@@ -16,6 +16,7 @@ setup(
     long_description_content_type="text/markdown",
     url="https://github.com/pylhc/tfs",
     author="pyLHC",
+    author_email="pylhc@github.com",
     license="MIT",
     classifiers=[
         "License :: OSI Approved :: MIT License",

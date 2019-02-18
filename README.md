@@ -29,20 +29,21 @@ tfs.write('path_to_output.tfs', data_frame, save_index="index_column")
 
 Reading and writing capabilities for [tfs-files](http://mad.web.cern.ch/mad/madx.old/Introduction/tfs.html)
 are provided by this package. The files are read into special `pandas` `Dataframes`, called `TfsDataFrames`,
-which in addition to the normal behaviour attach a dictionary of headers to the `DataFrame`.
+which in addition to the normal behaviour attach an `OrderedDict` of headers to the `DataFrame`.
 
 
 ## Known Issues
 
-- Creating new a new `DataFrame`, for example via `pandas.DataFrame.append()` or `pandas.concat()`, 
-convert the `TfsDataFrame` back to a `DataFrame` and lose therefore the headers.
-
+- Creating a new `DataFrame` by combining multiple `TfsDataFrame`,
+for example via `pandas.DataFrame.append()` or `pandas.concat()`, 
+will convert the `TfsDataFrame` back to a `DataFrame` and lose therefore the headers.
 
 ## Authors
 
 * **Jaime** - *Initial work* - [jaimecp89](https://github.com/jaimecp89)
+* **Lukáš** - *Initial work* - [lmalina](https://github.com/lmalina)
 * **Josch** - *Publishing* - [JoschD](https://github.com/JoschD)
-* **pyLHC** - *Working Group* - [pyLHC](https://github.com/pyLHC)
+* **pyLHC/OMC-Team** - *Working Group* - [pyLHC](https://github.com/orgs/pylhc/teams/omc-team)
 
 
 ## License

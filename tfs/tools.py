@@ -5,7 +5,7 @@ Module tools
 Additional functions to modify tfs files.
 
 """
-from handler import TfsFormatError, read_tfs, write_tfs
+from tfs.handler import TfsFormatError, read_tfs, write_tfs
 import logging
 import numpy as np
 LOG = logging.getLogger(__name__)
