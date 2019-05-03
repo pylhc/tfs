@@ -1,8 +1,13 @@
 """
-Module handler
+Handler
 -------------------
 
 Basic tfs-to-pandas io-functionality.
+
+
+:author: Jaime
+:module: handler
+
 """
 from collections import OrderedDict
 from os.path import basename, dirname
@@ -288,7 +293,10 @@ def _dtype_to_format(type_, colsize):
 
 
 def _validate(data_frame, info_str=""):
-    """ Check if Dataframe contains finite values only """
+    """
+    Check if Dataframe contains finite values only
+    and both indices and columns are unique.
+    """
     def isnotfinite(x):
         try:
             return ~np.isfinite(x)

@@ -1,4 +1,9 @@
 # TFS-Pandas
+[![Travis (.com)](https://img.shields.io/travis/com/pylhc/tfs.svg?style=popout)](https://travis-ci.com/pylhc/tfs/)
+[![Code Climate coverage](https://img.shields.io/codeclimate/coverage/pylhc/tfs.svg?style=popout)](https://codeclimate.com/github/pylhc/tfs)
+[![Code Climate maintainability (percentage)](https://img.shields.io/codeclimate/maintainability-percentage/pylhc/tfs.svg?style=popout)](https://codeclimate.com/github/pylhc/tfs)
+[![GitHub last commit](https://img.shields.io/github/last-commit/pylhc/tfs.svg?style=popout)](https://github.com/pylhc/tfs/)
+[![GitHub release](https://img.shields.io/github/release/pylhc/tfs.svg?style=popout)](https://github.com/pylhc/tfs/)
 
 This package provides reading and writing functionality for **table format system (tfs)** files. 
 

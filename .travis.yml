@@ -1,15 +1,21 @@
+env:
+  global:
+    - CC_TEST_REPORTER_ID=6805394e7fbeae5625e7fc12bec771f671f0fb3a284e83d4ce023abb7a80509b
 language: python
 email:
-    recipients:
-#      - lmalina@cern.ch
-#      - jcoellod@cern.ch
-    on_success: always
-    on_failure: always
+  on_success: always
+  on_failure: always
 python:
- - "3.6"
+  - "3.6"
+before_script:
+  - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+  - chmod +x ./cc-test-reporter
+  - ./cc-test-reporter before-build
 script:
- - pytest --cov=tfs tests
-# - travis-sphinx build --source=doc/ --nowarn
+  - pytest --cov-report xml --cov=tfs tests
+  - travis-sphinx build --source=doc/ --nowarn
+after_script:
+  - ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT
 after_success:
-# - travis-sphinx deploy
+  - travis-sphinx deploy
  
