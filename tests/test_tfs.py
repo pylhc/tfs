@@ -1,6 +1,6 @@
 import os
 import pytest
-import context
+from . import context
 from tfs import read_tfs, write_tfs
 
 
