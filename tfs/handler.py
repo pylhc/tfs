@@ -1,8 +1,13 @@
 """
-Module handler
+Handler
 -------------------
 
 Basic tfs-to-pandas io-functionality.
+
+
+:author: Jaime
+:module: handler
+
 """
 from collections import OrderedDict
 from os.path import basename, dirname

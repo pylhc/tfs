@@ -1,8 +1,11 @@
 """
-Module collection
+Collection
 ----------------------
 
 Advanced tfs reading and writing functionality.
+
+:author: Jaime
+:module: collection
 
 """
 import os

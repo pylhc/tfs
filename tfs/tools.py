@@ -1,8 +1,12 @@
 """
-Module tools
+Tools
 -----------------
 
 Additional functions to modify tfs files.
+
+
+:author: Jaime
+:module: tools
 
 """
 from tfs.handler import TfsFormatError, read_tfs, write_tfs
