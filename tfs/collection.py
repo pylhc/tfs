@@ -9,7 +9,7 @@ Advanced tfs reading and writing functionality.
 
 """
 import os
-from tfs.handler import read_tfs, write_tfs
+from handler import read_tfs, write_tfs
 
 
 class _MetaTfsCollection(type):
