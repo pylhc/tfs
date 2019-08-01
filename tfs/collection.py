@@ -37,10 +37,10 @@ class _MetaTfsCollection(type):
                 new_dict[name + "_y"] = prop_y
             except TypeError:
                 new_dict[name] = new_props
-        return super(_MetaTfsCollection, mcs).__new__(mcs, cls_name, bases, new_dict)
+        return super().__new__(mcs, cls_name, bases, new_dict)
 
 
-class TfsCollection(object):
+class TfsCollection(metaclass=_MetaTfsCollection):
     """ Abstract class to lazily load and write TFS files.
 
     The classes that inherit from this abstract class will be able to define
@@ -84,8 +84,6 @@ class TfsCollection(object):
     value. If the self.allow_write attribute is set to true, an assignment on
     one of the attributes will trigger the corresponding file write.
     """
-    __metaclass__ = _MetaTfsCollection
-
     def __init__(self, directory, allow_write=False):
         self.directory = directory
         self.allow_write = allow_write
