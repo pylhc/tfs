@@ -37,10 +37,10 @@ class _MetaTfsCollection(type):
                 new_dict[name + "_y"] = prop_y
             except TypeError:
                 new_dict[name] = new_props
-        return super(_MetaTfsCollection, mcs).__new__(mcs, cls_name, bases, new_dict)
+        return super().__new__(mcs, cls_name, bases, new_dict)
 
 
-class TfsCollection(object):
+class TfsCollection(metaclass=_MetaTfsCollection):
     """ Abstract class to lazily load and write TFS files.
 
     The classes that inherit from this abstract class will be able to define
@@ -49,33 +49,36 @@ class TfsCollection(object):
     DataFrames.
 
     Example:
-        If "./example" is a directory that contains two TFS file "getbetax.out"
-        and "getbetax.out" with BETX and BETY columns respectively:
+        If `./example` is a directory that contains two TFS file `getbetax.out`
+        and `getbetax.out` with BETX and BETY columns respectively:
 
-        >>> class ExampleCollection(TfsCollection)
-        >>>
-        >>>    # All TFS attributes must be marked with the Tfs(...) class:
-        >>>    beta = Tfs("getbeta{}.out")
-        >>>    # This is a traditional attribute.
-        >>>    other_value = 7
-        >>>
-        >>>    def get_filename(template, plane):
-        >>>       return template.format(plane)
-        >>>
-        >>> example = ExampleCollection("./example")
-        >>> # Get the BETX column from "getbetax.out":
-        >>> beta_x_column = example.beta_x.BETX
-        >>> # Get the BETY column from "getbetay.out":
-        >>> beta_y_column = example.beta_y.BETY
-        >>> # The planes can also be accessed as items:
-        >>> beta_y_column = example.beta["y"].BETY
-        >>> # This will write an empty DataFrame to "getbetay.out":
-        >>> example.allow_write = True
-        >>> example.beta["y"] = DataFrame()
+    .. sourcecode:: python
+
+         class ExampleCollection(TfsCollection)
+
+            # All TFS attributes must be marked with the Tfs(...) class:
+            beta = Tfs("getbeta{}.out")
+            # This is a traditional attribute.
+            other_value = 7
+
+            def get_filename(template, plane):
+               return template.format(plane)
+
+         example = ExampleCollection("./example")
+         # Get the BETX column from "getbetax.out":
+         beta_x_column = example.beta_x.BETX
+         # Get the BETY column from "getbetay.out":
+         beta_y_column = example.beta_y.BETY
+         # The planes can also be accessed as items:
+         beta_y_column = example.beta["y"].BETY
+         # This will write an empty DataFrame to "getbetay.out":
+         example.allow_write = True
+         example.beta["y"] = DataFrame()
+
 
     If the file to be loaded is not defined for two planes it can be declared
-    as: coupling = Tfs("getcouple.out", two_planes=False) and then accessed as
-    f1001w_column = example.coupling.F1001W.
+    as: ``coupling = Tfs("getcouple.out", two_planes=False)`` and then accessed as
+    ``f1001w_column = example.coupling.F1001W``.
     No file will be loaded until the corresponding attribute is accessed and
     the loaded DataFrame will be buffered, thus the user should expect an
     IOError if the requested file is not in the provided directory (only the
@@ -84,8 +87,6 @@ class TfsCollection(object):
     value. If the self.allow_write attribute is set to true, an assignment on
     one of the attributes will trigger the corresponding file write.
     """
-    __metaclass__ = _MetaTfsCollection
-
     def __init__(self, directory, allow_write=False):
         self.directory = directory
         self.allow_write = allow_write
