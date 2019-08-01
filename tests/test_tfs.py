@@ -22,10 +22,12 @@ def test_tfs_write_read(_dataframe, _test_file):
     assert os.path.isfile(_test_file)
 
     new = read_tfs(_test_file)
-    assert _dataframe.headers == new.headers
     assert all(_dataframe.columns == new.columns)
     for column in _dataframe:
         assert all(abs(_dataframe.loc[:, column] - new.loc[:, column]) < 1e-10)  # could go to 1E-12
+    assert _dataframe.headers == new.headers
+    for header in _dataframe.headers:
+        assert _dataframe[header] == new[header]  # works with present float
 
 
 def test_tfs_read_write_read(_tfs_file, _test_file):
