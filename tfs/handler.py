@@ -9,6 +9,7 @@ Basic tfs-to-pandas io-functionality.
 
 """
 from collections import OrderedDict
+from contextlib import suppress
 from os.path import basename, dirname
 import logging
 import pandas
@@ -45,13 +46,16 @@ class TfsDataFrame(pandas.DataFrame):
     _metadata = ["headers", "indx"]
 
     def __init__(self, *args, **kwargs):
-        self.headers = kwargs.pop("headers", {})
+        self.headers = {}
+        with suppress(IndexError, AttributeError):
+            self.headers = args[0].headers
+        self.headers = kwargs.pop("headers", self.headers)
         self.indx = _Indx(self)
-        super(TfsDataFrame, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     def __getitem__(self, key):
         try:
-            return super(TfsDataFrame, self).__getitem__(key)
+            return super().__getitem__(key)
         except KeyError as e:
             try:
                 return self.headers[key]
@@ -62,7 +66,7 @@ class TfsDataFrame(pandas.DataFrame):
 
     def __getattr__(self, name):
         try:
-            return super(TfsDataFrame, self).__getattr__(name)
+            return super().__getattr__(name)
         except AttributeError:
             try:
                 return self.headers[name]
@@ -72,6 +76,9 @@ class TfsDataFrame(pandas.DataFrame):
     @property
     def _constructor(self):
         return TfsDataFrame
+
+    def __str__(self):
+        return f"{super().__str__().strip()}\nHeaders: {str(self.headers)}\n"
 
 
 class _Indx(object):
@@ -187,6 +194,10 @@ def write_tfs(tfs_path, data_frame, headers_dict=None,
             headers_str, colnames_str, coltypes_str, data_str
         )))
 
+    if save_index:
+        # removed inserted column again
+        data_frame.drop(data_frame.columns[0], axis=1, inplace=True)
+
 
 def _get_headers_str(headers_dict):
     return "\n".join(_get_header_line(name, headers_dict[name])
@@ -217,6 +228,8 @@ def _get_coltypes_str(types, colwidth):
 
 
 def _get_data_str(data_frame, colwidth):
+    if len(data_frame) == 0:
+        return "\n"
     format_strings = "  " + _get_row_fmt_str(data_frame.dtypes, colwidth)
     return "\n".join(
         data_frame.apply(lambda series: format_strings.format(*series), axis=1)
@@ -236,7 +249,8 @@ class TfsFormatError(Exception):
 
 
 def _create_data_frame(column_names, column_types, rows_list, headers):
-    data_frame = TfsDataFrame(data=np.array(rows_list),
+    data = np.array(rows_list) if len(rows_list) else None  # case of empty dataframe
+    data_frame = TfsDataFrame(data=data,
                               columns=column_names,
                               headers=headers)
     _assign_column_types(data_frame, column_names, column_types)
