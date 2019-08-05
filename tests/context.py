@@ -6,5 +6,7 @@ if root_path not in sys.path:
 tfs_path = join(root_path, "tfs")
 if tfs_path not in sys.path:
     sys.path.insert(0, tfs_path)
-
+test_path = join(root_path, "tests")
+if test_path not in sys.path:
+    sys.path.insert(0, test_path)
 import tfs
