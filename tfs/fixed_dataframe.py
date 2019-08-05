@@ -7,14 +7,56 @@ This classes allow you to pre-define your dataframes and only allow specific col
 
 :Example:
 
-..sourcecode::
+.. sourcecode:: python
 
+    class KickTfs(FixedTfs):
+        filename = "kick_{}.tfs"
+        two_planes = True
+
+        class Columns(FixedColumnCollection):
+            NAME = FixedColumn("NAME", str)
+            S = FixedColumn("S", float, "m")
+            ALPHA = FixedColumn("ALF{}", float, "m")
+            BETA = FixedColumn("BET{}", float, "m")
+
+        class Headers(FixedColumnCollection):
+            TITLE = FixedColumn("Title", str)
+            TUNEX = FixedColumn("Q1", float)
+            RESCALE = FixedColumn("RescaleFactor{}", float)
+
+        Index = Columns.NAME
+
+    kick_x = KickTfs(plane="X", directory="measurement_output")
+
+    kick_x[kick_x.Columns.ALPHA] = calculate_alpha()
+    # is equivalent to
+    kick_x.ALFX = calculate_alpha()
+
+    # the following will fail:
+    kick_x["ALFY"] = calculate_alpha()
+
+    # to write the file as kick_x.tfs into measurement_output:
+    kick_x.write()
+
+    # the class still has the old definitions stored
+    KickTfs.Columns.ALPHA != kick_x.Columns.ALPHA
+
+    # Getting a plane into the columns can be done at any level
+    planed_columns = KickTfs.Columns("X")
+    planed_columns.ALPHA == KickTfs.Columns.ALPHA("X")
+
+
+``kick_x`` has now all columns defined, including their ``dtype``, which ensures successfull writing
+into a file. Otherwise ``kick_x`` will behave like a normal TfsDataFrame.
+
+The naming of the classes as ``Columns`` and ``Headers`` is important, as otherwise the definitions
+will not be found. Not including them will result in unrestricted DataFrames.
 
 
 :Issues:
 
 * If a lower-level function creating a new dataframe (e.g. ``append()`` or ``concat``) is called,
-  the definitions are lost
+  the definitions might be lost.
 * Tricks can be used to temporarily create new columns and headers (e.g. writing to the headers object directly).
   It is in your hand to control for this once in a while by calling
   :meth:`FixedTfs.validate_definitions`.
@@ -183,7 +225,7 @@ class FixedTfs(TfsDataFrame):
                 raise TypeError("Invalid index type in DataFrame.")
 
     def validate_definitions(self):
-        """ Validate the column, header and index names present. """
+        """ Validate the column, header and index present. """
         for kind in ("Columns", "Headers"):
             for attribute in ("dtype", "name"):
                 self._validate(attribute, kind)

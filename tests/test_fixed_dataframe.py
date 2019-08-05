@@ -7,6 +7,7 @@ from fixed_dataframe import FixedColumn, FixedColumnCollection, FixedTfs
 from handler import read_tfs, write_tfs, TfsDataFrame
 from helper import compare_dataframes
 
+
 class MyTfs(FixedTfs):
     filename = "mytfs_{}.tfs"
     two_planes = True
@@ -27,17 +28,6 @@ class PlanelessTfs(FixedTfs):
     filename = "test{}"
     two_planes = False
 
-def test_setting_loc():
-    df = MyTfs(plane="Y")
-    df.loc["A", "VALY"] = 1
-
-    df.loc["B", :] = ["Moso", 2.]
-
-    with pytest.raises(KeyError):
-        df.loc["A", "Wrong"] = 10
-
-    with pytest.raises(TypeError):
-        df.loc["A", "VALY"] = "NOTANUMBER"
 
 # Tests ------------------------------------------------------------------------
 
