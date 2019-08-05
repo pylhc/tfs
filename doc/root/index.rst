@@ -9,6 +9,10 @@ TFS-Pandas Modules
     :members:
 
 
+.. automodule:: fixed_dataframe
+    :members:
+
+
 .. automodule:: tools
     :members:
 

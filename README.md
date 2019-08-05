@@ -45,9 +45,9 @@ will convert the `TfsDataFrame` back to a `DataFrame` and lose therefore the hea
 
 ## Authors
 
-* **Jaime** - *Initial work* - [jaimecp89](https://github.com/jaimecp89)
-* **Lukáš** - *Initial work* - [lmalina](https://github.com/lmalina)
-* **Josch** - *Publishing* - [JoschD](https://github.com/JoschD)
+* **Jaime** - [jaimecp89](https://github.com/jaimecp89)
+* **Lukáš** - [lmalina](https://github.com/lmalina)
+* **Josch** - [JoschD](https://github.com/JoschD)
 * **pyLHC/OMC-Team** - *Working Group* - [pyLHC](https://github.com/orgs/pylhc/teams/omc-team)
 
 
