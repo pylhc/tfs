@@ -1,8 +1,10 @@
 import os
 import tempfile
-import pytest
+
 import numpy as np
-import context
+import pytest
+
+from . import context
 from fixed_dataframe import FixedColumn, FixedColumnCollection, FixedTfs
 from handler import read_tfs, write_tfs, TfsDataFrame
 from helper import compare_dataframes

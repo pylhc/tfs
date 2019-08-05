@@ -1,13 +1,12 @@
 import os
 import tempfile
-import pytest
 from shutil import copyfile
-import numpy as np
-import context
-from fixed_dataframe import FixedColumn, FixedColumnCollection, FixedTfs
-from handler import read_tfs, write_tfs, TfsDataFrame, TfsFormatError
-from tools import remove_header_comments_from_files, remove_nan_from_files, significant_numbers
 
+import pytest
+
+from . import context
+from handler import read_tfs, TfsFormatError
+from tools import remove_header_comments_from_files, remove_nan_from_files, significant_numbers
 
 CURRENT_DIR = os.path.dirname(__file__)
 

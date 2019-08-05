@@ -1,11 +1,12 @@
 import os
-import pytest
 import tempfile
-from numpy.random import rand
-import context
-from tfs import read_tfs, write_tfs, TfsDataFrame
-from helper import compare_dataframes, compare_float_dataframes
 
+import pytest
+from numpy.random import rand
+
+from . import context
+from helper import compare_dataframes, compare_float_dataframes
+from tfs import read_tfs, write_tfs, TfsDataFrame
 
 CURRENT_DIR = os.path.dirname(__file__)
 

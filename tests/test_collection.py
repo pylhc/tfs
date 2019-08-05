@@ -1,11 +1,12 @@
 import os
-import pytest
 import tempfile
-import context
-from tfs import read_tfs
+
+import pytest
+
+from . import context
 from collection import TfsCollection, Tfs
 from helper import compare_dataframes
-
+from tfs import read_tfs
 
 CURRENT_DIR = os.path.dirname(__file__)
 
