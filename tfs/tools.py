@@ -15,7 +15,7 @@ import numpy as np
 LOG = logging.getLogger(__name__)
 
 
-def significant_numbers(value, error):
+def significant_numbers(value: float, error: float) -> (str, str):
     """Computes value and its error properly rounded with respect to the size of the error"""
     digits = -int(np.floor(np.log10(error)))
     if np.floor(error * 10 ** digits) == 1:
@@ -23,7 +23,7 @@ def significant_numbers(value, error):
     return f"{round(value,digits):.{max(digits, 0)}f}", f"{round(error, digits):.{max(digits, 0)}f}"
 
 
-def remove_nan_from_files(list_of_files, replace=False):
+def remove_nan_from_files(list_of_files: list, replace: bool = False):
     """ Remove NAN-Entries from files in list_of_files.
 
     If replace=False a new file with .dropna in it's name is created, otherwise the file is
@@ -42,7 +42,7 @@ def remove_nan_from_files(list_of_files, replace=False):
             write_tfs(filepath, df)
 
 
-def remove_header_comments_from_files(list_of_files):
+def remove_header_comments_from_files(list_of_files: list):
     """ Check the files in list for invalid headers (no type defined) and removes them. """
     for filepath in list_of_files:
         LOG.info(f"Checking file: {filepath:s}")
@@ -78,7 +78,7 @@ class DotDict(dict):
     __setattr__ = dict.__setitem__
     __delattr__ = dict.__delitem__
 
-    def __getattr__(self, key):
+    def __getattr__(self, key: object) -> object:
         """ Needed to raise the correct exceptions """
         try:
             return super().__getitem__(key)

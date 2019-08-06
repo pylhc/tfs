@@ -127,7 +127,7 @@ class FixedTfs(TfsDataFrame):
     two_planes = True
     _initialized = False
 
-    def __init__(self, plane="", directory="", *args, **kwargs):
+    def __init__(self, plane: str = "", directory: str = "", *args, **kwargs):
         super().__init__(*args, **kwargs)
         cls = type(self)
         self._directory = directory
@@ -234,12 +234,12 @@ class FixedTfs(TfsDataFrame):
 
     # IO Functions --------------------
 
-    def get_filename(self):
+    def get_filename(self) -> str:
         return self._filename
 
     def write(self):
         self.validate_definitions()
         write_tfs(self._filename, self, save_index=self.index.name)
 
-    def read(self):
+    def read(self) -> 'FixedTfs':
         return type(self)(self._plane, self._directory, read_tfs(self._filename, index=self.index.name))

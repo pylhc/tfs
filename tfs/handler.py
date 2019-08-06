@@ -8,12 +8,15 @@ Basic tfs-to-pandas io-functionality.
 :module: handler
 
 """
+import logging
 from collections import OrderedDict
 from contextlib import suppress
 from os.path import basename, dirname
-import logging
-import pandas
+from typing import Union
+
 import numpy as np
+import pandas
+from pandas import DataFrame
 
 LOGGER = logging.getLogger(__name__)
 
@@ -53,7 +56,7 @@ class TfsDataFrame(pandas.DataFrame):
         self.indx = _Indx(self)
         super().__init__(*args, **kwargs)
 
-    def __getitem__(self, key):
+    def __getitem__(self, key: object) -> object:
         try:
             return super().__getitem__(key)
         except KeyError as e:
@@ -64,7 +67,7 @@ class TfsDataFrame(pandas.DataFrame):
             except TypeError:
                 raise e
 
-    def __getattr__(self, name):
+    def __getattr__(self, name: str) -> object:
         try:
             return super().__getattr__(name)
         except AttributeError:
@@ -94,7 +97,7 @@ class _Indx(object):
         return name_series[name_series == key].index[0]
 
 
-def read_tfs(tfs_path, index=None):
+def read_tfs(tfs_path: str, index: str = None) -> TfsDataFrame:
     """
     Parses the TFS table present in tfs_path and returns a custom Pandas DataFrame (TfsDataFrame).
 
@@ -149,8 +152,8 @@ def read_tfs(tfs_path, index=None):
     return data_frame
 
 
-def write_tfs(tfs_path, data_frame, headers_dict=None,
-              save_index=False, colwidth=DEFAULT_COLUMN_WIDTH):
+def write_tfs(tfs_path: str, data_frame: DataFrame, headers_dict: dict = None,
+              save_index: Union[str, bool] = False, colwidth: int = DEFAULT_COLUMN_WIDTH):
     """
     Writes the DataFrame into tfs_path with the headers_dict as
     headers dictionary. If you want to keep the order of the headers, use collections.OrderedDict.
