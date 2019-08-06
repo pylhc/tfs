@@ -164,23 +164,34 @@ class FixedTfs(TfsDataFrame):
 
     def _fill_missing_definitions(self):
         if self.Columns is not None:
-            for name, datatype, _ in self.Columns:
-                if name not in self.columns:
-                    self[name] = DEFAULTS[datatype]
-            self.reindex(self.Columns.names)
-            self.astype({name: dtype for name, dtype, _ in self.Columns}, copy=False)
-
-        if self.Index is not None:
-            self.index.name = self.Index.name
-            self.index = self.index.astype(self.Index.dtype)
+            self._fill_missing_columns()
 
         if self.Headers is not None:
-            for name, datatype, _ in self.Headers:
-                if name not in self.headers:
-                    self.headers[name] = DEFAULTS[datatype]
-            new_headers = OrderedDict([(key, self.headers.pop(key)) for key in self.Headers.names])
-            new_headers.update(self.headers)  # should be error, will raised in validation step!
-            self.headers = new_headers
+            self._fill_missing_headers()
+
+        if self.Index is not None:
+            self._fill_missing_index()
+
+    # ---
+
+    def _fill_missing_columns(self):
+        for name, datatype, _ in self.Columns:
+            if name not in self.columns:
+                self[name] = DEFAULTS[datatype]
+        self.reindex(self.Columns.names)
+        self.astype({name: dtype for name, dtype, _ in self.Columns}, copy=False)
+
+    def _fill_missing_headers(self):
+        for name, datatype, _ in self.Headers:
+            if name not in self.headers:
+                self.headers[name] = DEFAULTS[datatype]
+        new_headers = OrderedDict([(key, self.headers.pop(key)) for key in self.Headers.names])
+        new_headers.update(self.headers)  # should be error, will raised in validation step!
+        self.headers = new_headers
+
+    def _fill_missing_index(self):
+        self.index.name = self.Index.name
+        self.index = self.index.astype(self.Index.dtype)
 
     # Validation --------------------
 
@@ -242,4 +253,5 @@ class FixedTfs(TfsDataFrame):
         write_tfs(self._filename, self, save_index=self.index.name)
 
     def read(self) -> 'FixedTfs':
-        return type(self)(self._plane, self._directory, read_tfs(self._filename, index=self.index.name))
+        return type(self)(self._plane, self._directory,
+                          read_tfs(self._filename, index=self.index.name))
