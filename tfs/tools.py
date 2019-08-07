@@ -15,8 +15,10 @@ import numpy as np
 LOG = logging.getLogger(__name__)
 
 
-def significant_numbers(value: float, error: float) -> (str, str):
+def significant_digits(value: float, error: float) -> (str, str):
     """Computes value and its error properly rounded with respect to the size of the error"""
+    if error == 0:
+        raise ValueError("Input error of 0. Cannot compute significant digits.")
     digits = -int(np.floor(np.log10(error)))
     if np.floor(error * 10 ** digits) == 1:
         digits = digits + 1
