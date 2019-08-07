@@ -1,10 +1,12 @@
 import os
-import pytest
 import tempfile
-from . import context
-from tfs import read_tfs
-from collection import TfsCollection, Tfs
 
+import pytest
+
+from . import context
+from collection import TfsCollection, Tfs
+from helper import compare_dataframes
+from tfs import read_tfs
 
 CURRENT_DIR = os.path.dirname(__file__)
 
@@ -21,13 +23,13 @@ class CollectionTest(TfsCollection):
 
 def test_read(_input_dir, _tfs_x, _tfs_y):
     c = CollectionTest(_input_dir)
-    _compare_dataframes(_tfs_x, c.file_x)
-    _compare_dataframes(_tfs_x, c.filex)
-    _compare_dataframes(_tfs_y, c.file_y)
+    compare_dataframes(_tfs_x, c.file_x)
+    compare_dataframes(_tfs_x, c.filex)
+    compare_dataframes(_tfs_y, c.file["y"])
     assert c.value == 10
 
 
-def test_write(_tfs_x, _output_dir):
+def test_write(_tfs_x, _tfs_y, _output_dir):
     c = CollectionTest(_output_dir)
     assert not os.path.isfile(
         os.path.join(_output_dir, "nofile_x.tfs"))
@@ -40,24 +42,19 @@ def test_write(_tfs_x, _output_dir):
     c.nofile_x = _tfs_x
     assert os.path.isfile(
         os.path.join(_output_dir, "nofile_x.tfs"))
+    compare_dataframes(_tfs_x, c.nofile_x)
 
-    _compare_dataframes(_tfs_x, c.nofile_x)
+    c.nofile["y"] = _tfs_y
+    assert os.path.isfile(
+        os.path.join(_output_dir, "nofile_y.tfs"))
+    compare_dataframes(_tfs_y, c.nofile["y"])
 
 
 def test_maybe(_input_dir):
     c = CollectionTest(_input_dir)
-    tfs = c.maybe_call.nofile_x
+    c.maybe_call.nofile_x
     with pytest.raises(IOError):
-        tfs = c.nofile_x
-
-
-def _compare_dataframes(df1, df2):
-    assert df1.headers == df2.headers
-    for header in df1.headers:
-        assert df1[header] == df2[header]
-    assert all(df1.columns == df2.columns)
-    for column in df1:
-        assert all(df1.loc[:, column] == df2.loc[:, column])
+        c.nofile_x
 
 
 @pytest.fixture()

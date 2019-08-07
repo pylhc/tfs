@@ -1,10 +1,12 @@
 import os
-import pytest
 import tempfile
-from numpy.random import rand
-from . import context
-from tfs import read_tfs, write_tfs, TfsDataFrame
 
+import pytest
+from numpy.random import rand
+
+from . import context
+from helper import compare_dataframes, compare_float_dataframes
+from tfs import read_tfs, write_tfs, TfsDataFrame
 
 CURRENT_DIR = os.path.dirname(__file__)
 
@@ -14,7 +16,19 @@ def test_tfs_read(_tfs_file):
     assert len(test_file.headers) > 0
     assert len(test_file.columns) > 0
     assert len(test_file.index) > 0
+    assert len(str(test_file)) > 0
     assert isinstance(test_file.index[0], str)
+
+    with pytest.raises(AttributeError):
+        test_file.Not_HERE
+
+    with pytest.raises(KeyError):
+        test_file["Not_HERE"]
+
+
+def tfs_indx(_tfs_file):
+    test_file = read_tfs(_tfs_file)
+    assert test_file.indx["BPMYB.5L2.B1"] == test_file.set_index("NAME")["BPMYB.5L2.B1"]
 
 
 def test_tfs_write_read(_dataframe, _test_file):
@@ -22,12 +36,18 @@ def test_tfs_write_read(_dataframe, _test_file):
     assert os.path.isfile(_test_file)
 
     new = read_tfs(_test_file)
-    assert all(_dataframe.columns == new.columns)
-    for column in _dataframe:
-        assert all(abs(_dataframe.loc[:, column] - new.loc[:, column]) < 1e-10)  # could go to 1E-12
-    assert _dataframe.headers == new.headers
-    for header in _dataframe.headers:
-        assert _dataframe[header] == new[header]  # works with present float
+    compare_float_dataframes(_dataframe, new)
+
+
+def test_tfs_write_read_autoindex(_dataframe, _test_file):
+    df = _dataframe.set_index("a")
+    df1 = _dataframe.set_index("a")
+    write_tfs(_test_file, df, save_index=True)
+    compare_dataframes(df, df1)  # writing should not change things
+
+    df_read = read_tfs(_test_file)
+    assert df_read.index.name == df.index.name
+    assert all((df_read.index.values - df.index.values) <= 1E-12)
 
 
 def test_tfs_read_write_read(_tfs_file, _test_file):
@@ -38,6 +58,7 @@ def test_tfs_read_write_read(_tfs_file, _test_file):
     assert all(original.columns == new.columns)
     for column in original:
         assert all(original.loc[:, column] == new.loc[:, column])
+
 
 
 @pytest.fixture()
