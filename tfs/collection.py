@@ -9,7 +9,7 @@ Advanced tfs reading and writing functionality.
 
 """
 import os
-from handler import read_tfs, write_tfs
+from handler import read_tfs, write_tfs, TfsDataFrame
 
 
 class _MetaTfsCollection(type):
@@ -87,7 +87,7 @@ class TfsCollection(metaclass=_MetaTfsCollection):
     value. If the self.allow_write attribute is set to true, an assignment on
     one of the attributes will trigger the corresponding file write.
     """
-    def __init__(self, directory, allow_write=False):
+    def __init__(self, directory: str, allow_write: bool = False):
         self.directory = directory
         self.allow_write = allow_write
         self.maybe_call = _MaybeCall(self)
@@ -126,7 +126,7 @@ class TfsCollection(metaclass=_MetaTfsCollection):
         """
         self._buffer = {}
 
-    def read_tfs(self, filename):
+    def read_tfs(self, filename: str) -> TfsDataFrame:
         """Actually reads the TFS file from self.directory with filename.
 
         This function can be ovewriten to use something instead of tfs
@@ -142,7 +142,7 @@ class TfsCollection(metaclass=_MetaTfsCollection):
             tfs_data = tfs_data.set_index("NAME", drop=False)
         return tfs_data
 
-    def __getattr__(self, attr):
+    def __getattr__(self, attr: str) -> object:
         if attr in self._two_plane_names:
             return TfsCollection._TwoPlanes(self, attr)
         raise AttributeError("{} object has no attribute {}"
