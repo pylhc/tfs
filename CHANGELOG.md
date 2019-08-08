@@ -1,5 +1,14 @@
 # TFS-Pandas Changelog
 
+## Version 1.0.2
+ - Fixed:
+   - Additional index column after writing is removed again
+   - Renamded sigificant_numbers to significant_digits
+   - significant_digits throws proper error if zero-error is given
+
+ - Added:
+   - Fixed Dataframe Class
+   - Type Annotations
 
 ## Version 1.0.1
  - Fixed: 
