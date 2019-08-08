@@ -1,5 +1,9 @@
 # TFS-Pandas Changelog
 
+## Version 1.0.3
+ - Fixed:
+   - From relative to absolute imports (IMPORTANT FIX!!)
+
 ## Version 1.0.2
  - Fixed:
    - Additional index column after writing is removed again
