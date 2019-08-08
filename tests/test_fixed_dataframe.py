@@ -5,9 +5,9 @@ import numpy as np
 import pytest
 
 from . import context
-from fixed_dataframe import FixedColumn, FixedColumnCollection, FixedTfs
-from handler import read_tfs, write_tfs, TfsDataFrame
 from helper import compare_dataframes
+from tfs.fixed_dataframe import FixedColumn, FixedColumnCollection, FixedTfs
+from tfs.handler import read_tfs, write_tfs, TfsDataFrame
 
 
 class MyTfs(FixedTfs):

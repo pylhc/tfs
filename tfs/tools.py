@@ -9,9 +9,12 @@ Additional functions to modify tfs files.
 :module: tools
 
 """
-from handler import TfsFormatError, read_tfs, write_tfs
 import logging
+
 import numpy as np
+
+from tfs.handler import TfsFormatError, read_tfs, write_tfs
+
 LOG = logging.getLogger(__name__)
 
 
