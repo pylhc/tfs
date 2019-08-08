@@ -5,8 +5,8 @@ from shutil import copyfile
 import pytest
 
 from . import context
-from handler import read_tfs, TfsFormatError
-from tools import remove_header_comments_from_files, remove_nan_from_files, significant_digits
+from tfs.handler import read_tfs, TfsFormatError
+from tfs.tools import remove_header_comments_from_files, remove_nan_from_files, significant_digits
 
 CURRENT_DIR = os.path.dirname(__file__)
 

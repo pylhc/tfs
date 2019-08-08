@@ -67,8 +67,8 @@ import os
 from collections import defaultdict, OrderedDict, namedtuple
 from contextlib import suppress
 
-from tools import DotDict
-from handler import TfsDataFrame, read_tfs, write_tfs
+from tfs.handler import TfsDataFrame, read_tfs, write_tfs
+from tfs.tools import DotDict
 
 DEFAULTS = defaultdict(float, {int: 0, str: ''})
 
