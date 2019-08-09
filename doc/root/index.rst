@@ -1,18 +1,18 @@
 TFS-Pandas Modules
 **************************
 
-.. automodule:: collection
+.. automodule:: tfs.collection
     :members:
 
 
-.. automodule:: handler
+.. automodule:: tfs.handler
     :members:
 
 
-.. automodule:: fixed_dataframe
+.. automodule:: tfs.fixed_dataframe
     :members:
 
 
-.. automodule:: tools
+.. automodule:: tfs.tools
     :members:
 
