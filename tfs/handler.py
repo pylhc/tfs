@@ -81,7 +81,21 @@ class TfsDataFrame(pandas.DataFrame):
         return TfsDataFrame
 
     def __str__(self):
-        return f"{super().__str__().strip()}\nHeaders: {str(self.headers)}\n"
+        space = " " * 4
+
+        def _str_items(items):
+            return '\n'.join(f'{space}{k}: {v}' for k, v in items)
+
+        s = ""
+        if len(self.headers):
+            s += "Headers:\n"
+            if len(self.headers) > 7:
+                items = list(self.headers.items())
+                s += f"{_str_items(items[:3])}\n{space}...\n{_str_items(items[-3:])}\n"
+            else:
+                s += f"{_str_items(self.headers.items())}\n"
+            s += "\n"
+        return f"{s}{super().__str__()}"
 
 
 class _Indx(object):
