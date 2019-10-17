@@ -3,8 +3,7 @@ import tempfile
 
 import pytest
 
-from . import context
-from helper import compare_dataframes
+from .helper import compare_dataframes
 from tfs import read_tfs
 from tfs.collection import TfsCollection, Tfs
 
