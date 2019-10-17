@@ -59,6 +59,35 @@ def test_tfs_read_write_read(_tfs_file, _test_file):
         assert all(original.loc[:, column] == new.loc[:, column])
 
 
+def test_tfs_write_empty_columns_dataframe(_test_file):
+    df = TfsDataFrame(
+             index=range(3), 
+             columns=[],
+             data=rand(3, 0),
+             headers={"Title": "Tfs Title", "Value": 3.3663}
+    )
+
+    write_tfs(_test_file, df)
+    assert os.path.isfile(_test_file)
+
+    new = read_tfs(_test_file)
+    compare_float_dataframes(df, new)
+
+
+def test_tfs_write_empty_index_dataframe(_test_file):
+    df = TfsDataFrame(
+             index=[], 
+             columns=['a', 'b', 'c'],
+             data=rand(0, 3),
+             headers={"Title": "Tfs Title", "Value": 3.3663}
+    )
+
+    write_tfs(_test_file, df)
+    assert os.path.isfile(_test_file)
+
+    new = read_tfs(_test_file)
+    compare_float_dataframes(df, new)
+
 
 @pytest.fixture()
 def _tfs_file():
