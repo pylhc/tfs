@@ -4,8 +4,7 @@ import tempfile
 import numpy as np
 import pytest
 
-from . import context
-from helper import compare_dataframes
+from .helper import compare_dataframes
 from tfs.fixed_dataframe import FixedColumn, FixedColumnCollection, FixedTfs
 from tfs.handler import read_tfs, write_tfs, TfsDataFrame
 
