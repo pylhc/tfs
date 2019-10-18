@@ -245,7 +245,7 @@ def _get_coltypes_str(types, colwidth):
 
 
 def _get_data_str(data_frame, colwidth):
-    if len(data_frame) == 0:
+    if len(data_frame.index) == 0 or len(data_frame.columns) == 0:
         return "\n"
     format_strings = "  " + _get_row_fmt_str(data_frame.dtypes, colwidth)
     return "\n".join(
