@@ -8,7 +8,9 @@ Advanced tfs reading and writing functionality.
 :module: collection
 
 """
-import os
+import pathlib
+
+from pandas import DataFrame
 
 from tfs.handler import read_tfs, write_tfs, TfsDataFrame
 
@@ -88,8 +90,9 @@ class TfsCollection(metaclass=_MetaTfsCollection):
     value. If the self.allow_write attribute is set to true, an assignment on
     one of the attributes will trigger the corresponding file write.
     """
-    def __init__(self, directory: str, allow_write: bool = False):
-        self.directory = directory
+    def __init__(self, directory: pathlib.Path, allow_write: bool = False):
+        # self.directory = directory
+        self.directory = pathlib.Path(directory) if isinstance(directory, str) else directory
         self.allow_write = allow_write
         self.maybe_call = _MaybeCall(self)
         self._buffer = {}
@@ -138,18 +141,18 @@ class TfsCollection(metaclass=_MetaTfsCollection):
         Returns:
             A tfs instance of the requested file.
         """
-        tfs_data = read_tfs(os.path.join(self.directory, filename))
-        if "NAME" in tfs_data:
-            tfs_data = tfs_data.set_index("NAME", drop=False)
-        return tfs_data
+        tfs_data_df = read_tfs(self.directory / filename)
+        # tfs_data = read_tfs(os.path.join(self.directory, filename))
+        if "NAME" in tfs_data_df:
+            tfs_data_df = tfs_data_df.set_index("NAME", drop=False)
+        return tfs_data_df
 
     def __getattr__(self, attr: str) -> object:
         if attr in self._two_plane_names:
             return TfsCollection._TwoPlanes(self, attr)
-        raise AttributeError("{} object has no attribute {}"
-                             .format(self.__class__.__name__, attr))
+        raise AttributeError(f"{self.__class__.__name__} object has no attribute {attr}")
 
-    def _load_tfs(self, filename):
+    def _load_tfs(self, filename: str):
         try:
             return self._buffer[filename]
         except KeyError:
@@ -159,9 +162,10 @@ class TfsCollection(metaclass=_MetaTfsCollection):
             self._buffer[filename] = tfs_data
             return self._buffer[filename]
 
-    def _write_tfs(self, filename, data_frame):
+    def _write_tfs(self, filename: str, data_frame: DataFrame):
         if self.allow_write:
-            write_tfs(os.path.join(self.directory, filename), data_frame)
+            write_tfs(self.directory / filename, data_frame)
+            # write_tfs(os.path.join(self.directory, filename), data_frame)
         self._buffer[filename] = data_frame
 
     class _TwoPlanes(object):
@@ -176,7 +180,7 @@ class TfsCollection(metaclass=_MetaTfsCollection):
             setattr(self.parent, self.attr + "_" + plane, value)
 
 
-class Tfs(object):
+class Tfs:
     """ Class to mark attributes as Tfs attributes.
 
     Any parameter given to this class will be passed to the "get_filename()"
@@ -244,7 +248,7 @@ def _setter(self, value, *args, **kwargs):
         self._write_tfs(filename, value)
 
 
-class _MaybeCall(object):
+class _MaybeCall:
     """Handles the maybe_call feature of the TfsCollection.
 
     This class defines the maybe_call attribute in the instances of

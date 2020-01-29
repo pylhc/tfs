@@ -28,7 +28,7 @@ def significant_digits(value: float, error: float) -> (str, str):
     return f"{round(value,digits):.{max(digits, 0)}f}", f"{round(error, digits):.{max(digits, 0)}f}"
 
 
-def remove_nan_from_files(list_of_files: list, replace: bool = False):
+def remove_nan_from_files(list_of_files: list, replace: bool = False) -> None:
     """ Remove NAN-Entries from files in list_of_files.
 
     If replace=False a new file with .dropna in it's name is created, otherwise the file is
@@ -47,10 +47,11 @@ def remove_nan_from_files(list_of_files: list, replace: bool = False):
             write_tfs(filepath, df)
 
 
-def remove_header_comments_from_files(list_of_files: list):
+def remove_header_comments_from_files(list_of_files: list) -> None:
     """ Check the files in list for invalid headers (no type defined) and removes them. """
     for filepath in list_of_files:
-        LOG.info(f"Checking file: {filepath:s}")
+        # LOG.info(f"Checking file: {filepath:s}")
+        LOG.info(f"Checking file: {filepath}")  # Unhappy if filepath is pathlib.Path, not needed if filepath is str
         with open(filepath, "r") as f:
             f_lines = f.readlines()
 

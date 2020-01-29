@@ -64,6 +64,7 @@ will not be found. Not including them will result in unrestricted DataFrames.
 
 """
 import os
+import pathlib
 from collections import defaultdict, OrderedDict, namedtuple
 from contextlib import suppress
 
@@ -76,7 +77,8 @@ DEFAULTS = defaultdict(float, {int: 0, str: ''})
 class FixedColumn(DotDict):
     """ Class to define columns by name and dtype and possibly unit.
     The unit is not used internally so far, but might be useful for some applications."""
-    def __init__(self, name: str, dtype: type, unit: str = ""):
+    def __init__(self, name: str, dtype: type, unit: str = None):
+        unit = "" if unit is None else unit
         super().__init__(dict(name=name, dtype=dtype, unit=unit))
 
     def __str__(self):
@@ -86,7 +88,7 @@ class FixedColumn(DotDict):
         return FixedColumn(self.name.format(plane), self.dtype, self.unit)
 
 
-class FixedColumnCollection(object):
+class FixedColumnCollection:
     """ Abstract class to define TFS-Columns with name and Type.
 
     The columns are sorted into `names` and `types`, or as named-tuples in `columns`.
@@ -95,13 +97,19 @@ class FixedColumnCollection(object):
     https://docs.python.org/3.6/whatsnew/3.6.html#whatsnew36-pep520 )
 
     """
-    def __init__(self, plane: str = "", exclude: FixedColumn = None):
+    def __init__(self, plane: str = None, exclude: FixedColumn = None):
         type_and_unit = namedtuple("type_and_unit", ["dtype", "unit"])
 
-        self.plane = plane
-        if exclude is None:
-            exclude = []
-        columns = [c for c in type(self).__dict__.items() if isinstance(c[1], FixedColumn) and c[1] not in exclude]
+        self.plane = "" if plane is None else plane
+        # if exclude is None:
+        #     exclude = []
+        exclude = [] if exclude is None else exclude
+        columns = [
+            col
+            for col in type(self).__dict__.items()
+            if isinstance(col[1], FixedColumn) and col[1] not in exclude
+        ]
+
         self.mapping = OrderedDict()
         for attribute, column in columns:
             new_column = column(plane)
@@ -127,14 +135,17 @@ class FixedTfs(TfsDataFrame):
     two_planes = True
     _initialized = False
 
-    def __init__(self, plane: str = "", directory: str = "", *args, **kwargs):
+    def __init__(self, plane: str = None, directory: pathlib.Path = None, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        plane = "" if plane is None else plane
+        directory = "" if directory is None else directory
         cls = type(self)
-        self._directory = directory
+        self._directory = pathlib.Path(directory)
         self._plane = plane
         if not cls.two_planes and len(plane):
             raise ValueError(f"{cls.__name__} is planeless, but a plane was defined.")
         self._filename = os.path.join(directory, cls.filename.format(plane))
+        # self._filename = directory / cls.filename.format(plane)  # Unsure of cls.filename.format, this breaks tests
 
         self.Columns = None
         with suppress(AttributeError, TypeError):
@@ -245,7 +256,7 @@ class FixedTfs(TfsDataFrame):
 
     # IO Functions --------------------
 
-    def get_filename(self) -> str:
+    def get_filename(self) -> pathlib.Path:
         return self._filename
 
     def write(self):

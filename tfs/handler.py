@@ -9,9 +9,9 @@ Basic tfs-to-pandas io-functionality.
 
 """
 import logging
+import pathlib
 from collections import OrderedDict
 from contextlib import suppress
-from os.path import basename, dirname
 from typing import Union
 
 import numpy as np
@@ -84,7 +84,7 @@ class TfsDataFrame(pandas.DataFrame):
         return f"{super().__str__().strip()}\nHeaders: {str(self.headers)}\n"
 
 
-class _Indx(object):
+class _Indx:
     """
     Helper class to mock the metaclass twiss.indx["element_name"]
     behaviour.
@@ -97,22 +97,25 @@ class _Indx(object):
         return name_series[name_series == key].index[0]
 
 
-def read_tfs(tfs_path: str, index: str = None) -> TfsDataFrame:
+def read_tfs(tfs_path: pathlib.Path, index: str = None) -> TfsDataFrame:
     """
     Parses the TFS table present in tfs_path and returns a custom Pandas DataFrame (TfsDataFrame).
 
     Args:
-        tfs_path: path to the input TFS file
+        tfs_path: pathlib.Path of the input TFS file, can be str but will be cast to pathlib.Path
         index: Name of the column to set as index. If not given looks for INDEX_ID-column
 
     Returns:
         TfsDataFrame object
     """
-    LOGGER.debug(f"Reading path: {tfs_path}")
+    tfs_path = pathlib.Path(tfs_path) if isinstance(tfs_path, str) else tfs_path
+    # LOGGER.debug(f"Reading path: {tfs_path}")
+    LOGGER.debug(f"Reading path: {tfs_path.absolute()}")
     headers = OrderedDict()
     column_names = column_types = None
     rows_list = []
-    with open(tfs_path, "r") as tfs_data:
+    # with open(tfs_path, "r") as tfs_data:
+    with tfs_path.open("r") as tfs_data:
         for line in tfs_data:
             parts = line.split()
             if len(parts) == 0:
@@ -148,18 +151,19 @@ def read_tfs(tfs_path: str, index: str = None) -> TfsDataFrame:
                 idx_name = None  # to remove it completely (Pandas makes a difference)
             data_frame = data_frame.rename_axis(idx_name)
 
-    _validate(data_frame, f"from file {tfs_path:s}")
+    # _validate(data_frame, f"from file {tfs_path:s}")
+    _validate(data_frame, f"from file {tfs_path.absolute()}")
     return data_frame
 
 
-def write_tfs(tfs_path: str, data_frame: DataFrame, headers_dict: dict = None,
+def write_tfs(tfs_path: pathlib.Path, data_frame: DataFrame, headers_dict: dict = None,
               save_index: Union[str, bool] = False, colwidth: int = DEFAULT_COLUMN_WIDTH):
     """
     Writes the DataFrame into tfs_path with the headers_dict as
     headers dictionary. If you want to keep the order of the headers, use collections.OrderedDict.
 
     Args:
-        tfs_path: path to the output TFS file
+        tfs_path: pathlib.Path to the output TFS file, can be str but will be cast to pathlib.Path
         data_frame: TfsDataFrame or pandas.DataFrame to save
         headers_dict: Headers of the data_frame, if empty tries to use data_frame.headers
         save_index: bool or string. Default: False
@@ -167,7 +171,9 @@ def write_tfs(tfs_path: str, data_frame: DataFrame, headers_dict: dict = None,
             If string, it saves the index of the data_frame to a column named by string.
         colwidth: Column width
     """
-    _validate(data_frame, f"to be written in {tfs_path:s}")
+    tfs_path = pathlib.Path(tfs_path) if isinstance(tfs_path, str) else tfs_path
+    # _validate(data_frame, f"to be written in {tfs_path:s}")
+    _validate(data_frame, f"to be written in {tfs_path.absolute()}")
     if save_index:
         if isinstance(save_index, str):
             # saves index into column by name given
@@ -179,7 +185,8 @@ def write_tfs(tfs_path: str, data_frame: DataFrame, headers_dict: dict = None,
             except TypeError:
                 idx_name = INDEX_ID
         data_frame.insert(0, idx_name, data_frame.index)
-    LOGGER.debug(f"Attempting to write file: {basename(tfs_path)} in {dirname(tfs_path)}")
+    # LOGGER.debug(f"Attempting to write file: {basename(tfs_path)} in {dirname(tfs_path)}")
+    LOGGER.debug(f"Attempting to write file: {tfs_path.name} in {tfs_path.parent}")
 
     if headers_dict is None:  # Tries to get headers from TfsDataFrame
         try:
@@ -192,7 +199,8 @@ def write_tfs(tfs_path: str, data_frame: DataFrame, headers_dict: dict = None,
     colnames_str = _get_colnames_str(data_frame.columns, colwidth)
     coltypes_str = _get_coltypes_str(data_frame.dtypes, colwidth)
     data_str = _get_data_str(data_frame, colwidth)
-    with open(tfs_path, "w") as tfs_data:
+    # with open(tfs_path, "w") as tfs_data:
+    with tfs_path.open("w") as tfs_data:
         tfs_data.write("\n".join((
             headers_str, colnames_str, coltypes_str, data_str
         )))
@@ -202,12 +210,12 @@ def write_tfs(tfs_path: str, data_frame: DataFrame, headers_dict: dict = None,
         data_frame.drop(data_frame.columns[0], axis=1, inplace=True)
 
 
-def _get_headers_str(headers_dict):
+def _get_headers_str(headers_dict) -> str:
     return "\n".join(_get_header_line(name, headers_dict[name])
                      for name in headers_dict)
 
 
-def _get_header_line(name, value):
+def _get_header_line(name: str, value) -> str:
     if not isinstance(name, str):
         raise ValueError(f"{name} is not a string")
     if isinstance(value, INT_PARENTS):
@@ -220,17 +228,17 @@ def _get_header_line(name, value):
         raise ValueError(f"{value} does not correspond to recognized types (string, float and int)")
 
 
-def _get_colnames_str(colnames, colwidth):
+def _get_colnames_str(colnames, colwidth) -> str:
     fmt = _get_row_fmt_str([None] * len(colnames), colwidth)
     return "* " + fmt.format(*colnames)
 
 
-def _get_coltypes_str(types, colwidth):
+def _get_coltypes_str(types, colwidth) -> str:
     fmt = _get_row_fmt_str([str] * len(types), colwidth)
     return "$ " + fmt.format(*[_dtype_to_str(type_) for type_ in types])
 
 
-def _get_data_str(data_frame, colwidth):
+def _get_data_str(data_frame, colwidth) -> str:
     if len(data_frame.index) == 0 or len(data_frame.columns) == 0:
         return "\n"
     format_strings = "  " + _get_row_fmt_str(data_frame.dtypes, colwidth)
@@ -239,7 +247,7 @@ def _get_data_str(data_frame, colwidth):
     )
 
 
-def _get_row_fmt_str(dtypes, colwidth):
+def _get_row_fmt_str(dtypes, colwidth) -> str:
     return " ".join(
         "{" + f"{indx:d}:>{_dtype_to_format(type_, colwidth)}" + "}"
         for indx, type_ in enumerate(dtypes)
@@ -251,7 +259,7 @@ class TfsFormatError(Exception):
     pass
 
 
-def _create_data_frame(column_names, column_types, rows_list, headers):
+def _create_data_frame(column_names, column_types, rows_list, headers) -> TfsDataFrame:
     data = np.array(rows_list) if len(rows_list) else None  # case of empty dataframe
     data_frame = TfsDataFrame(data=data,
                               columns=column_names,
@@ -260,27 +268,28 @@ def _create_data_frame(column_names, column_types, rows_list, headers):
     return data_frame
 
 
-def _assign_column_types(data_frame, column_names, column_types):
+def _assign_column_types(data_frame, column_names, column_types) -> None:
     names_to_types = dict(zip(column_names, column_types))
     for name in names_to_types:
         data_frame[name] = data_frame[name].astype(names_to_types[name])
 
 
-def _compute_types(str_list):
+def _compute_types(str_list) -> list:
     return [_id_to_type(string) for string in str_list]
 
 
-def _parse_header(str_list):
+def _parse_header(str_list) -> tuple:
     type_idx = next((idx for idx, part in enumerate(str_list) if part.startswith("%")), None)
     if type_idx is None:
-        raise TfsFormatError("No data type found in header: '{}'".format(" ".join(str_list)))
+        # raise TfsFormatError("No data type found in header: '{}'".format(" ".join(str_list)))
+        raise TfsFormatError(f"No data type found in header: '{''.join(str_list)}'")
 
     name = " ".join(str_list[0:type_idx])
     value_str = " ".join(str_list[(type_idx+1):])
     return name, _id_to_type(str_list[type_idx])(value_str.strip('"'))
 
 
-def _id_to_type(type_str):
+def _id_to_type(type_str: str):
     try:
         return ID_TO_TYPE[type_str]
     except KeyError:
@@ -289,7 +298,7 @@ def _id_to_type(type_str):
         raise TfsFormatError(f"Unknown data type: {type_str}")
 
 
-def _dtype_to_str(type_):
+def _dtype_to_str(type_) -> str:
     if np.issubdtype(type_, np.integer) or np.issubdtype(type_, np.bool_):
         return "%d"
     elif np.issubdtype(type_, np.floating):
@@ -298,7 +307,7 @@ def _dtype_to_str(type_):
         return "%s"
 
 
-def _dtype_to_format(type_, colsize):
+def _dtype_to_format(type_, colsize) -> str:
     if type_ is None:
         return f"{colsize}"
     if np.issubdtype(type_, np.integer) or np.issubdtype(type_, np.bool_):
@@ -324,7 +333,9 @@ def _validate(data_frame, info_str=""):
 
     bool_df = data_frame.apply(isnotfinite)
     if bool_df.values.any():
-        LOGGER.warning(f"DataFrame {info_str:s} contains non-physical values at Index: "
+        # LOGGER.warning(f"DataFrame {info_str:s} contains non-physical values at Index: "
+        #                f"{bool_df.index[bool_df.any(axis='columns')].tolist()}")
+        LOGGER.warning(f"DataFrame {info_str} contains non-physical values at Index: "
                        f"{bool_df.index[bool_df.any(axis='columns')].tolist()}")
 
     if not len(set(data_frame.index)) == len(data_frame.index):
@@ -333,4 +344,5 @@ def _validate(data_frame, info_str=""):
     if not len(set(data_frame.columns)) == len(data_frame.columns):
         raise TfsFormatError("Column names not Unique.")
 
-    LOGGER.debug(f"DataFrame {info_str:s} validated.")
+    # LOGGER.debug(f"DataFrame {info_str:s} validated.")
+    LOGGER.debug(f"DataFrame {info_str} validated.")
