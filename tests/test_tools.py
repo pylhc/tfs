@@ -1,4 +1,5 @@
 import os
+import pathlib
 import tempfile
 from shutil import copyfile
 
@@ -7,10 +8,10 @@ import pytest
 from tfs.handler import read_tfs, TfsFormatError
 from tfs.tools import remove_header_comments_from_files, remove_nan_from_files, significant_digits
 
-CURRENT_DIR = os.path.dirname(__file__)
+CURRENT_DIR = pathlib.Path(__file__).parent
 
 
-def test_clean_file(_bad_file, _clean_file):
+def test_clean_file(_bad_file: pathlib.Path, _clean_file: str):
     copyfile(_bad_file, _clean_file)
     with pytest.raises(TfsFormatError):
         read_tfs(_bad_file)
@@ -39,11 +40,11 @@ def test_significant_digits():
 
 
 @pytest.fixture()
-def _bad_file():
-    return os.path.join(CURRENT_DIR, "inputs", "bad_file.tfs")
+def _bad_file() -> pathlib.Path:
+    return CURRENT_DIR / "inputs" / "bad_file.tfs"
 
 
 @pytest.fixture()
-def _clean_file():
+def _clean_file() -> str:
     with tempfile.TemporaryDirectory() as cwd:
         yield os.path.join(cwd, "clean_file.tfs")
