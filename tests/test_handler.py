@@ -48,7 +48,7 @@ def test_tfs_write_read_autoindex(_dataframe: TfsDataFrame, _test_file: str):
 
     df_read = read_tfs(_test_file)
     assert df_read.index.name == df.index.name
-    assert all((df_read.index.values - df.index.values) <= 1E-12)
+    assert all((df_read.index.values - df.index.values) <= 1e-12)
 
 
 def test_tfs_read_write_read(_tfs_file: pathlib.Path, _test_file: str):
@@ -63,10 +63,10 @@ def test_tfs_read_write_read(_tfs_file: pathlib.Path, _test_file: str):
 
 def test_tfs_write_empty_columns_dataframe(_test_file: str):
     df = TfsDataFrame(
-             index=range(3), 
-             columns=[],
-             data=numpy.random.rand(3, 0),
-             headers={"Title": "Tfs Title", "Value": 3.3663}
+        index=range(3),
+        columns=[],
+        data=numpy.random.rand(3, 0),
+        headers={"Title": "Tfs Title", "Value": 3.3663},
     )
 
     write_tfs(_test_file, df)
@@ -78,10 +78,10 @@ def test_tfs_write_empty_columns_dataframe(_test_file: str):
 
 def test_tfs_write_empty_index_dataframe(_test_file: str):
     df = TfsDataFrame(
-             index=[], 
-             columns=['a', 'b', 'c'],
-             data=numpy.random.rand(0, 3),
-             headers={"Title": "Tfs Title", "Value": 3.3663}
+        index=[],
+        columns=["a", "b", "c"],
+        data=numpy.random.rand(0, 3),
+        headers={"Title": "Tfs Title", "Value": 3.3663},
     )
 
     write_tfs(_test_file, df)
@@ -105,7 +105,8 @@ def _test_file() -> str:
 @pytest.fixture()
 def _dataframe() -> TfsDataFrame:
     return TfsDataFrame(
-        index=range(3), columns="a b c d e".split(),
+        index=range(3),
+        columns="a b c d e".split(),
         data=numpy.random.rand(3, 5),
-        headers={"Title": "Tfs Title", "Value": 3.3663}
+        headers={"Title": "Tfs Title", "Value": 3.3663},
     )
