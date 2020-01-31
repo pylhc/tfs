@@ -21,11 +21,12 @@ class _MetaTfsCollection(type):
     Tfs(...) and replaces it for a property getter and setter. Check
     TfsCollection docs.
     """
-    def __new__(mcs, cls_name, bases, dct):
+
+    def __new__(mcs, cls_name, bases, dct: dict):
         new_dict = dict(dct)
         new_dict["_two_plane_names"] = []
-        for name in dct:
-            value = dct[name]
+        # for name in dct:
+        for key, value in dct.items():
             try:
                 args = value.args
                 kwargs = value.kwargs
@@ -34,12 +35,12 @@ class _MetaTfsCollection(type):
             new_props = _define_property(args, kwargs)
             try:
                 prop_x, prop_y = new_props
-                new_dict.pop(name)
-                new_dict["_two_plane_names"].append(name)
-                new_dict[name + "_x"] = prop_x
-                new_dict[name + "_y"] = prop_y
+                new_dict.pop(key)
+                new_dict["_two_plane_names"].append(key)
+                new_dict[key + "_x"] = prop_x
+                new_dict[key + "_y"] = prop_y
             except TypeError:
-                new_dict[name] = new_props
+                new_dict[key] = new_props
         return super().__new__(mcs, cls_name, bases, new_dict)
 
 
@@ -48,7 +49,7 @@ class TfsCollection(metaclass=_MetaTfsCollection):
 
     The classes that inherit from this abstract class will be able to define
     TFS files as readable or writable and read or write them just as attribute
-    access or assignments. All attributes will be read and write as Pandas
+    access or assignments. All attributes will be read and writen as Pandas
     DataFrames.
 
     Example:
@@ -90,15 +91,15 @@ class TfsCollection(metaclass=_MetaTfsCollection):
     value. If the self.allow_write attribute is set to true, an assignment on
     one of the attributes will trigger the corresponding file write.
     """
-    def __init__(self, directory: pathlib.Path, allow_write: bool = False):
-        # self.directory = directory
+
+    def __init__(self, directory: pathlib.Path, allow_write: bool = None):
         self.directory = pathlib.Path(directory) if isinstance(directory, str) else directory
-        self.allow_write = allow_write
+        self.allow_write = False if allow_write is None else allow_write
         self.maybe_call = _MaybeCall(self)
         self._buffer = {}
 
     def get_filename(self, *args, **kwargs):
-        """Returns the filename to be loaded or written.
+        """Return the filename to be loaded or written.
 
         This function will get as parameters any parameter given to the
         Tfs(...) attributes. It must return the filename to be written
@@ -131,7 +132,7 @@ class TfsCollection(metaclass=_MetaTfsCollection):
         self._buffer = {}
 
     def read_tfs(self, filename: str) -> TfsDataFrame:
-        """Actually reads the TFS file from self.directory with filename.
+        """Reads the TFS file from self.directory with filename.
 
         This function can be ovewriten to use something instead of tfs
         to load the files.
@@ -142,7 +143,6 @@ class TfsCollection(metaclass=_MetaTfsCollection):
             A tfs instance of the requested file.
         """
         tfs_data_df = read_tfs(self.directory / filename)
-        # tfs_data = read_tfs(os.path.join(self.directory, filename))
         if "NAME" in tfs_data_df:
             tfs_data_df = tfs_data_df.set_index("NAME", drop=False)
         return tfs_data_df
@@ -165,7 +165,6 @@ class TfsCollection(metaclass=_MetaTfsCollection):
     def _write_tfs(self, filename: str, data_frame: DataFrame):
         if self.allow_write:
             write_tfs(self.directory / filename, data_frame)
-            # write_tfs(os.path.join(self.directory, filename), data_frame)
         self._buffer[filename] = data_frame
 
     class _TwoPlanes(object):
@@ -187,12 +186,14 @@ class Tfs:
     and "write_to()" methods, together with the plane if "two_planes=False" is
     not present.
     """
+
     def __init__(self, *args, **kwargs):
         self.args = args
         self.kwargs = kwargs
 
 
 # Private methods to define the properties ##################################
+
 
 def _define_property(args, kwargs):
     if "two_planes" not in kwargs:
@@ -208,10 +209,11 @@ def _define_property(args, kwargs):
 
         def setter_funct(self, tfs_data):
             return _setter(self, tfs_data, *args, **kwargs)
+
         return property(fget=getter_funct, fset=setter_funct)
 
 
-def _define_property_two_planes(args, kwargs):
+def _define_property_two_planes(args, kwargs) -> tuple:
     x_kwargs = dict(kwargs)
     y_kwargs = dict(kwargs)
     x_kwargs["plane"] = "x"
@@ -252,11 +254,12 @@ class _MaybeCall:
     """Handles the maybe_call feature of the TfsCollection.
 
     This class defines the maybe_call attribute in the instances of
-    TfsCollection. To avoid repetitive try: except: blocks, this class allowes
+    TfsCollection. To avoid repetitive try: except: blocks, this class allows
     you to do: meas.maybe_call.beta["x"](some_funct, args, kwargs). If the
     requested file is available, the call is equivalent to: some_funct(args,
     kwargs), if it is not no function is called and the program continues.
     """
+
     def __init__(self, parent):
         self.parent = parent
 
@@ -269,8 +272,7 @@ class _MaybeCall:
             self.attr = attr
 
         def __getitem__(self, item):
-            return _MaybeCall.MaybeCallAttr(self.parent,
-                                            self.attr + "_" + item)
+            return _MaybeCall.MaybeCallAttr(self.parent, self.attr + "_" + item)
 
         def __call__(self, function_call, *args, **kwargs):
             try:

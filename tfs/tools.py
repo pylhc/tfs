@@ -25,47 +25,53 @@ def significant_digits(value: float, error: float) -> (str, str):
     digits = -int(np.floor(np.log10(error)))
     if np.floor(error * 10 ** digits) == 1:
         digits = digits + 1
-    return f"{round(value,digits):.{max(digits, 0)}f}", f"{round(error, digits):.{max(digits, 0)}f}"
+    return (
+        f"{round(value, digits):.{max(digits, 0)}f}",
+        f"{round(error, digits):.{max(digits, 0)}f}",
+    )
 
 
-def remove_nan_from_files(list_of_files: list, replace: bool = False) -> None:
+def remove_nan_from_files(list_of_files: list, replace: bool = None) -> None:
     """ Remove NAN-Entries from files in list_of_files.
 
-    If replace=False a new file with .dropna in it's name is created, otherwise the file is
+    If replace=False a new file with .dropna appended to its name is created, otherwise the file is
     overwritten.
     """
+    replace = False if replace is None else replace
     for filepath in list_of_files:
         try:
-            df = read_tfs(filepath)
+            tfs_data_frame = read_tfs(filepath)
             LOG.info(f"Read file {filepath:s}")
         except (IOError, TfsFormatError):
             LOG.info(f"Skipped file {filepath:s}")
         else:
-            df = df.dropna(axis='index')
+            tfs_data_frame = tfs_data_frame.dropna(axis="index")
             if not replace:
                 filepath += ".dropna"
-            write_tfs(filepath, df)
+            write_tfs(filepath, tfs_data_frame)
 
 
 def remove_header_comments_from_files(list_of_files: list) -> None:
-    """ Check the files in list for invalid headers (no type defined) and removes them. """
+    """
+    Check the files in the provided list for invalid headers (no type defined) and
+    removes those when found.
+    """
     for filepath in list_of_files:
-        # LOG.info(f"Checking file: {filepath:s}")
-        LOG.info(f"Checking file: {filepath}")  # Unhappy if filepath is pathlib.Path, not needed if filepath is str
+        LOG.info(f"Checking file: {filepath}")
         with open(filepath, "r") as f:
             f_lines = f.readlines()
 
-        del_idcs = []
-        for idx, line in enumerate(f_lines):
+        detele_indicies = []
+        for index, line in enumerate(f_lines):
             if line.startswith("*"):
                 break
             if line.startswith("@") and len(line.split("%")) == 1:
-                del_idcs.append(idx)
+                detele_indicies.append(index)
 
-        if len(del_idcs) > 0:
-            LOG.info(f"    Found {len(del_idcs):d} lines to delete.")
-            for idx in reversed(del_idcs):
-                deleted_line = f_lines.pop(idx)
+        if detele_indicies:
+            LOG.info(f"    Found {len(detele_indicies):d} lines to delete.")
+            for index in reversed(detele_indicies):
+                deleted_line = f_lines.pop(index)
                 LOG.info(f"    Deleted line: {deleted_line.strip():s}")
 
             with open(filepath, "w") as f:
@@ -74,6 +80,7 @@ def remove_header_comments_from_files(list_of_files: list) -> None:
 
 class DotDict(dict):
     """ Make dict fields accessible by . """
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         for key in self:
