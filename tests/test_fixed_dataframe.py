@@ -1,12 +1,14 @@
 import os
+import pathlib
 import tempfile
 
 import numpy as np
 import pytest
+from pandas.testing import assert_frame_equal
 
-from .helper import compare_dataframes
 from tfs.fixed_dataframe import FixedColumn, FixedColumnCollection, FixedTfs
 from tfs.handler import read_tfs, write_tfs, TfsDataFrame
+from .helper import compare_dataframes
 
 
 class MyTfs(FixedTfs):
@@ -60,21 +62,21 @@ def test_empty_df_creation():
 
 def test_setting_columns():
     df = MyTfs(plane="X")
-    df["VALX"] = [1., 2., 3.]
+    df["VALX"] = [1.0, 2.0, 3.0]
     assert all(df["VALX"] == np.array([1, 2, 3]))
 
     with pytest.raises(TypeError):
         df["VALX"] = [1, 2, 3]
 
     with pytest.raises(KeyError):
-        df["VALY"] = [1., 2., 3.]
+        df["VALY"] = [1.0, 2.0, 3.0]
 
 
 def test_setting_loc():
     df = MyTfs(plane="Y")
     df.loc["A", "VALY"] = 1
 
-    df.loc["B", :] = ["Moso", 2.]
+    df.loc["B", :] = ["Moso", 2.0]
 
     with pytest.raises(KeyError):
         df.loc["A", "Wrong"] = 10
@@ -93,7 +95,7 @@ def test_setting_headers():
     with pytest.raises(TypeError):
         df.validate_definitions()
 
-    df.headers["OffsetY"] = 10.
+    df.headers["OffsetY"] = 10.0
     with pytest.raises(KeyError):
         df.validate_definitions()
 
@@ -104,7 +106,7 @@ def test_setting_indices():
     with pytest.raises(KeyError):
         df.validate_definitions()
 
-    df = MyTfs(plane="X", index=[1,2,3])
+    df = MyTfs(plane="X", index=[1, 2, 3])
     assert df.index[0] == "1"
     df.index = df.index.astype(int)
     assert df.index[0] == 1
@@ -113,12 +115,12 @@ def test_setting_indices():
 
 
 def test_init_with_data():
-    df = MyTfs(plane="X", columns=["VALX"], data=[1., 2., 3.], headers={"OffsetX": 100.})
-    assert all(df["VALX"] == np.array([1, 2, 3]))
+    df = MyTfs(plane="X", columns=["VALX"], data=[1.0, 2.0, 3.0], headers={"OffsetX": 100.0})
+    assert np.array_equal(df["VALX"].values, np.array([1, 2, 3]))
     assert df.headers["OffsetX"] == 100
 
     with pytest.raises(KeyError):
-        MyTfs(plane="X", columns=["VALY"], data=[1., 2., 3.])
+        MyTfs(plane="X", columns=["VALY"], data=[1.0, 2.0, 3.0])
 
     with pytest.raises(TypeError):
         MyTfs(plane="X", columns=["VALX"], data=[1, 2, 3])
@@ -140,7 +142,7 @@ def test_single_plane_creation():
 def test_no_restrictions():
     df = PlanelessTfs(directory="")
     df["Allowed"] = 10
-    df.headers["Write"]  = "Everything"
+    df.headers["Write"] = "Everything"
     df.validate_definitions()
 
 
@@ -155,12 +157,12 @@ def test_empty_write(_output_dir):
     compare_dataframes(df, df_read)
 
 
-def test_filled_write(_output_dir, _filled_tfs):
+def test_filled_write(_output_dir, _filled_tfs: MyTfs):
     df = _filled_tfs(plane="X", directory=_output_dir)
     df.write()
     assert os.path.isfile(df.get_filename())
     df_read = read_tfs(df.get_filename(), index="NAME")
-    compare_dataframes(df, df_read)
+    assert_frame_equal(df, df_read)
 
 
 def test_empty_read(_output_dir):
@@ -170,11 +172,11 @@ def test_empty_read(_output_dir):
     compare_dataframes(df, df_read)
 
 
-def test_filled_read(_output_dir, _filled_tfs):
+def test_filled_read(_output_dir, _filled_tfs: MyTfs):
     df = _filled_tfs(plane="X", directory=_output_dir)
     write_tfs(df.get_filename(), df, save_index="NAME")
     df_read = MyTfs(plane="X", directory=_output_dir).read()
-    compare_dataframes(df, df_read)
+    assert_frame_equal(df, df_read)
 
 
 def test_read_fail(_output_dir):
@@ -190,7 +192,7 @@ def test_write_fail(_output_dir):
     mydf.headers["Nothere"] = "Still"
     with pytest.raises(KeyError):
         mydf.write()
-    assert not os.path.isfile(mydf.get_filename())
+    assert not pathlib.Path(mydf.get_filename()).is_file()
 
 
 # Little Helpers ---------------------------------------------------------------
@@ -203,7 +205,12 @@ def _output_dir():
 
 
 @pytest.fixture()
-def _filled_tfs():
-    yield lambda plane, directory: MyTfs(plane=plane, directory=directory,
-                                         index=["A", "B"], columns=MyTfs.Columns("X", exclude=[MyTfs.Index]).names,
-               data=[["Wonder", 1.1], ["BAR", 4.4]], headers={"OffsetX": 100., "Title": "Test Title"})
+def _filled_tfs() -> MyTfs:
+    yield lambda plane, directory: MyTfs(
+        plane=plane,
+        directory=directory,
+        index=["A", "B"],
+        columns=MyTfs.Columns("X", exclude=[MyTfs.Index]).names,
+        data=[["Wonder", 1.1], ["BAR", 4.4]],
+        headers={"OffsetX": 100.0, "Title": "Test Title"},
+    )
