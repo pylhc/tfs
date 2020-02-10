@@ -1,3 +1,4 @@
+import os
 import pathlib
 import tempfile
 
@@ -8,7 +9,7 @@ from tfs import read_tfs
 from tfs.collection import TfsCollection, Tfs
 from tfs.handler import TfsDataFrame
 
-CURRENT_DIR = pathlib.Path(__file__).parent
+CURRENT_DIR = os.path.dirname(__file__)
 
 
 class CollectionTest(TfsCollection):
@@ -21,7 +22,7 @@ class CollectionTest(TfsCollection):
         return template.format(plane)
 
 
-def test_read(_input_dir: pathlib.Path, _tfs_x: TfsDataFrame, _tfs_y: TfsDataFrame):
+def test_read(_input_dir: str, _tfs_x: TfsDataFrame, _tfs_y: TfsDataFrame):
     c = CollectionTest(_input_dir)
     assert_frame_equal(_tfs_x, c.file_x)
     assert_frame_equal(_tfs_x, c.filex)
@@ -48,7 +49,7 @@ def test_write(_tfs_x: TfsDataFrame, _tfs_y: TfsDataFrame, _output_dir: str):
     assert_frame_equal(_tfs_y, c.nofile["y"])
 
 
-def test_maybe(_input_dir: pathlib.Path):
+def test_maybe(_input_dir: str):
     c = CollectionTest(_input_dir)
     c.maybe_call.nofile_x
     with pytest.raises(IOError):
@@ -57,17 +58,17 @@ def test_maybe(_input_dir: pathlib.Path):
 
 @pytest.fixture()
 def _tfs_x() -> TfsDataFrame:
-    return read_tfs(CURRENT_DIR / "inputs" / "file_x.tfs").set_index("NAME", drop=False)
+    return read_tfs(os.path.join(CURRENT_DIR, "inputs", "file_x.tfs")).set_index("NAME", drop=False)
 
 
 @pytest.fixture()
 def _tfs_y() -> TfsDataFrame:
-    return read_tfs(CURRENT_DIR / "inputs" / "file_y.tfs").set_index("NAME", drop=False)
+    return read_tfs(os.path.join(CURRENT_DIR, "inputs", "file_y.tfs")).set_index("NAME", drop=False)
 
 
 @pytest.fixture()
-def _input_dir() -> pathlib.Path:
-    return CURRENT_DIR / "inputs"
+def _input_dir() -> str:
+    return os.path.join(CURRENT_DIR, "inputs")
 
 
 @pytest.fixture()
