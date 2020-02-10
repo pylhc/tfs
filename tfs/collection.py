@@ -49,7 +49,7 @@ class TfsCollection(metaclass=_MetaTfsCollection):
 
     The classes that inherit from this abstract class will be able to define
     TFS files as readable or writable and read or write them just as attribute
-    access or assignments. All attributes will be read and writen as Pandas
+    access or assignments. All attributes will be read and written as Pandas
     DataFrames.
 
     Example:
@@ -134,7 +134,7 @@ class TfsCollection(metaclass=_MetaTfsCollection):
     def read_tfs(self, filename: str) -> TfsDataFrame:
         """Reads the TFS file from self.directory with filename.
 
-        This function can be ovewriten to use something instead of tfs
+        This function can be ovewritten to use something instead of tfs
         to load the files.
 
         Arguments:
