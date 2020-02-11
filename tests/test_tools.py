@@ -11,10 +11,25 @@ from tfs.tools import remove_header_comments_from_files, remove_nan_from_files, 
 CURRENT_DIR = pathlib.Path(__file__).parent
 
 
-def test_clean_file(_bad_file: pathlib.Path, _clean_file: str):
-    copyfile(_bad_file, _clean_file)
+def test_clean_file_pathlib_input(_bad_file_pathlib: pathlib.Path, _clean_file: str):
+    copyfile(_bad_file_pathlib, _clean_file)
     with pytest.raises(TfsFormatError):
-        read_tfs(_bad_file)
+        read_tfs(_bad_file_pathlib)
+
+    remove_header_comments_from_files([_clean_file])
+    df = read_tfs(_clean_file)
+    assert df.isna().any().any()
+
+    remove_nan_from_files([_clean_file])
+    df = read_tfs(_clean_file + ".dropna")
+    assert len(df) > 0
+    assert not df.isna().any().any()
+
+
+def test_clean_file_str_input(_bad_file_str: str, _clean_file: str):
+    copyfile(_bad_file_str, _clean_file)
+    with pytest.raises(TfsFormatError):
+        read_tfs(_bad_file_str)
 
     remove_header_comments_from_files([_clean_file])
     df = read_tfs(_clean_file)
@@ -40,8 +55,13 @@ def test_significant_digits():
 
 
 @pytest.fixture()
-def _bad_file() -> pathlib.Path:
+def _bad_file_pathlib() -> pathlib.Path:
     return CURRENT_DIR / "inputs" / "bad_file.tfs"
+
+
+@pytest.fixture()
+def _bad_file_str() -> str:
+    return os.path.join(os.path.dirname(__file__), "inputs", "bad_file.tfs")
 
 
 @pytest.fixture()

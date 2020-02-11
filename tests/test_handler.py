@@ -12,8 +12,8 @@ from .helper import compare_float_dataframes
 CURRENT_DIR = pathlib.Path(__file__).parent
 
 
-def test_tfs_read(_tfs_file: pathlib.Path):
-    test_file = read_tfs(_tfs_file, index="NAME")
+def test_tfs_read_pathlib_input(_tfs_file_pathlib: pathlib.Path):
+    test_file = read_tfs(_tfs_file_pathlib, index="NAME")
     assert len(test_file.headers) > 0
     assert len(test_file.columns) > 0
     assert len(test_file.index) > 0
@@ -27,8 +27,28 @@ def test_tfs_read(_tfs_file: pathlib.Path):
         test_var = test_file["Not_HERE"]
 
 
-def tfs_indx(_tfs_file: pathlib.Path):
-    test_file = read_tfs(_tfs_file)
+def test_tfs_read_str_input(_tfs_file_str: str):
+    test_file = read_tfs(_tfs_file_str, index="NAME")
+    assert len(test_file.headers) > 0
+    assert len(test_file.columns) > 0
+    assert len(test_file.index) > 0
+    assert len(str(test_file)) > 0
+    assert isinstance(test_file.index[0], str)
+
+    with pytest.raises(AttributeError):
+        test_var = test_file.Not_HERE
+
+    with pytest.raises(KeyError):
+        test_var = test_file["Not_HERE"]
+
+
+def tfs_indx_pathlib_input(_tfs_file_pathlib: pathlib.Path):
+    test_file = read_tfs(_tfs_file_pathlib)
+    assert test_file.indx["BPMYB.5L2.B1"] == test_file.set_index("NAME")["BPMYB.5L2.B1"]
+
+
+def tfs_indx_str_input(_tfs_file_str: str):
+    test_file = read_tfs(_tfs_file_str)
     assert test_file.indx["BPMYB.5L2.B1"] == test_file.set_index("NAME")["BPMYB.5L2.B1"]
 
 
@@ -51,8 +71,18 @@ def test_tfs_write_read_autoindex(_dataframe: TfsDataFrame, _test_file: str):
     assert all((df_read.index.values - df.index.values) <= 1e-12)
 
 
-def test_tfs_read_write_read(_tfs_file: pathlib.Path, _test_file: str):
-    original = read_tfs(_tfs_file)
+def test_tfs_read_write_read_pathlib_input(_tfs_file_pathlib: pathlib.Path, _test_file: str):
+    original = read_tfs(_tfs_file_pathlib)
+    write_tfs(_test_file, original)
+    new = read_tfs(_test_file)
+    assert original.headers == new.headers
+    assert numpy.array_equal(original.columns, new.columns)
+    for column in original:
+        assert numpy.array_equal(original.loc[:, column].values, new.loc[:, column].values)
+
+
+def test_tfs_read_write_read_str_input(_tfs_file_str: str, _test_file: str):
+    original = read_tfs(_tfs_file_str)
     write_tfs(_test_file, original)
     new = read_tfs(_test_file)
     assert original.headers == new.headers
@@ -92,8 +122,13 @@ def test_tfs_write_empty_index_dataframe(_test_file: str):
 
 
 @pytest.fixture()
-def _tfs_file() -> pathlib.Path:
+def _tfs_file_pathlib() -> pathlib.Path:
     return CURRENT_DIR / "inputs" / "file_x.tfs"
+
+
+@pytest.fixture()
+def _tfs_file_str() -> str:
+    return os.path.join(os.path.dirname(__file__), "inputs", "file_x.tfs")
 
 
 @pytest.fixture()

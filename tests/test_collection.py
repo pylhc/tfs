@@ -1,3 +1,4 @@
+import os
 import pathlib
 import tempfile
 
@@ -21,8 +22,16 @@ class CollectionTest(TfsCollection):
         return template.format(plane)
 
 
-def test_read(_input_dir: pathlib.Path, _tfs_x: TfsDataFrame, _tfs_y: TfsDataFrame):
-    c = CollectionTest(_input_dir)
+def test_read_pathlib_input(_input_dir_pathlib: pathlib.Path, _tfs_x: TfsDataFrame, _tfs_y: TfsDataFrame):
+    c = CollectionTest(_input_dir_pathlib)
+    assert_frame_equal(_tfs_x, c.file_x)
+    assert_frame_equal(_tfs_x, c.filex)
+    assert_frame_equal(_tfs_y, c.file["y"])
+    assert c.value == 10
+
+
+def test_read_str_input(_input_dir_str: str, _tfs_x: TfsDataFrame, _tfs_y: TfsDataFrame):
+    c = CollectionTest(_input_dir_str)
     assert_frame_equal(_tfs_x, c.file_x)
     assert_frame_equal(_tfs_x, c.filex)
     assert_frame_equal(_tfs_y, c.file["y"])
@@ -48,8 +57,15 @@ def test_write(_tfs_x: TfsDataFrame, _tfs_y: TfsDataFrame, _output_dir: str):
     assert_frame_equal(_tfs_y, c.nofile["y"])
 
 
-def test_maybe(_input_dir: pathlib.Path):
-    c = CollectionTest(_input_dir)
+def test_maybe_pathlib_input(_input_dir_pathlib: pathlib.Path):
+    c = CollectionTest(_input_dir_pathlib)
+    c.maybe_call.nofile_x
+    with pytest.raises(IOError):
+        c.nofile_x
+
+
+def test_maybe_str_input(_input_dir_str: str):
+    c = CollectionTest(_input_dir_str)
     c.maybe_call.nofile_x
     with pytest.raises(IOError):
         c.nofile_x
@@ -66,8 +82,13 @@ def _tfs_y() -> TfsDataFrame:
 
 
 @pytest.fixture()
-def _input_dir() -> pathlib.Path:
+def _input_dir_pathlib() -> pathlib.Path:
     return CURRENT_DIR / "inputs"
+
+
+@pytest.fixture()
+def _input_dir_str() -> str:
+    return os.path.join(os.path.dirname(__file__), "inputs")
 
 
 @pytest.fixture()
