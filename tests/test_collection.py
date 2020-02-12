@@ -1,13 +1,14 @@
-import os
+import pathlib
 import tempfile
 
 import pytest
+from pandas.testing import assert_frame_equal
 
-from .helper import compare_dataframes
 from tfs import read_tfs
 from tfs.collection import TfsCollection, Tfs
+from tfs.handler import TfsDataFrame
 
-CURRENT_DIR = os.path.dirname(__file__)
+CURRENT_DIR = pathlib.Path(__file__).parent
 
 
 class CollectionTest(TfsCollection):
@@ -20,36 +21,34 @@ class CollectionTest(TfsCollection):
         return template.format(plane)
 
 
-def test_read(_input_dir, _tfs_x, _tfs_y):
+def test_read(_input_dir: pathlib.Path, _tfs_x: TfsDataFrame, _tfs_y: TfsDataFrame):
     c = CollectionTest(_input_dir)
-    compare_dataframes(_tfs_x, c.file_x)
-    compare_dataframes(_tfs_x, c.filex)
-    compare_dataframes(_tfs_y, c.file["y"])
+    assert_frame_equal(_tfs_x, c.file_x)
+    assert_frame_equal(_tfs_x, c.filex)
+    assert_frame_equal(_tfs_y, c.file["y"])
     assert c.value == 10
 
 
-def test_write(_tfs_x, _tfs_y, _output_dir):
+def test_write(_tfs_x: TfsDataFrame, _tfs_y: TfsDataFrame, _output_dir):
     c = CollectionTest(_output_dir)
-    assert not os.path.isfile(
-        os.path.join(_output_dir, "nofile_x.tfs"))
+    file_x_path = pathlib.Path(_output_dir) / "nofile_x.tfs"
+    assert not file_x_path.is_file()
 
     c.nofile_x = _tfs_x  # will not throw error, but does nothing
-    assert not os.path.isfile(
-        os.path.join(_output_dir, "nofile_x.tfs"))
+    assert not file_x_path.is_file()
 
     c.allow_write = True
     c.nofile_x = _tfs_x
-    assert os.path.isfile(
-        os.path.join(_output_dir, "nofile_x.tfs"))
-    compare_dataframes(_tfs_x, c.nofile_x)
+    assert file_x_path.is_file()
+    assert_frame_equal(_tfs_x, c.nofile_x)
 
     c.nofile["y"] = _tfs_y
-    assert os.path.isfile(
-        os.path.join(_output_dir, "nofile_y.tfs"))
-    compare_dataframes(_tfs_y, c.nofile["y"])
+    file_y_path = pathlib.Path(_output_dir) / "nofile_y.tfs"
+    assert file_y_path.is_file()
+    assert_frame_equal(_tfs_y, c.nofile["y"])
 
 
-def test_maybe(_input_dir):
+def test_maybe(_input_dir: pathlib.Path):
     c = CollectionTest(_input_dir)
     c.maybe_call.nofile_x
     with pytest.raises(IOError):
@@ -57,28 +56,21 @@ def test_maybe(_input_dir):
 
 
 @pytest.fixture()
-def _tfs_x():
-    return read_tfs(os.path.join(CURRENT_DIR, "inputs", "file_x.tfs")).set_index("NAME", drop=False)
+def _tfs_x() -> TfsDataFrame:
+    return read_tfs(CURRENT_DIR / "inputs" / "file_x.tfs").set_index("NAME", drop=False)
 
 
 @pytest.fixture()
-def _tfs_y():
-    return read_tfs(os.path.join(CURRENT_DIR, "inputs", "file_y.tfs")).set_index("NAME", drop=False)
+def _tfs_y() -> TfsDataFrame:
+    return read_tfs(CURRENT_DIR / "inputs" / "file_y.tfs").set_index("NAME", drop=False)
 
 
 @pytest.fixture()
-def _input_dir():
-    return os.path.join(CURRENT_DIR, "inputs")
+def _input_dir() -> pathlib.Path:
+    return CURRENT_DIR / "inputs"
 
 
 @pytest.fixture()
 def _output_dir():
     with tempfile.TemporaryDirectory() as cwd:
         yield cwd
-
-
-@pytest.fixture()
-def _test_file():
-    with tempfile.TemporaryDirectory() as cwd:
-        yield os.path.join(cwd, "test_file.tfs")
-

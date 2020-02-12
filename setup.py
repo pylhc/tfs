@@ -11,7 +11,7 @@ MODULE_NAME = 'tfs'
 
 # Dependencies for the module itself
 DEPENDENCIES = ['numpy>=1.14.1',
-                'pandas>=0.22.0'
+                'pandas>=0.22.0, <1.0'
                 ]
 
 # Test dependencies that should only be installed for test purposes

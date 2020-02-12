@@ -64,19 +64,23 @@ will not be found. Not including them will result in unrestricted DataFrames.
 
 """
 import os
+import pathlib
 from collections import defaultdict, OrderedDict, namedtuple
 from contextlib import suppress
 
 from tfs.handler import TfsDataFrame, read_tfs, write_tfs
 from tfs.tools import DotDict
 
-DEFAULTS = defaultdict(float, {int: 0, str: ''})
+DEFAULTS = defaultdict(float, {int: 0, str: ""})
 
 
 class FixedColumn(DotDict):
-    """ Class to define columns by name and dtype and possibly unit.
-    The unit is not used internally so far, but might be useful for some applications."""
-    def __init__(self, name: str, dtype: type, unit: str = ""):
+    """Class to define columns by name and dtype and possibly unit.
+    The unit is not used internally so far, but might be useful for some applications.
+    """
+
+    def __init__(self, name: str, dtype: type, unit: str = None):
+        unit = "" if unit is None else unit
         super().__init__(dict(name=name, dtype=dtype, unit=unit))
 
     def __str__(self):
@@ -86,27 +90,32 @@ class FixedColumn(DotDict):
         return FixedColumn(self.name.format(plane), self.dtype, self.unit)
 
 
-class FixedColumnCollection(object):
-    """ Abstract class to define TFS-Columns with name and Type.
+class FixedColumnCollection:
+    """Abstract class to define TFS-Columns with name and Type.
 
     The columns are sorted into `names` and `types`, or as named-tuples in `columns`.
     Order of the properties is preserved since python 3.6 (see:
     https://stackoverflow.com/a/36060212/5609590
     https://docs.python.org/3.6/whatsnew/3.6.html#whatsnew36-pep520 )
-
     """
-    def __init__(self, plane: str = "", exclude: FixedColumn = None):
-        type_and_unit = namedtuple("type_and_unit", ["dtype", "unit"])
 
-        self.plane = plane
-        if exclude is None:
-            exclude = []
-        columns = [c for c in type(self).__dict__.items() if isinstance(c[1], FixedColumn) and c[1] not in exclude]
+    def __init__(self, plane: str = None, exclude: FixedColumn = None):
+        type_and_unit = namedtuple("type_and_unit", ["dtype", "unit"])
+        self.plane = "" if plane is None else plane
+        exclude = [] if exclude is None else exclude
+        columns = [
+            col
+            for col in type(self).__dict__.items()
+            if isinstance(col[1], FixedColumn) and col[1] not in exclude
+        ]
+
         self.mapping = OrderedDict()
         for attribute, column in columns:
             new_column = column(plane)
             setattr(self, attribute, new_column)  # use same attributes but now 'planed'
-            self.mapping[new_column.name] = type_and_unit(dtype=new_column.dtype, unit=new_column.unit)
+            self.mapping[new_column.name] = type_and_unit(
+                dtype=new_column.dtype, unit=new_column.unit
+            )
         self.names, (self.dtypes, self.units) = self.mapping.keys(), zip(*self.mapping.values())
 
     def __iter__(self):
@@ -117,7 +126,7 @@ class FixedColumnCollection(object):
 
 
 class FixedTfs(TfsDataFrame):
-    """ Abstract class to handle fixed TfsDataFrames.
+    """Abstract class to handle fixed TfsDataFrames.
 
     The final class needs to define filename, columns and headers.
     The instance directory and plane.
@@ -127,14 +136,17 @@ class FixedTfs(TfsDataFrame):
     two_planes = True
     _initialized = False
 
-    def __init__(self, plane: str = "", directory: str = "", *args, **kwargs):
+    def __init__(self, plane: str = None, directory: pathlib.Path = None, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        plane = "" if plane is None else plane
+        directory = "" if directory is None else directory
         cls = type(self)
-        self._directory = directory
+        self._directory = pathlib.Path(directory)
         self._plane = plane
         if not cls.two_planes and len(plane):
             raise ValueError(f"{cls.__name__} is planeless, but a plane was defined.")
         self._filename = os.path.join(directory, cls.filename.format(plane))
+        # self._filename = directory / cls.filename.format(plane)  # Unsure of cls.filename.format, this breaks tests
 
         self.Columns = None
         with suppress(AttributeError, TypeError):
@@ -195,12 +207,12 @@ class FixedTfs(TfsDataFrame):
 
     # Validation --------------------
 
-    def _is_valid_name(self, kind, key):
+    def _is_valid_name(self, kind, key) -> bool:
         if getattr(self, kind) is None:
             return True
         return key in getattr(self, kind).names
 
-    def _is_valid_dtype(self, kind, key):
+    def _is_valid_dtype(self, kind, key) -> bool:
         if getattr(self, kind) is None:
             return True
 
@@ -216,12 +228,9 @@ class FixedTfs(TfsDataFrame):
 
     def _validate(self, attribute, kind, key=None):
         keys = getattr(self, kind.lower()) if key is None else [key]
-        map_ = {
-            "name": (self._is_valid_name, KeyError),
-            "dtype": (self._is_valid_dtype, TypeError)
-        }
+        map_ = {"name": (self._is_valid_name, KeyError), "dtype": (self._is_valid_dtype, TypeError)}
         accepted, error = map_[attribute]
-        invalid_name = [k for k in keys if not accepted(kind, k)]
+        invalid_name = [key for key in keys if not accepted(kind, key)]
         if len(invalid_name):
             raise error(f"Found invalid {kind} {attribute}s '{str(invalid_name)}'")
 
@@ -236,7 +245,7 @@ class FixedTfs(TfsDataFrame):
                 raise TypeError("Invalid index type in DataFrame.")
 
     def validate_definitions(self):
-        """ Validate the column, header and index present. """
+        """Validate the column, header and index present. """
         for kind in ("Columns", "Headers"):
             for attribute in ("dtype", "name"):
                 self._validate(attribute, kind)
@@ -245,13 +254,14 @@ class FixedTfs(TfsDataFrame):
 
     # IO Functions --------------------
 
-    def get_filename(self) -> str:
+    def get_filename(self) -> pathlib.Path:
         return self._filename
 
-    def write(self):
+    def write(self) -> None:
         self.validate_definitions()
         write_tfs(self._filename, self, save_index=self.index.name)
 
-    def read(self) -> 'FixedTfs':
-        return type(self)(self._plane, self._directory,
-                          read_tfs(self._filename, index=self.index.name))
+    def read(self) -> "FixedTfs":
+        return type(self)(
+            self._plane, self._directory, read_tfs(self._filename, index=self.index.name)
+        )
