@@ -81,7 +81,7 @@ class TfsDataFrame(pandas.DataFrame):
     def _constructor(self):
         return TfsDataFrame
 
-    def __str__(self):
+    def __repr__(self):
         space = " " * 4
 
         def _str_items(items):
@@ -96,7 +96,7 @@ class TfsDataFrame(pandas.DataFrame):
             else:
                 s += f"{_str_items(self.headers.items())}\n"
             s += "\n"
-        return f"{s}{super().__str__()}"
+        return f"{s}{super().__repr__()}"
 
 
 class _Indx:
