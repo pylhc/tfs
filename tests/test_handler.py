@@ -121,6 +121,17 @@ def test_tfs_write_empty_index_dataframe(_test_file: str):
     compare_float_dataframes(df, new)
 
 
+def test_header_print():
+    headers = {"param": 3, "other": "hello"}
+    df = TfsDataFrame(headers=headers)
+    print_out = str(df)
+    assert "Headers" in print_out
+
+    for key, val in headers.items():
+        assert key in print_out
+        assert str(val) in print_out
+
+
 @pytest.fixture()
 def _tfs_file_pathlib() -> pathlib.Path:
     return CURRENT_DIR / "inputs" / "file_x.tfs"
