@@ -4,7 +4,6 @@ Handler
 
 Basic tfs-to-pandas io-functionality.
 
-:author: Jaime
 :module: handler
 
 """

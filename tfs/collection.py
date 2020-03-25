@@ -134,7 +134,7 @@ class TfsCollection(metaclass=_MetaTfsCollection):
     def read_tfs(self, filename: str) -> TfsDataFrame:
         """Reads the TFS file from self.directory with filename.
 
-        This function can be ovewritten to use something instead of tfs
+        This function can be overwritten to use something instead of tfs
         to load the files.
 
         Arguments:
