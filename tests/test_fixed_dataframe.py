@@ -1,4 +1,3 @@
-import os
 import pathlib
 import tempfile
 
@@ -63,7 +62,7 @@ def test_empty_df_creation():
 def test_setting_columns():
     df = MyTfs(plane="X")
     df["VALX"] = [1.0, 2.0, 3.0]
-    assert all(df["VALX"] == np.array([1, 2, 3]))
+    assert np.array_equal(df["VALX"], np.array([1, 2, 3]))
 
     with pytest.raises(TypeError):
         df["VALX"] = [1, 2, 3]
@@ -149,37 +148,37 @@ def test_no_restrictions():
 # IO Tests ---------------------------------------------------------------------
 
 
-def test_empty_write(_output_dir):
+def test_empty_write(_output_dir: str):
     df = MyTfs(plane="X", directory=_output_dir)
     df.write()
-    assert os.path.isfile(df.get_filename())
+    assert pathlib.Path(df.get_filename()).is_file()
     df_read = read_tfs(df.get_filename(), index="NAME")
     compare_dataframes(df, df_read)
 
 
-def test_filled_write(_output_dir, _filled_tfs: MyTfs):
+def test_filled_write(_output_dir: str, _filled_tfs: MyTfs):
     df = _filled_tfs(plane="X", directory=_output_dir)
     df.write()
-    assert os.path.isfile(df.get_filename())
+    assert pathlib.Path(df.get_filename()).is_file()
     df_read = read_tfs(df.get_filename(), index="NAME")
     assert_frame_equal(df, df_read)
 
 
-def test_empty_read(_output_dir):
+def test_empty_read(_output_dir: str):
     df = MyTfs(plane="X", directory=_output_dir)
     write_tfs(df.get_filename(), df, save_index="NAME")
     df_read = MyTfs(plane="X", directory=_output_dir).read()
     compare_dataframes(df, df_read)
 
 
-def test_filled_read(_output_dir, _filled_tfs: MyTfs):
+def test_filled_read(_output_dir: str, _filled_tfs: MyTfs):
     df = _filled_tfs(plane="X", directory=_output_dir)
     write_tfs(df.get_filename(), df, save_index="NAME")
     df_read = MyTfs(plane="X", directory=_output_dir).read()
     assert_frame_equal(df, df_read)
 
 
-def test_read_fail(_output_dir):
+def test_read_fail(_output_dir: str):
     mydf = MyTfs(plane="X", directory=_output_dir)
     df = TfsDataFrame(columns=["Does", "Not", "Exist"])
     write_tfs(mydf.get_filename(), df)
@@ -187,7 +186,7 @@ def test_read_fail(_output_dir):
         MyTfs(plane="X", directory=_output_dir).read()
 
 
-def test_write_fail(_output_dir):
+def test_write_fail(_output_dir: str):
     mydf = MyTfs(plane="X", directory=_output_dir)
     mydf.headers["Nothere"] = "Still"
     with pytest.raises(KeyError):
@@ -199,7 +198,7 @@ def test_write_fail(_output_dir):
 
 
 @pytest.fixture()
-def _output_dir():
+def _output_dir() -> str:
     with tempfile.TemporaryDirectory() as cwd:
         yield cwd
 
