@@ -198,6 +198,7 @@ def write_tfs(
     tfs_file_path = pathlib.Path(tfs_file_path) if isinstance(tfs_file_path, str) else tfs_file_path
     _validate(data_frame, f"to be written in {tfs_file_path.absolute()}")
     if save_index:
+        lalign_first = True
         if isinstance(save_index, str):  # save index into column by name given
             idx_name = save_index
         else:  # save index into column, which can be found by INDEX_ID
@@ -215,9 +216,9 @@ def write_tfs(
 
     colwidth = max(MIN_COLUMN_WIDTH, colwidth)
     headers_str = _get_headers_string(headers_dict, headerswidth)
-    colnames_str = _get_colnames_string(data_frame.columns, colwidth, bool(save_index))
-    coltypes_str = _get_coltypes_string(data_frame.dtypes, colwidth, bool(save_index))
-    data_str = _get_data_string(data_frame, colwidth, bool(save_index))
+    colnames_str = _get_colnames_string(data_frame.columns, colwidth, lalign_first)
+    coltypes_str = _get_coltypes_string(data_frame.dtypes, colwidth, lalign_first)
+    data_str = _get_data_string(data_frame, colwidth, lalign_first)
 
     LOGGER.debug(f"Attempting to write file: {tfs_file_path.name} in {tfs_file_path.parent}")
     with tfs_file_path.open("w") as tfs_data:
@@ -241,25 +242,25 @@ def _get_header_line(name: str, value, width: int) -> str:
 
 
 def _get_colnames_string(colnames, colwidth, lalign_first) -> str:
-    format_string = _get_row_format_string([None] * len(colnames), colwidth)
+    format_string = _get_row_format_string([None] * len(colnames), colwidth, lalign_first)
     return "* " + format_string.format(*colnames)
 
 
-def _get_coltypes_string(types, colwidth, lalign_firsth) -> str:
-    fmt = _get_row_format_string([str] * len(types), colwidth)
+def _get_coltypes_string(types, colwidth, lalign_first) -> str:
+    fmt = _get_row_format_string([str] * len(types), colwidth, lalign_first)
     return "$ " + fmt.format(*[_dtype_to_str(type_) for type_ in types])
 
 
-def _get_data_string(data_frame, colwidth, lalign_firsth) -> str:
+def _get_data_string(data_frame, colwidth, lalign_first) -> str:
     if len(data_frame.index) == 0 or len(data_frame.columns) == 0:
         return "\n"
-    format_strings = "  " + _get_row_format_string(data_frame.dtypes, colwidth)
+    format_strings = "  " + _get_row_format_string(data_frame.dtypes, colwidth, lalign_first)
     return "\n".join(data_frame.apply(lambda series: format_strings.format(*series), axis=1))
 
 
-def _get_row_format_string(dtypes, colwidth) -> str:
+def _get_row_format_string(dtypes, colwidth, lalign_first) -> str:
     return " ".join(
-        "{" + f"{indx:d}:>{_dtype_to_format(type_, colwidth)}" + "}"
+        f"{{{indx:d}:{'<' if (not indx) and lalign_first else '>'}{_dtype_to_format(type_, colwidth)}}}"
         for indx, type_ in enumerate(dtypes)
     )
 
