@@ -24,8 +24,12 @@ NAMES = "*"
 TYPES = "$"
 COMMENTS = "#"
 INDEX_ID = "INDEX&&&"
-FLOAT_PARENTS = (float, np.floating)
-INT_PARENTS = (int, np.integer, bool, np.bool_)
+ID_TO_POSSIBLE_TYPES = {  # only numpy types allowed in np.issubdtype
+    "%le": (np.floating,),
+    "%d":  (np.integer, np.bool_),
+    "%s":  (np.str_, np.object_),
+}
+
 ID_TO_TYPE = {
     "%s": np.str,
     "%bpm_s": np.str,
@@ -175,6 +179,7 @@ def write_tfs(
     headers_dict: dict = None,
     save_index: Union[str, bool] = False,
     colwidth: int = DEFAULT_COLUMN_WIDTH,
+    headerswidth: int = DEFAULT_COLUMN_WIDTH,
 ) -> None:
     """
     Writes the DataFrame into tfs_path with the headers_dict as headers dictionary.
@@ -187,7 +192,8 @@ def write_tfs(
         save_index: bool or string. Default: False
             If True, saves the index of the data_frame to a column identifiable by INDEX_ID.
             If string, it saves the index of the data_frame to a column named by string.
-        colwidth: Column width
+        colwidth: Column width, can not be smaller than MIN_COLUMN_WIDTH
+        headerswidth: formats the header with this width for each keys and values
     """
     tfs_file_path = pathlib.Path(tfs_file_path) if isinstance(tfs_file_path, str) else tfs_file_path
     _validate(data_frame, f"to be written in {tfs_file_path.absolute()}")
@@ -208,10 +214,10 @@ def write_tfs(
             headers_dict = {}
 
     colwidth = max(MIN_COLUMN_WIDTH, colwidth)
-    headers_str = _get_headers_string(headers_dict)
-    colnames_str = _get_colnames_string(data_frame.columns, colwidth)
-    coltypes_str = _get_coltypes_string(data_frame.dtypes, colwidth)
-    data_str = _get_data_string(data_frame, colwidth)
+    headers_str = _get_headers_string(headers_dict, headerswidth)
+    colnames_str = _get_colnames_string(data_frame.columns, colwidth, bool(save_index))
+    coltypes_str = _get_coltypes_string(data_frame.dtypes, colwidth, bool(save_index))
+    data_str = _get_data_string(data_frame, colwidth, bool(save_index))
 
     LOGGER.debug(f"Attempting to write file: {tfs_file_path.name} in {tfs_file_path.parent}")
     with tfs_file_path.open("w") as tfs_data:
@@ -221,34 +227,30 @@ def write_tfs(
         data_frame.drop(data_frame.columns[0], axis=1, inplace=True)
 
 
-def _get_headers_string(headers_dict) -> str:
-    return "\n".join(_get_header_line(name, headers_dict[name]) for name in headers_dict)
+def _get_headers_string(headers_dict, width) -> str:
+    return "\n".join(_get_header_line(name, headers_dict[name], width) for name in headers_dict)
 
 
-def _get_header_line(name: str, value) -> str:
+def _get_header_line(name: str, value, width: int) -> str:
     if not isinstance(name, str):
         raise ValueError(f"{name} is not a string")
-    if isinstance(value, INT_PARENTS):
-        return f"@ {name} %d {value}"
-    elif isinstance(value, FLOAT_PARENTS):
-        return f"@ {name} %le {value}"
-    elif isinstance(value, str):
-        return f'@ {name} %s "{value}"'
-    else:
-        raise ValueError(f"{value} does not correspond to recognized types (string, float and int)")
+    type_str = _value_to_type_string(value)
+    if type_str == "%s":
+        value = f'"{value}"'
+    return f"@ {name:<{width}} {type_str} {value:>{width}}"
 
 
-def _get_colnames_string(colnames, colwidth) -> str:
+def _get_colnames_string(colnames, colwidth, lalign_first) -> str:
     format_string = _get_row_format_string([None] * len(colnames), colwidth)
     return "* " + format_string.format(*colnames)
 
 
-def _get_coltypes_string(types, colwidth) -> str:
+def _get_coltypes_string(types, colwidth, lalign_firsth) -> str:
     fmt = _get_row_format_string([str] * len(types), colwidth)
     return "$ " + fmt.format(*[_dtype_to_str(type_) for type_ in types])
 
 
-def _get_data_string(data_frame, colwidth) -> str:
+def _get_data_string(data_frame, colwidth, lalign_firsth) -> str:
     if len(data_frame.index) == 0 or len(data_frame.columns) == 0:
         return "\n"
     format_strings = "  " + _get_row_format_string(data_frame.dtypes, colwidth)
@@ -305,12 +307,16 @@ def _id_to_type(type_str: str) -> type:
 
 
 def _dtype_to_str(type_) -> str:
-    if np.issubdtype(type_, np.integer) or np.issubdtype(type_, np.bool_):
-        return "%d"
-    elif np.issubdtype(type_, np.floating):
-        return "%le"
+    for id, types in ID_TO_POSSIBLE_TYPES.items():
+        if any(np.issubdtype(type_, t) for t in types):
+            return id
     else:
-        return "%s"
+        raise ValueError(f"{type_} does not correspond to any recognized type.")
+
+
+def _value_to_type_string(value) -> str:
+    dtype_ = np.array(value).dtype  # let numpy handle conversion to it dtypes
+    return _dtype_to_str(dtype_)
 
 
 def _dtype_to_format(type_, colsize) -> str:
