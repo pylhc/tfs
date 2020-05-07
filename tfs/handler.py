@@ -375,4 +375,10 @@ def _validate(data_frame, info_str=""):
     if len(set(data_frame.columns)) != len(data_frame.columns):
         raise TfsFormatError("Column names not Unique.")
 
+    if any(" " in c for c in data_frame.columns):
+        raise TfsFormatError("TFS-Columns can not contain spaces.")
+
+    if any(" " in h for h in data_frame.headers.keys()):
+        raise TfsFormatError("TFS-Header names can not contain spaces.")
+
     LOGGER.debug(f"DataFrame {info_str} validated.")
