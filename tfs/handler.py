@@ -199,6 +199,7 @@ def write_tfs(
     tfs_file_path = pathlib.Path(tfs_file_path) if isinstance(tfs_file_path, str) else tfs_file_path
     _validate(data_frame, f"to be written in {tfs_file_path.absolute()}")
     data_frame = data_frame.copy()  # as it might be changed
+    lalign_first = False
     if save_index:
         lalign_first = True
         _insert_index_column(data_frame, save_index)
