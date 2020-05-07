@@ -194,7 +194,7 @@ def write_tfs(
             If True, saves the index of the data_frame to a column identifiable by INDEX_ID.
             If string, it saves the index of the data_frame to a column named by string.
         colwidth: Column width, can not be smaller than MIN_COLUMN_WIDTH
-        headerswidth: formats the header with this width for each keys and values
+        headerswidth: Formats the header width for both, keys and values
     """
     tfs_file_path = pathlib.Path(tfs_file_path) if isinstance(tfs_file_path, str) else tfs_file_path
     _validate(data_frame, f"to be written in {tfs_file_path.absolute()}")
