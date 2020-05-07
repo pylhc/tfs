@@ -117,7 +117,7 @@ class _Indx:
         return name_series[name_series == key].index[0]
 
 
-def read_tfs(tfs_file_path: pathlib.Path, index: str = None) -> TfsDataFrame:
+def read_tfs(tfs_file_path: Union[pathlib.Path, str], index: str = None) -> TfsDataFrame:
     """
     Parses the TFS table present in tfs_path and returns a custom Pandas DataFrame (TfsDataFrame).
 
@@ -128,7 +128,7 @@ def read_tfs(tfs_file_path: pathlib.Path, index: str = None) -> TfsDataFrame:
     Returns:
         TfsDataFrame object
     """
-    tfs_file_path = pathlib.Path(tfs_file_path) if isinstance(tfs_file_path, str) else tfs_file_path
+    tfs_file_path = pathlib.Path(tfs_file_path)
     LOGGER.debug(f"Reading path: {tfs_file_path.absolute()}")
     headers = OrderedDict()
     rows_list = []
@@ -175,7 +175,7 @@ def read_tfs(tfs_file_path: pathlib.Path, index: str = None) -> TfsDataFrame:
 
 
 def write_tfs(
-    tfs_file_path: pathlib.Path,
+    tfs_file_path: Union[pathlib.Path, str],
     data_frame: DataFrame,
     headers_dict: dict = None,
     save_index: Union[str, bool] = False,
@@ -196,7 +196,7 @@ def write_tfs(
         colwidth: Column width, can not be smaller than MIN_COLUMN_WIDTH
         headerswidth: Formats the header width for both, keys and values
     """
-    tfs_file_path = pathlib.Path(tfs_file_path) if isinstance(tfs_file_path, str) else tfs_file_path
+    tfs_file_path = pathlib.Path(tfs_file_path)
     _validate(data_frame, f"to be written in {tfs_file_path.absolute()}")
     data_frame = data_frame.copy()  # as it might be changed
     lalign_first = False
