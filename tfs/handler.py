@@ -9,6 +9,7 @@ Basic tfs-to-pandas io-functionality.
 """
 import logging
 import pathlib
+import shlex
 from collections import OrderedDict
 from contextlib import suppress
 from typing import Union
@@ -16,7 +17,6 @@ from typing import Union
 import numpy as np
 import pandas
 from pandas import DataFrame
-import shlex
 
 LOGGER = logging.getLogger(__name__)
 
@@ -199,9 +199,9 @@ def write_tfs(
     tfs_file_path = pathlib.Path(tfs_file_path)
     _validate(data_frame, f"to be written in {tfs_file_path.absolute()}")
     data_frame = data_frame.copy()  # as it might be changed
-    lalign_first = False
+    left_align_first_column = False
     if save_index:
-        lalign_first = True
+        left_align_first_column = True
         _insert_index_column(data_frame, save_index)
 
     if headers_dict is None:  # tries to get headers from TfsDataFrame
@@ -212,9 +212,9 @@ def write_tfs(
 
     colwidth = max(MIN_COLUMN_WIDTH, colwidth)
     headers_str = _get_headers_string(headers_dict, headerswidth)
-    colnames_str = _get_colnames_string(data_frame.columns, colwidth, lalign_first)
-    coltypes_str = _get_coltypes_string(data_frame.dtypes, colwidth, lalign_first)
-    data_str = _get_data_string(data_frame, colwidth, lalign_first)
+    colnames_str = _get_colnames_string(data_frame.columns, colwidth, left_align_first_column)
+    coltypes_str = _get_coltypes_string(data_frame.dtypes, colwidth, left_align_first_column)
+    data_str = _get_data_string(data_frame, colwidth, left_align_first_column)
 
     LOGGER.debug(f"Attempting to write file: {tfs_file_path.name} in {tfs_file_path.parent}")
     with tfs_file_path.open("w") as tfs_data:
@@ -245,28 +245,31 @@ def _get_header_line(name: str, value, width: int) -> str:
     return f"@ {name:<{width}} {type_str} {value:>{width}}"
 
 
-def _get_colnames_string(colnames, colwidth, lalign_first) -> str:
-    format_string = _get_row_format_string([None] * len(colnames), colwidth, lalign_first)
+def _get_colnames_string(colnames, colwidth, left_align_first_column) -> str:
+    format_string = _get_row_format_string([None] * len(colnames), colwidth, left_align_first_column)
     return "* " + format_string.format(*colnames)
 
 
-def _get_coltypes_string(types, colwidth, lalign_first) -> str:
-    fmt = _get_row_format_string([str] * len(types), colwidth, lalign_first)
+def _get_coltypes_string(types, colwidth, left_align_first_column) -> str:
+    fmt = _get_row_format_string([str] * len(types), colwidth, left_align_first_column)
     return "$ " + fmt.format(*[_dtype_to_str(type_) for type_ in types])
 
 
-def _get_data_string(data_frame, colwidth, lalign_first) -> str:
+def _get_data_string(data_frame, colwidth, left_align_first_column) -> str:
     if len(data_frame.index) == 0 or len(data_frame.columns) == 0:
         return "\n"
-    format_strings = "  " + _get_row_format_string(data_frame.dtypes, colwidth, lalign_first)
+    format_strings = "  " + _get_row_format_string(
+        data_frame.dtypes, colwidth, left_align_first_column
+    )
     data_frame = _quote_string_columns(data_frame)
     return "\n".join(data_frame.apply(lambda series: format_strings.format(*series), axis=1))
 
 
-def _get_row_format_string(dtypes, colwidth, lalign_first) -> str:
+def _get_row_format_string(dtypes, colwidth, left_align_first_column) -> str:
     return " ".join(
         f"{{{indx:d}:"
-        f"{'<' if (not indx) and lalign_first else '>'}{_dtype_to_format(type_, colwidth)}}}"
+        f"{'<' if (not indx) and left_align_first_column else '>'}"
+        f"{_dtype_to_format(type_, colwidth)}}}"
         for indx, type_ in enumerate(dtypes)
     )
 
