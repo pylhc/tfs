@@ -51,14 +51,13 @@ class TfsDataFrame(pandas.DataFrame):
     data_frame.header_name.
     """
 
-    _metadata = ["headers", "indx"]
+    _metadata = ["headers"]
 
     def __init__(self, *args, **kwargs):
         self.headers = {}
         with suppress(IndexError, AttributeError):
             self.headers = args[0].headers
         self.headers = kwargs.pop("headers", self.headers)
-        self.indx = _Indx(self)
         super().__init__(*args, **kwargs)
 
     def __getitem__(self, key: object) -> object:
@@ -101,20 +100,6 @@ class TfsDataFrame(pandas.DataFrame):
                 s += f"{_str_items(self.headers.items())}\n"
             s += "\n"
         return f"{s}{super().__repr__()}"
-
-
-class _Indx:
-    """
-    Helper class to mock the metaclass twiss.indx["element_name"]
-    behaviour.
-    """
-
-    def __init__(self, tfs_data_frame):
-        self._tfs_data_frame = tfs_data_frame
-
-    def __getitem__(self, key):
-        name_series = self._tfs_data_frame.NAME
-        return name_series[name_series == key].index[0]
 
 
 def read_tfs(tfs_file_path: Union[pathlib.Path, str], index: str = None) -> TfsDataFrame:
