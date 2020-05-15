@@ -64,9 +64,10 @@ will not be found. Not including them will result in unrestricted DataFrames.
 
 """
 import os
-import pathlib
+from pathlib import Path
 from collections import defaultdict, OrderedDict, namedtuple
 from contextlib import suppress
+from typing import Union
 
 from tfs.handler import TfsDataFrame, read_tfs, write_tfs
 from tfs.tools import DotDict
@@ -136,17 +137,16 @@ class FixedTfs(TfsDataFrame):
     two_planes = True
     _initialized = False
 
-    def __init__(self, plane: str = None, directory: pathlib.Path = None, *args, **kwargs):
+    def __init__(self, plane: str = None, directory: Union[Path, str] = None, *args, **kwargs):
         super().__init__(*args, **kwargs)
         plane = "" if plane is None else plane
         directory = "" if directory is None else directory
         cls = type(self)
-        self._directory = pathlib.Path(directory)
+        self._directory = Path(directory)
         self._plane = plane
         if not cls.two_planes and len(plane):
             raise ValueError(f"{cls.__name__} is planeless, but a plane was defined.")
-        self._filename = os.path.join(directory, cls.filename.format(plane))
-        # self._filename = directory / cls.filename.format(plane)  # Unsure of cls.filename.format, this breaks tests
+        self._filename = self._directory / cls.filename.format(plane)
 
         self.Columns = None
         with suppress(AttributeError, TypeError):
@@ -254,7 +254,7 @@ class FixedTfs(TfsDataFrame):
 
     # IO Functions --------------------
 
-    def get_filename(self) -> pathlib.Path:
+    def get_filename(self) -> Path:
         return self._filename
 
     def write(self) -> None:
