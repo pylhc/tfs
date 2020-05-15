@@ -4,10 +4,10 @@ import tempfile
 import numpy as np
 import pytest
 from pandas.testing import assert_frame_equal
+from pandas.util.testing import assert_dict_equal
 
 from tfs.fixed_dataframe import FixedColumn, FixedColumnCollection, FixedTfs
 from tfs.handler import read_tfs, write_tfs, TfsDataFrame
-from .helper import compare_dataframes
 
 
 class MyTfs(FixedTfs):
@@ -135,7 +135,7 @@ def test_single_plane_creation():
     with pytest.raises(ValueError):
         PlanelessTfs(plane="X", directory="")
     df = PlanelessTfs(directory="")
-    assert PlanelessTfs.filename.format("") == df.get_filename()
+    assert PlanelessTfs.filename.format("") == df.get_filename().name
 
 
 def test_no_restrictions():
@@ -153,7 +153,9 @@ def test_empty_write(_output_dir: str):
     df.write()
     assert pathlib.Path(df.get_filename()).is_file()
     df_read = read_tfs(df.get_filename(), index="NAME")
-    compare_dataframes(df, df_read)
+
+    assert_frame_equal(df, df_read, check_exact=False)  # float precision can be an issue
+    assert_dict_equal(df.headers, df_read.headers, compare_keys=True)
 
 
 def test_filled_write(_output_dir: str, _filled_tfs: MyTfs):
@@ -162,13 +164,15 @@ def test_filled_write(_output_dir: str, _filled_tfs: MyTfs):
     assert pathlib.Path(df.get_filename()).is_file()
     df_read = read_tfs(df.get_filename(), index="NAME")
     assert_frame_equal(df, df_read)
+    assert_dict_equal(df.headers, df_read.headers, compare_keys=True)
 
 
 def test_empty_read(_output_dir: str):
     df = MyTfs(plane="X", directory=_output_dir)
     write_tfs(df.get_filename(), df, save_index="NAME")
     df_read = MyTfs(plane="X", directory=_output_dir).read()
-    compare_dataframes(df, df_read)
+    assert_frame_equal(df, df_read, check_exact=False)  # float precision can be an issue
+    assert_dict_equal(df.headers, df_read.headers, compare_keys=True)
 
 
 def test_filled_read(_output_dir: str, _filled_tfs: MyTfs):
@@ -176,6 +180,7 @@ def test_filled_read(_output_dir: str, _filled_tfs: MyTfs):
     write_tfs(df.get_filename(), df, save_index="NAME")
     df_read = MyTfs(plane="X", directory=_output_dir).read()
     assert_frame_equal(df, df_read)
+    assert_dict_equal(df.headers, df_read.headers, compare_keys=True)
 
 
 def test_read_fail(_output_dir: str):
