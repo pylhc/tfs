@@ -24,7 +24,7 @@ pip install tfs-pandas
 
 Example:
 
-```
+```python
 import tfs
 
 data_frame = tfs.read('path_to_input.tfs', index="index_column")
@@ -36,6 +36,9 @@ Reading and writing capabilities for [tfs-files](http://mad.web.cern.ch/mad/madx
 are provided by this package. The files are read into special `pandas` `Dataframes`, called `TfsDataFrames`,
 which in addition to the normal behaviour attach an `OrderedDict` of headers to the `DataFrame`.
 
+### Changelog
+
+see [CHANGELOG](CHANGELOG.md)
 
 ## Known Issues
 
@@ -53,5 +56,5 @@ will convert the `TfsDataFrame` back to a `DataFrame` and lose therefore the hea
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
+This project is licensed under the MIT License - see the [LICENSE](LICENSE.md) file for details
 

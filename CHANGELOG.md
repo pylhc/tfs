@@ -1,5 +1,15 @@
 # TFS-Pandas Changelog
 
+## Version 1.0.5
+- Fixed:
+    - Bug with testing for headers, also in pandas DataFrames
+    - Same testing method for all data-frame comparisons
+    - Some minor fixes
+    
+- Added:
+    - Testing of writing of pandas DataFrames
+
+
 ## Version 1.0.4
  - Added:
    - support for pathlib Paths
