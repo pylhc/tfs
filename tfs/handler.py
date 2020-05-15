@@ -293,7 +293,7 @@ def _parse_header(str_list: list) -> tuple:
         raise TfsFormatError(f"No data type found in header: '{''.join(str_list)}'")
 
     name = " ".join(str_list[0:type_index])
-    value_string = " ".join(str_list[(type_index + 1) :])
+    value_string = " ".join(str_list[(type_index + 1):])
     return name, _id_to_type(str_list[type_index])(value_string.strip('"'))
 
 
@@ -366,7 +366,7 @@ def _validate(data_frame, info_str=""):
     if any(" " in c for c in data_frame.columns):
         raise TfsFormatError("TFS-Columns can not contain spaces.")
 
-    if any(" " in h for h in data_frame.headers.keys()):
+    if hasattr(data_frame, 'headers') and any(" " in h for h in data_frame.headers.keys()):
         raise TfsFormatError("TFS-Header names can not contain spaces.")
 
     LOGGER.debug(f"DataFrame {info_str} validated.")
