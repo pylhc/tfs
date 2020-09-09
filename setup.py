@@ -10,7 +10,7 @@ HERE = pathlib.Path(__file__).parent
 MODULE_NAME = 'tfs'
 
 # Dependencies for the module itself
-DEPENDENCIES = ['numpy=1.16.5',
+DEPENDENCIES = ['numpy==1.16.5',
                 'pandas>=0.25.0'
                 ]
 
