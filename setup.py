@@ -10,8 +10,8 @@ HERE = pathlib.Path(__file__).parent
 MODULE_NAME = 'tfs'
 
 # Dependencies for the module itself
-DEPENDENCIES = ['numpy>=1.14.1',
-                'pandas>=0.22.0, <1.0'
+DEPENDENCIES = ['numpy>=1.17.4',
+                'pandas>=0.25.2'
                 ]
 
 # Test dependencies that should only be installed for test purposes
@@ -61,6 +61,7 @@ setup(
         "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
+        "Programming Language :: Python :: 3.8",
     ],
     packages=find_packages(include=(MODULE_NAME,)),
     install_requires=DEPENDENCIES,

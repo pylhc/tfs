@@ -35,6 +35,9 @@ jobs:
     - <<: *test-stage
       python: 3.7
 
+    - <<: *test-stage
+      python: 3.8
+
     - stage: documentation
       install:
         - pip install '.[doc]'
