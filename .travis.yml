@@ -39,7 +39,7 @@ jobs:
       python: 3.8
 
     - <<: *test-stage
-        python: 3.9-dev
+      python: 3.9-dev
 
     - stage: documentation
       install:
