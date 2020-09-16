@@ -7,11 +7,6 @@ TOPLEVEL_DIR = pathlib.Path(__file__).parent.absolute()
 ABOUT_FILE = TOPLEVEL_DIR / "tfs" / "__init__.py"
 README = TOPLEVEL_DIR / "README.md"
 
-# Information on the tfs-pandas package
-ABOUT_TFS: dict = {}
-with ABOUT_FILE.open("r") as f:
-    exec(f.read(), ABOUT_TFS)
-
 with README.open("r") as docs:
     long_description = docs.read()
 
@@ -34,7 +29,7 @@ EXTRA_DEPENDENCIES.update(
 
 setuptools.setup(
     name="tfs-pandas",
-    version=ABOUT_TFS["__version__"],
+    version="2.0.0",
     description="Read and write tfs files.",
     long_description=long_description,
     long_description_content_type="text/markdown",
