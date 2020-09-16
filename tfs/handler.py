@@ -204,7 +204,7 @@ def write_tfs(
 
     LOGGER.debug(f"Attempting to write file: {tfs_file_path.name} in {tfs_file_path.parent}")
     with tfs_file_path.open("w") as tfs_data:
-        tfs_data.write("\n".join((headers_str, colnames_str, coltypes_str, data_str)))
+        tfs_data.write("".join((headers_str, colnames_str, coltypes_str, data_str)))
 
 
 def _insert_index_column(data_frame, save_index):
@@ -219,7 +219,14 @@ def _insert_index_column(data_frame, save_index):
 
 
 def _get_headers_string(headers_dict, width) -> str:
-    return "\n".join(_get_header_line(name, headers_dict[name], width) for name in headers_dict)
+    """Will not write an empty header line in case the headers_dict is empty."""
+    if headers_dict:
+        return (
+            "\n".join(_get_header_line(name, headers_dict[name], width) for name in headers_dict)
+            + "\n"
+        )
+    else:
+        return ""
 
 
 def _get_header_line(name: str, value, width: int) -> str:
@@ -235,12 +242,12 @@ def _get_colnames_string(colnames, colwidth, left_align_first_column) -> str:
     format_string = _get_row_format_string(
         [None] * len(colnames), colwidth, left_align_first_column
     )
-    return "* " + format_string.format(*colnames)
+    return "* " + format_string.format(*colnames) + "\n"
 
 
 def _get_coltypes_string(types, colwidth, left_align_first_column) -> str:
     fmt = _get_row_format_string([str] * len(types), colwidth, left_align_first_column)
-    return "$ " + fmt.format(*[_dtype_to_str(type_) for type_ in types])
+    return "$ " + fmt.format(*[_dtype_to_str(type_) for type_ in types]) + "\n"
 
 
 def _get_data_string(data_frame, colwidth, left_align_first_column) -> str:
@@ -250,7 +257,7 @@ def _get_data_string(data_frame, colwidth, left_align_first_column) -> str:
         data_frame.dtypes, colwidth, left_align_first_column
     )
     data_frame = _quote_string_columns(data_frame)
-    return "\n".join(data_frame.apply(lambda series: format_strings.format(*series), axis=1))
+    return "\n".join(data_frame.apply(lambda series: format_strings.format(*series), axis=1)) + "\n"
 
 
 def _get_row_format_string(dtypes, colwidth, left_align_first_column) -> str:

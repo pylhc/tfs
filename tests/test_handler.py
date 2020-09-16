@@ -22,10 +22,10 @@ def test_tfs_read_pathlib_input(_tfs_file_pathlib: pathlib.Path):
     assert isinstance(test_file.index[0], str)
 
     with pytest.raises(AttributeError):
-        test_var = test_file.Not_HERE
+        _ = test_file.Not_HERE
 
     with pytest.raises(KeyError):
-        test_var = test_file["Not_HERE"]
+        _ = test_file["Not_HERE"]
 
 
 def test_tfs_read_str_input(_tfs_file_str: str):
@@ -37,10 +37,10 @@ def test_tfs_read_str_input(_tfs_file_str: str):
     assert isinstance(test_file.index[0], str)
 
     with pytest.raises(AttributeError):
-        test_var = test_file.Not_HERE
+        _ = test_file.Not_HERE
 
     with pytest.raises(KeyError):
-        test_var = test_file["Not_HERE"]
+        _ = test_file["Not_HERE"]
 
 
 def tfs_indx_pathlib_input(_tfs_file_pathlib: pathlib.Path):
@@ -60,6 +60,15 @@ def test_tfs_write_read(_dataframe: TfsDataFrame, _test_file: str):
     new = read_tfs(_test_file)
     assert_frame_equal(_dataframe, new, check_exact=False)  # float precision can be an issue
     assert_dict_equal(_dataframe.headers, new.headers, compare_keys=True)
+
+
+def test_tfs_write_read_no_headers(_dataframe_empty_headers: TfsDataFrame, _test_file: str):
+    write_tfs(_test_file, _dataframe_empty_headers)
+    assert pathlib.Path(_test_file).is_file()
+
+    new = read_tfs(_test_file)
+    assert_frame_equal(_dataframe_empty_headers, new, check_exact=False)  # float precision again
+    assert_dict_equal(_dataframe_empty_headers.headers, new.headers, compare_keys=True)
 
 
 def test_tfs_write_read_pandasdf(_pddataframe: DataFrame, _test_file: str):
@@ -199,6 +208,13 @@ def _dataframe() -> TfsDataFrame:
         columns="a b c d e".split(),
         data=numpy.random.rand(3, 5),
         headers={"Title": "Tfs Title", "Value": 3.3663},
+    )
+
+
+@pytest.fixture()
+def _dataframe_empty_headers() -> TfsDataFrame:
+    return TfsDataFrame(
+        index=range(3), columns="a b c d e".split(), data=numpy.random.rand(3, 5), headers={},
     )
 
 
