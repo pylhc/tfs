@@ -179,12 +179,12 @@ def test_fail_on_spaces_headers():
 
 @pytest.fixture()
 def _tfs_file_pathlib() -> pathlib.Path:
-    return CURRENT_DIR / "inputs" / "file_x.tfs"
+    return CURRENT_DIR / "inputs" / "file_X.tfs"
 
 
 @pytest.fixture()
 def _tfs_file_str() -> str:
-    return os.path.join(os.path.dirname(__file__), "inputs", "file_x.tfs")
+    return os.path.join(os.path.dirname(__file__), "inputs", "file_X.tfs")
 
 
 @pytest.fixture()

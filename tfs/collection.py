@@ -216,8 +216,8 @@ def _define_property(args, kwargs):
 def _define_property_two_planes(args, kwargs) -> tuple:
     x_kwargs = dict(kwargs)
     y_kwargs = dict(kwargs)
-    x_kwargs["plane"] = "x"
-    y_kwargs["plane"] = "y"
+    x_kwargs["plane"] = "X"
+    y_kwargs["plane"] = "Y"
 
     def x_getter_funct(self):
         return _getter(self, *args, **x_kwargs)

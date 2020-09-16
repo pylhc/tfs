@@ -15,7 +15,7 @@ CURRENT_DIR = pathlib.Path(__file__).parent
 class CollectionTest(TfsCollection):
     file = Tfs("file_{}.tfs")
     nofile = Tfs("nofile_{}.tfs")
-    filex = Tfs("file_x.tfs", two_planes=False)
+    filex = Tfs("file_X.tfs", two_planes=False)
     value = 10
 
     def get_filename(self, template, plane=""):
@@ -40,7 +40,7 @@ def test_read_str_input(_input_dir_str: str, _tfs_x: TfsDataFrame, _tfs_y: TfsDa
 
 def test_write(_tfs_x: TfsDataFrame, _tfs_y: TfsDataFrame, _output_dir: str):
     c = CollectionTest(_output_dir)
-    file_x_path = pathlib.Path(_output_dir) / "nofile_x.tfs"
+    file_x_path = pathlib.Path(_output_dir) / "nofile_X.tfs"
     assert not file_x_path.is_file()
 
     c.nofile_x = _tfs_x  # will not throw error, but does nothing
@@ -52,7 +52,7 @@ def test_write(_tfs_x: TfsDataFrame, _tfs_y: TfsDataFrame, _output_dir: str):
     assert_frame_equal(_tfs_x, c.nofile_x)
 
     c.nofile["y"] = _tfs_y
-    file_y_path = pathlib.Path(_output_dir) / "nofile_y.tfs"
+    file_y_path = pathlib.Path(_output_dir) / "nofile_Y.tfs"
     assert file_y_path.is_file()
     assert_frame_equal(_tfs_y, c.nofile["y"])
 
@@ -73,12 +73,12 @@ def test_maybe_str_input(_input_dir_str: str):
 
 @pytest.fixture()
 def _tfs_x() -> TfsDataFrame:
-    return read_tfs(CURRENT_DIR / "inputs" / "file_x.tfs").set_index("NAME", drop=False)
+    return read_tfs(CURRENT_DIR / "inputs" / "file_X.tfs").set_index("NAME", drop=False)
 
 
 @pytest.fixture()
 def _tfs_y() -> TfsDataFrame:
-    return read_tfs(CURRENT_DIR / "inputs" / "file_y.tfs").set_index("NAME", drop=False)
+    return read_tfs(CURRENT_DIR / "inputs" / "file_Y.tfs").set_index("NAME", drop=False)
 
 
 @pytest.fixture()
