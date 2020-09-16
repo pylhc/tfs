@@ -1,5 +1,6 @@
 """Exposes TfsDataFrame, read_tfs and write_tfs directly in tfs namespace."""
-from tfs.handler import read_tfs, write_tfs, TfsDataFrame
+from tfs.handler import TfsDataFrame, read_tfs, write_tfs
+
 __version__ = "2.0.0"
 # aliases
 read = read_tfs

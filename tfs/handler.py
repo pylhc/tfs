@@ -27,8 +27,8 @@ COMMENTS = "#"
 INDEX_ID = "INDEX&&&"
 ID_TO_POSSIBLE_TYPES = {  # only numpy types allowed in np.issubdtype
     "%le": (np.floating,),
-    "%d":  (np.integer, np.bool_),
-    "%s":  (np.str_, np.object_),
+    "%d": (np.integer, np.bool_),
+    "%s": (np.str_, np.object_),
 }
 
 ID_TO_TYPE = {
@@ -88,7 +88,7 @@ class TfsDataFrame(pandas.DataFrame):
         space = " " * 4
 
         def _str_items(items):
-            return '\n'.join(f'{space}{k}: {v}' for k, v in items)
+            return "\n".join(f"{space}{k}: {v}" for k, v in items)
 
         s = ""
         if len(self.headers):
@@ -172,7 +172,8 @@ def write_tfs(
     If you want to keep the order of the headers, use collections.OrderedDict.
 
     Args:
-        tfs_file_path: pathlib.Path to the output TFS file, can be str but will be cast to pathlib.Path
+        tfs_file_path: PosixPath object to the output TFS file. Can be a string, but will be cast
+        to a PosixPath object.
         data_frame: TfsDataFrame or pandas.DataFrame to save
         headers_dict: Headers of the data_frame, if empty tries to use data_frame.headers
         save_index: bool or string. Default: False
@@ -231,7 +232,9 @@ def _get_header_line(name: str, value, width: int) -> str:
 
 
 def _get_colnames_string(colnames, colwidth, left_align_first_column) -> str:
-    format_string = _get_row_format_string([None] * len(colnames), colwidth, left_align_first_column)
+    format_string = _get_row_format_string(
+        [None] * len(colnames), colwidth, left_align_first_column
+    )
     return "* " + format_string.format(*colnames)
 
 
@@ -293,7 +296,7 @@ def _parse_header(str_list: list) -> tuple:
         raise TfsFormatError(f"No data type found in header: '{''.join(str_list)}'")
 
     name = " ".join(str_list[0:type_index])
-    value_string = " ".join(str_list[(type_index + 1):])
+    value_string = " ".join(str_list[(type_index + 1) :])
     return name, _id_to_type(str_list[type_index])(value_string.strip('"'))
 
 
@@ -331,6 +334,7 @@ def _dtype_to_format(type_, colsize) -> str:
 
 class TfsFormatError(Exception):
     """Raised when wrong format is detected in the TFS file."""
+
     pass
 
 
@@ -366,7 +370,7 @@ def _validate(data_frame, info_str=""):
     if any(" " in c for c in data_frame.columns):
         raise TfsFormatError("TFS-Columns can not contain spaces.")
 
-    if hasattr(data_frame, 'headers') and any(" " in h for h in data_frame.headers.keys()):
+    if hasattr(data_frame, "headers") and any(" " in h for h in data_frame.headers.keys()):
         raise TfsFormatError("TFS-Header names can not contain spaces.")
 
     LOGGER.debug(f"DataFrame {info_str} validated.")

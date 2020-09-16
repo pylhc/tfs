@@ -4,10 +4,10 @@ import tempfile
 
 import numpy
 import pytest
-from pandas.util.testing import assert_frame_equal, assert_dict_equal, assert_index_equal
 from pandas import DataFrame
+from pandas.util.testing import assert_dict_equal, assert_frame_equal, assert_index_equal
 
-from tfs import read_tfs, write_tfs, TfsDataFrame
+from tfs import TfsDataFrame, read_tfs, write_tfs
 from tfs.handler import TfsFormatError
 
 CURRENT_DIR = pathlib.Path(__file__).parent
@@ -67,17 +67,16 @@ def test_tfs_write_read_pandasdf(_pddataframe: DataFrame, _test_file: str):
     assert pathlib.Path(_test_file).is_file()
 
     new = read_tfs(_test_file)
-    assert_frame_equal(_pddataframe, new,
-                       check_exact=False,  # float precision can be an issue
-                       check_frame_type=False,  # read df is TfsDF
-                       )
+    assert_frame_equal(
+        _pddataframe,
+        new,
+        check_exact=False,  # float precision can be an issue
+        check_frame_type=False,  # read df is TfsDF
+    )
 
 
 def test_write_read_spaces_in_strings(_test_file: str):
-    df = TfsDataFrame(
-        data=["This is", "a test", 'with spaces'],
-        columns=["A"]
-    )
+    df = TfsDataFrame(data=["This is", "a test", "with spaces"], columns=["A"])
     write_tfs(_test_file, df)
     new = read_tfs(_test_file)
     assert_frame_equal(df, new)
@@ -156,25 +155,25 @@ def test_header_print():
 def test_fail_on_non_unique_columns():
     df = TfsDataFrame(columns=["A", "B", "A"])
     with pytest.raises(TfsFormatError):
-        write_tfs('', df)
+        write_tfs("", df)
 
 
 def test_fail_on_non_unique_index():
     df = TfsDataFrame(index=["A", "B", "A"])
     with pytest.raises(TfsFormatError):
-        write_tfs('', df)
+        write_tfs("", df)
 
 
 def test_fail_on_spaces_columns():
     df = TfsDataFrame(columns=["allowed", "not allowed"])
     with pytest.raises(TfsFormatError):
-        write_tfs('', df)
+        write_tfs("", df)
 
 
 def test_fail_on_spaces_headers():
     df = TfsDataFrame(headers={"allowed": 1, "not allowed": 2})
     with pytest.raises(TfsFormatError):
-        write_tfs('', df)
+        write_tfs("", df)
 
 
 @pytest.fixture()
@@ -205,8 +204,4 @@ def _dataframe() -> TfsDataFrame:
 
 @pytest.fixture()
 def _pddataframe() -> DataFrame:
-    return DataFrame(
-        index=range(3),
-        columns="a b c d e".split(),
-        data=numpy.random.rand(3, 5),
-    )
+    return DataFrame(index=range(3), columns="a b c d e".split(), data=numpy.random.rand(3, 5),)

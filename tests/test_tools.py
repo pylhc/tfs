@@ -5,7 +5,7 @@ from shutil import copyfile
 
 import pytest
 
-from tfs.handler import read_tfs, TfsFormatError
+from tfs.handler import TfsFormatError, read_tfs
 from tfs.tools import remove_header_comments_from_files, remove_nan_from_files, significant_digits
 
 CURRENT_DIR = pathlib.Path(__file__).parent

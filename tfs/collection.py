@@ -12,7 +12,7 @@ import pathlib
 
 from pandas import DataFrame
 
-from tfs.handler import read_tfs, write_tfs, TfsDataFrame
+from tfs.handler import TfsDataFrame, read_tfs, write_tfs
 
 
 class _MetaTfsCollection(type):
