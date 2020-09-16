@@ -87,8 +87,8 @@ class TfsDataFrame(pandas.DataFrame):
     def __repr__(self):
         space = " " * 4
 
-        def _str_items(items):
-            return "\n".join(f"{space}{k}: {v}" for k, v in items)
+        def _str_items(items_list):
+            return "\n".join(f"{space}{k}: {v}" for k, v in items_list)
 
         s = ""
         if len(self.headers):
@@ -107,7 +107,8 @@ def read_tfs(tfs_file_path: Union[pathlib.Path, str], index: str = None) -> TfsD
     Parses the TFS table present in tfs_path and returns a custom Pandas DataFrame (TfsDataFrame).
 
     Args:
-        tfs_file_path: pathlib.Path of the input TFS file, can be str but will be cast to pathlib.Path
+        tfs_file_path: PosixPath object to the output TFS file. Can be a string, but will be cast
+        to a PosixPath object.
         index: Name of the column to set as index. If not given looks for INDEX_ID-column
 
     Returns:
@@ -317,9 +318,9 @@ def _id_to_type(type_str: str) -> type:
 
 
 def _dtype_to_str(type_) -> str:
-    for id, types in ID_TO_POSSIBLE_TYPES.items():
+    for identifier, types in ID_TO_POSSIBLE_TYPES.items():
         if any(np.issubdtype(type_, t) for t in types):
-            return id
+            return identifier
     else:
         raise ValueError(f"{type_} does not correspond to any recognized type.")
 
