@@ -15,7 +15,7 @@ MODULE_NAME = "tfs"
 # Dependencies for the package itself
 DEPENDENCIES = [
     "numpy>=1.17.4",
-    "pandas>=0.25.2",
+    "pandas>=1.0",
 ]
 
 # Extra dependencies
