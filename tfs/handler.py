@@ -10,7 +10,6 @@ Basic tfs-to-pandas io-functionality.
 import logging
 import pathlib
 import shlex
-from collections import OrderedDict
 from contextlib import suppress
 from typing import Union
 
@@ -116,7 +115,7 @@ def read_tfs(tfs_file_path: Union[pathlib.Path, str], index: str = None) -> TfsD
     """
     tfs_file_path = pathlib.Path(tfs_file_path)
     LOGGER.debug(f"Reading path: {tfs_file_path.absolute()}")
-    headers = OrderedDict()
+    headers = {}
     rows_list = []
     column_names = column_types = None
 
