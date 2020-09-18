@@ -5,7 +5,8 @@ import tempfile
 import numpy
 import pytest
 from pandas import DataFrame
-from pandas.util.testing import assert_dict_equal, assert_frame_equal, assert_index_equal
+from pandas._testing import assert_dict_equal
+from pandas.testing import assert_frame_equal, assert_index_equal
 
 from tfs import TfsDataFrame, read_tfs, write_tfs
 from tfs.handler import TfsFormatError
