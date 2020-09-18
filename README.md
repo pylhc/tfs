@@ -38,7 +38,7 @@ which in addition to the normal behaviour attach an `OrderedDict` of headers to 
 
 ### Changelog
 
-see [CHANGELOG](CHANGELOG.md)
+See the [CHANGELOG](CHANGELOG.md) file.
 
 ## Known Issues
 
@@ -51,10 +51,10 @@ will convert the `TfsDataFrame` back to a `DataFrame` and lose therefore the hea
 * **Jaime** - [jaimecp89](https://github.com/jaimecp89)
 * **Lukáš** - [lmalina](https://github.com/lmalina)
 * **Josch** - [JoschD](https://github.com/JoschD)
+* **Felix** - [fsoubelet](https://github.com/fsoubelet)
 * **pyLHC/OMC-Team** - *Working Group* - [pyLHC](https://github.com/orgs/pylhc/teams/omc-team)
 
 
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE.md) file for details
-

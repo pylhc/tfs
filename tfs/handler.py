@@ -10,6 +10,7 @@ Basic tfs-to-pandas io-functionality.
 import logging
 import pathlib
 import shlex
+from collections import OrderedDict
 from contextlib import suppress
 from typing import Union
 
@@ -53,7 +54,7 @@ class TfsDataFrame(pandas.DataFrame):
     _metadata = ["headers"]
 
     def __init__(self, *args, **kwargs):
-        self.headers = {}
+        self.headers = OrderedDict()
         with suppress(IndexError, AttributeError):
             self.headers = args[0].headers
         self.headers = kwargs.pop("headers", self.headers)
@@ -161,7 +162,7 @@ def read_tfs(tfs_file_path: Union[pathlib.Path, str], index: str = None) -> TfsD
 
 def write_tfs(
     tfs_file_path: Union[pathlib.Path, str],
-    data_frame: DataFrame,
+    data_frame: Union[TfsDataFrame, DataFrame],
     headers_dict: dict = None,
     save_index: Union[str, bool] = False,
     colwidth: int = DEFAULT_COLUMN_WIDTH,

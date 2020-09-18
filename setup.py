@@ -38,7 +38,7 @@ setuptools.setup(
     url="https://github.com/pylhc/tfs",
     packages=setuptools.find_packages(include=(MODULE_NAME,)),
     include_package_data=True,
-    python_requires=">=3.7",
+    python_requires=">=3.6",
     license="MIT",
     classifiers=[
         "License :: OSI Approved :: MIT License",
