@@ -2,15 +2,32 @@ import pathlib
 
 import setuptools
 
+MODULE_NAME = "tfs"
 # The directory containing this file
 TOPLEVEL_DIR = pathlib.Path(__file__).parent.absolute()
-ABOUT_FILE = TOPLEVEL_DIR / "tfs" / "__init__.py"
+ABOUT_FILE = TOPLEVEL_DIR / MODULE_NAME / "__init__.py"
 README = TOPLEVEL_DIR / "README.md"
+
+
+def about_package(init_posixpath: pathlib.Path) -> dict:
+    """
+    Return package information defined with dunders in __init__.py as a dictionary, when
+    provided with a PosixPath to the __init__.py file.
+    """
+    about_text: str = init_posixpath.read_text()
+    attributes = [
+        (entry.split(" = ")[0], entry.split(" = ")[1].strip('"'))
+        for entry in about_text.strip().split("\n")
+        if entry.startswith("__")
+    ]
+    return {element[0]: element[1] for element in attributes}
+
+
+ABOUT_TFS = about_package(ABOUT_FILE)
 
 with README.open("r") as docs:
     long_description = docs.read()
 
-MODULE_NAME = "tfs"
 
 # Dependencies for the package itself
 DEPENDENCIES = [
@@ -28,18 +45,18 @@ EXTRA_DEPENDENCIES.update(
 )
 
 setuptools.setup(
-    name="tfs-pandas",
-    version="2.0.0",
-    description="Read and write tfs files.",
+    name=ABOUT_TFS["__title__"],
+    version=ABOUT_TFS["__version__"],
+    description=ABOUT_TFS["__description__"],
     long_description=long_description,
     long_description_content_type="text/markdown",
-    author="pyLHC",
-    author_email="pylhc@github.com",
-    url="https://github.com/pylhc/tfs",
+    author=ABOUT_TFS["__author__"],
+    author_email=ABOUT_TFS["__author_email__"],
+    url=ABOUT_TFS["__url__"],
     packages=setuptools.find_packages(include=(MODULE_NAME,)),
     include_package_data=True,
     python_requires=">=3.6",
-    license="MIT",
+    license=ABOUT_TFS["__license__"],
     classifiers=[
         "License :: OSI Approved :: MIT License",
         "Programming Language :: Python :: 3",
