@@ -172,11 +172,11 @@ class TfsCollection(metaclass=_MetaTfsCollection):
             self.parent = parent
             self.attr = attr
 
-        def __getitem__(self, plane):
-            return getattr(self.parent, self.attr + "_" + plane)
+        def __getitem__(self, plane: str):
+            return getattr(self.parent, self.attr + "_" + plane.lower())
 
-        def __setitem__(self, plane, value):
-            setattr(self.parent, self.attr + "_" + plane, value)
+        def __setitem__(self, plane: str, value):
+            setattr(self.parent, self.attr + "_" + plane.lower(), value)
 
 
 class Tfs:
@@ -216,8 +216,8 @@ def _define_property(args, kwargs):
 def _define_property_two_planes(args, kwargs) -> tuple:
     x_kwargs = dict(kwargs)
     y_kwargs = dict(kwargs)
-    x_kwargs["plane"] = "X"
-    y_kwargs["plane"] = "Y"
+    x_kwargs["plane"] = "x"
+    y_kwargs["plane"] = "y"
 
     def x_getter_funct(self):
         return _getter(self, *args, **x_kwargs)
