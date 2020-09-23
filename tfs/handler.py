@@ -15,8 +15,7 @@ from contextlib import suppress
 from typing import Union
 
 import numpy as np
-import pandas
-from pandas import DataFrame
+import pandas as pd
 
 LOGGER = logging.getLogger(__name__)
 
@@ -36,14 +35,14 @@ ID_TO_TYPE = {
     "%bpm_s": np.str,
     "%le": np.float64,
     "%f": np.float64,
-    "%hd": np.int,
-    "%d": np.int,
+    "%hd": np.int64,
+    "%d": np.int64,
 }
 DEFAULT_COLUMN_WIDTH = 20
 MIN_COLUMN_WIDTH = 10
 
 
-class TfsDataFrame(pandas.DataFrame):
+class TfsDataFrame(pd.DataFrame):
     """
     Class to hold the information of the built Pandas DataFrame,
     together with a way of getting the headers of the TFS file.
@@ -115,37 +114,39 @@ def read_tfs(tfs_file_path: Union[pathlib.Path, str], index: str = None) -> TfsD
         TfsDataFrame object
     """
     tfs_file_path = pathlib.Path(tfs_file_path)
-    LOGGER.debug(f"Reading path: {tfs_file_path.absolute()}")
     headers = {}
     rows_list = []
     column_names = column_types = None
 
+    LOGGER.debug(f"Reading path: {tfs_file_path.absolute()}")
     with tfs_file_path.open("r") as tfs_data:
         for line in tfs_data:
-            parts = shlex.split(line)
-            if len(parts) == 0:
+            line_components = shlex.split(line)
+            if not line_components:
                 continue
-            if parts[0] == HEADER:
-                name, value = _parse_header(parts[1:])
+            if line_components[0] == HEADER:
+                name, value = _parse_header(line_components[1:])
                 headers[name] = value
-            elif parts[0] == NAMES:
+            elif line_components[0] == NAMES:
                 LOGGER.debug("Setting column names.")
-                column_names = np.array(parts[1:])
-            elif parts[0] == TYPES:
+                column_names = np.array(line_components[1:])
+            elif line_components[0] == TYPES:
                 LOGGER.debug("Setting column types.")
-                column_types = _compute_types(parts[1:])
-            elif parts[0] == COMMENTS:
+                column_types = _compute_types(line_components[1:])
+            elif line_components[0] == COMMENTS:
                 continue
             else:
                 if column_names is None:
+                    LOGGER.error(f"No column names in file {tfs_file_path.absolute()}, aborting")
                     raise TfsFormatError("Column names have not been set.")
                 if column_types is None:
+                    LOGGER.error(f"No column types in file {tfs_file_path.absolute()}, aborting")
                     raise TfsFormatError("Column types have not been set.")
-                parts = [part.strip('"') for part in parts]
-                rows_list.append(parts)
+                line_components = [part.strip('"') for part in line_components]
+                rows_list.append(line_components)
     data_frame = _create_data_frame(column_names, column_types, rows_list, headers)
 
-    if index is not None:  # Use given column as index
+    if index:  # Use given column as index
         data_frame = data_frame.set_index(index)
     else:  # Try to find Index automatically
         index_column = [colname for colname in data_frame.columns if colname.startswith(INDEX_ID)]
@@ -162,7 +163,7 @@ def read_tfs(tfs_file_path: Union[pathlib.Path, str], index: str = None) -> TfsD
 
 def write_tfs(
     tfs_file_path: Union[pathlib.Path, str],
-    data_frame: Union[TfsDataFrame, DataFrame],
+    data_frame: Union[TfsDataFrame, pd.DataFrame],
     headers_dict: dict = None,
     save_index: Union[str, bool] = False,
     colwidth: int = DEFAULT_COLUMN_WIDTH,
@@ -323,7 +324,7 @@ def _dtype_to_str(type_) -> str:
         if any(np.issubdtype(type_, t) for t in types):
             return identifier
     else:
-        raise ValueError(f"{type_} does not correspond to any recognized type.")
+        raise ValueError(f"'{type_}' does not correspond to any recognized type.")
 
 
 def _value_to_type_string(value) -> str:
@@ -347,13 +348,16 @@ class TfsFormatError(Exception):
     pass
 
 
-def _validate(data_frame, info_str=""):
+def _validate(data_frame: Union[TfsDataFrame, pd.DataFrame], info_str: str = "") -> None:
     """
-    Check if Dataframe contains finite values only
-    and both indices and columns are unique.
+    Check if Dataframe contains finite values only and both indices and columns are unique.
+
+    Args:
+        data_frame (Union[TfsDataFrame, pd.DataFrame]): the dataframe to check on.
+        info_str (str): additional information to includ in logging statements.
     """
 
-    def isnotfinite(x):
+    def is_not_finite(x):
         try:
             return ~np.isfinite(x)
         except TypeError:  # most likely string
@@ -362,24 +366,28 @@ def _validate(data_frame, info_str=""):
             except AttributeError:  # single entry
                 return np.zeros(1, dtype=bool)
 
-    boolean_df = data_frame.apply(isnotfinite)
+    boolean_df = data_frame.apply(is_not_finite)
 
-    if boolean_df.values.any():
+    if boolean_df.to_numpy().any():  # .values if frowned upon as it is unspecific in its casting
         LOGGER.warning(
             f"DataFrame {info_str} contains non-physical values at Index: "
             f"{boolean_df.index[boolean_df.any(axis='columns')].tolist()}"
         )
 
     if len(set(data_frame.index)) != len(data_frame.index):
+        LOGGER.error(f"Non-unique indices found, dataframe {info_str} is invalid")
         raise TfsFormatError("Indices are not Unique.")
 
     if len(set(data_frame.columns)) != len(data_frame.columns):
+        LOGGER.error(f"Non-unique column names found, dataframe {info_str} is invalid")
         raise TfsFormatError("Column names not Unique.")
 
     if any(" " in c for c in data_frame.columns):
+        LOGGER.error(f"Space(s) found in TFS columns, dataframe {info_str} is invalid")
         raise TfsFormatError("TFS-Columns can not contain spaces.")
 
     if hasattr(data_frame, "headers") and any(" " in h for h in data_frame.headers.keys()):
+        LOGGER.error(f"Space(s) found in TFS header names, dataframe {info_str} is invalid")
         raise TfsFormatError("TFS-Header names can not contain spaces.")
 
-    LOGGER.debug(f"DataFrame {info_str} validated.")
+    LOGGER.debug(f"DataFrame {info_str} validated")
