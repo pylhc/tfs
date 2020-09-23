@@ -39,12 +39,11 @@ def about_package(init_posixpath: pathlib.Path) -> dict:
     provided with a PosixPath to the __init__.py file.
     """
     about_text: str = init_posixpath.read_text()
-    attributes = [
-        (entry.split(" = ")[0], entry.split(" = ")[1].strip('"'))
+    return {
+        entry.split(" = ")[0]: entry.split(" = ")[1].strip('"')
         for entry in about_text.strip().split("\n")
         if entry.startswith("__")
-    ]
-    return {element[0]: element[1] for element in attributes}
+    }
 
 
 ABOUT_TFS = about_package(ABOUT_FILE)
