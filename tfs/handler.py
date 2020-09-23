@@ -114,7 +114,7 @@ def read_tfs(tfs_file_path: Union[pathlib.Path, str], index: str = None) -> TfsD
         TfsDataFrame object
     """
     tfs_file_path = pathlib.Path(tfs_file_path)
-    headers = {}
+    headers = OrderedDict()
     rows_list = []
     column_names = column_types = None
 
