@@ -1,5 +1,5 @@
 # Runs all tests not flagged as "extended" with a pytest marker
-name: Basic Tests
+name: Tests
 
 defaults:
   run:
