@@ -53,6 +53,10 @@ def test_significant_digits():
     assert s[0] == "0.0339"
     assert s[1] == "0.0015"
 
+    s = significant_digits(0.0338577, 0.0015473, return_floats=True)
+    assert s[0] == 0.0339
+    assert s[1] == 0.0015
+
 
 @pytest.fixture()
 def _bad_file_pathlib() -> pathlib.Path:
