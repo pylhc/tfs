@@ -3,6 +3,7 @@
 ## Version 2.0.0
 - Breaking Changes:
     - `FixedColumn`, `FixedColumnCollection` and `FixedTfs` have been removed from the package
+    - Objects are not converted to strings upon read anymore, and will raise an error
     - Minimum pandas version is 1.0
 
 - Fixed:

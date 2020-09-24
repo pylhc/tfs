@@ -189,7 +189,7 @@ def write_tfs(
         except AttributeError:
             headers_dict = OrderedDict()
 
-    data_frame = _autoset_pandas_types(data_frame)
+    data_frame = _autoset_pandas_types(data_frame)  # will always make a copy of the provided df
 
     if save_index:
         left_align_first_column = True
@@ -227,8 +227,8 @@ def _autoset_pandas_types(
         The dataframe with dtypes infered as much as possible to the pandas dtypes.
     """
     LOGGER.debug("Attempting conversion of dataframe to pandas dtypes")
-    try:  # Do not force floats like 1.0 or 15.0 to go to integer type
-        return data_frame.copy().convert_dtypes(convert_integer=False)
+    try:
+        return data_frame.copy().convert_dtypes(convert_integer=False)  # do not force floats to int
     except ValueError as pd_convert_error:  # If used on empty dataframes (uses concat internally)
         if not data_frame.size and "No objects to concatenate" in pd_convert_error.args[0]:
             LOGGER.warning("An empty dataframe was provided, no types were infered")
@@ -274,7 +274,7 @@ def _get_colnames_string(colnames, colwidth, left_align_first_column) -> str:
 
 def _get_coltypes_string(types, colwidth, left_align_first_column) -> str:
     fmt = _get_row_format_string([str] * len(types), colwidth, left_align_first_column)
-    return "$ " + fmt.format(*[_dtype_to_str(type_) for type_ in types])
+    return "$ " + fmt.format(*[_dtype_to_id_string(type_) for type_ in types])
 
 
 def _get_data_string(data_frame, colwidth, left_align_first_column) -> str:
@@ -291,7 +291,7 @@ def _get_row_format_string(dtypes: List[type], colwidth: int, left_align_first_c
     return " ".join(
         f"{{{indx:d}:"
         f"{'<' if (not indx) and left_align_first_column else '>'}"
-        f"{_dtype_to_format(type_, colwidth)}}}"
+        f"{_dtype_to_formatter(type_, colwidth)}}}"
         for indx, type_ in enumerate(dtypes)
     )
 
@@ -346,7 +346,22 @@ def _id_to_type(type_str: str) -> type:
         raise TfsFormatError(f"Unknown data type: {type_str}")
 
 
-def _dtype_to_str(type_) -> str:
+def _value_to_type_string(value) -> str:
+    dtype_ = np.array(value).dtype  # let numpy handle conversion to it dtypes
+    return _dtype_to_id_string(dtype_)
+
+
+def _dtype_to_id_string(type_: type) -> str:
+    """
+    Return the proper TFS identifier for the provided dtype.
+
+    Args:
+        type_ (type): an instance of the built-in type (in this package, one of numpy or pandas
+        types) to get the ID string for.
+
+    Returns:
+        The ID string.
+    """
     if pdtypes.is_integer_dtype(type_) or pdtypes.is_bool_dtype(type_):
         return "%d"
     elif pdtypes.is_float_dtype(type_):
@@ -359,12 +374,18 @@ def _dtype_to_str(type_) -> str:
     )
 
 
-def _value_to_type_string(value) -> str:
-    dtype_ = np.array(value).dtype  # let numpy handle conversion to it dtypes
-    return _dtype_to_str(dtype_)
+def _dtype_to_formatter(type_: type, colsize: int) -> str:
+    """
+    Return the proper string formatter for the provided dtype.
 
+    Args:
+        type_ (type): an instance of the built-in type (in this package, one of numpy or pandas
+        types) to get the formatter for.
+        colsize (int): size of the written column to use for the formatter.
 
-def _dtype_to_format(type_, colsize) -> str:
+    Returns:
+        The formatter.
+    """
     if type_ is None:
         return f"{colsize}"
     if pdtypes.is_integer_dtype(type_) or pdtypes.is_bool_dtype(type_):

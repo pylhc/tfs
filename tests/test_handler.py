@@ -218,12 +218,12 @@ class TestFailures:
     def test_dtype_to_format_fails_unexpected_dtypes(self):
         unexpected_list = [1, 2, 3]
         with pytest.raises(TypeError):
-            _ = tfs.handler._dtype_to_format(unexpected_list, colsize=10)
+            _ = tfs.handler._dtype_to_formatter(unexpected_list, colsize=10)
 
     def test_dtype_to_str_fails_unexpected_dtypes(self):
         unexpected_list = [1, 2, 3]
         with pytest.raises(TypeError):
-            _ = tfs.handler._dtype_to_str(unexpected_list)
+            _ = tfs.handler._dtype_to_id_string(unexpected_list)
 
     def test_id_to_type_fails_unexpected_identifiers(self):
         unexpected_id = "%t"

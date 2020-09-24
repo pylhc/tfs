@@ -19,9 +19,6 @@ import sys
 # https://stackoverflow.com/questions/40845304/runtimewarning-numpy-dtype-size-changed-may-indicate-binary-incompatibility
 import warnings
 
-# warnings.filterwarnings("ignore", message="numpy.dtype size changed")
-# warnings.filterwarnings("ignore", message="numpy.ufunc size changed")
-
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
@@ -195,15 +192,3 @@ texinfo_documents = [
         "Miscellaneous",
     ),
 ]
-
-# -- Autodoc Configuration ---------------------------------------------------
-
-# Add here all modules to be mocked up. When the dependencies are not met
-# at building time. Here used to have PyQT mocked.
-# autodoc_mock_imports = [
-#     "PyQt5",
-#     "PyQt5.QtGui",
-#     "PyQt5.QtCore",
-#     "PyQt5.QtWidgets",
-#     "matplotlib.backends.backend_qt5agg",
-# ]
