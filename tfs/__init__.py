@@ -13,4 +13,4 @@ __license__ = "MIT"
 read = read_tfs
 write = write_tfs
 
-__all__ = [read, read_tfs, write, write_tfs, __version__]
+__all__ = [read, write, TfsDataFrame, __version__]

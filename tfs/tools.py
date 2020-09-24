@@ -10,17 +10,31 @@ Additional functions to modify tfs files.
 
 """
 import logging
+from pathlib import Path
+from typing import List, Tuple, Union
 
 import numpy as np
 
 from tfs.handler import TfsFormatError, read_tfs, write_tfs
-from typing import Union
 
 LOG = logging.getLogger(__name__)
 
 
-def significant_digits(value: float, error: float, return_floats: bool = False) -> tuple((Union[str, float], Union[str, float])): 
-    """Computes value and its error properly rounded with respect to the size of the error"""
+def significant_digits(
+    value: float, error: float, return_floats: bool = False
+) -> tuple([Union[str, float]]):
+    """
+    Computes value and its error properly rounded with respect to the size of the error.
+
+    Args:
+        value (float): a number.
+        error (float): the error on the number.
+        return_floats (bool): if True, returns significant digits as floats, otherwise as strings.
+        Defaults to False.
+
+    Returns:
+        A tuple of the rounded value and error with regards to the size of the error.
+    """
     if error == 0:
         raise ValueError("Input error of 0. Cannot compute significant digits.")
     digits = -int(np.floor(np.log10(error)))
@@ -35,19 +49,22 @@ def significant_digits(value: float, error: float, return_floats: bool = False) 
     return res
 
 
-def remove_nan_from_files(list_of_files: list, replace: bool = None) -> None:
-    """ Remove NAN-Entries from files in list_of_files.
-
-    If replace=False a new file with .dropna appended to its name is created, otherwise the file is
-    overwritten.
+def remove_nan_from_files(list_of_files: List[Union[str, Path]], replace: bool = False) -> None:
     """
-    replace = False if replace is None else replace
+    Remove NAN-Entries from files in list_of_files.
+
+    Args:
+        list_of_files (List[Union[str, Path]]): list of paths to tfs files meant to be sanitized.
+        The entries of the list can be strings or PosixPath objects.
+        replace (bool): if True, the provided files will be overwritten, otherwise new files with
+        '.dropna' appended to the original filenames will be written to disk. Defaults to False.
+    """
     for filepath in list_of_files:
         try:
             tfs_data_frame = read_tfs(filepath)
             LOG.info(f"Read file {filepath:s}")
         except (IOError, TfsFormatError):
-            LOG.info(f"Skipped file {filepath:s}")
+            LOG.warning(f"Skipped file {filepath:s} as it could not be loaded")
         else:
             tfs_data_frame = tfs_data_frame.dropna(axis="index")
             if not replace:
@@ -55,26 +72,30 @@ def remove_nan_from_files(list_of_files: list, replace: bool = None) -> None:
             write_tfs(filepath, tfs_data_frame)
 
 
-def remove_header_comments_from_files(list_of_files: list) -> None:
+def remove_header_comments_from_files(list_of_files: List[Union[str, Path]]) -> None:
     """
     Check the files in the provided list for invalid headers (no type defined) and
-    removes those when found.
+    removes those inplace when found.
+
+    Args:
+        list_of_files (List[Union[str, Path]]): list of paths to tfs files meant to be checked.
+        The entries of the list can be strings or PosixPath objects.
     """
     for filepath in list_of_files:
         LOG.info(f"Checking file: {filepath}")
         with open(filepath, "r") as f:
             f_lines = f.readlines()
 
-        detele_indicies = []
+        delete_indicies = []
         for index, line in enumerate(f_lines):
             if line.startswith("*"):
                 break
             if line.startswith("@") and len(line.split("%")) == 1:
-                detele_indicies.append(index)
+                delete_indicies.append(index)
 
-        if detele_indicies:
-            LOG.info(f"    Found {len(detele_indicies):d} lines to delete.")
-            for index in reversed(detele_indicies):
+        if delete_indicies:
+            LOG.info(f"    Found {len(delete_indicies):d} lines to delete.")
+            for index in reversed(delete_indicies):
                 deleted_line = f_lines.pop(index)
                 LOG.info(f"    Deleted line: {deleted_line.strip():s}")
 
@@ -83,7 +104,7 @@ def remove_header_comments_from_files(list_of_files: list) -> None:
 
 
 class DotDict(dict):
-    """ Make dict fields accessible by . """
+    """Make dict fields accessible by '.'"""
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

@@ -19,8 +19,8 @@ import sys
 # https://stackoverflow.com/questions/40845304/runtimewarning-numpy-dtype-size-changed-may-indicate-binary-incompatibility
 import warnings
 
-warnings.filterwarnings("ignore", message="numpy.dtype size changed")
-warnings.filterwarnings("ignore", message="numpy.ufunc size changed")
+# warnings.filterwarnings("ignore", message="numpy.dtype size changed")
+# warnings.filterwarnings("ignore", message="numpy.ufunc size changed")
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
@@ -39,12 +39,11 @@ def about_package(init_posixpath: pathlib.Path) -> dict:
     provided with a PosixPath to the __init__.py file.
     """
     about_text: str = init_posixpath.read_text()
-    attributes = [
-        (entry.split(" = ")[0], entry.split(" = ")[1].strip('"'))
+    return {
+        entry.split(" = ")[0]: entry.split(" = ")[1].strip('"')
         for entry in about_text.strip().split("\n")
         if entry.startswith("__")
-    ]
-    return {element[0]: element[1] for element in attributes}
+    }
 
 
 ABOUT_TFS = about_package(ABOUT_FILE)
@@ -201,10 +200,10 @@ texinfo_documents = [
 
 # Add here all modules to be mocked up. When the dependencies are not met
 # at building time. Here used to have PyQT mocked.
-autodoc_mock_imports = [
-    "PyQt5",
-    "PyQt5.QtGui",
-    "PyQt5.QtCore",
-    "PyQt5.QtWidgets",
-    "matplotlib.backends.backend_qt5agg",
-]
+# autodoc_mock_imports = [
+#     "PyQt5",
+#     "PyQt5.QtGui",
+#     "PyQt5.QtCore",
+#     "PyQt5.QtWidgets",
+#     "matplotlib.backends.backend_qt5agg",
+# ]

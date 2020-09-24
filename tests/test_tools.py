@@ -58,8 +58,7 @@ def test_significant_digits():
     assert s[1] == 0.0015
 
     with pytest.raises(ValueError):
-        s = significant_digits(0.0338577, 0.)
-    
+        s = significant_digits(0.0338577, 0.0)
 
 
 @pytest.fixture()
