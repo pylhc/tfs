@@ -82,6 +82,18 @@ def test_maybe_str_input(_input_dir_str: str):
         c.nofile_x
 
 
+def test_collection_buffer_clear(_dummy_collection):
+    _dummy_collection._buffer["some_key"] = 5
+    assert _dummy_collection._buffer["some_key"]
+    _dummy_collection.clear()
+    assert not _dummy_collection._buffer
+
+
+def test_tfs_collection_no_attribute(_dummy_collection):
+    with pytest.raises(AttributeError):
+        _ = _dummy_collection.absent_attribute
+
+
 @pytest.fixture()
 def _tfs_x() -> TfsDataFrame:
     return read_tfs(CURRENT_DIR / "inputs" / "file_x.tfs").set_index("NAME", drop=False)
@@ -106,3 +118,8 @@ def _input_dir_str() -> str:
 def _output_dir() -> str:
     with tempfile.TemporaryDirectory() as cwd:
         yield cwd
+
+
+@pytest.fixture()
+def _dummy_collection() -> TfsCollection:
+    return TfsCollection("")

@@ -16,6 +16,8 @@ from typing import Union
 
 import numpy as np
 import pandas as pd
+from pandas.api import types as pdtypes
+from typing import List
 
 LOGGER = logging.getLogger(__name__)
 
@@ -24,12 +26,6 @@ NAMES = "*"
 TYPES = "$"
 COMMENTS = "#"
 INDEX_ID = "INDEX&&&"
-ID_TO_POSSIBLE_TYPES = {  # only numpy types allowed in np.issubdtype
-    "%le": (np.floating,),
-    "%d": (np.integer, np.bool_),
-    "%s": (np.str_, np.object_),
-}
-
 ID_TO_TYPE = {
     "%s": np.str,
     "%bpm_s": np.str,
@@ -62,13 +58,13 @@ class TfsDataFrame(pd.DataFrame):
     def __getitem__(self, key: object) -> object:
         try:
             return super().__getitem__(key)
-        except KeyError as e:
+        except KeyError as error:
             try:
                 return self.headers[key]
             except KeyError:
                 raise KeyError(f"{key} is neither in the DataFrame nor in headers.")
             except TypeError:
-                raise e
+                raise error
 
     def __getattr__(self, name: str) -> object:
         try:
@@ -186,17 +182,23 @@ def write_tfs(
     """
     tfs_file_path = pathlib.Path(tfs_file_path)
     _validate(data_frame, f"to be written in {tfs_file_path.absolute()}")
-    data_frame = data_frame.copy()  # as it might be changed
     left_align_first_column = False
-    if save_index:
-        left_align_first_column = True
-        _insert_index_column(data_frame, save_index)
 
     if headers_dict is None:  # tries to get headers from TfsDataFrame
         try:
             headers_dict = data_frame.headers
         except AttributeError:
-            headers_dict = {}
+            headers_dict = OrderedDict()
+
+    try:  # Do not force floats like 1.0 or 15.0 to go to integer type
+        data_frame = data_frame.copy().convert_dtypes(convert_integer=False, convert_boolean=False)
+    except ValueError as pd_convert_error:  # If used on empty dataframes (uses concat internally)
+        if "No objects to concatenate" in pd_convert_error.args[0]:
+            data_frame = data_frame.copy()  # since it's empty anyway, nothing to convert
+
+    if save_index:
+        left_align_first_column = True
+        _insert_index_column(data_frame, save_index)
 
     colwidth = max(MIN_COLUMN_WIDTH, colwidth)
     headers_str = _get_headers_string(headers_dict, headerswidth)
@@ -234,7 +236,7 @@ def _get_headers_string(headers_dict, width) -> str:
 
 def _get_header_line(name: str, value, width: int) -> str:
     if not isinstance(name, str):
-        raise ValueError(f"{name} is not a string")
+        raise TypeError(f"{name} is not a string")
     type_str = _value_to_type_string(value)
     if type_str == "%s":
         value = f'"{value}"'
@@ -263,7 +265,7 @@ def _get_data_string(data_frame, colwidth, left_align_first_column) -> str:
     return "\n".join(data_frame.apply(lambda series: format_strings.format(*series), axis=1))
 
 
-def _get_row_format_string(dtypes, colwidth, left_align_first_column) -> str:
+def _get_row_format_string(dtypes: List[type], colwidth: int, left_align_first_column: bool) -> str:
     return " ".join(
         f"{{{indx:d}:"
         f"{'<' if (not indx) and left_align_first_column else '>'}"
@@ -315,16 +317,24 @@ def _id_to_type(type_str: str) -> type:
         return ID_TO_TYPE[type_str]
     except KeyError:
         if type_str.startswith("%") and type_str.endswith("s"):
+            LOGGER.warning(
+                f"Identified '{type_str}' as string identifier, check and beware of typos"
+            )
             return str
         raise TfsFormatError(f"Unknown data type: {type_str}")
 
 
 def _dtype_to_str(type_) -> str:
-    for identifier, types in ID_TO_POSSIBLE_TYPES.items():
-        if any(np.issubdtype(type_, t) for t in types):
-            return identifier
-    else:
-        raise ValueError(f"'{type_}' does not correspond to any recognized type.")
+    if pdtypes.is_integer_dtype(type_) or pdtypes.is_bool_dtype(type_):
+        return "%d"
+    elif pdtypes.is_float_dtype(type_):
+        return "%le"
+    elif pdtypes.is_string_dtype(type_):
+        return "%s"
+    raise TypeError(
+        f"Provided type '{type_}' could not be identified as either a bool, int, "
+        f"float or string dtype"
+    )
 
 
 def _value_to_type_string(value) -> str:
@@ -335,11 +345,16 @@ def _value_to_type_string(value) -> str:
 def _dtype_to_format(type_, colsize) -> str:
     if type_ is None:
         return f"{colsize}"
-    if np.issubdtype(type_, np.integer) or np.issubdtype(type_, np.bool_):
+    if pdtypes.is_integer_dtype(type_) or pdtypes.is_bool_dtype(type_):
         return f"{colsize}d"
-    if np.issubdtype(type_, np.floating):
+    elif pdtypes.is_float_dtype(type_):
         return f"{colsize}.{colsize - len('-0.e-000')}g"
-    return f"{colsize}s"
+    elif pdtypes.is_string_dtype(type_):
+        return f"{colsize}s"
+    raise TypeError(
+        f"Provided type '{type_}' could not be identified as either a bool, int, "
+        f"float or string dtype"
+    )
 
 
 class TfsFormatError(Exception):
@@ -366,9 +381,9 @@ def _validate(data_frame: Union[TfsDataFrame, pd.DataFrame], info_str: str = "")
             except AttributeError:  # single entry
                 return np.zeros(1, dtype=bool)
 
-    boolean_df = data_frame.apply(is_not_finite)
+    boolean_df = data_frame.applymap(is_not_finite)
 
-    if boolean_df.to_numpy().any():  # .values if frowned upon as it is unspecific in its casting
+    if boolean_df.to_numpy().any():
         LOGGER.warning(
             f"DataFrame {info_str} contains non-physical values at Index: "
             f"{boolean_df.index[boolean_df.any(axis='columns')].tolist()}"
