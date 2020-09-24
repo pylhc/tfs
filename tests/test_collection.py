@@ -12,6 +12,11 @@ from tfs.handler import TfsDataFrame
 CURRENT_DIR = pathlib.Path(__file__).parent
 
 
+def test_tfscollection_getfilename_not_implemented():
+    with pytest.raises(NotImplementedError):
+        TfsCollection.get_filename("doesnt matter")
+
+
 class CollectionTest(TfsCollection):
     file = Tfs("file_{}.tfs")
     nofile = Tfs("nofile_{}.tfs")

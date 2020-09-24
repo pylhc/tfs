@@ -2,8 +2,9 @@
 
 ## Version 2.0.0
 - Breaking Changes:
+    - `FixedColumn`, `FixedColumnCollection` and `FixedTfs` have been removed from the package
     - Minimum pandas version is 1.0
-    
+
 - Fixed:
     - No longer writes an empty line to file in case of empty headers
     - "Planed" dataframes capitalize plane key attributes to be consistent with other `pylhc` packages, however they can be accessed with and without capitalizing your query.
