@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>tfs.collection &mdash; tfs-pandas 1.0.5 documentation</title>
+  <title>tfs.collection &mdash; tfs-pandas 2.0.0 documentation</title>
   
 
   
@@ -59,7 +59,7 @@
             
             
               <div class="version">
-                1.0.5
+                2.0
               </div>
             
           
@@ -164,7 +164,7 @@
 
 <span class="kn">from</span> <span class="nn">pandas</span> <span class="kn">import</span> <span class="n">DataFrame</span>
 
-<span class="kn">from</span> <span class="nn">tfs.handler</span> <span class="kn">import</span> <span class="n">read_tfs</span><span class="p">,</span> <span class="n">write_tfs</span><span class="p">,</span> <span class="n">TfsDataFrame</span>
+<span class="kn">from</span> <span class="nn">tfs.handler</span> <span class="kn">import</span> <span class="n">TfsDataFrame</span><span class="p">,</span> <span class="n">read_tfs</span><span class="p">,</span> <span class="n">write_tfs</span>
 
 
 <span class="k">class</span> <span class="nc">_MetaTfsCollection</span><span class="p">(</span><span class="nb">type</span><span class="p">):</span>
@@ -324,11 +324,11 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">parent</span> <span class="o">=</span> <span class="n">parent</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">attr</span> <span class="o">=</span> <span class="n">attr</span>
 
-        <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">plane</span><span class="p">):</span>
-            <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">attr</span> <span class="o">+</span> <span class="s2">&quot;_&quot;</span> <span class="o">+</span> <span class="n">plane</span><span class="p">)</span>
+        <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">plane</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">attr</span> <span class="o">+</span> <span class="s2">&quot;_&quot;</span> <span class="o">+</span> <span class="n">plane</span><span class="o">.</span><span class="n">lower</span><span class="p">())</span>
 
-        <span class="k">def</span> <span class="fm">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">plane</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
-            <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">attr</span> <span class="o">+</span> <span class="s2">&quot;_&quot;</span> <span class="o">+</span> <span class="n">plane</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span></div>
+        <span class="k">def</span> <span class="fm">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">plane</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">attr</span> <span class="o">+</span> <span class="s2">&quot;_&quot;</span> <span class="o">+</span> <span class="n">plane</span><span class="o">.</span><span class="n">lower</span><span class="p">(),</span> <span class="n">value</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="Tfs"><a class="viewcode-back" href="../../root/index.html#tfs.collection.Tfs">[docs]</a><span class="k">class</span> <span class="nc">Tfs</span><span class="p">:</span>
@@ -445,7 +445,7 @@
   <div role="contentinfo">
     <p>
         
-        &copy; Copyright 2019, OMC-TEAM
+        &copy; Copyright 
 
     </p>
   </div>
