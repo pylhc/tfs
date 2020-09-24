@@ -51,27 +51,33 @@ jobs:
       - name: Install package
         run: pip install '.[test]'
 
-      - name: Run all tests
-        run: python -m pytest
-
-      - name: Set ENV for codeclimate (push)
+      - name: Set up env for CodeClimate (push)
         run: |
           echo "::set-env name=GIT_BRANCH::$GITHUB_REF"
           echo "::set-env name=GIT_COMMIT_SHA::$GITHUB_SHA"
         if: github.event_name == 'push'
 
-      - name: Set ENV for codeclimate (pull_request)
+      - name: Set up env for CodeClimate (pull_request)
+        env:
+          PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
         run: |
-          git fetch --no-tags --prune --depth=1 origin +refs/heads/$GITHUB_HEAD_REF:refs/remotes/origin/$GITHUB_HEAD_REF
           echo "::set-env name=GIT_BRANCH::$GITHUB_HEAD_REF"
-          echo "::set-env name=GIT_COMMIT_SHA::$(git rev-parse origin/$GITHUB_HEAD_REF)"
+          echo "::set-env name=GIT_COMMIT_SHA::$PR_HEAD_SHA"
         if: github.event_name == 'pull_request'
+
+      - name: Prepare CodeClimate binary
+        env:
+          CC_TEST_REPORTER_ID: 6805394e7fbeae5625e7fc12bec771f671f0fb3a284e83d4ce023abb7a80509b
+        run: |
+          curl -LSs 'https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64' >./cc-test-reporter;
+          chmod +x ./cc-test-reporter
+          ./cc-test-reporter before-build
+
+      - name: Run all tests
+        run: python -m pytest
 
       - name: Push Coverage to CodeClimate
         if: ${{ success() }}  # only if tests were successful
-        uses: paambaati/codeclimate-action@v2.5.3
         env:
-          CC_TEST_REPORTER_ID: 6805394e7fbeae5625e7fc12bec771f671f0fb3a284e83d4ce023abb7a80509b
-        with:
-          coverageCommand: coverage xml
-          debug: true
+          CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
+        run: ./cc-test-reporter after-build
