@@ -1,11 +1,12 @@
 import os
 import pathlib
-import tempfile
 import random
 import string
+import tempfile
+
 import numpy
+import pandas
 import pytest
-from pandas import DataFrame
 from pandas._testing import assert_dict_equal
 from pandas.testing import assert_frame_equal, assert_index_equal
 
@@ -47,13 +48,15 @@ class TestReadWrite:
         test_file = read_tfs(_tfs_file_str)
         assert test_file.indx["BPMYB.5L2.B1"] == test_file.set_index("NAME")["BPMYB.5L2.B1"]
 
-    def test_tfs_write_read(self, _dataframe: TfsDataFrame, _test_file: str):
-        write_tfs(_test_file, _dataframe)
+    def test_tfs_write_read(self, _tfs_dataframe, _test_file: str):
+        write_tfs(_test_file, _tfs_dataframe)
         assert pathlib.Path(_test_file).is_file()
 
         new = read_tfs(_test_file)
-        assert_frame_equal(_dataframe, new, check_exact=False)  # float precision can be an issue
-        assert_dict_equal(_dataframe.headers, new.headers, compare_keys=True)
+        assert_frame_equal(
+            _tfs_dataframe, new, check_exact=False
+        )  # float precision can be an issue
+        assert_dict_equal(_tfs_dataframe.headers, new.headers, compare_keys=True)
 
     def test_tfs_write_read_no_headers(
         self, _dataframe_empty_headers: TfsDataFrame, _test_file: str
@@ -65,13 +68,13 @@ class TestReadWrite:
         assert_frame_equal(_dataframe_empty_headers, new, check_exact=False)  # float precision
         assert_dict_equal(_dataframe_empty_headers.headers, new.headers, compare_keys=True)
 
-    def test_tfs_write_read_pandasdf(self, _pddataframe: DataFrame, _test_file: str):
-        write_tfs(_test_file, _pddataframe)
+    def test_tfs_write_read_pandasdf(self, _pd_dataframe, _test_file: str):
+        write_tfs(_test_file, _pd_dataframe)
         assert pathlib.Path(_test_file).is_file()
 
         new = read_tfs(_test_file)
         assert_frame_equal(
-            _pddataframe,
+            _pd_dataframe,
             new,
             check_exact=False,  # float precision can be an issue
             check_frame_type=False,  # read df is TfsDF
@@ -83,15 +86,15 @@ class TestReadWrite:
         new = read_tfs(_test_file)
         assert_frame_equal(df, new)
 
-    def test_tfs_write_read_autoindex(self, _dataframe: TfsDataFrame, _test_file: str):
-        df = _dataframe.set_index("a")
-        df1 = _dataframe.set_index("a")
+    def test_tfs_write_read_autoindex(self, _tfs_dataframe, _test_file: str):
+        df = _tfs_dataframe.set_index("a")
+        df1 = _tfs_dataframe.set_index("a")
         write_tfs(_test_file, df, save_index=True)
         assert_frame_equal(df, df1)
 
         df_read = read_tfs(_test_file)
         assert_index_equal(df.index, df_read.index, check_exact=False)
-        assert_dict_equal(_dataframe.headers, df_read.headers, compare_keys=True)
+        assert_dict_equal(_tfs_dataframe.headers, df_read.headers, compare_keys=True)
 
     def test_tfs_read_write_read_pathlib_input(
         self, _tfs_file_pathlib: pathlib.Path, _test_file: str
@@ -252,17 +255,26 @@ class TestFailures:
 class TestWarnings:
     def test_warn_unphysical_values(self, caplog):
         nan_tfs_path = pathlib.Path(__file__).parent / "inputs" / "has_nans.tfs"
-        nan_tfs = read_tfs(nan_tfs_path, index="NAME")
+        _ = read_tfs(nan_tfs_path, index="NAME")
         for record in caplog.records:
             assert record.levelname == "WARNING"
         assert "contains non-physical values at Index:" in caplog.text
 
     def test_id_to_type_handles_typo_str_id(self, caplog):
         typoed_str_id = "%%s"
-        found_type = tfs.handler._id_to_type(typoed_str_id)
+        _ = tfs.handler._id_to_type(typoed_str_id)
         for record in caplog.records:
             assert record.levelname == "WARNING"
         assert "Identified '%%s' as string identifier, check and beware of typos" in caplog.text
+
+    def test_empty_df_warns_on_types_inference(self, caplog):
+        empty_df = pandas.DataFrame()
+        converted_df = tfs.handler._autoset_pandas_types(empty_df)
+        assert_frame_equal(converted_df, empty_df)
+
+        for record in caplog.records:
+            assert record.levelname == "WARNING"
+        assert "An empty dataframe was provided, no types were infered" in caplog.text
 
 
 class TestPrinting:
@@ -297,7 +309,7 @@ def _test_file() -> str:
 
 
 @pytest.fixture()
-def _dataframe() -> TfsDataFrame:
+def _tfs_dataframe() -> TfsDataFrame:
     return TfsDataFrame(
         index=range(3),
         columns="a b c d e".split(),
@@ -379,8 +391,10 @@ def _no_colnames_tfs_path() -> pathlib.Path:
 
 
 @pytest.fixture()
-def _pddataframe() -> DataFrame:
-    return DataFrame(index=range(3), columns="a b c d e".split(), data=numpy.random.rand(3, 5),)
+def _pd_dataframe() -> pandas.DataFrame:
+    return pandas.DataFrame(
+        index=range(3), columns="a b c d e".split(), data=numpy.random.rand(3, 5),
+    )
 
 
 def _rand_string(string_length: int = 10) -> str:

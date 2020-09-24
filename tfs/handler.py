@@ -12,12 +12,11 @@ import pathlib
 import shlex
 from collections import OrderedDict
 from contextlib import suppress
-from typing import Union
+from typing import List, Union
 
 import numpy as np
 import pandas as pd
 from pandas.api import types as pdtypes
-from typing import List
 
 LOGGER = logging.getLogger(__name__)
 
@@ -26,7 +25,7 @@ NAMES = "*"
 TYPES = "$"
 COMMENTS = "#"
 INDEX_ID = "INDEX&&&"
-ID_TO_TYPE = {
+ID_TO_TYPE = {  # used when reading files
     "%s": np.str,
     "%bpm_s": np.str,
     "%le": np.float64,
@@ -180,9 +179,9 @@ def write_tfs(
         colwidth: Column width, can not be smaller than MIN_COLUMN_WIDTH
         headerswidth: Formats the header width for both, keys and values
     """
+    left_align_first_column = False
     tfs_file_path = pathlib.Path(tfs_file_path)
     _validate(data_frame, f"to be written in {tfs_file_path.absolute()}")
-    left_align_first_column = False
 
     if headers_dict is None:  # tries to get headers from TfsDataFrame
         try:
@@ -190,11 +189,7 @@ def write_tfs(
         except AttributeError:
             headers_dict = OrderedDict()
 
-    try:  # Do not force floats like 1.0 or 15.0 to go to integer type
-        data_frame = data_frame.copy().convert_dtypes(convert_integer=False, convert_boolean=False)
-    except ValueError as pd_convert_error:  # If used on empty dataframes (uses concat internally)
-        if "No objects to concatenate" in pd_convert_error.args[0]:
-            data_frame = data_frame.copy()  # since it's empty anyway, nothing to convert
+    data_frame = _autoset_pandas_types(data_frame)
 
     if save_index:
         left_align_first_column = True
@@ -213,6 +208,33 @@ def write_tfs(
                 (line for line in (headers_str, colnames_str, coltypes_str, data_str) if line)
             )
         )
+
+
+def _autoset_pandas_types(
+    data_frame: Union[TfsDataFrame, pd.DataFrame]
+) -> Union[TfsDataFrame, pd.DataFrame]:
+    """
+    Tries to apply the .convert_dtypes() method of pandas on a copy on the provided dataframe. If
+    the operation is not possible, checks if the provided dataframe is empty (which prevents
+    convert_dtypes() to internally use concat) and then return only a copy of the original
+    dataframe. Otherwise, raise the exception given by pandas.
+
+    Args:
+        data_frame (Union[TfsDataFrame, pd.DataFrame]): TfsDataFrame or pandas.DataFrame to
+        determine the types of.
+
+    Returns:
+        The dataframe with dtypes infered as much as possible to the pandas dtypes.
+    """
+    LOGGER.debug("Attempting conversion of dataframe to pandas dtypes")
+    try:  # Do not force floats like 1.0 or 15.0 to go to integer type
+        return data_frame.copy().convert_dtypes(convert_integer=False)
+    except ValueError as pd_convert_error:  # If used on empty dataframes (uses concat internally)
+        if not data_frame.size and "No objects to concatenate" in pd_convert_error.args[0]:
+            LOGGER.warning("An empty dataframe was provided, no types were infered")
+            return data_frame.copy()  # since it's empty anyway, nothing to convert
+        else:
+            raise pd_convert_error
 
 
 def _insert_index_column(data_frame, save_index):

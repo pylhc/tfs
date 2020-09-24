@@ -1,4 +1,6 @@
-"""Exposes TfsDataFrame, read_tfs and write_tfs directly in tfs namespace."""
+"""
+Exposes TfsDataFrame, read and write directly in tfs namespace, as well as the package version.
+"""
 from tfs.handler import TfsDataFrame, read_tfs, write_tfs
 
 __title__ = "tfs-pandas"

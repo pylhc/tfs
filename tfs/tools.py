@@ -17,7 +17,7 @@ import numpy as np
 
 from tfs.handler import TfsFormatError, read_tfs, write_tfs
 
-LOG = logging.getLogger(__name__)
+LOGGER = logging.getLogger(__name__)
 
 
 def significant_digits(
@@ -62,9 +62,9 @@ def remove_nan_from_files(list_of_files: List[Union[str, Path]], replace: bool =
     for filepath in list_of_files:
         try:
             tfs_data_frame = read_tfs(filepath)
-            LOG.info(f"Read file {filepath:s}")
+            LOGGER.info(f"Read file {filepath:s}")
         except (IOError, TfsFormatError):
-            LOG.warning(f"Skipped file {filepath:s} as it could not be loaded")
+            LOGGER.warning(f"Skipped file {filepath:s} as it could not be loaded")
         else:
             tfs_data_frame = tfs_data_frame.dropna(axis="index")
             if not replace:
@@ -82,7 +82,7 @@ def remove_header_comments_from_files(list_of_files: List[Union[str, Path]]) -> 
         The entries of the list can be strings or PosixPath objects.
     """
     for filepath in list_of_files:
-        LOG.info(f"Checking file: {filepath}")
+        LOGGER.info(f"Checking file: {filepath}")
         with open(filepath, "r") as f:
             f_lines = f.readlines()
 
@@ -94,10 +94,10 @@ def remove_header_comments_from_files(list_of_files: List[Union[str, Path]]) -> 
                 delete_indicies.append(index)
 
         if delete_indicies:
-            LOG.info(f"    Found {len(delete_indicies):d} lines to delete.")
+            LOGGER.info(f"    Found {len(delete_indicies):d} lines to delete.")
             for index in reversed(delete_indicies):
                 deleted_line = f_lines.pop(index)
-                LOG.info(f"    Deleted line: {deleted_line.strip():s}")
+                LOGGER.info(f"    Deleted line: {deleted_line.strip():s}")
 
             with open(filepath, "w") as f:
                 f.writelines(f_lines)
