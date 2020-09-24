@@ -36,7 +36,7 @@ DEPENDENCIES = [
 
 # Extra dependencies
 EXTRA_DEPENDENCIES = {
-    "test": ["pytest>=5.2", "pytest-cov>=2.7",],
+    "test": ["pytest>=5.2", "pytest-cov>=2.7"],
     "doc": ["sphinx", "travis-sphinx", "sphinx_rtd_theme"],
 }
 EXTRA_DEPENDENCIES.update(

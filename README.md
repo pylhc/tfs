@@ -57,4 +57,4 @@ will convert the `TfsDataFrame` back to a `DataFrame` and lose therefore the hea
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE.md) file for details
+This project is licensed under the MIT License - see the [LICENSE](LICENSE.md) file for details.
