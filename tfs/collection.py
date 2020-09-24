@@ -12,7 +12,7 @@ import pathlib
 
 from pandas import DataFrame
 
-from tfs.handler import read_tfs, write_tfs, TfsDataFrame
+from tfs.handler import TfsDataFrame, read_tfs, write_tfs
 
 
 class _MetaTfsCollection(type):
@@ -172,11 +172,11 @@ class TfsCollection(metaclass=_MetaTfsCollection):
             self.parent = parent
             self.attr = attr
 
-        def __getitem__(self, plane):
-            return getattr(self.parent, self.attr + "_" + plane)
+        def __getitem__(self, plane: str):
+            return getattr(self.parent, self.attr + "_" + plane.lower())
 
-        def __setitem__(self, plane, value):
-            setattr(self.parent, self.attr + "_" + plane, value)
+        def __setitem__(self, plane: str, value):
+            setattr(self.parent, self.attr + "_" + plane.lower(), value)
 
 
 class Tfs:

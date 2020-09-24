@@ -1,5 +1,21 @@
 # TFS-Pandas Changelog
 
+## Version 2.0.0
+- Breaking Changes:
+    - `FixedColumn`, `FixedColumnCollection` and `FixedTfs` have been removed from the package
+    - Objects are not converted to strings upon read anymore, and will raise an error
+    - Minimum pandas version is 1.0
+
+- Fixed:
+    - No longer writes an empty line to file in case of empty headers
+    - "Planed" dataframes capitalize plane key attributes to be consistent with other `pylhc` packages, however they can be accessed with and without capitalizing your query.
+
+- Changes:
+    - Minimum required `numpy` version is now 1.19
+    - TfsDataFrames now automatically cast themselves to pandas datatypes using `.convert_dtypes()`
+    - Lighter dependency matrix
+    - Full testing of supported Python versions across linux, macOS and windows systems through Github Actions
+
 ## Version 1.0.5
 - Fixed:
     - Bug with testing for headers, also in pandas DataFrames
