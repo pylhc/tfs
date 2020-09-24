@@ -1,0 +1,430 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>TFS-Pandas Modules &mdash; tfs-pandas 1.0.5 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="prev" title="Welcome to tfs-pandas documentation!" href="../index.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home" alt="Documentation Home"> tfs-pandas
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0.5
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">TFS-Pandas Modules</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#collection">Collection</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#handler">Handler</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#tools">Tools</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">tfs-pandas</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>TFS-Pandas Modules</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/root/index.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-tfs.collection">
+<span id="tfs-pandas-modules"></span><h1>TFS-Pandas Modules<a class="headerlink" href="#module-tfs.collection" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="collection">
+<h2>Collection<a class="headerlink" href="#collection" title="Permalink to this headline">¶</a></h2>
+<p>Advanced tfs reading and writing functionality.</p>
+<dl class="field-list simple">
+<dt class="field-odd">author</dt>
+<dd class="field-odd"><p>Jaime</p>
+</dd>
+<dt class="field-even">module</dt>
+<dd class="field-even"><p>collection</p>
+</dd>
+</dl>
+<dl class="py class">
+<dt id="tfs.collection.Tfs">
+<em class="property">class </em><code class="sig-prename descclassname">tfs.collection.</code><code class="sig-name descname">Tfs</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tfs/collection.html#Tfs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tfs.collection.Tfs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class to mark attributes as Tfs attributes.</p>
+<p>Any parameter given to this class will be passed to the “get_filename()”
+and “write_to()” methods, together with the plane if “two_planes=False” is
+not present.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt id="tfs.collection.TfsCollection">
+<em class="property">class </em><code class="sig-prename descclassname">tfs.collection.</code><code class="sig-name descname">TfsCollection</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">directory</span><span class="p">:</span> <span class="n">pathlib.Path</span></em>, <em class="sig-param"><span class="n">allow_write</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tfs/collection.html#TfsCollection"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tfs.collection.TfsCollection" title="Permalink to this definition">¶</a></dt>
+<dd><p>Abstract class to lazily load and write TFS files.</p>
+<p>The classes that inherit from this abstract class will be able to define
+TFS files as readable or writable and read or write them just as attribute
+access or assignments. All attributes will be read and written as Pandas
+DataFrames.</p>
+<p class="rubric">Example</p>
+<p>If <cite>./example</cite> is a directory that contains two TFS file <cite>getbetax.out</cite>
+and <cite>getbetax.out</cite> with BETX and BETY columns respectively:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">ExampleCollection</span><span class="p">(</span><span class="n">TfsCollection</span><span class="p">)</span>
+
+   <span class="c1"># All TFS attributes must be marked with the Tfs(...) class:</span>
+   <span class="n">beta</span> <span class="o">=</span> <span class="n">Tfs</span><span class="p">(</span><span class="s2">&quot;getbeta</span><span class="si">{}</span><span class="s2">.out&quot;</span><span class="p">)</span>
+   <span class="c1"># This is a traditional attribute.</span>
+   <span class="n">other_value</span> <span class="o">=</span> <span class="mi">7</span>
+
+   <span class="k">def</span> <span class="nf">get_filename</span><span class="p">(</span><span class="n">template</span><span class="p">,</span> <span class="n">plane</span><span class="p">):</span>
+      <span class="k">return</span> <span class="n">template</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">plane</span><span class="p">)</span>
+
+<span class="n">example</span> <span class="o">=</span> <span class="n">ExampleCollection</span><span class="p">(</span><span class="s2">&quot;./example&quot;</span><span class="p">)</span>
+<span class="c1"># Get the BETX column from &quot;getbetax.out&quot;:</span>
+<span class="n">beta_x_column</span> <span class="o">=</span> <span class="n">example</span><span class="o">.</span><span class="n">beta_x</span><span class="o">.</span><span class="n">BETX</span>
+<span class="c1"># Get the BETY column from &quot;getbetay.out&quot;:</span>
+<span class="n">beta_y_column</span> <span class="o">=</span> <span class="n">example</span><span class="o">.</span><span class="n">beta_y</span><span class="o">.</span><span class="n">BETY</span>
+<span class="c1"># The planes can also be accessed as items:</span>
+<span class="n">beta_y_column</span> <span class="o">=</span> <span class="n">example</span><span class="o">.</span><span class="n">beta</span><span class="p">[</span><span class="s2">&quot;y&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">BETY</span>
+<span class="c1"># This will write an empty DataFrame to &quot;getbetay.out&quot;:</span>
+<span class="n">example</span><span class="o">.</span><span class="n">allow_write</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="n">example</span><span class="o">.</span><span class="n">beta</span><span class="p">[</span><span class="s2">&quot;y&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">DataFrame</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>If the file to be loaded is not defined for two planes it can be declared
+as: <code class="docutils literal notranslate"><span class="pre">coupling</span> <span class="pre">=</span> <span class="pre">Tfs(&quot;getcouple.out&quot;,</span> <span class="pre">two_planes=False)</span></code> and then accessed as
+<code class="docutils literal notranslate"><span class="pre">f1001w_column</span> <span class="pre">=</span> <span class="pre">example.coupling.F1001W</span></code>.
+No file will be loaded until the corresponding attribute is accessed and
+the loaded DataFrame will be buffered, thus the user should expect an
+IOError if the requested file is not in the provided directory (only the
+first time but is better to always take it into account!).
+When a DataFrame is assigned to one attribute it will be set as the buffer
+value. If the self.allow_write attribute is set to true, an assignment on
+one of the attributes will trigger the corresponding file write.</p>
+<dl class="py method">
+<dt id="tfs.collection.TfsCollection.clear">
+<code class="sig-name descname">clear</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tfs/collection.html#TfsCollection.clear"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tfs.collection.TfsCollection.clear" title="Permalink to this definition">¶</a></dt>
+<dd><p>Clear the file buffer.</p>
+<p>Any subsequent attribute access will try to load the corresponding file
+again.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="tfs.collection.TfsCollection.get_filename">
+<code class="sig-name descname">get_filename</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tfs/collection.html#TfsCollection.get_filename"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tfs.collection.TfsCollection.get_filename" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the filename to be loaded or written.</p>
+<p>This function will get as parameters any parameter given to the
+Tfs(…) attributes. It must return the filename to be written
+according to those parameters. If “two_planes=False” is not present in
+the Tfs(…) definition, it will also be given the keyword argument
+plane=”x” or “y”.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="tfs.collection.TfsCollection.read_tfs">
+<code class="sig-name descname">read_tfs</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#tfs.handler.TfsDataFrame" title="tfs.handler.TfsDataFrame">tfs.handler.TfsDataFrame</a><a class="reference internal" href="../_modules/tfs/collection.html#TfsCollection.read_tfs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tfs.collection.TfsCollection.read_tfs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reads the TFS file from self.directory with filename.</p>
+<p>This function can be overwritten to use something instead of tfs
+to load the files.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>filename</strong> -- The name of the file to load.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A tfs instance of the requested file.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="tfs.collection.TfsCollection.write_to">
+<code class="sig-name descname">write_to</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tfs/collection.html#TfsCollection.write_to"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tfs.collection.TfsCollection.write_to" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the filename and DataFrame to be written on assignments.</p>
+<p>If this function is overwrote, it will replace get_filename(…) in
+file writes to find out the filename of the file to be written. It also
+gets the value assigned as first parameter.
+It must return a tuple (filename, data_frame).</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<span class="target" id="module-tfs.handler"></span><div class="section" id="handler">
+<h2>Handler<a class="headerlink" href="#handler" title="Permalink to this headline">¶</a></h2>
+<p>Basic tfs-to-pandas io-functionality.</p>
+<dl class="field-list simple">
+<dt class="field-odd">module</dt>
+<dd class="field-odd"><p>handler</p>
+</dd>
+</dl>
+<dl class="py class">
+<dt id="tfs.handler.TfsDataFrame">
+<em class="property">class </em><code class="sig-prename descclassname">tfs.handler.</code><code class="sig-name descname">TfsDataFrame</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tfs/handler.html#TfsDataFrame"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tfs.handler.TfsDataFrame" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class to hold the information of the built Pandas DataFrame,
+together with a way of getting the headers of the TFS file.
+To get a header value do: data_frame[“header_name”] or
+data_frame.header_name.</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt id="tfs.handler.TfsFormatError">
+<em class="property">exception </em><code class="sig-prename descclassname">tfs.handler.</code><code class="sig-name descname">TfsFormatError</code><a class="reference internal" href="../_modules/tfs/handler.html#TfsFormatError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tfs.handler.TfsFormatError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Raised when wrong format is detected in the TFS file.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="tfs.handler.read_tfs">
+<code class="sig-prename descclassname">tfs.handler.</code><code class="sig-name descname">read_tfs</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">tfs_file_path</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>pathlib.Path<span class="p">, </span>str<span class="p">]</span></span></em>, <em class="sig-param"><span class="n">index</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#tfs.handler.TfsDataFrame" title="tfs.handler.TfsDataFrame">tfs.handler.TfsDataFrame</a><a class="reference internal" href="../_modules/tfs/handler.html#read_tfs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tfs.handler.read_tfs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parses the TFS table present in tfs_path and returns a custom Pandas DataFrame (TfsDataFrame).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>tfs_file_path</strong> -- pathlib.Path of the input TFS file, can be str but will be cast to pathlib.Path</p></li>
+<li><p><strong>index</strong> -- Name of the column to set as index. If not given looks for INDEX_ID-column</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>TfsDataFrame object</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="tfs.handler.write_tfs">
+<code class="sig-prename descclassname">tfs.handler.</code><code class="sig-name descname">write_tfs</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">tfs_file_path</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>pathlib.Path<span class="p">, </span>str<span class="p">]</span></span></em>, <em class="sig-param"><span class="n">data_frame</span><span class="p">:</span> <span class="n">pandas.core.frame.DataFrame</span></em>, <em class="sig-param"><span class="n">headers_dict</span><span class="p">:</span> <span class="n">dict</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">save_index</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>str<span class="p">, </span>bool<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">False</span></em>, <em class="sig-param"><span class="n">colwidth</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">20</span></em>, <em class="sig-param"><span class="n">headerswidth</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">20</span></em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/tfs/handler.html#write_tfs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tfs.handler.write_tfs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Writes the DataFrame into tfs_path with the headers_dict as headers dictionary.
+If you want to keep the order of the headers, use collections.OrderedDict.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>tfs_file_path</strong> -- pathlib.Path to the output TFS file, can be str but will be cast to pathlib.Path</p></li>
+<li><p><strong>data_frame</strong> -- TfsDataFrame or pandas.DataFrame to save</p></li>
+<li><p><strong>headers_dict</strong> -- Headers of the data_frame, if empty tries to use data_frame.headers</p></li>
+<li><p><strong>save_index</strong> -- bool or string. Default: False
+If True, saves the index of the data_frame to a column identifiable by INDEX_ID.
+If string, it saves the index of the data_frame to a column named by string.</p></li>
+<li><p><strong>colwidth</strong> -- Column width, can not be smaller than MIN_COLUMN_WIDTH</p></li>
+<li><p><strong>headerswidth</strong> -- Formats the header width for both, keys and values</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<span class="target" id="module-tfs.tools"></span><div class="section" id="tools">
+<h2>Tools<a class="headerlink" href="#tools" title="Permalink to this headline">¶</a></h2>
+<p>Additional functions to modify tfs files.</p>
+<dl class="field-list simple">
+<dt class="field-odd">author</dt>
+<dd class="field-odd"><p>Jaime</p>
+</dd>
+<dt class="field-even">module</dt>
+<dd class="field-even"><p>tools</p>
+</dd>
+</dl>
+<dl class="py class">
+<dt id="tfs.tools.DotDict">
+<em class="property">class </em><code class="sig-prename descclassname">tfs.tools.</code><code class="sig-name descname">DotDict</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tfs/tools.html#DotDict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tfs.tools.DotDict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make dict fields accessible by .</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="tfs.tools.remove_header_comments_from_files">
+<code class="sig-prename descclassname">tfs.tools.</code><code class="sig-name descname">remove_header_comments_from_files</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">list_of_files</span><span class="p">:</span> <span class="n">list</span></em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/tfs/tools.html#remove_header_comments_from_files"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tfs.tools.remove_header_comments_from_files" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check the files in the provided list for invalid headers (no type defined) and
+removes those when found.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="tfs.tools.remove_nan_from_files">
+<code class="sig-prename descclassname">tfs.tools.</code><code class="sig-name descname">remove_nan_from_files</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">list_of_files</span><span class="p">:</span> <span class="n">list</span></em>, <em class="sig-param"><span class="n">replace</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/tfs/tools.html#remove_nan_from_files"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tfs.tools.remove_nan_from_files" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove NAN-Entries from files in list_of_files.</p>
+<p>If replace=False a new file with .dropna appended to its name is created, otherwise the file is
+overwritten.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="tfs.tools.significant_digits">
+<code class="sig-prename descclassname">tfs.tools.</code><code class="sig-name descname">significant_digits</code><span class="sig-paren">(</span><em class="sig-param">value: float</em>, <em class="sig-param">error: float) -&gt; (&lt;class 'str'&gt;</em>, <em class="sig-param">&lt;class 'str'&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tfs/tools.html#significant_digits"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tfs.tools.significant_digits" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes value and its error properly rounded with respect to the size of the error</p>
+</dd></dl>
+
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+      
+        <a href="../index.html" class="btn btn-neutral float-left" title="Welcome to tfs-pandas documentation!" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2019, OMC-TEAM
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
