@@ -101,24 +101,3 @@ def remove_header_comments_from_files(list_of_files: List[Union[str, Path]]) -> 
 
             with open(filepath, "w") as f:
                 f.writelines(f_lines)
-
-
-class DotDict(dict):
-    """Make dict fields accessible by '.'"""
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        for key in self:
-            if isinstance(self[key], dict):
-                self[key] = DotDict(self[key])
-
-    # __getattr__ = dict.__getitem__
-    __setattr__ = dict.__setitem__
-    __delattr__ = dict.__delitem__
-
-    def __getattr__(self, key: object) -> object:
-        """ Needed to raise the correct exceptions """
-        try:
-            return super().__getitem__(key)
-        except KeyError as e:
-            raise AttributeError(e).with_traceback(e.__traceback__) from e
