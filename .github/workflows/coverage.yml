@@ -60,4 +60,4 @@ jobs:
         env:
           CC_TEST_REPORTER_ID: 6805394e7fbeae5625e7fc12bec771f671f0fb3a284e83d4ce023abb7a80509b
         with:
-          coverageCommand: coverage xml
+          coverageCommand: coverage run -m pytest
