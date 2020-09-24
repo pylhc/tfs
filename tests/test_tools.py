@@ -41,6 +41,13 @@ def test_clean_file_str_input(_bad_file_str: str, _clean_file: str):
     assert not df.isna().any().any()
 
 
+def test_remove_nan_raises(caplog):
+    remove_nan_from_files(["no_a_file.tfs"])
+    for record in caplog.records:
+        assert record.levelname == "WARNING"
+    assert "could not be loaded" in caplog.text
+
+
 def test_significant_digits():
     s = significant_digits(0.637282, 1e-3)
     assert s[0] == "0.6373"
