@@ -52,7 +52,9 @@ jobs:
         run: pip install '.[test]'
 
       - name: Run all tests
-        run: python -m pytest
+        run: |
+          coverage --version
+          coverage run -m pytest
 
       - name: Push Coverage to CodeClimate
         if: ${{ success() }}  # only if tests were successful
@@ -60,4 +62,5 @@ jobs:
         env:
           CC_TEST_REPORTER_ID: 6805394e7fbeae5625e7fc12bec771f671f0fb3a284e83d4ce023abb7a80509b
         with:
-          coverageCommand: coverage run -m pytest
+          coverageCommand: coverage xml
+          debug: true
