@@ -22,7 +22,7 @@ LOG = logging.getLogger(__name__)
 
 def significant_digits(
     value: float, error: float, return_floats: bool = False
-) -> tuple([Union[str, float]]):
+) -> Tuple[Union[str, float]]:
     """
     Computes value and its error properly rounded with respect to the size of the error.
 
@@ -45,7 +45,7 @@ def significant_digits(
         f"{round(error, digits):.{max(digits, 0)}f}",
     )
     if return_floats:
-        return tuple([ float(val) for val in res ])
+        return tuple([float(val) for val in res])
     return res
 
 
