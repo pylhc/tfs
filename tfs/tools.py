@@ -19,19 +19,19 @@ from typing import Union
 LOG = logging.getLogger(__name__)
 
 
-def significant_digits(value: float, error: float, return_floats: bool = False) -> list((Union[str, float], Union[str, float])): 
+def significant_digits(value: float, error: float, return_floats: bool = False) -> tuple((Union[str, float], Union[str, float])): 
     """Computes value and its error properly rounded with respect to the size of the error"""
     if error == 0:
         raise ValueError("Input error of 0. Cannot compute significant digits.")
     digits = -int(np.floor(np.log10(error)))
     if np.floor(error * 10 ** digits) == 1:
         digits = digits + 1
-    res = [
+    res = (
         f"{round(value, digits):.{max(digits, 0)}f}",
         f"{round(error, digits):.{max(digits, 0)}f}",
-    ]
+    )
     if return_floats:
-        return [ float(val) for val in res ]
+        return tuple([ float(val) for val in res ])
     return res
 
 
