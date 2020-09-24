@@ -9,7 +9,7 @@ on:  # Runs on all push events to master branch and any push related to a pull r
   push:
     branches:
       - master
-  pull_request:
+  pull_request:  # so that codeclimate gets coverage and reports on the diff
 
 jobs:
   coverage:
