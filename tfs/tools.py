@@ -24,13 +24,13 @@ def significant_digits(
     value: float, error: float, return_floats: bool = False
 ) -> Tuple[Union[str, float]]:
     """
-    Computes value and its error properly rounded with respect to the size of the error.
+    Computes ``value`` and its error properly rounded with respect to the size of ``error``.
 
     Args:
         value (float): a number.
         error (float): the error on the number.
-        return_floats (bool): if True, returns significant digits as floats, otherwise as strings.
-        Defaults to False.
+        return_floats (bool): if ``True``, returns significant digits as floats. Otherwise as
+            strings. Defaults to ``False``.
 
     Returns:
         A tuple of the rounded value and error with regards to the size of the error.
@@ -51,13 +51,14 @@ def significant_digits(
 
 def remove_nan_from_files(list_of_files: List[Union[str, Path]], replace: bool = False) -> None:
     """
-    Remove NAN-Entries from files in list_of_files.
+    Remove NAN-Entries from files in ``list_of_files``.
 
     Args:
         list_of_files (List[Union[str, Path]]): list of paths to tfs files meant to be sanitized.
-        The entries of the list can be strings or PosixPath objects.
-        replace (bool): if True, the provided files will be overwritten, otherwise new files with
-        '.dropna' appended to the original filenames will be written to disk. Defaults to False.
+            The entries of the list can be strings or PosixPath objects.
+        replace (bool): if ``True``, the provided files will be overwritten. Otherwise new files
+            with `.dropna` appended to the original filenames will be written to disk. Defaults to
+            ``False``.
     """
     for filepath in list_of_files:
         try:
@@ -74,12 +75,12 @@ def remove_nan_from_files(list_of_files: List[Union[str, Path]], replace: bool =
 
 def remove_header_comments_from_files(list_of_files: List[Union[str, Path]]) -> None:
     """
-    Check the files in the provided list for invalid headers (no type defined) and
-    removes those inplace when found.
+    Check the files in the provided list for invalid headers (no type defined) and removes those
+    inplace when found.
 
     Args:
         list_of_files (List[Union[str, Path]]): list of paths to tfs files meant to be checked.
-        The entries of the list can be strings or PosixPath objects.
+            The entries of the list can be strings or PosixPath objects.
     """
     for filepath in list_of_files:
         LOGGER.info(f"Checking file: {filepath}")

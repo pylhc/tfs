@@ -18,7 +18,7 @@ from tfs.handler import TfsDataFrame, read_tfs, write_tfs
 class _MetaTfsCollection(type):
     """
     Metaclass for TfsCollection. It takes the class attributes declared as
-    Tfs(...) and replaces it for a property getter and setter. Check
+    `Tfs(...)` and replaces it for a property getter and setter. Check
     TfsCollection docs.
     """
 
@@ -45,51 +45,58 @@ class _MetaTfsCollection(type):
 
 
 class TfsCollection(metaclass=_MetaTfsCollection):
-    """ Abstract class to lazily load and write TFS files.
+    """
+    Abstract class to lazily load and write TFS files.
 
-    The classes that inherit from this abstract class will be able to define
-    TFS files as readable or writable and read or write them just as attribute
-    access or assignments. All attributes will be read and written as Pandas
-    DataFrames.
+    classes inheriting from this abstract class will be able to define TFS files
+    as readable or writable, and read or write them just as attribute access or
+    assignments. All attributes will be read and written as `TfsDataFrames`.
 
     Example:
-        If `./example` is a directory that contains two TFS file `getbetax.out`
-        and `getbetax.out` with BETX and BETY columns respectively:
+        If **./example** is a directory that contains two TFS files `getbetax.tfs`
+        and `getbetax.tfs` with BETX and BETY columns respectively:
 
     .. sourcecode:: python
 
          class ExampleCollection(TfsCollection)
+            # All TFS attributes must be marked with the Tfs(...) class, and generated attribute
+            # names will be appended with _x / _y depending on files found in "./example"
 
-            # All TFS attributes must be marked with the Tfs(...) class:
-            beta = Tfs("getbeta{}.out")
-            # This is a traditional attribute.
-            other_value = 7
+            beta = Tfs("getbeta{}.tfs")  # A TFS attribute
+            other_value = 7  # A traditional attribute.
 
-            def get_filename(template, plane):
+            def get_filename(template: str, plane: str) -> str:
                return template.format(plane)
 
          example = ExampleCollection("./example")
-         # Get the BETX column from "getbetax.out":
-         beta_x_column = example.beta_x.BETX
-         # Get the BETY column from "getbetay.out":
+
+         # Get the BETX / BETY column from "getbetax.tfs":
+         beta_x_column = example.beta_x.BETX  # / example.beta_x.BETY
+
+         # Get the BETY column from "getbetay.tfs":
          beta_y_column = example.beta_y.BETY
-         # The planes can also be accessed as items:
+
+         # The planes can also be accessed as items (both examples below work):
          beta_y_column = example.beta["y"].BETY
+         beta_y_column = example.beta["Y"].BETY
+
          # This will write an empty DataFrame to "getbetay.out":
          example.allow_write = True
          example.beta["y"] = DataFrame()
 
 
-    If the file to be loaded is not defined for two planes it can be declared
-    as: ``coupling = Tfs("getcouple.out", two_planes=False)`` and then accessed as
+    If the file to be loaded is not defined for two planes then the attribute can be declared as:
+    ``coupling = Tfs("getcouple.tfs", two_planes=False)`` and then accessed as
     ``f1001w_column = example.coupling.F1001W``.
-    No file will be loaded until the corresponding attribute is accessed and
-    the loaded DataFrame will be buffered, thus the user should expect an
-    IOError if the requested file is not in the provided directory (only the
-    first time but is better to always take it into account!).
-    When a DataFrame is assigned to one attribute it will be set as the buffer
-    value. If the self.allow_write attribute is set to true, an assignment on
-    one of the attributes will trigger the corresponding file write.
+
+    No file will be loaded until the corresponding attribute is accessed and the loaded
+    `TfsDataFrame` will be buffered, thus the user should expect an **IOError** if the requested
+    file is not in the provided directory (only the first time, but is better to always take it
+    into account!).
+
+    When a `TfsDataFrame` is assigned to one attribute, it will be set as the buffer value. If the
+    ``self.allow_write`` attribute is set to true, an assignment on one of the attributes will
+    trigger the corresponding file write.
     """
 
     def __init__(self, directory: pathlib.Path, allow_write: bool = None):
@@ -99,48 +106,50 @@ class TfsCollection(metaclass=_MetaTfsCollection):
         self._buffer = {}
 
     def get_filename(self, *args, **kwargs):
-        """Return the filename to be loaded or written.
+        """
+        Return the filename to be loaded or written.
 
-        This function will get as parameters any parameter given to the
-        Tfs(...) attributes. It must return the filename to be written
-        according to those parameters. If "two_planes=False" is not present in
-        the Tfs(...) definition, it will also be given the keyword argument
-        plane="x" or "y".
+        This function will get as parameters any parameter given to the Tfs(...) attributes. It must
+        return the filename to be written according to those parameters. If ``two_planes=False`` is
+        not present in the Tfs(...) definition, it will also be given the keyword argument
+        ``plane="x"`` or ``plane="y"``.
         """
         raise NotImplementedError(
             "This is an abstract method, it should be implemented in subclasses."
         )
 
     def write_to(self, *args, **kwargs):
-        """Returns the filename and DataFrame to be written on assignments.
+        """
+        Returns the filename and `TfsDataFrame` to be written on assignments.
 
-        If this function is overwrote, it will replace get_filename(...) in
-        file writes to find out the filename of the file to be written. It also
-        gets the value assigned as first parameter.
-        It must return a tuple (filename, data_frame).
+        If this function is overwritten, it will replace ``get_filename(...)`` in file writes to
+        find out the filename of the file to be written. It also gets the value assigned as first
+        parameter. It must return a tuple (filename, tfs_data_frame).
         """
         raise NotImplementedError(
             "This is an abstract method, it should be implemented in subclasses."
         )
 
     def clear(self):
-        """Clear the file buffer.
+        """
+        Clear the file buffer.
 
-        Any subsequent attribute access will try to load the corresponding file
-        again.
+        Any subsequent attribute access will try to load the corresponding file again.
         """
         self._buffer = {}
 
     def read_tfs(self, filename: str) -> TfsDataFrame:
-        """Reads the TFS file from self.directory with filename.
+        """
+        Reads the TFS file from **self.directory** with the given filename.
 
-        This function can be overwritten to use something instead of tfs
-        to load the files.
+        This function can be overwritten to use something instead of the `tfs` module to load the
+        files.
 
         Arguments:
-            filename: The name of the file to load.
+            filename (str): The name of the file to load.
+
         Returns:
-            A tfs instance of the requested file.
+            A `TfsDataFrame` built from reading the requested file.
         """
         tfs_data_df = read_tfs(self.directory / filename)
         if "NAME" in tfs_data_df:
@@ -182,9 +191,8 @@ class TfsCollection(metaclass=_MetaTfsCollection):
 class Tfs:
     """ Class to mark attributes as Tfs attributes.
 
-    Any parameter given to this class will be passed to the "get_filename()"
-    and "write_to()" methods, together with the plane if "two_planes=False" is
-    not present.
+    Any parameter given to this class will be passed to the ``get_filename()`` and ``write_to()``
+    methods, together with the plane if ``two_planes=False`` is not present.
     """
 
     def __init__(self, *args, **kwargs):
@@ -251,13 +259,14 @@ def _setter(self, value, *args, **kwargs):
 
 
 class _MaybeCall:
-    """Handles the maybe_call feature of the TfsCollection.
+    """
+    Handles the maybe_call feature of the TfsCollection.
 
-    This class defines the maybe_call attribute in the instances of
-    TfsCollection. To avoid repetitive try: except: blocks, this class allows
-    you to do: meas.maybe_call.beta["x"](some_funct, args, kwargs). If the
-    requested file is available, the call is equivalent to: some_funct(args,
-    kwargs), if it is not no function is called and the program continues.
+    This class defines the `maybe_call` attribute in the instances of `TfsCollection`. To avoid
+    repetitive try / except blocks, this class allows you to do:
+    ``meas.maybe_call.beta["x"](some_funct, args, kwargs)``.
+    If the requested file is available, the call is equivalent to: ``some_funct(args, kwargs)``, if
+    not then no function is called and the program continues.
     """
 
     def __init__(self, parent):
