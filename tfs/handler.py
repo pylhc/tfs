@@ -350,13 +350,39 @@ def _parse_header(str_list: list) -> tuple:
 def _id_to_type(type_str: str) -> type:
     try:
         return ID_TO_TYPE[type_str]
-    except KeyError:
-        if type_str.startswith("%") and type_str.endswith("s"):
-            LOGGER.warning(
-                f"Identified '{type_str}' as string identifier, check and beware of typos"
-            )
+    except KeyError:  # could be a "%20s" that MAD-X likes to output
+        if _is_madx_string_col_identifier(type_str):
             return str
         raise TfsFormatError(f"Unknown data type: {type_str}")
+
+
+def _is_madx_string_col_identifier(type_str: str) -> bool:
+    """
+    `MAD-X` likes to return the string columns by also indicating their width, so trying to parse
+    `%s` identifiers only we might miss those looking like `%20s` specifying (here) a 20-character
+    wide column for strings.
+
+    Provided with a suspected identifier of this type, this function returns ``True`` if they are
+    in the `MAD-X` format, ``False`` otherwise.
+
+    The check is done by first checking that the identifier starts with `%` and finishes with `s`,
+    then by extracting the inner part of the string (for `%20s`, that would be `20`) and seeing if
+    it can be cast to an integer. If not, then the inner part is not indicating column width and
+    thus the suspicious identifier does not come from `MAD-X`.
+
+    Args:
+        type_str (str): the suspicious identifier.
+
+    Returns:
+        ``True`` if the identifier comes from `MAD-X`, ``False`` otherwise.
+    """
+    if not (type_str.startswith("%") and type_str.endswith("s")):
+        return False
+    try:
+        _ = int(type_str[1:-1])
+        return True
+    except ValueError:
+        return False
 
 
 def _value_to_type_string(value) -> str:
