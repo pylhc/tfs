@@ -350,7 +350,7 @@ def _parse_header(str_list: list) -> tuple:
 def _id_to_type(type_str: str) -> type:
     try:
         return ID_TO_TYPE[type_str]
-    except KeyError:  # could be a "%20s" that MAD-X likes to output
+    except KeyError:  # could be a "%[num]s" that MAD-X likes to output
         if _is_madx_string_col_identifier(type_str):
             return str
         raise TfsFormatError(f"Unknown data type: {type_str}")
