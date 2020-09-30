@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>tfs.handler &mdash; tfs-pandas 2.0.0 documentation</title>
+  <title>tfs.handler &mdash; tfs-pandas 2.0.1 documentation</title>
   
 
   
@@ -154,7 +154,7 @@
 <span class="sd">Handler</span>
 <span class="sd">-------------------</span>
 
-<span class="sd">Basic tfs-to-pandas io-functionality.</span>
+<span class="sd">Basic tfs files IO functionality.</span>
 
 <span class="sd">:module: handler</span>
 
@@ -191,10 +191,9 @@
 
 <div class="viewcode-block" id="TfsDataFrame"><a class="viewcode-back" href="../../root/index.html#tfs.handler.TfsDataFrame">[docs]</a><span class="k">class</span> <span class="nc">TfsDataFrame</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Class to hold the information of the built Pandas DataFrame,</span>
-<span class="sd">    together with a way of getting the headers of the TFS file.</span>
-<span class="sd">    To get a header value do: data_frame[&quot;header_name&quot;] or</span>
-<span class="sd">    data_frame.header_name.</span>
+<span class="sd">    Class to hold the information of the built extended `pandas` DataFrame, together with a way of</span>
+<span class="sd">    getting the headers of the TFS file. As the file headers are stored in a dictionary upon read,</span>
+<span class="sd">    to get a header value use ``data_frame[&quot;header_name&quot;]``.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">_metadata</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;headers&quot;</span><span class="p">]</span>
@@ -250,15 +249,17 @@
 
 <div class="viewcode-block" id="read_tfs"><a class="viewcode-back" href="../../root/index.html#tfs.handler.read_tfs">[docs]</a><span class="k">def</span> <span class="nf">read_tfs</span><span class="p">(</span><span class="n">tfs_file_path</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span> <span class="n">index</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TfsDataFrame</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Parses the TFS table present in tfs_path and returns a custom Pandas DataFrame (TfsDataFrame).</span>
+<span class="sd">    Parses the TFS table present in **tfs_file_path** and returns a customized version of a Pandas</span>
+<span class="sd">    DataFrame (a TfsDataFrame).</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        tfs_file_path: PosixPath object to the output TFS file. Can be a string, but will be cast</span>
-<span class="sd">        to a PosixPath object.</span>
-<span class="sd">        index: Name of the column to set as index. If not given looks for INDEX_ID-column</span>
+<span class="sd">        tfs_file_path (Union[pathlib.Path, str]): PosixPath object to the output TFS file. Can be</span>
+<span class="sd">            a string, in which case it will be cast to a PosixPath object.</span>
+<span class="sd">        index (str): Name of the column to set as index. If not given, looks in **tfs_file_path**</span>
+<span class="sd">            for a column starting with `INDEX&amp;&amp;&amp;`.</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        TfsDataFrame object</span>
+<span class="sd">        A TfsDataFrame object.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">tfs_file_path</span> <span class="o">=</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="n">tfs_file_path</span><span class="p">)</span>
     <span class="n">headers</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
@@ -317,19 +318,21 @@
     <span class="n">headerswidth</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">DEFAULT_COLUMN_WIDTH</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Writes the DataFrame into tfs_path with the headers_dict as headers dictionary.</span>
-<span class="sd">    If you want to keep the order of the headers, use collections.OrderedDict.</span>
+<span class="sd">    Writes the DataFrame into **tfs_file_path** with the `headers_dict` as headers dictionary. If</span>
+<span class="sd">    you want to keep the order of the headers upon write, use a ``collections.OrderedDict``.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        tfs_file_path: PosixPath object to the output TFS file. Can be a string, but will be cast</span>
-<span class="sd">        to a PosixPath object.</span>
-<span class="sd">        data_frame: TfsDataFrame or pandas.DataFrame to save</span>
-<span class="sd">        headers_dict: Headers of the data_frame, if empty tries to use data_frame.headers</span>
-<span class="sd">        save_index: bool or string. Default: False</span>
-<span class="sd">            If True, saves the index of the data_frame to a column identifiable by INDEX_ID.</span>
-<span class="sd">            If string, it saves the index of the data_frame to a column named by string.</span>
-<span class="sd">        colwidth: Column width, can not be smaller than MIN_COLUMN_WIDTH</span>
-<span class="sd">        headerswidth: Formats the header width for both, keys and values</span>
+<span class="sd">        tfs_file_path (Union[pathlib.Path, str]): PosixPath object to the output TFS file. Can be</span>
+<span class="sd">            a string, in which case it will be cast to a PosixPath object.</span>
+<span class="sd">        data_frame (Union[TfsDataFrame, pd.DataFrame]): `TfsDataFrame` or `pandas.DataFrame` to</span>
+<span class="sd">            write to file.</span>
+<span class="sd">        headers_dict (dict): Headers of the data_frame. If not provided, assumes a `TfsDataFrame`</span>
+<span class="sd">            was given and tries to use ``data_frame.headers``.</span>
+<span class="sd">        save_index (Union[str, bool]): bool or string. Default to ``False``. If ``True``, saves</span>
+<span class="sd">            the index of the data_frame to a column identifiable by `INDEX&amp;&amp;&amp;`. If given as string,</span>
+<span class="sd">            saves the index of the data_frame to a column named by the provided value.</span>
+<span class="sd">        colwidth (int): Column width, can not be smaller than `MIN_COLUMN_WIDTH`.</span>
+<span class="sd">        headerswidth (int): Used to format the header width for both keys and values.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">left_align_first_column</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="n">tfs_file_path</span> <span class="o">=</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="n">tfs_file_path</span><span class="p">)</span>
@@ -373,7 +376,7 @@
 
 <span class="sd">    Args:</span>
 <span class="sd">        data_frame (Union[TfsDataFrame, pd.DataFrame]): TfsDataFrame or pandas.DataFrame to</span>
-<span class="sd">        determine the types of.</span>
+<span class="sd">            determine the types of.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The dataframe with dtypes infered as much as possible to the pandas dtypes.</span>
@@ -400,8 +403,18 @@
     <span class="n">data_frame</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">idx_name</span><span class="p">,</span> <span class="n">data_frame</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
 
 
-<span class="k">def</span> <span class="nf">_get_headers_string</span><span class="p">(</span><span class="n">headers_dict</span><span class="p">,</span> <span class="n">width</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Will not write an empty header line in case the headers_dict is empty.&quot;&quot;&quot;</span>
+<span class="k">def</span> <span class="nf">_get_headers_string</span><span class="p">(</span><span class="n">headers_dict</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">width</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Returns the string to write a `TfsDataFrame`&#39;s headers to file. Will return an empty string if</span>
+<span class="sd">    called for an empty headers dictionary, in order not write an line to file.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        headers_dict (dict): the `TfsDataFrame`&#39;s headers.</span>
+<span class="sd">        width (int): column width to use when formatting keys and values from the headers dict.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        A full string representation for the headers dictionary.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">headers_dict</span><span class="p">:</span>
         <span class="k">return</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">_get_header_line</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">headers_dict</span><span class="p">[</span><span class="n">name</span><span class="p">],</span> <span class="n">width</span><span class="p">)</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">headers_dict</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
@@ -489,13 +502,31 @@
 <span class="k">def</span> <span class="nf">_id_to_type</span><span class="p">(</span><span class="n">type_str</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">type</span><span class="p">:</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">ID_TO_TYPE</span><span class="p">[</span><span class="n">type_str</span><span class="p">]</span>
-    <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">type_str</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;%&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">type_str</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;s&quot;</span><span class="p">):</span>
-            <span class="n">LOGGER</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Identified &#39;</span><span class="si">{</span><span class="n">type_str</span><span class="si">}</span><span class="s2">&#39; as string identifier, check and beware of typos&quot;</span>
-            <span class="p">)</span>
+    <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>  <span class="c1"># could be a &quot;%[num]s&quot; that MAD-X likes to output</span>
+        <span class="k">if</span> <span class="n">_is_madx_string_col_identifier</span><span class="p">(</span><span class="n">type_str</span><span class="p">):</span>
             <span class="k">return</span> <span class="nb">str</span>
         <span class="k">raise</span> <span class="n">TfsFormatError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unknown data type: </span><span class="si">{</span><span class="n">type_str</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_is_madx_string_col_identifier</span><span class="p">(</span><span class="n">type_str</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    `MAD-X` likes to return the string columns by also indicating their width, so trying to parse</span>
+<span class="sd">    `%s` identifiers only we might miss those looking like `%20s` specifying (here) a 20-character</span>
+<span class="sd">     wide column for strings.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        type_str (str): the suspicious identifier.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        ``True`` if the identifier is identified as coming from `MAD-X`, ``False`` otherwise.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">type_str</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;%&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">type_str</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;s&quot;</span><span class="p">)):</span>
+        <span class="k">return</span> <span class="kc">False</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">_</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">type_str</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+        <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span>
 
 
 <span class="k">def</span> <span class="nf">_value_to_type_string</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
@@ -509,7 +540,7 @@
 
 <span class="sd">    Args:</span>
 <span class="sd">        type_ (type): an instance of the built-in type (in this package, one of numpy or pandas</span>
-<span class="sd">        types) to get the ID string for.</span>
+<span class="sd">            types) to get the ID string for.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The ID string.</span>
@@ -553,7 +584,7 @@
 
 
 <div class="viewcode-block" id="TfsFormatError"><a class="viewcode-back" href="../../root/index.html#tfs.handler.TfsFormatError">[docs]</a><span class="k">class</span> <span class="nc">TfsFormatError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Raised when wrong format is detected in the TFS file.&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Raised when a wrong format is detected in the TFS file.&quot;&quot;&quot;</span>
 
     <span class="k">pass</span></div>
 

@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>tfs.tools &mdash; tfs-pandas 2.0.0 documentation</title>
+  <title>tfs.tools &mdash; tfs-pandas 2.0.1 documentation</title>
   
 
   
@@ -174,15 +174,15 @@
 
 <div class="viewcode-block" id="significant_digits"><a class="viewcode-back" href="../../root/index.html#tfs.tools.significant_digits">[docs]</a><span class="k">def</span> <span class="nf">significant_digits</span><span class="p">(</span>
     <span class="n">value</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">error</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">return_floats</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]:</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span><span class="nb">float</span><span class="p">]]:</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Computes value and its error properly rounded with respect to the size of the error.</span>
+<span class="sd">    Computes ``value`` and its error properly rounded with respect to the size of ``error``.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        value (float): a number.</span>
 <span class="sd">        error (float): the error on the number.</span>
-<span class="sd">        return_floats (bool): if True, returns significant digits as floats, otherwise as strings.</span>
-<span class="sd">        Defaults to False.</span>
+<span class="sd">        return_floats (bool): if ``True``, returns significant digits as floats. Otherwise as</span>
+<span class="sd">            strings. Defaults to ``False``.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        A tuple of the rounded value and error with regards to the size of the error.</span>
@@ -203,13 +203,14 @@
 
 <div class="viewcode-block" id="remove_nan_from_files"><a class="viewcode-back" href="../../root/index.html#tfs.tools.remove_nan_from_files">[docs]</a><span class="k">def</span> <span class="nf">remove_nan_from_files</span><span class="p">(</span><span class="n">list_of_files</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">]],</span> <span class="n">replace</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Remove NAN-Entries from files in list_of_files.</span>
+<span class="sd">    Remove NAN-Entries from files in ``list_of_files``.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        list_of_files (List[Union[str, Path]]): list of paths to tfs files meant to be sanitized.</span>
-<span class="sd">        The entries of the list can be strings or PosixPath objects.</span>
-<span class="sd">        replace (bool): if True, the provided files will be overwritten, otherwise new files with</span>
-<span class="sd">        &#39;.dropna&#39; appended to the original filenames will be written to disk. Defaults to False.</span>
+<span class="sd">            The entries of the list can be strings or PosixPath objects.</span>
+<span class="sd">        replace (bool): if ``True``, the provided files will be overwritten. Otherwise new files</span>
+<span class="sd">            with `.dropna` appended to the original filenames will be written to disk. Defaults to</span>
+<span class="sd">            ``False``.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">for</span> <span class="n">filepath</span> <span class="ow">in</span> <span class="n">list_of_files</span><span class="p">:</span>
         <span class="k">try</span><span class="p">:</span>
@@ -226,12 +227,12 @@
 
 <div class="viewcode-block" id="remove_header_comments_from_files"><a class="viewcode-back" href="../../root/index.html#tfs.tools.remove_header_comments_from_files">[docs]</a><span class="k">def</span> <span class="nf">remove_header_comments_from_files</span><span class="p">(</span><span class="n">list_of_files</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Check the files in the provided list for invalid headers (no type defined) and</span>
-<span class="sd">    removes those inplace when found.</span>
+<span class="sd">    Check the files in the provided list for invalid headers (no type defined) and removes those</span>
+<span class="sd">    inplace when found.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        list_of_files (List[Union[str, Path]]): list of paths to tfs files meant to be checked.</span>
-<span class="sd">        The entries of the list can be strings or PosixPath objects.</span>
+<span class="sd">            The entries of the list can be strings or PosixPath objects.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">for</span> <span class="n">filepath</span> <span class="ow">in</span> <span class="n">list_of_files</span><span class="p">:</span>
         <span class="n">LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Checking file: </span><span class="si">{</span><span class="n">filepath</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
