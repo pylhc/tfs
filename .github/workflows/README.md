@@ -11,7 +11,7 @@ It runs on `ubuntu-latest` and `Python 3.x`.
 ### Testing Suite
 
 Tests are ensured in the `tests` workflow, which triggers on all pushes.
-Truns on a matrix of all available operating systems for all supported Python versions (currently `3.6`, `3.7` and `3.8`.
+It runs on a matrix of all available operating systems for all supported Python versions (currently `3.6`, `3.7` and `3.8`).
 
 ### Test Coverage
 

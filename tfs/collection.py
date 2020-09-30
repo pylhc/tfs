@@ -53,8 +53,8 @@ class TfsCollection(metaclass=_MetaTfsCollection):
     assignments. All attributes will be read and written as `TfsDataFrames`.
 
     Example:
-        If **./example** is a directory that contains two TFS files `getbetax.tfs`
-        and `getbetax.tfs` with BETX and BETY columns respectively:
+        If **./example** is a directory that contains two TFS files `beta_phase_x.tfs`
+        and `beta_phase_y.tfs` with BETX and BETY columns respectively:
 
     .. sourcecode:: python
 
@@ -62,7 +62,7 @@ class TfsCollection(metaclass=_MetaTfsCollection):
             # All TFS attributes must be marked with the Tfs(...) class, and generated attribute
             # names will be appended with _x / _y depending on files found in "./example"
 
-            beta = Tfs("getbeta{}.tfs")  # A TFS attribute
+            beta = Tfs("beta_phase_{}.tfs")  # A TFS attribute
             other_value = 7  # A traditional attribute.
 
             def get_filename(template: str, plane: str) -> str:
@@ -70,17 +70,17 @@ class TfsCollection(metaclass=_MetaTfsCollection):
 
          example = ExampleCollection("./example")
 
-         # Get the BETX / BETY column from "getbetax.tfs":
+         # Get the BETX / BETY column from "beta_phase_x.tfs":
          beta_x_column = example.beta_x.BETX  # / example.beta_x.BETY
 
-         # Get the BETY column from "getbetay.tfs":
+         # Get the BETY column from "beta_phase_y.tfs":
          beta_y_column = example.beta_y.BETY
 
          # The planes can also be accessed as items (both examples below work):
          beta_y_column = example.beta["y"].BETY
          beta_y_column = example.beta["Y"].BETY
 
-         # This will write an empty DataFrame to "getbetay.out":
+         # This will write an empty DataFrame to "beta_phase_y.tfs":
          example.allow_write = True
          example.beta["y"] = DataFrame()
 

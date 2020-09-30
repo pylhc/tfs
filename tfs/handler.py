@@ -360,21 +360,13 @@ def _is_madx_string_col_identifier(type_str: str) -> bool:
     """
     `MAD-X` likes to return the string columns by also indicating their width, so trying to parse
     `%s` identifiers only we might miss those looking like `%20s` specifying (here) a 20-character
-    wide column for strings.
-
-    Provided with a suspected identifier of this type, this function returns ``True`` if they are
-    in the `MAD-X` format, ``False`` otherwise.
-
-    The check is done by first checking that the identifier starts with `%` and finishes with `s`,
-    then by extracting the inner part of the string (for `%20s`, that would be `20`) and seeing if
-    it can be cast to an integer. If not, then the inner part is not indicating column width and
-    thus the suspicious identifier does not come from `MAD-X`.
+     wide column for strings.
 
     Args:
         type_str (str): the suspicious identifier.
 
     Returns:
-        ``True`` if the identifier comes from `MAD-X`, ``False`` otherwise.
+        ``True`` if the identifier is identified as coming from `MAD-X`, ``False`` otherwise.
     """
     if not (type_str.startswith("%") and type_str.endswith("s")):
         return False
