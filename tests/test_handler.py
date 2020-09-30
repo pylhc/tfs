@@ -251,6 +251,16 @@ class TestFailures:
             assert record.levelname == "ERROR"
         assert "No column names in file" in caplog.text
 
+    def test_id_to_type_handles_typo_str_id(self):
+        typoed_str_id = "%%s"
+        with pytest.raises(TfsFormatError):
+            _ = tfs.handler._id_to_type(typoed_str_id)
+
+
+def test_id_to_type_handles_madx_string_identifier():
+    madx_str_id = "%20s"
+    assert tfs.handler._id_to_type(madx_str_id) is str
+
 
 class TestWarnings:
     def test_warn_unphysical_values(self, caplog):
@@ -259,13 +269,6 @@ class TestWarnings:
         for record in caplog.records:
             assert record.levelname == "WARNING"
         assert "contains non-physical values at Index:" in caplog.text
-
-    def test_id_to_type_handles_typo_str_id(self, caplog):
-        typoed_str_id = "%%s"
-        _ = tfs.handler._id_to_type(typoed_str_id)
-        for record in caplog.records:
-            assert record.levelname == "WARNING"
-        assert "Identified '%%s' as string identifier, check and beware of typos" in caplog.text
 
     def test_empty_df_warns_on_types_inference(self, caplog):
         empty_df = pandas.DataFrame()

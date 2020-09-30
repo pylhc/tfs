@@ -2,7 +2,7 @@
 Handler
 -------------------
 
-Basic tfs-to-pandas io-functionality.
+Basic tfs files IO functionality.
 
 :module: handler
 
@@ -39,10 +39,9 @@ MIN_COLUMN_WIDTH = 10
 
 class TfsDataFrame(pd.DataFrame):
     """
-    Class to hold the information of the built Pandas DataFrame,
-    together with a way of getting the headers of the TFS file.
-    To get a header value do: data_frame["header_name"] or
-    data_frame.header_name.
+    Class to hold the information of the built extended `pandas` DataFrame, together with a way of
+    getting the headers of the TFS file. As the file headers are stored in a dictionary upon read,
+    to get a header value use ``data_frame["header_name"]``.
     """
 
     _metadata = ["headers"]
@@ -98,15 +97,17 @@ class TfsDataFrame(pd.DataFrame):
 
 def read_tfs(tfs_file_path: Union[pathlib.Path, str], index: str = None) -> TfsDataFrame:
     """
-    Parses the TFS table present in tfs_path and returns a custom Pandas DataFrame (TfsDataFrame).
+    Parses the TFS table present in **tfs_file_path** and returns a customized version of a Pandas
+    DataFrame (a TfsDataFrame).
 
     Args:
-        tfs_file_path: PosixPath object to the output TFS file. Can be a string, but will be cast
-        to a PosixPath object.
-        index: Name of the column to set as index. If not given looks for INDEX_ID-column
+        tfs_file_path (Union[pathlib.Path, str]): PosixPath object to the output TFS file. Can be
+            a string, in which case it will be cast to a PosixPath object.
+        index (str): Name of the column to set as index. If not given, looks in **tfs_file_path**
+            for a column starting with `INDEX&&&`.
 
     Returns:
-        TfsDataFrame object
+        A TfsDataFrame object.
     """
     tfs_file_path = pathlib.Path(tfs_file_path)
     headers = OrderedDict()
@@ -165,19 +166,21 @@ def write_tfs(
     headerswidth: int = DEFAULT_COLUMN_WIDTH,
 ) -> None:
     """
-    Writes the DataFrame into tfs_path with the headers_dict as headers dictionary.
-    If you want to keep the order of the headers, use collections.OrderedDict.
+    Writes the DataFrame into **tfs_file_path** with the `headers_dict` as headers dictionary. If
+    you want to keep the order of the headers upon write, use a ``collections.OrderedDict``.
 
     Args:
-        tfs_file_path: PosixPath object to the output TFS file. Can be a string, but will be cast
-        to a PosixPath object.
-        data_frame: TfsDataFrame or pandas.DataFrame to save
-        headers_dict: Headers of the data_frame, if empty tries to use data_frame.headers
-        save_index: bool or string. Default: False
-            If True, saves the index of the data_frame to a column identifiable by INDEX_ID.
-            If string, it saves the index of the data_frame to a column named by string.
-        colwidth: Column width, can not be smaller than MIN_COLUMN_WIDTH
-        headerswidth: Formats the header width for both, keys and values
+        tfs_file_path (Union[pathlib.Path, str]): PosixPath object to the output TFS file. Can be
+            a string, in which case it will be cast to a PosixPath object.
+        data_frame (Union[TfsDataFrame, pd.DataFrame]): `TfsDataFrame` or `pandas.DataFrame` to
+            write to file.
+        headers_dict (dict): Headers of the data_frame. If not provided, assumes a `TfsDataFrame`
+            was given and tries to use ``data_frame.headers``.
+        save_index (Union[str, bool]): bool or string. Default to ``False``. If ``True``, saves
+            the index of the data_frame to a column identifiable by `INDEX&&&`. If given as string,
+            saves the index of the data_frame to a column named by the provided value.
+        colwidth (int): Column width, can not be smaller than `MIN_COLUMN_WIDTH`.
+        headerswidth (int): Used to format the header width for both keys and values.
     """
     left_align_first_column = False
     tfs_file_path = pathlib.Path(tfs_file_path)
@@ -221,7 +224,7 @@ def _autoset_pandas_types(
 
     Args:
         data_frame (Union[TfsDataFrame, pd.DataFrame]): TfsDataFrame or pandas.DataFrame to
-        determine the types of.
+            determine the types of.
 
     Returns:
         The dataframe with dtypes infered as much as possible to the pandas dtypes.
@@ -248,8 +251,18 @@ def _insert_index_column(data_frame, save_index):
     data_frame.insert(0, idx_name, data_frame.index)
 
 
-def _get_headers_string(headers_dict, width) -> str:
-    """Will not write an empty header line in case the headers_dict is empty."""
+def _get_headers_string(headers_dict: dict, width: int) -> str:
+    """
+    Returns the string to write a `TfsDataFrame`'s headers to file. Will return an empty string if
+    called for an empty headers dictionary, in order not write an line to file.
+
+    Args:
+        headers_dict (dict): the `TfsDataFrame`'s headers.
+        width (int): column width to use when formatting keys and values from the headers dict.
+
+    Returns:
+        A full string representation for the headers dictionary.
+    """
     if headers_dict:
         return "\n".join(_get_header_line(name, headers_dict[name], width) for name in headers_dict)
     else:
@@ -337,13 +350,31 @@ def _parse_header(str_list: list) -> tuple:
 def _id_to_type(type_str: str) -> type:
     try:
         return ID_TO_TYPE[type_str]
-    except KeyError:
-        if type_str.startswith("%") and type_str.endswith("s"):
-            LOGGER.warning(
-                f"Identified '{type_str}' as string identifier, check and beware of typos"
-            )
+    except KeyError:  # could be a "%[num]s" that MAD-X likes to output
+        if _is_madx_string_col_identifier(type_str):
             return str
         raise TfsFormatError(f"Unknown data type: {type_str}")
+
+
+def _is_madx_string_col_identifier(type_str: str) -> bool:
+    """
+    `MAD-X` likes to return the string columns by also indicating their width, so trying to parse
+    `%s` identifiers only we might miss those looking like `%20s` specifying (here) a 20-character
+     wide column for strings.
+
+    Args:
+        type_str (str): the suspicious identifier.
+
+    Returns:
+        ``True`` if the identifier is identified as coming from `MAD-X`, ``False`` otherwise.
+    """
+    if not (type_str.startswith("%") and type_str.endswith("s")):
+        return False
+    try:
+        _ = int(type_str[1:-1])
+        return True
+    except ValueError:
+        return False
 
 
 def _value_to_type_string(value) -> str:
@@ -357,7 +388,7 @@ def _dtype_to_id_string(type_: type) -> str:
 
     Args:
         type_ (type): an instance of the built-in type (in this package, one of numpy or pandas
-        types) to get the ID string for.
+            types) to get the ID string for.
 
     Returns:
         The ID string.
@@ -401,7 +432,7 @@ def _dtype_to_formatter(type_: type, colsize: int) -> str:
 
 
 class TfsFormatError(Exception):
-    """Raised when wrong format is detected in the TFS file."""
+    """Raised when a wrong format is detected in the TFS file."""
 
     pass
 

@@ -1,5 +1,11 @@
 # TFS-Pandas Changelog
 
+## Version 2.0.1
+- Fixed:
+    - No longer warns on MAD-X styled string column types (`%[num]s`).
+    - Documentation is up-to-date, and plays nicely with `Sphinx`'s parsing.
+    - Fix a wrong type hint.
+
 ## Version 2.0.0
 - Breaking Changes:
     - `FixedColumn`, `FixedColumnCollection` and `FixedTfs` have been removed from the package
