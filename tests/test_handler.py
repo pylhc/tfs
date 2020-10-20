@@ -142,6 +142,30 @@ class TestReadWrite:
         assert_frame_equal(df, new)
         assert_dict_equal(df.headers, new.headers, compare_keys=True)
 
+    def test_write_int_float_str_columns(self, _test_file: str):
+        """ This test is here because of numeric conversion bug back in v2.0.1 """
+        df = TfsDataFrame(
+            data=[[1, 1., "one"],
+                  [2, 2., "two"],
+                  [3, 3., "three"]],
+            columns=["Int", "Float", "String"]
+        )
+        write_tfs(_test_file, df)
+        new = read_tfs(_test_file)
+        assert_frame_equal(df, new)
+
+    def test_write_int_float_columns(self, _test_file: str):
+        """ This test is here because of numeric conversion bug back in v2.0.1 """
+        df = TfsDataFrame(
+            data=[[1, 1.],
+                  [2, 2.],
+                  [3, 3.]],
+            columns=["Int", "Float"]
+        )
+        write_tfs(_test_file, df)
+        new = read_tfs(_test_file)
+        assert_frame_equal(df, new)
+
 
 class TestFailures:
     def test_absent_attributes_and_keys(self, _tfs_file_str: str):
