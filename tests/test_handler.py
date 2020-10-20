@@ -143,7 +143,8 @@ class TestReadWrite:
         assert_dict_equal(df.headers, new.headers, compare_keys=True)
 
     def test_write_int_float_str_columns(self, _test_file: str):
-        """ This test is here because of numeric conversion bug back in v2.0.1 """
+        """ This test is more of an extension of the test below
+         (this dataframe was not affected by the bug) """
         df = TfsDataFrame(
             data=[[1, 1., "one"],
                   [2, 2., "two"],
@@ -155,7 +156,8 @@ class TestReadWrite:
         assert_frame_equal(df, new)
 
     def test_write_int_float_columns(self, _test_file: str):
-        """ This test is here because of numeric conversion bug back in v2.0.1 """
+        """ This test is here because of numeric conversion bug
+        upon writing back in v2.0.1 """
         df = TfsDataFrame(
             data=[[1, 1.],
                   [2, 2.],
