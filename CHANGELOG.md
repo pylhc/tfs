@@ -1,6 +1,6 @@
 # TFS-Pandas Changelog
 ## Version 2.0.2
--Fixed:
+- Fixed:
     - Proper error on non-string columns
     - Writing numeric-only mixed type dataframes bug
     
