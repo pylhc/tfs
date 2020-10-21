@@ -142,6 +142,32 @@ class TestReadWrite:
         assert_frame_equal(df, new)
         assert_dict_equal(df.headers, new.headers, compare_keys=True)
 
+    def test_write_int_float_str_columns(self, _test_file: str):
+        """ This test is more of an extension of the test below
+         (this dataframe was not affected by the bug) """
+        df = TfsDataFrame(
+            data=[[1, 1., "one"],
+                  [2, 2., "two"],
+                  [3, 3., "three"]],
+            columns=["Int", "Float", "String"]
+        )
+        write_tfs(_test_file, df)
+        new = read_tfs(_test_file)
+        assert_frame_equal(df, new)
+
+    def test_write_int_float_columns(self, _test_file: str):
+        """ This test is here because of numeric conversion bug
+        upon writing back in v2.0.1 """
+        df = TfsDataFrame(
+            data=[[1, 1.],
+                  [2, 2.],
+                  [3, 3.]],
+            columns=["Int", "Float"]
+        )
+        write_tfs(_test_file, df)
+        new = read_tfs(_test_file)
+        assert_frame_equal(df, new)
+
 
 class TestFailures:
     def test_absent_attributes_and_keys(self, _tfs_file_str: str):
@@ -169,6 +195,15 @@ class TestFailures:
         for record in caplog.records:
             assert record.levelname == "ERROR"
         assert "Non-unique indices found" in caplog.text
+
+    def test_fail_on_wrong_column_type(self, caplog):
+        df = TfsDataFrame(columns=range(5))
+        with pytest.raises(TfsFormatError):
+            write_tfs("", df)
+
+        for record in caplog.records:
+            assert record.levelname == "ERROR"
+        assert "not of string-type" in caplog.text
 
     def test_fail_on_spaces_columns(self, caplog):
         df = TfsDataFrame(columns=["allowed", "not allowed"])

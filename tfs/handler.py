@@ -297,6 +297,7 @@ def _get_data_string(data_frame, colwidth, left_align_first_column) -> str:
         data_frame.dtypes, colwidth, left_align_first_column
     )
     data_frame = _quote_string_columns(data_frame)
+    data_frame = data_frame.astype(object)  # overrides pandas auto-conversion (lead to format bug)
     return "\n".join(data_frame.apply(lambda series: format_strings.format(*series), axis=1))
 
 
@@ -470,6 +471,10 @@ def _validate(data_frame: Union[TfsDataFrame, pd.DataFrame], info_str: str = "")
     if len(set(data_frame.columns)) != len(data_frame.columns):
         LOGGER.error(f"Non-unique column names found, dataframe {info_str} is invalid")
         raise TfsFormatError("Column names not Unique.")
+
+    if any(not isinstance(c, str) for c in data_frame.columns):
+        LOGGER.error(f"Some column-names are not of string-type, dataframe {info_str} is invalid.")
+        raise TfsFormatError("TFS-Columns need to be strings.")
 
     if any(" " in c for c in data_frame.columns):
         LOGGER.error(f"Space(s) found in TFS columns, dataframe {info_str} is invalid")
