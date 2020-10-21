@@ -297,6 +297,7 @@ def _get_data_string(data_frame, colwidth, left_align_first_column) -> str:
         data_frame.dtypes, colwidth, left_align_first_column
     )
     data_frame = _quote_string_columns(data_frame)
+    data_frame = data_frame.astype(object)  # overrides pandas auto-conversion (lead to format bug)
     return "\n".join(data_frame.apply(lambda series: format_strings.format(*series), axis=1))
 
 
