@@ -1,5 +1,9 @@
 # TFS-Pandas Changelog
-
+## Version 2.0.2
+- Fixed:
+    - Proper error on non-string columns
+    - Writing numeric-only mixed type dataframes bug
+    
 ## Version 2.0.1
 - Fixed:
     - No longer warns on MAD-X styled string column types (`%[num]s`).
