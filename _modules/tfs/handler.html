@@ -449,6 +449,7 @@
         <span class="n">data_frame</span><span class="o">.</span><span class="n">dtypes</span><span class="p">,</span> <span class="n">colwidth</span><span class="p">,</span> <span class="n">left_align_first_column</span>
     <span class="p">)</span>
     <span class="n">data_frame</span> <span class="o">=</span> <span class="n">_quote_string_columns</span><span class="p">(</span><span class="n">data_frame</span><span class="p">)</span>
+    <span class="n">data_frame</span> <span class="o">=</span> <span class="n">data_frame</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">object</span><span class="p">)</span>  <span class="c1"># overrides pandas auto-conversion (lead to format bug)</span>
     <span class="k">return</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">data_frame</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">series</span><span class="p">:</span> <span class="n">format_strings</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">*</span><span class="n">series</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>
 
 
