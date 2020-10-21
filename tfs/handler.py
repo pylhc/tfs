@@ -472,6 +472,10 @@ def _validate(data_frame: Union[TfsDataFrame, pd.DataFrame], info_str: str = "")
         LOGGER.error(f"Non-unique column names found, dataframe {info_str} is invalid")
         raise TfsFormatError("Column names not Unique.")
 
+    if any(not isinstance(c, str) for c in data_frame.columns):
+        LOGGER.error(f"Some column-names are not of string-type, dataframe {info_str} is invalid.")
+        raise TfsFormatError("TFS-Columns need to be strings.")
+
     if any(" " in c for c in data_frame.columns):
         LOGGER.error(f"Space(s) found in TFS columns, dataframe {info_str} is invalid")
         raise TfsFormatError("TFS-Columns can not contain spaces.")
