@@ -3,10 +3,6 @@ Collection
 ----------------------
 
 Advanced tfs reading and writing functionality.
-
-:author: Jaime
-:module: collection
-
 """
 import pathlib
 
@@ -48,7 +44,7 @@ class TfsCollection(metaclass=_MetaTfsCollection):
     """
     Abstract class to lazily load and write TFS files.
 
-    classes inheriting from this abstract class will be able to define TFS files
+    Classes inheriting from this abstract class will be able to define TFS files
     as readable or writable, and read or write them just as attribute access or
     assignments. All attributes will be read and written as `TfsDataFrames`.
 

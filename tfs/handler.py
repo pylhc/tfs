@@ -3,9 +3,6 @@ Handler
 -------------------
 
 Basic tfs files IO functionality.
-
-:module: handler
-
 """
 import logging
 import pathlib
