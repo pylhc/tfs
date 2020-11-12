@@ -13,6 +13,7 @@
   
   <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/css/custom.css" type="text/css" />
 
   
   
@@ -49,9 +50,12 @@
           
 
           
-            <a href="../../index.html" class="icon icon-home" alt="Documentation Home"> tfs-pandas
+            <a href="../../index.html">
           
 
+          
+            
+            <img src="../../_static/omc_logo.svg" class="logo" alt="Logo"/>
           
           </a>
 
@@ -85,7 +89,12 @@
             
             
               <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../root/index.html">TFS-Pandas Modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules/index.html">TFS-Pandas Modules</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#collection">Collection</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#handler">Handler</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#tools">Tools</a></li>
+</ul>
+</li>
 </ul>
 
             
@@ -155,10 +164,6 @@
 <span class="sd">----------------------</span>
 
 <span class="sd">Advanced tfs reading and writing functionality.</span>
-
-<span class="sd">:author: Jaime</span>
-<span class="sd">:module: collection</span>
-
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">import</span> <span class="nn">pathlib</span>
 
@@ -196,11 +201,11 @@
         <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__new__</span><span class="p">(</span><span class="n">mcs</span><span class="p">,</span> <span class="n">cls_name</span><span class="p">,</span> <span class="n">bases</span><span class="p">,</span> <span class="n">new_dict</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="TfsCollection"><a class="viewcode-back" href="../../root/index.html#tfs.collection.TfsCollection">[docs]</a><span class="k">class</span> <span class="nc">TfsCollection</span><span class="p">(</span><span class="n">metaclass</span><span class="o">=</span><span class="n">_MetaTfsCollection</span><span class="p">):</span>
+<div class="viewcode-block" id="TfsCollection"><a class="viewcode-back" href="../../modules/index.html#tfs.collection.TfsCollection">[docs]</a><span class="k">class</span> <span class="nc">TfsCollection</span><span class="p">(</span><span class="n">metaclass</span><span class="o">=</span><span class="n">_MetaTfsCollection</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Abstract class to lazily load and write TFS files.</span>
 
-<span class="sd">    classes inheriting from this abstract class will be able to define TFS files</span>
+<span class="sd">    Classes inheriting from this abstract class will be able to define TFS files</span>
 <span class="sd">    as readable or writable, and read or write them just as attribute access or</span>
 <span class="sd">    assignments. All attributes will be read and written as `TfsDataFrames`.</span>
 
@@ -257,7 +262,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">maybe_call</span> <span class="o">=</span> <span class="n">_MaybeCall</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_buffer</span> <span class="o">=</span> <span class="p">{}</span>
 
-<div class="viewcode-block" id="TfsCollection.get_filename"><a class="viewcode-back" href="../../root/index.html#tfs.collection.TfsCollection.get_filename">[docs]</a>    <span class="k">def</span> <span class="nf">get_filename</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="TfsCollection.get_filename"><a class="viewcode-back" href="../../modules/index.html#tfs.collection.TfsCollection.get_filename">[docs]</a>    <span class="k">def</span> <span class="nf">get_filename</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return the filename to be loaded or written.</span>
 
@@ -270,7 +275,7 @@
             <span class="s2">&quot;This is an abstract method, it should be implemented in subclasses.&quot;</span>
         <span class="p">)</span></div>
 
-<div class="viewcode-block" id="TfsCollection.write_to"><a class="viewcode-back" href="../../root/index.html#tfs.collection.TfsCollection.write_to">[docs]</a>    <span class="k">def</span> <span class="nf">write_to</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="TfsCollection.write_to"><a class="viewcode-back" href="../../modules/index.html#tfs.collection.TfsCollection.write_to">[docs]</a>    <span class="k">def</span> <span class="nf">write_to</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns the filename and `TfsDataFrame` to be written on assignments.</span>
 
@@ -282,7 +287,7 @@
             <span class="s2">&quot;This is an abstract method, it should be implemented in subclasses.&quot;</span>
         <span class="p">)</span></div>
 
-<div class="viewcode-block" id="TfsCollection.clear"><a class="viewcode-back" href="../../root/index.html#tfs.collection.TfsCollection.clear">[docs]</a>    <span class="k">def</span> <span class="nf">clear</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="TfsCollection.clear"><a class="viewcode-back" href="../../modules/index.html#tfs.collection.TfsCollection.clear">[docs]</a>    <span class="k">def</span> <span class="nf">clear</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Clear the file buffer.</span>
 
@@ -290,7 +295,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_buffer</span> <span class="o">=</span> <span class="p">{}</span></div>
 
-<div class="viewcode-block" id="TfsCollection.read_tfs"><a class="viewcode-back" href="../../root/index.html#tfs.collection.TfsCollection.read_tfs">[docs]</a>    <span class="k">def</span> <span class="nf">read_tfs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TfsDataFrame</span><span class="p">:</span>
+<div class="viewcode-block" id="TfsCollection.read_tfs"><a class="viewcode-back" href="../../modules/index.html#tfs.collection.TfsCollection.read_tfs">[docs]</a>    <span class="k">def</span> <span class="nf">read_tfs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TfsDataFrame</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Reads the TFS file from **self.directory** with the given filename.</span>
 
@@ -340,7 +345,7 @@
             <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">attr</span> <span class="o">+</span> <span class="s2">&quot;_&quot;</span> <span class="o">+</span> <span class="n">plane</span><span class="o">.</span><span class="n">lower</span><span class="p">(),</span> <span class="n">value</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="Tfs"><a class="viewcode-back" href="../../root/index.html#tfs.collection.Tfs">[docs]</a><span class="k">class</span> <span class="nc">Tfs</span><span class="p">:</span>
+<div class="viewcode-block" id="Tfs"><a class="viewcode-back" href="../../modules/index.html#tfs.collection.Tfs">[docs]</a><span class="k">class</span> <span class="nc">Tfs</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot; Class to mark attributes as Tfs attributes.</span>
 
 <span class="sd">    Any parameter given to this class will be passed to the ``get_filename()`` and ``write_to()``</span>

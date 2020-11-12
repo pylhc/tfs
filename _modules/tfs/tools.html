@@ -13,6 +13,7 @@
   
   <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/css/custom.css" type="text/css" />
 
   
   
@@ -49,9 +50,12 @@
           
 
           
-            <a href="../../index.html" class="icon icon-home" alt="Documentation Home"> tfs-pandas
+            <a href="../../index.html">
           
 
+          
+            
+            <img src="../../_static/omc_logo.svg" class="logo" alt="Logo"/>
           
           </a>
 
@@ -85,7 +89,12 @@
             
             
               <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../root/index.html">TFS-Pandas Modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules/index.html">TFS-Pandas Modules</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#collection">Collection</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#handler">Handler</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#tools">Tools</a></li>
+</ul>
+</li>
 </ul>
 
             
@@ -155,11 +164,6 @@
 <span class="sd">-----------------</span>
 
 <span class="sd">Additional functions to modify tfs files.</span>
-
-
-<span class="sd">:author: Jaime</span>
-<span class="sd">:module: tools</span>
-
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">import</span> <span class="nn">logging</span>
 <span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
@@ -172,7 +176,7 @@
 <span class="n">LOGGER</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="significant_digits"><a class="viewcode-back" href="../../root/index.html#tfs.tools.significant_digits">[docs]</a><span class="k">def</span> <span class="nf">significant_digits</span><span class="p">(</span>
+<div class="viewcode-block" id="significant_digits"><a class="viewcode-back" href="../../modules/index.html#tfs.tools.significant_digits">[docs]</a><span class="k">def</span> <span class="nf">significant_digits</span><span class="p">(</span>
     <span class="n">value</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">error</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">return_floats</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span><span class="nb">float</span><span class="p">]]:</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -201,7 +205,7 @@
     <span class="k">return</span> <span class="n">res</span></div>
 
 
-<div class="viewcode-block" id="remove_nan_from_files"><a class="viewcode-back" href="../../root/index.html#tfs.tools.remove_nan_from_files">[docs]</a><span class="k">def</span> <span class="nf">remove_nan_from_files</span><span class="p">(</span><span class="n">list_of_files</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">]],</span> <span class="n">replace</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<div class="viewcode-block" id="remove_nan_from_files"><a class="viewcode-back" href="../../modules/index.html#tfs.tools.remove_nan_from_files">[docs]</a><span class="k">def</span> <span class="nf">remove_nan_from_files</span><span class="p">(</span><span class="n">list_of_files</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">]],</span> <span class="n">replace</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Remove NAN-Entries from files in ``list_of_files``.</span>
 
@@ -225,7 +229,7 @@
             <span class="n">write_tfs</span><span class="p">(</span><span class="n">filepath</span><span class="p">,</span> <span class="n">tfs_data_frame</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="remove_header_comments_from_files"><a class="viewcode-back" href="../../root/index.html#tfs.tools.remove_header_comments_from_files">[docs]</a><span class="k">def</span> <span class="nf">remove_header_comments_from_files</span><span class="p">(</span><span class="n">list_of_files</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<div class="viewcode-block" id="remove_header_comments_from_files"><a class="viewcode-back" href="../../modules/index.html#tfs.tools.remove_header_comments_from_files">[docs]</a><span class="k">def</span> <span class="nf">remove_header_comments_from_files</span><span class="p">(</span><span class="n">list_of_files</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Check the files in the provided list for invalid headers (no type defined) and removes those</span>
 <span class="sd">    inplace when found.</span>

@@ -13,6 +13,7 @@
   
   <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/css/custom.css" type="text/css" />
 
   
   
@@ -49,9 +50,12 @@
           
 
           
-            <a href="../../index.html" class="icon icon-home" alt="Documentation Home"> tfs-pandas
+            <a href="../../index.html">
           
 
+          
+            
+            <img src="../../_static/omc_logo.svg" class="logo" alt="Logo"/>
           
           </a>
 
@@ -85,7 +89,12 @@
             
             
               <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../root/index.html">TFS-Pandas Modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules/index.html">TFS-Pandas Modules</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#collection">Collection</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#handler">Handler</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#tools">Tools</a></li>
+</ul>
+</li>
 </ul>
 
             
@@ -155,9 +164,6 @@
 <span class="sd">-------------------</span>
 
 <span class="sd">Basic tfs files IO functionality.</span>
-
-<span class="sd">:module: handler</span>
-
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">import</span> <span class="nn">logging</span>
 <span class="kn">import</span> <span class="nn">pathlib</span>
@@ -189,7 +195,7 @@
 <span class="n">MIN_COLUMN_WIDTH</span> <span class="o">=</span> <span class="mi">10</span>
 
 
-<div class="viewcode-block" id="TfsDataFrame"><a class="viewcode-back" href="../../root/index.html#tfs.handler.TfsDataFrame">[docs]</a><span class="k">class</span> <span class="nc">TfsDataFrame</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
+<div class="viewcode-block" id="TfsDataFrame"><a class="viewcode-back" href="../../modules/index.html#tfs.handler.TfsDataFrame">[docs]</a><span class="k">class</span> <span class="nc">TfsDataFrame</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Class to hold the information of the built extended `pandas` DataFrame, together with a way of</span>
 <span class="sd">    getting the headers of the TFS file. As the file headers are stored in a dictionary upon read,</span>
@@ -247,7 +253,7 @@
         <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">s</span><span class="si">}{</span><span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span></div>
 
 
-<div class="viewcode-block" id="read_tfs"><a class="viewcode-back" href="../../root/index.html#tfs.handler.read_tfs">[docs]</a><span class="k">def</span> <span class="nf">read_tfs</span><span class="p">(</span><span class="n">tfs_file_path</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span> <span class="n">index</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TfsDataFrame</span><span class="p">:</span>
+<div class="viewcode-block" id="read_tfs"><a class="viewcode-back" href="../../modules/index.html#tfs.handler.read_tfs">[docs]</a><span class="k">def</span> <span class="nf">read_tfs</span><span class="p">(</span><span class="n">tfs_file_path</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span> <span class="n">index</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TfsDataFrame</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Parses the TFS table present in **tfs_file_path** and returns a customized version of a Pandas</span>
 <span class="sd">    DataFrame (a TfsDataFrame).</span>
@@ -309,7 +315,7 @@
     <span class="k">return</span> <span class="n">data_frame</span></div>
 
 
-<div class="viewcode-block" id="write_tfs"><a class="viewcode-back" href="../../root/index.html#tfs.handler.write_tfs">[docs]</a><span class="k">def</span> <span class="nf">write_tfs</span><span class="p">(</span>
+<div class="viewcode-block" id="write_tfs"><a class="viewcode-back" href="../../modules/index.html#tfs.handler.write_tfs">[docs]</a><span class="k">def</span> <span class="nf">write_tfs</span><span class="p">(</span>
     <span class="n">tfs_file_path</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span>
     <span class="n">data_frame</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">TfsDataFrame</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">],</span>
     <span class="n">headers_dict</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -584,7 +590,7 @@
     <span class="p">)</span>
 
 
-<div class="viewcode-block" id="TfsFormatError"><a class="viewcode-back" href="../../root/index.html#tfs.handler.TfsFormatError">[docs]</a><span class="k">class</span> <span class="nc">TfsFormatError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+<div class="viewcode-block" id="TfsFormatError"><a class="viewcode-back" href="../../modules/index.html#tfs.handler.TfsFormatError">[docs]</a><span class="k">class</span> <span class="nc">TfsFormatError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Raised when a wrong format is detected in the TFS file.&quot;&quot;&quot;</span>
 
     <span class="k">pass</span></div>

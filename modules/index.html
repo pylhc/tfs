@@ -13,6 +13,7 @@
   
   <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/css/custom.css" type="text/css" />
 
   
   
@@ -36,7 +37,7 @@
     
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="prev" title="Welcome to tfs-pandas documentation!" href="../index.html" /> 
+    <link rel="prev" title="Welcome to tfs-pandas’ documentation!" href="../index.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -50,9 +51,12 @@
           
 
           
-            <a href="../index.html" class="icon icon-home" alt="Documentation Home"> tfs-pandas
+            <a href="../index.html">
           
 
+          
+            
+            <img src="../_static/omc_logo.svg" class="logo" alt="Logo"/>
           
           </a>
 
@@ -144,7 +148,7 @@
       <li class="wy-breadcrumbs-aside">
         
             
-            <a href="../_sources/root/index.rst.txt" rel="nofollow"> View page source</a>
+            <a href="../_sources/modules/index.rst.txt" rel="nofollow"> View page source</a>
           
         
       </li>
@@ -162,14 +166,6 @@
 <div class="section" id="collection">
 <h2>Collection<a class="headerlink" href="#collection" title="Permalink to this headline">¶</a></h2>
 <p>Advanced tfs reading and writing functionality.</p>
-<dl class="field-list simple">
-<dt class="field-odd">author</dt>
-<dd class="field-odd"><p>Jaime</p>
-</dd>
-<dt class="field-even">module</dt>
-<dd class="field-even"><p>collection</p>
-</dd>
-</dl>
 <dl class="py class">
 <dt id="tfs.collection.Tfs">
 <em class="property">class </em><code class="sig-prename descclassname">tfs.collection.</code><code class="sig-name descname">Tfs</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tfs/collection.html#Tfs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tfs.collection.Tfs" title="Permalink to this definition">¶</a></dt>
@@ -182,7 +178,7 @@ methods, together with the plane if <code class="docutils literal notranslate"><
 <dt id="tfs.collection.TfsCollection">
 <em class="property">class </em><code class="sig-prename descclassname">tfs.collection.</code><code class="sig-name descname">TfsCollection</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">directory</span><span class="p">:</span> <span class="n">pathlib.Path</span></em>, <em class="sig-param"><span class="n">allow_write</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tfs/collection.html#TfsCollection"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tfs.collection.TfsCollection" title="Permalink to this definition">¶</a></dt>
 <dd><p>Abstract class to lazily load and write TFS files.</p>
-<p>classes inheriting from this abstract class will be able to define TFS files
+<p>Classes inheriting from this abstract class will be able to define TFS files
 as readable or writable, and read or write them just as attribute access or
 assignments. All attributes will be read and written as <cite>TfsDataFrames</cite>.</p>
 <p class="rubric">Example</p>
@@ -273,11 +269,6 @@ parameter. It must return a tuple (filename, tfs_data_frame).</p>
 <span class="target" id="module-tfs.handler"></span><div class="section" id="handler">
 <h2>Handler<a class="headerlink" href="#handler" title="Permalink to this headline">¶</a></h2>
 <p>Basic tfs files IO functionality.</p>
-<dl class="field-list simple">
-<dt class="field-odd">module</dt>
-<dd class="field-odd"><p>handler</p>
-</dd>
-</dl>
 <dl class="py class">
 <dt id="tfs.handler.TfsDataFrame">
 <em class="property">class </em><code class="sig-prename descclassname">tfs.handler.</code><code class="sig-name descname">TfsDataFrame</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tfs/handler.html#TfsDataFrame"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tfs.handler.TfsDataFrame" title="Permalink to this definition">¶</a></dt>
@@ -340,14 +331,6 @@ saves the index of the data_frame to a column named by the provided value.</p></
 <span class="target" id="module-tfs.tools"></span><div class="section" id="tools">
 <h2>Tools<a class="headerlink" href="#tools" title="Permalink to this headline">¶</a></h2>
 <p>Additional functions to modify tfs files.</p>
-<dl class="field-list simple">
-<dt class="field-odd">author</dt>
-<dd class="field-odd"><p>Jaime</p>
-</dd>
-<dt class="field-even">module</dt>
-<dd class="field-even"><p>tools</p>
-</dd>
-</dl>
 <dl class="py function">
 <dt id="tfs.tools.remove_header_comments_from_files">
 <code class="sig-prename descclassname">tfs.tools.</code><code class="sig-name descname">remove_header_comments_from_files</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">list_of_files</span><span class="p">:</span> <span class="n">List<span class="p">[</span>Union<span class="p">[</span>str<span class="p">, </span>pathlib.Path<span class="p">]</span><span class="p">]</span></span></em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/tfs/tools.html#remove_header_comments_from_files"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tfs.tools.remove_header_comments_from_files" title="Permalink to this definition">¶</a></dt>
@@ -409,7 +392,7 @@ strings. Defaults to <code class="docutils literal notranslate"><span class="pre
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
       
-        <a href="../index.html" class="btn btn-neutral float-left" title="Welcome to tfs-pandas documentation!" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="../index.html" class="btn btn-neutral float-left" title="Welcome to tfs-pandas’ documentation!" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
