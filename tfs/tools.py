@@ -3,11 +3,6 @@ Tools
 -----------------
 
 Additional functions to modify tfs files.
-
-
-:author: Jaime
-:module: tools
-
 """
 import logging
 from pathlib import Path
