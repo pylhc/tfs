@@ -23,8 +23,8 @@ TYPES = "$"
 COMMENTS = "#"
 INDEX_ID = "INDEX&&&"
 ID_TO_TYPE = {  # used when reading files
-    "%s": np.str,
-    "%bpm_s": np.str,
+    "%s": str,  # np.str is a deprecated alias to str
+    "%bpm_s": str,  # np.str is a deprecated alias to str
     "%le": np.float64,
     "%f": np.float64,
     "%hd": np.int64,
