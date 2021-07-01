@@ -1,4 +1,13 @@
 # TFS-Pandas Changelog
+
+## Version 2.0.3
+
+- Fixed:
+    - Took care of a numpy deprecation warning when using `np.str`, which should not appear anymore for users.
+
+- Changes:
+    - Prior to version `2.0.3`, reading and writing would raise `TfsFormatError` for `TfsDataFrames` with non-unique indices. This check is now disabled by default and left as an option to the user in said functions. Activating the check is as simple as setting the parameter `check_unique_indices` to `True`.
+
 ## Version 2.0.2
 - Fixed:
     - Proper error on non-string columns
