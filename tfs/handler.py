@@ -92,7 +92,7 @@ class TfsDataFrame(pd.DataFrame):
         return f"{s}{super().__repr__()}"
 
 
-def read_tfs(tfs_file_path: Union[pathlib.Path, str], index: str = None) -> TfsDataFrame:
+def fast_read(tfs_file_path: Union[pathlib.Path, str], index: str = None) -> TfsDataFrame:
     """
     Parses the TFS table present in **tfs_file_path** and returns a customized version of a Pandas
     DataFrame (a TfsDataFrame).
@@ -164,7 +164,7 @@ def read_tfs(tfs_file_path: Union[pathlib.Path, str], index: str = None) -> TfsD
     return tfs_data_frame
 
 
-def fast_read(tfs_file_path: Union[pathlib.Path, str], index: str = None) -> TfsDataFrame:
+def read_tfs(tfs_file_path: Union[pathlib.Path, str], index: str = None) -> TfsDataFrame:
     """
     Parses the TFS table present in **tfs_file_path** and returns a customized version of a Pandas
     DataFrame (a TfsDataFrame).
