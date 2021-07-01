@@ -92,7 +92,11 @@ class TfsDataFrame(pd.DataFrame):
         return f"{s}{super().__repr__()}"
 
 
-def read_tfs(tfs_file_path: Union[pathlib.Path, str], index: str = None) -> TfsDataFrame:
+def read_tfs(
+    tfs_file_path: Union[pathlib.Path, str],
+    index: str = None,
+    check_unique_indices: bool = False
+) -> TfsDataFrame:
     """
     Parses the TFS table present in **tfs_file_path** and returns a customized version of a Pandas
     DataFrame (a TfsDataFrame).
@@ -102,6 +106,8 @@ def read_tfs(tfs_file_path: Union[pathlib.Path, str], index: str = None) -> TfsD
             a string, in which case it will be cast to a PosixPath object.
         index (str): Name of the column to set as index. If not given, looks in **tfs_file_path**
             for a column starting with `INDEX&&&`.
+        check_unique_indices (bool): Flag to check that the read file has unique indices. If set to ``True``
+            and indices are not unique, a ``TfsFormatError`` will be raised. Defaults to False.
 
     Returns:
         A TfsDataFrame object.
@@ -150,7 +156,7 @@ def read_tfs(tfs_file_path: Union[pathlib.Path, str], index: str = None) -> TfsD
                 index_name = None  # to remove it completely (Pandas makes a difference)
             data_frame = data_frame.rename_axis(index_name)
 
-    _validate(data_frame, f"from file {tfs_file_path.absolute()}")
+    _validate(data_frame, f"from file {tfs_file_path.absolute()}", check_unique_indices)
     return data_frame
 
 
@@ -161,6 +167,7 @@ def write_tfs(
     save_index: Union[str, bool] = False,
     colwidth: int = DEFAULT_COLUMN_WIDTH,
     headerswidth: int = DEFAULT_COLUMN_WIDTH,
+    check_unique_indices: bool = False,
 ) -> None:
     """
     Writes the DataFrame into **tfs_file_path** with the `headers_dict` as headers dictionary. If
@@ -178,10 +185,13 @@ def write_tfs(
             saves the index of the data_frame to a column named by the provided value.
         colwidth (int): Column width, can not be smaller than `MIN_COLUMN_WIDTH`.
         headerswidth (int): Used to format the header width for both keys and values.
+        check_unique_indices (bool): Flag to check that the dataframe to be written has unique indices. If
+            set to ``True`` and indices are not unique, a ``TfsFormatError`` will be raised. Defaults to
+            ``False``.
     """
     left_align_first_column = False
     tfs_file_path = pathlib.Path(tfs_file_path)
-    _validate(data_frame, f"to be written in {tfs_file_path.absolute()}")
+    _validate(data_frame, f"to be written in {tfs_file_path.absolute()}", check_unique_indices)
 
     if headers_dict is None:  # tries to get headers from TfsDataFrame
         try:
@@ -435,13 +445,17 @@ class TfsFormatError(Exception):
     pass
 
 
-def _validate(data_frame: Union[TfsDataFrame, pd.DataFrame], info_str: str = "") -> None:
+def _validate(
+    data_frame: Union[TfsDataFrame, pd.DataFrame], info_str: str = "", check_unique_indices: bool = False
+) -> None:
     """
     Check if Dataframe contains finite values only and both indices and columns are unique.
 
     Args:
         data_frame (Union[TfsDataFrame, pd.DataFrame]): the dataframe to check on.
         info_str (str): additional information to includ in logging statements.
+        check_unique_indices (bool): Flag to check that the dataframe has unique indices. If set to
+            ``True`` and indices are not unique, a ``TfsFormatError`` will be raised. Defaults to ``False``.
     """
 
     def is_not_finite(x):
@@ -461,7 +475,7 @@ def _validate(data_frame: Union[TfsDataFrame, pd.DataFrame], info_str: str = "")
             f"{boolean_df.index[boolean_df.any(axis='columns')].tolist()}"
         )
 
-    if len(set(data_frame.index)) != len(data_frame.index):
+    if check_unique_indices and len(set(data_frame.index)) != len(data_frame.index):
         LOGGER.error(f"Non-unique indices found, dataframe {info_str} is invalid")
         raise TfsFormatError("Indices are not Unique.")
 
