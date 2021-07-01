@@ -190,7 +190,7 @@ class TestFailures:
     def test_fail_on_non_unique_index(self, caplog):
         df = TfsDataFrame(index=["A", "B", "A"])
         with pytest.raises(TfsFormatError):
-            write_tfs("", df)
+            write_tfs("", df, check_unique_indices=True)
 
         for record in caplog.records:
             assert record.levelname == "ERROR"
