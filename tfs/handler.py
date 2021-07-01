@@ -92,7 +92,7 @@ class TfsDataFrame(pd.DataFrame):
         return f"{s}{super().__repr__()}"
 
 
-def fast_read(tfs_file_path: Union[pathlib.Path, str], index: str = None) -> TfsDataFrame:
+def read_tfs(tfs_file_path: Union[pathlib.Path, str], index: str = None) -> TfsDataFrame:
     """
     Parses the TFS table present in **tfs_file_path** and returns a customized version of a Pandas
     DataFrame (a TfsDataFrame).
@@ -149,6 +149,10 @@ def fast_read(tfs_file_path: Union[pathlib.Path, str], index: str = None) -> Tfs
         names=column_names  # column names we have determined, avoids using first read row for columns
     )
 
+    LOGGER.debug("Converting to TfsDataFrame")
+    tfs_data_frame = TfsDataFrame(data_frame, headers=headers)
+    _assign_column_types(tfs_data_frame, column_names, column_types)  # pd parsing might infer floats to ints
+
     if index:
         LOGGER.debug(f"Setting '{index}' column as index")
         tfs_data_frame = tfs_data_frame.set_index(index)
@@ -156,14 +160,11 @@ def fast_read(tfs_file_path: Union[pathlib.Path, str], index: str = None) -> Tfs
         LOGGER.debug("Attempting to find index identifier in columns")
         _find_and_set_index(tfs_data_frame)
 
-    LOGGER.debug("Converting to TfsDataFrame")
-    tfs_data_frame = TfsDataFrame(data_frame, headers=headers)
-    _assign_column_types(tfs_data_frame, column_names, column_types)  # pd parsing might infer floats to ints
     _validate(tfs_data_frame, f"from file {tfs_file_path.absolute()}")
     return tfs_data_frame
 
 
-def read_tfs(tfs_file_path: Union[pathlib.Path, str], index: str = None) -> TfsDataFrame:
+def fast_read(tfs_file_path: Union[pathlib.Path, str], index: str = None) -> TfsDataFrame:
     """
     Parses the TFS table present in **tfs_file_path** and returns a customized version of a Pandas
     DataFrame (a TfsDataFrame).
