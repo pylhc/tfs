@@ -447,10 +447,7 @@ class TfsFormatError(Exception):
     pass
 
 
-def _validate(
-    data_frame: Union[TfsDataFrame, pd.DataFrame],
-    info_str: str = "",
-) -> None:
+def _validate(data_frame: Union[TfsDataFrame, pd.DataFrame], info_str: str = "") -> None:
     """
     Check if Dataframe contains finite values only, strings as column names and no empty headers
     or column names.
