@@ -178,19 +178,19 @@ class TestFailures:
         with pytest.raises(KeyError):
             _ = test_file["Not_HERE"]
 
-    def test_fail_on_non_unique_columns(self, caplog):
+    def test_raising_on_non_unique_columns(self, caplog):
         df = TfsDataFrame(columns=["A", "B", "A"])
         with pytest.raises(TfsFormatError):
-            write_tfs("", df)
+            df.check_unique_columns()
 
         for record in caplog.records:
             assert record.levelname == "ERROR"
-        assert "Non-unique column names found" in caplog.text
+        assert "Non-unique columns found" in caplog.text
 
-    def test_fail_on_non_unique_index(self, caplog):
+    def test_raising_on_non_unique_index(self, caplog):
         df = TfsDataFrame(index=["A", "B", "A"])
         with pytest.raises(TfsFormatError):
-            write_tfs("", df, check_unique_indices=True)
+            df.check_unique_indices()
 
         for record in caplog.records:
             assert record.levelname == "ERROR"
