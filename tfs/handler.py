@@ -93,9 +93,7 @@ class TfsDataFrame(pd.DataFrame):
 
 
 def read_tfs(
-    tfs_file_path: Union[pathlib.Path, str],
-    index: str = None,
-    check_unique_indices: bool = False
+    tfs_file_path: Union[pathlib.Path, str], index: str = None, check_unique_indices: bool = False
 ) -> TfsDataFrame:
     """
     Parses the TFS table present in **tfs_file_path** and returns a customized version of a Pandas
@@ -446,7 +444,9 @@ class TfsFormatError(Exception):
 
 
 def _validate(
-    data_frame: Union[TfsDataFrame, pd.DataFrame], info_str: str = "", check_unique_indices: bool = False
+    data_frame: Union[TfsDataFrame, pd.DataFrame],
+    info_str: str = "",
+    check_unique_indices: bool = False,
 ) -> None:
     """
     Check if Dataframe contains finite values only and both indices and columns are unique.
