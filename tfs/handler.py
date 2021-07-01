@@ -91,17 +91,29 @@ class TfsDataFrame(pd.DataFrame):
             s += "\n"
         return f"{s}{super().__repr__()}"
 
-    def check_unique_indices(self):
-        """Checks that the object has unique indices, raises a ``TfsFormatError`` if it does not."""
-        if self.index.has_duplicates:
+    def check_unique(self, check: str = "both") -> None:
+        """
+        Checks that indices, columns or both contain unique values, raises TfsFormatError if not.
+        By default, checks both.
+
+        Args:
+            check (str): which elements to check, either 'columns', 'indices' or 'both'. The parameter
+                is not case sensitive, and defauts to 'both'.
+
+        Raises:
+            Raises a ``TfsFormatError`` if the check find non-unique elements.
+        """
+        if check.lower() not in ("indices", "columns", "both"):
+            raise KeyError("The 'check' parameter should be one of 'indices', 'columns' or 'both'")
+        if check.lower() == "indices" and self.index.has_duplicates:
             LOGGER.error("Non-unique indices found")
             raise TfsFormatError("Indices are not unique.")
-
-    def check_unique_columns(self):
-        """Checks that the object has unique columns, raises a ``TfsFormatError`` if it does not."""
-        if self.columns.has_duplicates:
+        if check.lower() == "columns" and self.columns.has_duplicates:
             LOGGER.error("Non-unique columns found")
-            raise TfsFormatError("Columns are not unique")
+            raise TfsFormatError("Columns are not unique.")
+        if check.lower() == "both" and (self.index.has_duplicates or self.columns.has_duplicates):
+            LOGGER.error("Non-unique indices or columns found")
+            raise TfsFormatError("Indices or columns are not unique.")
 
 
 def read_tfs(tfs_file_path: Union[pathlib.Path, str], index: str = None) -> TfsDataFrame:

@@ -181,7 +181,7 @@ class TestFailures:
     def test_raising_on_non_unique_columns(self, caplog):
         df = TfsDataFrame(columns=["A", "B", "A"])
         with pytest.raises(TfsFormatError):
-            df.check_unique_columns()
+            df.check_unique(check="columns")
 
         for record in caplog.records:
             assert record.levelname == "ERROR"
@@ -190,11 +190,20 @@ class TestFailures:
     def test_raising_on_non_unique_index(self, caplog):
         df = TfsDataFrame(index=["A", "B", "A"])
         with pytest.raises(TfsFormatError):
-            df.check_unique_indices()
+            df.check_unique(check="indices")
 
         for record in caplog.records:
             assert record.levelname == "ERROR"
         assert "Non-unique indices found" in caplog.text
+
+    def test_raising_on_non_unique_both(self, caplog):
+        df = TfsDataFrame(index=["A", "B", "A"], columns=["A", "B", "A"])
+        with pytest.raises(TfsFormatError):
+            df.check_unique()  # defaults to both
+
+        for record in caplog.records:
+            assert record.levelname == "ERROR"
+        assert "Non-unique indices or columns found" in caplog.text
 
     def test_fail_on_wrong_column_type(self, caplog):
         df = TfsDataFrame(columns=range(5))

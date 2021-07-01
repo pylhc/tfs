@@ -6,7 +6,7 @@
     - Took care of a numpy deprecation warning when using `np.str`, which should not appear anymore for users.
 
 - Changes:
-    - Prior to version `2.0.3`, reading and writing would raise a `TfsFormatError` in case of non-unique indices or columns. These checks have been removed and are left to the user through new `TfsDataFrame` methods: `check_unique_indices` and `check_unique_columns`.
+    - Prior to version `2.0.3`, reading and writing would raise a `TfsFormatError` in case of non-unique indices or columns. These checks have been removed and are left to the user through a new `TfsDataFrame` method, `check_unique`.
 
 ## Version 2.0.2
 - Fixed:
