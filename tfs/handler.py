@@ -139,22 +139,26 @@ def fast_read(tfs_file_path: Union[pathlib.Path, str], index: str = None) -> Tfs
         LOGGER.error(f"No column types in file {tfs_file_path.absolute()}, aborting")
         raise TfsFormatError("Column types have not been set.")
 
-    # DO NOT TRY to give comments=[HEADER, NAMES, TYPES, COMMENTS] here!! If one of these symbols
-    # is encountered in the data lines, parsing dies and you're in for hours of debugging.
-    # Instead, we have counted the non-data lines and will skip them
-    data = np.loadtxt(tfs_file_path, skiprows=non_data_lines-1, dtype=str)  # added 1 at first data line
-    data = data if data.size != 0 else None  # makes a difference to pandas
-    tfs_data_frame = TfsDataFrame(data=data, columns=column_names, headers=headers)
-    _strip_quotes_in_string_columns(tfs_data_frame)
-    _assign_column_types(tfs_data_frame, column_names, column_types)
+    LOGGER.debug("Parsing data part of the file")
+    data_frame = pd.read_csv(
+        tfs_file_path,
+        skiprows=non_data_lines-1,  # because we incremented for the first data line in loop above
+        delim_whitespace=True,  # understands ' ' is our delimiter
+        skipinitialspace=True,  # understands ' ' and '     ' are both valid delimiters
+        quotechar='"',  # elements surrounded by " are one entry -> correct parsing of strings with spaces
+        names=column_names  # column names we have determined, avoids using first read row for columns
+    )
 
-    if index:  # Use given column as index
+    if index:
         LOGGER.debug(f"Setting '{index}' column as index")
         tfs_data_frame = tfs_data_frame.set_index(index)
-    else:  # Try to find Index automatically
+    else:
         LOGGER.debug("Attempting to find index identifier in columns")
         _find_and_set_index(tfs_data_frame)
 
+    LOGGER.debug("Converting to TfsDataFrame")
+    tfs_data_frame = TfsDataFrame(data_frame, headers=headers)
+    _assign_column_types(tfs_data_frame, column_names, column_types)  # pd parsing might infer floats to ints
     _validate(tfs_data_frame, f"from file {tfs_file_path.absolute()}")
     return tfs_data_frame
 
