@@ -181,29 +181,29 @@ class TestFailures:
     def test_raising_on_non_unique_columns(self, caplog):
         df = TfsDataFrame(columns=["A", "B", "A"])
         with pytest.raises(TfsFormatError):
-            df.check_unique(check="columns")
+            write_tfs("", df, non_unique_behavior="raise")
 
         for record in caplog.records:
-            assert record.levelname == "ERROR"
-        assert "Non-unique columns found" in caplog.text
+            assert record.levelname == "WARNING"
+        assert "Non-unique column names found" in caplog.text
 
     def test_raising_on_non_unique_index(self, caplog):
         df = TfsDataFrame(index=["A", "B", "A"])
         with pytest.raises(TfsFormatError):
-            df.check_unique(check="indices")
+            write_tfs("", df, non_unique_behavior="raise")
 
         for record in caplog.records:
-            assert record.levelname == "ERROR"
+            assert record.levelname == "WARNING"
         assert "Non-unique indices found" in caplog.text
 
     def test_raising_on_non_unique_both(self, caplog):
         df = TfsDataFrame(index=["A", "B", "A"], columns=["A", "B", "A"])
         with pytest.raises(TfsFormatError):
-            df.check_unique()  # defaults to both
+            write_tfs("", df, non_unique_behavior="raise")
 
         for record in caplog.records:
-            assert record.levelname == "ERROR"
-        assert "Non-unique indices or columns found" in caplog.text
+            assert record.levelname == "WARNING"
+        assert "Non-unique indices found" in caplog.text  # first checked and raised
 
     def test_fail_on_wrong_column_type(self, caplog):
         df = TfsDataFrame(columns=range(5))
@@ -300,6 +300,11 @@ class TestFailures:
         with pytest.raises(TfsFormatError):
             _ = tfs.handler._id_to_type(typoed_str_id)
 
+    def test_validate_raises_on_wrong_unique_behavior(self, caplog):
+        df = TfsDataFrame(index=["A", "B", "A"], columns=["A", "B", "A"])
+        with pytest.raises(KeyError):
+            tfs.handler._validate(df, "", non_unique_behavior="invalid")
+
 
 def test_id_to_type_handles_madx_string_identifier():
     madx_str_id = "%20s"
@@ -322,6 +327,31 @@ class TestWarnings:
         for record in caplog.records:
             assert record.levelname == "WARNING"
         assert "An empty dataframe was provided, no types were infered" in caplog.text
+
+    def test_warning_on_non_unique_columns(self, tmp_path, caplog):
+        df = TfsDataFrame(columns=["A", "B", "A"])
+        write_tfs(tmp_path / "temporary.tfs", df)
+
+        for record in caplog.records:
+            assert record.levelname == "WARNING"
+        assert "Non-unique column names found" in caplog.text
+
+    def test_warning_on_non_unique_index(self, tmp_path, caplog):
+        df = TfsDataFrame(index=["A", "B", "A"])
+        write_tfs(tmp_path / "temporary.tfs", df)
+
+        for record in caplog.records:
+            assert record.levelname == "WARNING"
+        assert "Non-unique indices found" in caplog.text
+
+    def test_warning_on_non_unique_both(self, tmp_path, caplog):
+        df = TfsDataFrame(index=["A", "B", "A"], columns=["A", "B", "A"])
+        write_tfs(tmp_path / "temporary.tfs", df)
+
+        for record in caplog.records:
+            assert record.levelname == "WARNING"
+        assert "Non-unique column names found" in caplog.text
+        assert "Non-unique indices found" in caplog.text
 
 
 class TestPrinting:

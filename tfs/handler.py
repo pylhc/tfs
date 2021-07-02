@@ -91,32 +91,12 @@ class TfsDataFrame(pd.DataFrame):
             s += "\n"
         return f"{s}{super().__repr__()}"
 
-    def check_unique(self, check: str = "both") -> None:
-        """
-        Checks that indices, columns or both contain unique values, raises TfsFormatError if not.
-        By default, checks both.
 
-        Args:
-            check (str): which elements to check, either 'columns', 'indices' or 'both'. The parameter
-                is not case sensitive, and defauts to 'both'.
-
-        Raises:
-            Raises a ``TfsFormatError`` if the check find non-unique elements.
-        """
-        if check.lower() not in ("indices", "columns", "both"):
-            raise KeyError("The 'check' parameter should be one of 'indices', 'columns' or 'both'")
-        if check.lower() == "indices" and self.index.has_duplicates:
-            LOGGER.error("Non-unique indices found")
-            raise TfsFormatError("Indices are not unique.")
-        if check.lower() == "columns" and self.columns.has_duplicates:
-            LOGGER.error("Non-unique columns found")
-            raise TfsFormatError("Columns are not unique.")
-        if check.lower() == "both" and (self.index.has_duplicates or self.columns.has_duplicates):
-            LOGGER.error("Non-unique indices or columns found")
-            raise TfsFormatError("Indices or columns are not unique.")
-
-
-def read_tfs(tfs_file_path: Union[pathlib.Path, str], index: str = None) -> TfsDataFrame:
+def read_tfs(
+    tfs_file_path: Union[pathlib.Path, str],
+    index: str = None,
+    non_unique_behavior: str = "warn",
+) -> TfsDataFrame:
     """
     Parses the TFS table present in **tfs_file_path** and returns a customized version of a Pandas
     DataFrame (a TfsDataFrame).
@@ -126,7 +106,9 @@ def read_tfs(tfs_file_path: Union[pathlib.Path, str], index: str = None) -> TfsD
             a string, in which case it will be cast to a PosixPath object.
         index (str): Name of the column to set as index. If not given, looks in **tfs_file_path**
             for a column starting with `INDEX&&&`.
-
+        non_unique_behavior (str): behavior to adopt if non-unique indices or columns are found in the
+            dataframe. Accepts **warn** and **raise** as values, case-insensitively, which dictates
+            to respectively issue a warning or raise an error if non-unique elements are found.
     Returns:
         A TfsDataFrame object.
     """
@@ -174,7 +156,7 @@ def read_tfs(tfs_file_path: Union[pathlib.Path, str], index: str = None) -> TfsD
                 index_name = None  # to remove it completely (Pandas makes a difference)
             data_frame = data_frame.rename_axis(index_name)
 
-    _validate(data_frame, f"from file {tfs_file_path.absolute()}")
+    _validate(data_frame, f"from file {tfs_file_path.absolute()}", non_unique_behavior)
     return data_frame
 
 
@@ -185,6 +167,7 @@ def write_tfs(
     save_index: Union[str, bool] = False,
     colwidth: int = DEFAULT_COLUMN_WIDTH,
     headerswidth: int = DEFAULT_COLUMN_WIDTH,
+    non_unique_behavior: str = "warn",
 ) -> None:
     """
     Writes the DataFrame into **tfs_file_path** with the `headers_dict` as headers dictionary. If
@@ -202,10 +185,13 @@ def write_tfs(
             saves the index of the data_frame to a column named by the provided value.
         colwidth (int): Column width, can not be smaller than `MIN_COLUMN_WIDTH`.
         headerswidth (int): Used to format the header width for both keys and values.
+        non_unique_behavior (str): behavior to adopt if non-unique indices or columns are found in the
+            dataframe. Accepts **warn** and **raise** as values, case-insensitively, which dictates
+            to respectively issue a warning or raise an error if non-unique elements are found.
     """
     left_align_first_column = False
     tfs_file_path = pathlib.Path(tfs_file_path)
-    _validate(data_frame, f"to be written in {tfs_file_path.absolute()}")
+    _validate(data_frame, f"to be written in {tfs_file_path.absolute()}", non_unique_behavior)
 
     if headers_dict is None:  # tries to get headers from TfsDataFrame
         try:
@@ -459,7 +445,11 @@ class TfsFormatError(Exception):
     pass
 
 
-def _validate(data_frame: Union[TfsDataFrame, pd.DataFrame], info_str: str = "") -> None:
+def _validate(
+    data_frame: Union[TfsDataFrame, pd.DataFrame],
+    info_str: str = "",
+    non_unique_behavior: str = "warn",
+) -> None:
     """
     Check if Dataframe contains finite values only, strings as column names and no empty headers
     or column names.
@@ -467,7 +457,12 @@ def _validate(data_frame: Union[TfsDataFrame, pd.DataFrame], info_str: str = "")
     Args:
         data_frame (Union[TfsDataFrame, pd.DataFrame]): the dataframe to check on.
         info_str (str): additional information to includ in logging statements.
+        non_unique_behavior (str): behavior to adopt if non-unique indices or columns are found in the
+            dataframe. Accepts **warn** and **raise** as values, case-insensitively, which dictates
+            to respectively issue a warning or raise an error if non-unique elements are found.
     """
+    if non_unique_behavior.lower() not in ("warn", "raise"):
+        raise KeyError("Invalid value for parameter 'validate_unique'")
 
     def is_not_finite(x):
         try:
@@ -485,6 +480,16 @@ def _validate(data_frame: Union[TfsDataFrame, pd.DataFrame], info_str: str = "")
             f"DataFrame {info_str} contains non-physical values at Index: "
             f"{boolean_df.index[boolean_df.any(axis='columns')].tolist()}"
         )
+
+    if data_frame.index.has_duplicates:
+        LOGGER.warning("Non-unique indices found.")
+        if non_unique_behavior.lower() == "raise":
+            raise TfsFormatError("The dataframe contains non-unique indices")
+
+    if data_frame.columns.has_duplicates:
+        LOGGER.warning("Non-unique column names found.")
+        if non_unique_behavior.lower() == "raise":
+            raise TfsFormatError("The dataframe contains non-unique columns.")
 
     if any(not isinstance(c, str) for c in data_frame.columns):
         LOGGER.error(f"Some column-names are not of string-type, dataframe {info_str} is invalid.")
