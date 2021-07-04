@@ -158,7 +158,7 @@ def fast_read(tfs_file_path: Union[pathlib.Path, str], index: str = None) -> Tfs
         tfs_data_frame = tfs_data_frame.set_index(index)
     else:
         LOGGER.debug("Attempting to find index identifier in columns")
-        _find_and_set_index(tfs_data_frame)
+        tfs_data_frame = _find_and_set_index(tfs_data_frame)
 
     _validate(tfs_data_frame, f"from file {tfs_file_path.absolute()}")
     return tfs_data_frame
@@ -396,15 +396,25 @@ def _strip_quotes_in_string_columns(data_frame: TfsDataFrame) -> None:
         data_frame[col] = data_frame[col].str.strip('"').str.strip("'")
 
 
-def _find_and_set_index(data_frame: TfsDataFrame) -> None:
-    """Looks for column with name starting with the index identifier, and sets it as index if found."""
+def _find_and_set_index(data_frame: TfsDataFrame) -> TfsDataFrame:
+    """
+    Looks for a column with a name starting with the index identifier, and sets it as index if found.
+    The index identifier will be stripped from the column name first.
+
+    Args:
+        data_frame (TfsDataFrame): the TfsDataFrame to look for an index in.
+
+    Returns:
+        The TfsDataFrame after operation, whether an index was found or not.
+    """
     index_column = [colname for colname in data_frame.columns if colname.startswith(INDEX_ID)]
     if index_column:
         data_frame = data_frame.set_index(index_column)
         index_name = index_column[0].replace(INDEX_ID, "")
         if index_name == "":
             index_name = None  # to remove it completely (Pandas makes a difference)
-        data_frame = data_frame.rename_axis(index_name)
+        data_frame = data_frame.rename_axis(index=index_name)
+    return data_frame
 
 
 def _create_data_frame(column_names, column_types, rows_list, headers) -> TfsDataFrame:
