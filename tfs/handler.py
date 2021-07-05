@@ -172,9 +172,7 @@ def fast_read(
 
 
 def read_tfs(
-    tfs_file_path: Union[pathlib.Path, str],
-    index: str = None,
-    non_unique_behavior: str = "warn",
+    tfs_file_path: Union[pathlib.Path, str], index: str = None, non_unique_behavior: str = "warn"
 ) -> TfsDataFrame:
     """
     Parses the TFS table present in **tfs_file_path** and returns a customized version of a Pandas
