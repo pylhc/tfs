@@ -229,6 +229,12 @@ def _autoset_pandas_types(
     convert_dtypes() to internally use concat) and then return only a copy of the original
     dataframe. Otherwise, raise the exception given by pandas.
 
+    NOTE: Starting with pandas 1.3.0, this behavior which was a bug has been fixed. This means no
+    ValueError is raised by calling .convert_dtypes() on an empty DataFrame, and from this function
+    no warning is logged. Testing of this behavior is disabled for Python 3.7+ workers, but the
+    function is kept as to not force a new min version requirement on pandas or Python for users.
+    See my comment at https://github.com/pylhc/tfs/pull/83#issuecomment-874208869
+
     Args:
         data_frame (Union[TfsDataFrame, pd.DataFrame]): TfsDataFrame or pandas.DataFrame to
             determine the types of.
