@@ -1,9 +1,18 @@
 # TFS-Pandas Changelog
+
+## Version 2.0.3
+
+- Fixed:
+    - Took care of a numpy deprecation warning when using `np.str`, which should not appear anymore for users.
+
+- Changes:
+    - Prior to version `2.0.3`, reading and writing would raise a `TfsFormatError` in case of non-unique indices or columns. From now on, this behavior is an option in `read_tfs` and `write_tfs`called `non_unique_bahvior` which by default is set to log a warning. If explicitely asked by the user, the failed check will raise a `TfsFormatError`.
+
 ## Version 2.0.2
 - Fixed:
     - Proper error on non-string columns
     - Writing numeric-only mixed type dataframes bug
-    
+
 ## Version 2.0.1
 - Fixed:
     - No longer warns on MAD-X styled string column types (`%[num]s`).
@@ -31,7 +40,7 @@
     - Bug with testing for headers, also in pandas DataFrames
     - Same testing method for all data-frame comparisons
     - Some minor fixes
-    
+
 - Added:
     - Testing of writing of pandas DataFrames
 
@@ -46,7 +55,7 @@
 
  - Removed:
    - `.indx` from class (use `index="NAME"` instead)
-   
+
  - Fixed:
    - Writing of empty dataframes
    - Doc imports
@@ -69,7 +78,7 @@
 ## Version 1.0.1
  - Fixed: 
     - Metaclass-Bug in Collections
-    
+
  - Added: 
     - Additional Unit Tests
     - Versioning
