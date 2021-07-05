@@ -240,14 +240,14 @@ def _autoset_pandas_types(
             determine the types of.
 
     Returns:
-        The dataframe with dtypes infered as much as possible to the pandas dtypes.
+        The dataframe with dtypes inferred as much as possible to the pandas dtypes.
     """
     LOGGER.debug("Attempting conversion of dataframe to pandas dtypes")
     try:
         return data_frame.copy().convert_dtypes(convert_integer=False)  # do not force floats to int
     except ValueError as pd_convert_error:  # If used on empty dataframes (uses concat internally)
         if not data_frame.size and "No objects to concatenate" in pd_convert_error.args[0]:
-            LOGGER.warning("An empty dataframe was provided, no types were infered")
+            LOGGER.warning("An empty dataframe was provided, no types were inferred")
             return data_frame.copy()  # since it's empty anyway, nothing to convert
         else:
             raise pd_convert_error

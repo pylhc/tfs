@@ -325,7 +325,7 @@ class TestWarnings:
 
         for record in caplog.records:
             assert record.levelname == "WARNING"
-        assert "An empty dataframe was provided, no types were infered" in caplog.text
+        assert "An empty dataframe was provided, no types were inferred" in caplog.text
 
     def test_warning_on_non_unique_columns(self, tmp_path, caplog):
         df = TfsDataFrame(columns=["A", "B", "A"])
