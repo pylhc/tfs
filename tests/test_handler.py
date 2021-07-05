@@ -2,6 +2,7 @@ import os
 import pathlib
 import random
 import string
+import sys
 import tempfile
 
 import numpy
@@ -143,27 +144,20 @@ class TestReadWrite:
         assert_dict_equal(df.headers, new.headers, compare_keys=True)
 
     def test_write_int_float_str_columns(self, _test_file: str):
-        """ This test is more of an extension of the test below
-         (this dataframe was not affected by the bug) """
+        """This test is more of an extension of the test below
+        (this dataframe was not affected by the bug)"""
         df = TfsDataFrame(
-            data=[[1, 1., "one"],
-                  [2, 2., "two"],
-                  [3, 3., "three"]],
-            columns=["Int", "Float", "String"]
+            data=[[1, 1.0, "one"], [2, 2.0, "two"], [3, 3.0, "three"]],
+            columns=["Int", "Float", "String"],
         )
         write_tfs(_test_file, df)
         new = read_tfs(_test_file)
         assert_frame_equal(df, new)
 
     def test_write_int_float_columns(self, _test_file: str):
-        """ This test is here because of numeric conversion bug
-        upon writing back in v2.0.1 """
-        df = TfsDataFrame(
-            data=[[1, 1.],
-                  [2, 2.],
-                  [3, 3.]],
-            columns=["Int", "Float"]
-        )
+        """This test is here because of numeric conversion bug
+        upon writing back in v2.0.1"""
+        df = TfsDataFrame(data=[[1, 1.0], [2, 2.0], [3, 3.0]], columns=["Int", "Float"])
         write_tfs(_test_file, df)
         new = read_tfs(_test_file)
         assert_frame_equal(df, new)
@@ -178,23 +172,32 @@ class TestFailures:
         with pytest.raises(KeyError):
             _ = test_file["Not_HERE"]
 
-    def test_fail_on_non_unique_columns(self, caplog):
+    def test_raising_on_non_unique_columns(self, caplog):
         df = TfsDataFrame(columns=["A", "B", "A"])
         with pytest.raises(TfsFormatError):
-            write_tfs("", df)
+            write_tfs("", df, non_unique_behavior="raise")
 
         for record in caplog.records:
-            assert record.levelname == "ERROR"
+            assert record.levelname == "WARNING"
         assert "Non-unique column names found" in caplog.text
 
-    def test_fail_on_non_unique_index(self, caplog):
+    def test_raising_on_non_unique_index(self, caplog):
         df = TfsDataFrame(index=["A", "B", "A"])
         with pytest.raises(TfsFormatError):
-            write_tfs("", df)
+            write_tfs("", df, non_unique_behavior="raise")
 
         for record in caplog.records:
-            assert record.levelname == "ERROR"
+            assert record.levelname == "WARNING"
         assert "Non-unique indices found" in caplog.text
+
+    def test_raising_on_non_unique_both(self, caplog):
+        df = TfsDataFrame(index=["A", "B", "A"], columns=["A", "B", "A"])
+        with pytest.raises(TfsFormatError):
+            write_tfs("", df, non_unique_behavior="raise")
+
+        for record in caplog.records:
+            assert record.levelname == "WARNING"
+        assert "Non-unique indices found" in caplog.text  # first checked and raised
 
     def test_fail_on_wrong_column_type(self, caplog):
         df = TfsDataFrame(columns=range(5))
@@ -291,6 +294,11 @@ class TestFailures:
         with pytest.raises(TfsFormatError):
             _ = tfs.handler._id_to_type(typoed_str_id)
 
+    def test_validate_raises_on_wrong_unique_behavior(self, caplog):
+        df = TfsDataFrame(index=["A", "B", "A"], columns=["A", "B", "A"])
+        with pytest.raises(KeyError):
+            tfs.handler._validate(df, "", non_unique_behavior="invalid")
+
 
 def test_id_to_type_handles_madx_string_identifier():
     madx_str_id = "%20s"
@@ -305,6 +313,11 @@ class TestWarnings:
             assert record.levelname == "WARNING"
         assert "contains non-physical values at Index:" in caplog.text
 
+    @pytest.mark.skipif(
+        sys.version_info >= (3, 7),
+        reason="Our workers on 3.7+ install pandas >= 1.3.0  which has fixed the .convert_dtypes() bug "
+        "we try...except in _autoset_pandas_types and test here",
+    )
     def test_empty_df_warns_on_types_inference(self, caplog):
         empty_df = pandas.DataFrame()
         converted_df = tfs.handler._autoset_pandas_types(empty_df)
@@ -312,7 +325,32 @@ class TestWarnings:
 
         for record in caplog.records:
             assert record.levelname == "WARNING"
-        assert "An empty dataframe was provided, no types were infered" in caplog.text
+        assert "An empty dataframe was provided, no types were inferred" in caplog.text
+
+    def test_warning_on_non_unique_columns(self, tmp_path, caplog):
+        df = TfsDataFrame(columns=["A", "B", "A"])
+        write_tfs(tmp_path / "temporary.tfs", df)
+
+        for record in caplog.records:
+            assert record.levelname == "WARNING"
+        assert "Non-unique column names found" in caplog.text
+
+    def test_warning_on_non_unique_index(self, tmp_path, caplog):
+        df = TfsDataFrame(index=["A", "B", "A"])
+        write_tfs(tmp_path / "temporary.tfs", df)
+
+        for record in caplog.records:
+            assert record.levelname == "WARNING"
+        assert "Non-unique indices found" in caplog.text
+
+    def test_warning_on_non_unique_both(self, tmp_path, caplog):
+        df = TfsDataFrame(index=["A", "B", "A"], columns=["A", "B", "A"])
+        write_tfs(tmp_path / "temporary.tfs", df)
+
+        for record in caplog.records:
+            assert record.levelname == "WARNING"
+        assert "Non-unique column names found" in caplog.text
+        assert "Non-unique indices found" in caplog.text
 
 
 class TestPrinting:
@@ -359,7 +397,10 @@ def _tfs_dataframe() -> TfsDataFrame:
 @pytest.fixture()
 def _dataframe_empty_headers() -> TfsDataFrame:
     return TfsDataFrame(
-        index=range(3), columns="a b c d e".split(), data=numpy.random.rand(3, 5), headers={},
+        index=range(3),
+        columns="a b c d e".split(),
+        data=numpy.random.rand(3, 5),
+        headers={},
     )
 
 
@@ -431,7 +472,9 @@ def _no_colnames_tfs_path() -> pathlib.Path:
 @pytest.fixture()
 def _pd_dataframe() -> pandas.DataFrame:
     return pandas.DataFrame(
-        index=range(3), columns="a b c d e".split(), data=numpy.random.rand(3, 5),
+        index=range(3),
+        columns="a b c d e".split(),
+        data=numpy.random.rand(3, 5),
     )
 
 

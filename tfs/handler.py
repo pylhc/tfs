@@ -92,7 +92,9 @@ class TfsDataFrame(pd.DataFrame):
         return f"{s}{super().__repr__()}"
 
 
-def fast_read(tfs_file_path: Union[pathlib.Path, str], index: str = None) -> TfsDataFrame:
+def fast_read(
+    tfs_file_path: Union[pathlib.Path, str], index: str = None, non_unique_behavior: str = "warn"
+) -> TfsDataFrame:
     """
     Parses the TFS table present in **tfs_file_path** and returns a customized version of a Pandas
     DataFrame (a TfsDataFrame).
@@ -102,6 +104,9 @@ def fast_read(tfs_file_path: Union[pathlib.Path, str], index: str = None) -> Tfs
             a string, in which case it will be cast to a PosixPath object.
         index (str): Name of the column to set as index. If not given, looks in **tfs_file_path**
             for a column starting with `INDEX&&&`.
+        non_unique_behavior (str): behavior to adopt if non-unique indices or columns are found in the
+            dataframe. Accepts **warn** and **raise** as values, case-insensitively, which dictates
+            to respectively issue a warning or raise an error if non-unique elements are found.
 
     Returns:
         A TfsDataFrame object.
@@ -142,16 +147,18 @@ def fast_read(tfs_file_path: Union[pathlib.Path, str], index: str = None) -> Tfs
     LOGGER.debug("Parsing data part of the file")
     data_frame = pd.read_csv(
         tfs_file_path,
-        skiprows=non_data_lines-1,  # because we incremented for the first data line in loop above
+        skiprows=non_data_lines - 1,  # because we incremented for the first data line in loop above
         delim_whitespace=True,  # understands ' ' is our delimiter
         skipinitialspace=True,  # understands ' ' and '     ' are both valid delimiters
         quotechar='"',  # elements surrounded by " are one entry -> correct parsing of strings with spaces
-        names=column_names  # column names we have determined, avoids using first read row for columns
+        names=column_names,  # column names we have determined, avoids using first read row for columns
     )
 
     LOGGER.debug("Converting to TfsDataFrame")
     tfs_data_frame = TfsDataFrame(data_frame, headers=headers)
-    _assign_column_types(tfs_data_frame, column_names, column_types)  # pd parsing might infer floats to ints
+    _assign_column_types(
+        tfs_data_frame, column_names, column_types
+    )  # pd parsing might infer floats to ints
 
     if index:
         LOGGER.debug(f"Setting '{index}' column as index")
@@ -160,11 +167,15 @@ def fast_read(tfs_file_path: Union[pathlib.Path, str], index: str = None) -> Tfs
         LOGGER.debug("Attempting to find index identifier in columns")
         tfs_data_frame = _find_and_set_index(tfs_data_frame)
 
-    _validate(tfs_data_frame, f"from file {tfs_file_path.absolute()}")
+    _validate(tfs_data_frame, f"from file {tfs_file_path.absolute()}", non_unique_behavior)
     return tfs_data_frame
 
 
-def read_tfs(tfs_file_path: Union[pathlib.Path, str], index: str = None) -> TfsDataFrame:
+def read_tfs(
+    tfs_file_path: Union[pathlib.Path, str],
+    index: str = None,
+    non_unique_behavior: str = "warn",
+) -> TfsDataFrame:
     """
     Parses the TFS table present in **tfs_file_path** and returns a customized version of a Pandas
     DataFrame (a TfsDataFrame).
@@ -174,7 +185,9 @@ def read_tfs(tfs_file_path: Union[pathlib.Path, str], index: str = None) -> TfsD
             a string, in which case it will be cast to a PosixPath object.
         index (str): Name of the column to set as index. If not given, looks in **tfs_file_path**
             for a column starting with `INDEX&&&`.
-
+        non_unique_behavior (str): behavior to adopt if non-unique indices or columns are found in the
+            dataframe. Accepts **warn** and **raise** as values, case-insensitively, which dictates
+            to respectively issue a warning or raise an error if non-unique elements are found.
     Returns:
         A TfsDataFrame object.
     """
@@ -222,7 +235,7 @@ def read_tfs(tfs_file_path: Union[pathlib.Path, str], index: str = None) -> TfsD
                 index_name = None  # to remove it completely (Pandas makes a difference)
             data_frame = data_frame.rename_axis(index_name)
 
-    _validate(data_frame, f"from file {tfs_file_path.absolute()}")
+    _validate(data_frame, f"from file {tfs_file_path.absolute()}", non_unique_behavior)
     return data_frame
 
 
@@ -233,6 +246,7 @@ def write_tfs(
     save_index: Union[str, bool] = False,
     colwidth: int = DEFAULT_COLUMN_WIDTH,
     headerswidth: int = DEFAULT_COLUMN_WIDTH,
+    non_unique_behavior: str = "warn",
 ) -> None:
     """
     Writes the DataFrame into **tfs_file_path** with the `headers_dict` as headers dictionary. If
@@ -250,10 +264,13 @@ def write_tfs(
             saves the index of the data_frame to a column named by the provided value.
         colwidth (int): Column width, can not be smaller than `MIN_COLUMN_WIDTH`.
         headerswidth (int): Used to format the header width for both keys and values.
+        non_unique_behavior (str): behavior to adopt if non-unique indices or columns are found in the
+            dataframe. Accepts **warn** and **raise** as values, case-insensitively, which dictates
+            to respectively issue a warning or raise an error if non-unique elements are found.
     """
     left_align_first_column = False
     tfs_file_path = pathlib.Path(tfs_file_path)
-    _validate(data_frame, f"to be written in {tfs_file_path.absolute()}")
+    _validate(data_frame, f"to be written in {tfs_file_path.absolute()}", non_unique_behavior)
 
     if headers_dict is None:  # tries to get headers from TfsDataFrame
         try:
@@ -291,19 +308,25 @@ def _autoset_pandas_types(
     convert_dtypes() to internally use concat) and then return only a copy of the original
     dataframe. Otherwise, raise the exception given by pandas.
 
+    NOTE: Starting with pandas 1.3.0, this behavior which was a bug has been fixed. This means no
+    ValueError is raised by calling .convert_dtypes() on an empty DataFrame, and from this function
+    no warning is logged. Testing of this behavior is disabled for Python 3.7+ workers, but the
+    function is kept as to not force a new min version requirement on pandas or Python for users.
+    See my comment at https://github.com/pylhc/tfs/pull/83#issuecomment-874208869
+
     Args:
         data_frame (Union[TfsDataFrame, pd.DataFrame]): TfsDataFrame or pandas.DataFrame to
             determine the types of.
 
     Returns:
-        The dataframe with dtypes infered as much as possible to the pandas dtypes.
+        The dataframe with dtypes inferred as much as possible to the pandas dtypes.
     """
     LOGGER.debug("Attempting conversion of dataframe to pandas dtypes")
     try:
         return data_frame.copy().convert_dtypes(convert_integer=False)  # do not force floats to int
     except ValueError as pd_convert_error:  # If used on empty dataframes (uses concat internally)
         if not data_frame.size and "No objects to concatenate" in pd_convert_error.args[0]:
-            LOGGER.warning("An empty dataframe was provided, no types were infered")
+            LOGGER.warning("An empty dataframe was provided, no types were inferred")
             return data_frame.copy()  # since it's empty anyway, nothing to convert
         else:
             raise pd_convert_error
@@ -388,12 +411,6 @@ def _quote_string_columns(data_frame):
 
     data_frame = data_frame.applymap(quote_strings)
     return data_frame
-
-
-def _strip_quotes_in_string_columns(data_frame: TfsDataFrame) -> None:
-    """Removes the quotes remaining from numpy parsing from string columns. Acts inplace."""
-    for col in data_frame.columns:
-        data_frame[col] = data_frame[col].str.strip('"').str.strip("'")
 
 
 def _find_and_set_index(data_frame: TfsDataFrame) -> TfsDataFrame:
@@ -534,14 +551,24 @@ class TfsFormatError(Exception):
     pass
 
 
-def _validate(data_frame: Union[TfsDataFrame, pd.DataFrame], info_str: str = "") -> None:
+def _validate(
+    data_frame: Union[TfsDataFrame, pd.DataFrame],
+    info_str: str = "",
+    non_unique_behavior: str = "warn",
+) -> None:
     """
-    Check if Dataframe contains finite values only and both indices and columns are unique.
+    Check if Dataframe contains finite values only, strings as column names and no empty headers
+    or column names.
 
     Args:
         data_frame (Union[TfsDataFrame, pd.DataFrame]): the dataframe to check on.
         info_str (str): additional information to includ in logging statements.
+        non_unique_behavior (str): behavior to adopt if non-unique indices or columns are found in the
+            dataframe. Accepts **warn** and **raise** as values, case-insensitively, which dictates
+            to respectively issue a warning or raise an error if non-unique elements are found.
     """
+    if non_unique_behavior.lower() not in ("warn", "raise"):
+        raise KeyError("Invalid value for parameter 'validate_unique'")
 
     def is_not_finite(x):
         try:
@@ -560,13 +587,15 @@ def _validate(data_frame: Union[TfsDataFrame, pd.DataFrame], info_str: str = "")
             f"{boolean_df.index[boolean_df.any(axis='columns')].tolist()}"
         )
 
-    if len(set(data_frame.index)) != len(data_frame.index):
-        LOGGER.error(f"Non-unique indices found, dataframe {info_str} is invalid")
-        raise TfsFormatError("Indices are not Unique.")
+    if data_frame.index.has_duplicates:
+        LOGGER.warning("Non-unique indices found.")
+        if non_unique_behavior.lower() == "raise":
+            raise TfsFormatError("The dataframe contains non-unique indices")
 
-    if len(set(data_frame.columns)) != len(data_frame.columns):
-        LOGGER.error(f"Non-unique column names found, dataframe {info_str} is invalid")
-        raise TfsFormatError("Column names not Unique.")
+    if data_frame.columns.has_duplicates:
+        LOGGER.warning("Non-unique column names found.")
+        if non_unique_behavior.lower() == "raise":
+            raise TfsFormatError("The dataframe contains non-unique columns.")
 
     if any(not isinstance(c, str) for c in data_frame.columns):
         LOGGER.error(f"Some column-names are not of string-type, dataframe {info_str} is invalid.")
