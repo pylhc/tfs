@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>tfs.handler &mdash; tfs-pandas 2.0.2 documentation</title>
+  <title>tfs.handler &mdash; tfs-pandas 2.0.3 documentation</title>
   
 
   
@@ -258,7 +258,11 @@
         <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">s</span><span class="si">}{</span><span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span></div>
 
 
-<div class="viewcode-block" id="read_tfs"><a class="viewcode-back" href="../../modules/index.html#tfs.handler.read_tfs">[docs]</a><span class="k">def</span> <span class="nf">read_tfs</span><span class="p">(</span><span class="n">tfs_file_path</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span> <span class="n">index</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TfsDataFrame</span><span class="p">:</span>
+<div class="viewcode-block" id="read_tfs"><a class="viewcode-back" href="../../modules/index.html#tfs.handler.read_tfs">[docs]</a><span class="k">def</span> <span class="nf">read_tfs</span><span class="p">(</span>
+    <span class="n">tfs_file_path</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span>
+    <span class="n">index</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">non_unique_behavior</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;warn&quot;</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TfsDataFrame</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Parses the TFS table present in **tfs_file_path** and returns a customized version of a Pandas</span>
 <span class="sd">    DataFrame (a TfsDataFrame).</span>
@@ -268,7 +272,9 @@
 <span class="sd">            a string, in which case it will be cast to a PosixPath object.</span>
 <span class="sd">        index (str): Name of the column to set as index. If not given, looks in **tfs_file_path**</span>
 <span class="sd">            for a column starting with `INDEX&amp;&amp;&amp;`.</span>
-
+<span class="sd">        non_unique_behavior (str): behavior to adopt if non-unique indices or columns are found in the</span>
+<span class="sd">            dataframe. Accepts **warn** and **raise** as values, case-insensitively, which dictates</span>
+<span class="sd">            to respectively issue a warning or raise an error if non-unique elements are found.</span>
 <span class="sd">    Returns:</span>
 <span class="sd">        A TfsDataFrame object.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -316,7 +322,7 @@
                 <span class="n">index_name</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># to remove it completely (Pandas makes a difference)</span>
             <span class="n">data_frame</span> <span class="o">=</span> <span class="n">data_frame</span><span class="o">.</span><span class="n">rename_axis</span><span class="p">(</span><span class="n">index_name</span><span class="p">)</span>
 
-    <span class="n">_validate</span><span class="p">(</span><span class="n">data_frame</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;from file </span><span class="si">{</span><span class="n">tfs_file_path</span><span class="o">.</span><span class="n">absolute</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">_validate</span><span class="p">(</span><span class="n">data_frame</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;from file </span><span class="si">{</span><span class="n">tfs_file_path</span><span class="o">.</span><span class="n">absolute</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">non_unique_behavior</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">data_frame</span></div>
 
 
@@ -327,6 +333,7 @@
     <span class="n">save_index</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="n">colwidth</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">DEFAULT_COLUMN_WIDTH</span><span class="p">,</span>
     <span class="n">headerswidth</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">DEFAULT_COLUMN_WIDTH</span><span class="p">,</span>
+    <span class="n">non_unique_behavior</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;warn&quot;</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Writes the DataFrame into **tfs_file_path** with the `headers_dict` as headers dictionary. If</span>
@@ -344,10 +351,13 @@
 <span class="sd">            saves the index of the data_frame to a column named by the provided value.</span>
 <span class="sd">        colwidth (int): Column width, can not be smaller than `MIN_COLUMN_WIDTH`.</span>
 <span class="sd">        headerswidth (int): Used to format the header width for both keys and values.</span>
+<span class="sd">        non_unique_behavior (str): behavior to adopt if non-unique indices or columns are found in the</span>
+<span class="sd">            dataframe. Accepts **warn** and **raise** as values, case-insensitively, which dictates</span>
+<span class="sd">            to respectively issue a warning or raise an error if non-unique elements are found.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">left_align_first_column</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="n">tfs_file_path</span> <span class="o">=</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="n">tfs_file_path</span><span class="p">)</span>
-    <span class="n">_validate</span><span class="p">(</span><span class="n">data_frame</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;to be written in </span><span class="si">{</span><span class="n">tfs_file_path</span><span class="o">.</span><span class="n">absolute</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">_validate</span><span class="p">(</span><span class="n">data_frame</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;to be written in </span><span class="si">{</span><span class="n">tfs_file_path</span><span class="o">.</span><span class="n">absolute</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">non_unique_behavior</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">headers_dict</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># tries to get headers from TfsDataFrame</span>
         <span class="k">try</span><span class="p">:</span>
@@ -385,19 +395,25 @@
 <span class="sd">    convert_dtypes() to internally use concat) and then return only a copy of the original</span>
 <span class="sd">    dataframe. Otherwise, raise the exception given by pandas.</span>
 
+<span class="sd">    NOTE: Starting with pandas 1.3.0, this behavior which was a bug has been fixed. This means no</span>
+<span class="sd">    ValueError is raised by calling .convert_dtypes() on an empty DataFrame, and from this function</span>
+<span class="sd">    no warning is logged. Testing of this behavior is disabled for Python 3.7+ workers, but the</span>
+<span class="sd">    function is kept as to not force a new min version requirement on pandas or Python for users.</span>
+<span class="sd">    See my comment at https://github.com/pylhc/tfs/pull/83#issuecomment-874208869</span>
+
 <span class="sd">    Args:</span>
 <span class="sd">        data_frame (Union[TfsDataFrame, pd.DataFrame]): TfsDataFrame or pandas.DataFrame to</span>
 <span class="sd">            determine the types of.</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        The dataframe with dtypes infered as much as possible to the pandas dtypes.</span>
+<span class="sd">        The dataframe with dtypes inferred as much as possible to the pandas dtypes.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">LOGGER</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Attempting conversion of dataframe to pandas dtypes&quot;</span><span class="p">)</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">data_frame</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span><span class="o">.</span><span class="n">convert_dtypes</span><span class="p">(</span><span class="n">convert_integer</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>  <span class="c1"># do not force floats to int</span>
     <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">pd_convert_error</span><span class="p">:</span>  <span class="c1"># If used on empty dataframes (uses concat internally)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">data_frame</span><span class="o">.</span><span class="n">size</span> <span class="ow">and</span> <span class="s2">&quot;No objects to concatenate&quot;</span> <span class="ow">in</span> <span class="n">pd_convert_error</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
-            <span class="n">LOGGER</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;An empty dataframe was provided, no types were infered&quot;</span><span class="p">)</span>
+            <span class="n">LOGGER</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;An empty dataframe was provided, no types were inferred&quot;</span><span class="p">)</span>
             <span class="k">return</span> <span class="n">data_frame</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>  <span class="c1"># since it&#39;s empty anyway, nothing to convert</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">pd_convert_error</span>
@@ -601,14 +617,24 @@
     <span class="k">pass</span></div>
 
 
-<span class="k">def</span> <span class="nf">_validate</span><span class="p">(</span><span class="n">data_frame</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">TfsDataFrame</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">],</span> <span class="n">info_str</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="k">def</span> <span class="nf">_validate</span><span class="p">(</span>
+    <span class="n">data_frame</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">TfsDataFrame</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">],</span>
+    <span class="n">info_str</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+    <span class="n">non_unique_behavior</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;warn&quot;</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Check if Dataframe contains finite values only and both indices and columns are unique.</span>
+<span class="sd">    Check if Dataframe contains finite values only, strings as column names and no empty headers</span>
+<span class="sd">    or column names.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        data_frame (Union[TfsDataFrame, pd.DataFrame]): the dataframe to check on.</span>
 <span class="sd">        info_str (str): additional information to includ in logging statements.</span>
+<span class="sd">        non_unique_behavior (str): behavior to adopt if non-unique indices or columns are found in the</span>
+<span class="sd">            dataframe. Accepts **warn** and **raise** as values, case-insensitively, which dictates</span>
+<span class="sd">            to respectively issue a warning or raise an error if non-unique elements are found.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">non_unique_behavior</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;warn&quot;</span><span class="p">,</span> <span class="s2">&quot;raise&quot;</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s2">&quot;Invalid value for parameter &#39;validate_unique&#39;&quot;</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">is_not_finite</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
         <span class="k">try</span><span class="p">:</span>
@@ -627,13 +653,15 @@
             <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">boolean_df</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="n">boolean_df</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s1">&#39;columns&#39;</span><span class="p">)]</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span>
         <span class="p">)</span>
 
-    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">data_frame</span><span class="o">.</span><span class="n">index</span><span class="p">))</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">data_frame</span><span class="o">.</span><span class="n">index</span><span class="p">):</span>
-        <span class="n">LOGGER</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Non-unique indices found, dataframe </span><span class="si">{</span><span class="n">info_str</span><span class="si">}</span><span class="s2"> is invalid&quot;</span><span class="p">)</span>
-        <span class="k">raise</span> <span class="n">TfsFormatError</span><span class="p">(</span><span class="s2">&quot;Indices are not Unique.&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">data_frame</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">has_duplicates</span><span class="p">:</span>
+        <span class="n">LOGGER</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Non-unique indices found.&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">non_unique_behavior</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;raise&quot;</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">TfsFormatError</span><span class="p">(</span><span class="s2">&quot;The dataframe contains non-unique indices&quot;</span><span class="p">)</span>
 
-    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">data_frame</span><span class="o">.</span><span class="n">columns</span><span class="p">))</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">data_frame</span><span class="o">.</span><span class="n">columns</span><span class="p">):</span>
-        <span class="n">LOGGER</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Non-unique column names found, dataframe </span><span class="si">{</span><span class="n">info_str</span><span class="si">}</span><span class="s2"> is invalid&quot;</span><span class="p">)</span>
-        <span class="k">raise</span> <span class="n">TfsFormatError</span><span class="p">(</span><span class="s2">&quot;Column names not Unique.&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">data_frame</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">has_duplicates</span><span class="p">:</span>
+        <span class="n">LOGGER</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Non-unique column names found.&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">non_unique_behavior</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;raise&quot;</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">TfsFormatError</span><span class="p">(</span><span class="s2">&quot;The dataframe contains non-unique columns.&quot;</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">data_frame</span><span class="o">.</span><span class="n">columns</span><span class="p">):</span>
         <span class="n">LOGGER</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Some column-names are not of string-type, dataframe </span><span class="si">{</span><span class="n">info_str</span><span class="si">}</span><span class="s2"> is invalid.&quot;</span><span class="p">)</span>
