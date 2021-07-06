@@ -99,6 +99,13 @@ def fast_read(
     Parses the TFS table present in **tfs_file_path** and returns a customized version of a Pandas
     DataFrame (a TfsDataFrame).
 
+    Methodology: This function parses the first lines of the file until it gets to the `types` line.
+    While parsed, the appropriate information is gathered (headers content, column names & types,
+    number of lines parsed). After reaching the types lines, the rest of the file is given to parse
+    to ``pandas.read_csv`` with the right options to make use of it's C engine's speed. After this,
+    conversion to ``TfsDataDrame`` is made, proper types are applied to columns, the index is set and
+    the frame is validated before being returned.
+
     Args:
         tfs_file_path (Union[pathlib.Path, str]): PosixPath object to the output TFS file. Can be
             a string, in which case it will be cast to a PosixPath object.
@@ -109,7 +116,7 @@ def fast_read(
             to respectively issue a warning or raise an error if non-unique elements are found.
 
     Returns:
-        A TfsDataFrame object.
+        A TfsDataFrame object with the loaded data from the file.
     """
     tfs_file_path = pathlib.Path(tfs_file_path)
     headers = OrderedDict()
@@ -134,8 +141,8 @@ def fast_read(
                 column_types = _compute_types(line_components[1:])
             elif line_components[0] == COMMENTS:
                 continue
-            else:  # after all previous cases should only be data lines. If not, file is fucked
-                break  # break to not go over all lines, saves a lot of time on big files
+            else:  # After all previous cases should only be data lines. If not, file is fucked.
+                break  # Break to not go over all lines, saves a lot of time on big files
 
     if column_names is None:
         LOGGER.error(f"No column names in file {tfs_file_path.absolute()}, aborting")
@@ -145,6 +152,8 @@ def fast_read(
         raise TfsFormatError("Column types have not been set.")
 
     LOGGER.debug("Parsing data part of the file")
+    # DO NOT use comment=COMMENTS in here, if you do and the symbol is in an element for some
+    # reason then the entire parsing will crash
     data_frame = pd.read_csv(
         tfs_file_path,
         skiprows=non_data_lines - 1,  # because we incremented for the first data line in loop above
@@ -156,9 +165,7 @@ def fast_read(
 
     LOGGER.debug("Converting to TfsDataFrame")
     tfs_data_frame = TfsDataFrame(data_frame, headers=headers)
-    _assign_column_types(
-        tfs_data_frame, column_names, column_types
-    )  # pd parsing might infer floats to ints
+    _assign_column_types(tfs_data_frame, column_names, column_types)  # ensure proper types
 
     if index:
         LOGGER.debug(f"Setting '{index}' column as index")
