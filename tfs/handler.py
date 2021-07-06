@@ -156,6 +156,7 @@ def fast_read(
     # reason then the entire parsing will crash
     data_frame = pd.read_csv(
         tfs_file_path,
+        engine="c",  # faster, and we do not need the features of the python engine
         skiprows=non_data_lines - 1,  # because we incremented for the first data line in loop above
         delim_whitespace=True,  # understands ' ' is our delimiter
         skipinitialspace=True,  # understands ' ' and '     ' are both valid delimiters
