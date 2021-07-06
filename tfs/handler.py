@@ -92,7 +92,7 @@ class TfsDataFrame(pd.DataFrame):
         return f"{s}{super().__repr__()}"
 
 
-def fast_read(
+def read_tfs(
     tfs_file_path: Union[pathlib.Path, str], index: str = None, non_unique_behavior: str = "warn"
 ) -> TfsDataFrame:
     """
@@ -179,7 +179,7 @@ def fast_read(
     return tfs_data_frame
 
 
-def read_tfs(
+def old_read_tfs(
     tfs_file_path: Union[pathlib.Path, str], index: str = None, non_unique_behavior: str = "warn"
 ) -> TfsDataFrame:
     """
