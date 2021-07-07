@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>TFS-Pandas Modules &mdash; tfs-pandas 2.0.3 documentation</title>
+  <title>TFS-Pandas Modules &mdash; tfs-pandas 2.1.0 documentation</title>
   
 
   
@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                2.0
+                2.1
               </div>
             
           
@@ -293,6 +293,12 @@ to get a header value use <code class="docutils literal notranslate"><span class
 <span class="sig-prename descclassname"><span class="pre">tfs.handler.</span></span><span class="sig-name descname"><span class="pre">read_tfs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tfs_file_path</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">pathlib.Path</span><span class="p"><span class="pre">,</span> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">non_unique_behavior</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'warn'</span></span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#tfs.handler.TfsDataFrame" title="tfs.handler.TfsDataFrame"><span class="pre">tfs.handler.TfsDataFrame</span></a><a class="reference internal" href="../_modules/tfs/handler.html#read_tfs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tfs.handler.read_tfs" title="Permalink to this definition">¶</a></dt>
 <dd><p>Parses the TFS table present in <strong>tfs_file_path</strong> and returns a customized version of a Pandas
 DataFrame (a TfsDataFrame).</p>
+<p>Methodology: This function parses the first lines of the file until it gets to the <cite>types</cite> line.
+While parsed, the appropriate information is gathered (headers content, column names &amp; types,
+number of lines parsed). After reaching the types lines, the rest of the file is given to parse
+to <code class="docutils literal notranslate"><span class="pre">pandas.read_csv</span></code> with the right options to make use of it’s C engine’s speed. After this,
+conversion to <code class="docutils literal notranslate"><span class="pre">TfsDataDrame</span></code> is made, proper types are applied to columns, the index is set and
+the frame is validated before being returned.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -306,7 +312,7 @@ to respectively issue a warning or raise an error if non-unique elements are fou
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>A TfsDataFrame object.</p>
+<dd class="field-even"><p>A TfsDataFrame object with the loaded data from the file.</p>
 </dd>
 </dl>
 </dd></dl>
