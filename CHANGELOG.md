@@ -1,5 +1,10 @@
 # TFS-Pandas Changelog
 
+## Version 2.1.0
+
+- Changes:
+    - The parsing in `read_tfs` has been reworked to make use of `pandas`'s C engine, resulting in drastic performance improvements when loading files. No functionality was lost or changed.
+
 ## Version 2.0.3
 
 - Fixed:

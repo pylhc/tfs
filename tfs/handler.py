@@ -93,13 +93,18 @@ class TfsDataFrame(pd.DataFrame):
 
 
 def read_tfs(
-    tfs_file_path: Union[pathlib.Path, str],
-    index: str = None,
-    non_unique_behavior: str = "warn",
+    tfs_file_path: Union[pathlib.Path, str], index: str = None, non_unique_behavior: str = "warn"
 ) -> TfsDataFrame:
     """
     Parses the TFS table present in **tfs_file_path** and returns a customized version of a Pandas
     DataFrame (a TfsDataFrame).
+
+    Methodology: This function parses the first lines of the file until it gets to the `types` line.
+    While parsed, the appropriate information is gathered (headers content, column names & types,
+    number of lines parsed). After reaching the types lines, the rest of the file is given to parse
+    to ``pandas.read_csv`` with the right options to make use of it's C engine's speed. After this,
+    conversion to ``TfsDataDrame`` is made, proper types are applied to columns, the index is set and
+    the frame is validated before being returned.
 
     Args:
         tfs_file_path (Union[pathlib.Path, str]): PosixPath object to the output TFS file. Can be
@@ -109,17 +114,19 @@ def read_tfs(
         non_unique_behavior (str): behavior to adopt if non-unique indices or columns are found in the
             dataframe. Accepts **warn** and **raise** as values, case-insensitively, which dictates
             to respectively issue a warning or raise an error if non-unique elements are found.
+
     Returns:
-        A TfsDataFrame object.
+        A TfsDataFrame object with the loaded data from the file.
     """
     tfs_file_path = pathlib.Path(tfs_file_path)
     headers = OrderedDict()
-    rows_list = []
+    non_data_lines: int = 0
     column_names = column_types = None
 
     LOGGER.debug(f"Reading path: {tfs_file_path.absolute()}")
     with tfs_file_path.open("r") as tfs_data:
         for line in tfs_data:
+            non_data_lines += 1
             line_components = shlex.split(line)
             if not line_components:
                 continue
@@ -127,37 +134,49 @@ def read_tfs(
                 name, value = _parse_header(line_components[1:])
                 headers[name] = value
             elif line_components[0] == NAMES:
-                LOGGER.debug("Setting column names.")
+                LOGGER.debug("Parsing column names.")
                 column_names = np.array(line_components[1:])
             elif line_components[0] == TYPES:
-                LOGGER.debug("Setting column types.")
+                LOGGER.debug("Parsing column types.")
                 column_types = _compute_types(line_components[1:])
             elif line_components[0] == COMMENTS:
                 continue
-            else:
-                if column_names is None:
-                    LOGGER.error(f"No column names in file {tfs_file_path.absolute()}, aborting")
-                    raise TfsFormatError("Column names have not been set.")
-                if column_types is None:
-                    LOGGER.error(f"No column types in file {tfs_file_path.absolute()}, aborting")
-                    raise TfsFormatError("Column types have not been set.")
-                line_components = [part.strip('"') for part in line_components]
-                rows_list.append(line_components)
-    data_frame = _create_data_frame(column_names, column_types, rows_list, headers)
+            else:  # After all previous cases should only be data lines. If not, file is fucked.
+                break  # Break to not go over all lines, saves a lot of time on big files
 
-    if index:  # Use given column as index
-        data_frame = data_frame.set_index(index)
-    else:  # Try to find Index automatically
-        index_column = [colname for colname in data_frame.columns if colname.startswith(INDEX_ID)]
-        if index_column:
-            data_frame = data_frame.set_index(index_column)
-            index_name = index_column[0].replace(INDEX_ID, "")
-            if index_name == "":
-                index_name = None  # to remove it completely (Pandas makes a difference)
-            data_frame = data_frame.rename_axis(index_name)
+    if column_names is None:
+        LOGGER.error(f"No column names in file {tfs_file_path.absolute()}, aborting")
+        raise TfsFormatError("Column names have not been set.")
+    if column_types is None:
+        LOGGER.error(f"No column types in file {tfs_file_path.absolute()}, aborting")
+        raise TfsFormatError("Column types have not been set.")
 
-    _validate(data_frame, f"from file {tfs_file_path.absolute()}", non_unique_behavior)
-    return data_frame
+    LOGGER.debug("Parsing data part of the file")
+    # DO NOT use comment=COMMENTS in here, if you do and the symbol is in an element for some
+    # reason then the entire parsing will crash
+    data_frame = pd.read_csv(
+        tfs_file_path,
+        engine="c",  # faster, and we do not need the features of the python engine
+        skiprows=non_data_lines - 1,  # because we incremented for the first data line in loop above
+        delim_whitespace=True,  # understands ' ' is our delimiter
+        skipinitialspace=True,  # understands ' ' and '     ' are both valid delimiters
+        quotechar='"',  # elements surrounded by " are one entry -> correct parsing of strings with spaces
+        names=column_names,  # column names we have determined, avoids using first read row for columns
+    )
+
+    LOGGER.debug("Converting to TfsDataFrame")
+    tfs_data_frame = TfsDataFrame(data_frame, headers=headers)
+    _assign_column_types(tfs_data_frame, column_names, column_types)  # ensure proper types
+
+    if index:
+        LOGGER.debug(f"Setting '{index}' column as index")
+        tfs_data_frame = tfs_data_frame.set_index(index)
+    else:
+        LOGGER.debug("Attempting to find index identifier in columns")
+        tfs_data_frame = _find_and_set_index(tfs_data_frame)
+
+    _validate(tfs_data_frame, f"from file {tfs_file_path.absolute()}", non_unique_behavior)
+    return tfs_data_frame
 
 
 def write_tfs(
@@ -331,6 +350,27 @@ def _quote_string_columns(data_frame):
         return s
 
     data_frame = data_frame.applymap(quote_strings)
+    return data_frame
+
+
+def _find_and_set_index(data_frame: TfsDataFrame) -> TfsDataFrame:
+    """
+    Looks for a column with a name starting with the index identifier, and sets it as index if found.
+    The index identifier will be stripped from the column name first.
+
+    Args:
+        data_frame (TfsDataFrame): the TfsDataFrame to look for an index in.
+
+    Returns:
+        The TfsDataFrame after operation, whether an index was found or not.
+    """
+    index_column = [colname for colname in data_frame.columns if colname.startswith(INDEX_ID)]
+    if index_column:
+        data_frame = data_frame.set_index(index_column)
+        index_name = index_column[0].replace(INDEX_ID, "")
+        if index_name == "":
+            index_name = None  # to remove it completely (Pandas makes a difference)
+        data_frame = data_frame.rename_axis(index=index_name)
     return data_frame
 
 
