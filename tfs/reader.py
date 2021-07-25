@@ -24,27 +24,26 @@ def read_tfs(
     tfs_file_path: Union[pathlib.Path, str], index: str = None, non_unique_behavior: str = "warn"
 ) -> TfsDataFrame:
     """
-    Parses the TFS table present in **tfs_file_path** and returns a customized version of a Pandas
-    DataFrame (a TfsDataFrame).
+    Parses the **TFS** table present in **tfs_file_path** and returns a ``TfsDataFrame``.
 
     Methodology: This function parses the first lines of the file until it gets to the `types` line.
     While parsed, the appropriate information is gathered (headers content, column names & types,
-    number of lines parsed). After reaching the types lines, the rest of the file is given to parse
-    to ``pandas.read_csv`` with the right options to make use of it's C engine's speed. After this,
+    number of lines parsed). After reaching the `types` line, the rest of the file is given to parse
+    to ``pandas.read_csv`` with the right options to make use of its C engine's speed. After this,
     conversion to ``TfsDataDrame`` is made, proper types are applied to columns, the index is set and
     the frame is validated before being returned.
 
     Args:
-        tfs_file_path (Union[pathlib.Path, str]): PosixPath object to the output TFS file. Can be
-            a string, in which case it will be cast to a PosixPath object.
+        tfs_file_path (Union[pathlib.Path, str]): Path object to the **TFS** file to read. Can be
+            a string, in which case it will be cast to a Path object.
         index (str): Name of the column to set as index. If not given, looks in **tfs_file_path**
             for a column starting with `INDEX&&&`.
         non_unique_behavior (str): behavior to adopt if non-unique indices or columns are found in the
-            dataframe. Accepts **warn** and **raise** as values, case-insensitively, which dictates
+            dataframe. Accepts `warn` and `raise` as values, case-insensitively, which dictates
             to respectively issue a warning or raise an error if non-unique elements are found.
 
     Returns:
-        A TfsDataFrame object with the loaded data from the file.
+        A ``TfsDataFrame`` object with the loaded data from the file.
     """
     tfs_file_path = pathlib.Path(tfs_file_path)
     headers = OrderedDict()
@@ -123,10 +122,10 @@ def _find_and_set_index(data_frame: TfsDataFrame) -> TfsDataFrame:
     The index identifier will be stripped from the column name first.
 
     Args:
-        data_frame (TfsDataFrame): the TfsDataFrame to look for an index in.
+        data_frame (TfsDataFrame): the ``TfsDataFrame`` to look for an index in.
 
     Returns:
-        The TfsDataFrame after operation, whether an index was found or not.
+        The ``TfsDataFrame`` after operation, whether an index was found or not.
     """
     index_column = [colname for colname in data_frame.columns if colname.startswith(INDEX_ID)]
     if index_column:
@@ -159,7 +158,7 @@ def _id_to_type(type_str: str) -> type:
 
 def _is_madx_string_col_identifier(type_str: str) -> bool:
     """
-    `MAD-X` likes to return the string columns by also indicating their width, so trying to parse
+    ``MAD-X`` likes to return the string columns by also indicating their width, so trying to parse
     `%s` identifiers only we might miss those looking like `%20s` specifying (here) a 20-character
      wide column for strings.
 
@@ -167,7 +166,7 @@ def _is_madx_string_col_identifier(type_str: str) -> bool:
         type_str (str): the suspicious identifier.
 
     Returns:
-        ``True`` if the identifier is identified as coming from `MAD-X`, ``False`` otherwise.
+        ``True`` if the identifier is identified as coming from ``MAD-X``, ``False`` otherwise.
     """
     if not (type_str.startswith("%") and type_str.endswith("s")):
         return False

@@ -1,8 +1,8 @@
 """
-Handler
+Writer
 -------------------
 
-Basic tfs files IO functionality.
+Writing functionalty for **TFS** files.
 """
 import logging
 import pathlib
@@ -29,23 +29,23 @@ def write_tfs(
     non_unique_behavior: str = "warn",
 ) -> None:
     """
-    Writes the DataFrame into **tfs_file_path** with the `headers_dict` as headers dictionary. If
-    you want to keep the order of the headers upon write, use a ``collections.OrderedDict``.
+    Writes the provided ``DataFrame`` to disk at **tfs_file_path**, eventually with the `headers_dict` as
+    headers dictionary.
 
     Args:
-        tfs_file_path (Union[pathlib.Path, str]): PosixPath object to the output TFS file. Can be
-            a string, in which case it will be cast to a PosixPath object.
-        data_frame (Union[TfsDataFrame, pd.DataFrame]): `TfsDataFrame` or `pandas.DataFrame` to
+        tfs_file_path (Union[pathlib.Path, str]): Path object to the output **TFS** file. Can be
+            a string, in which case it will be cast to a Path object.
+        data_frame (Union[TfsDataFrame, pd.DataFrame]): ``TfsDataFrame`` or ``pandas.DataFrame`` to
             write to file.
-        headers_dict (dict): Headers of the data_frame. If not provided, assumes a `TfsDataFrame`
+        headers_dict (dict): Headers for the `data_frame`. If not provided, assumes a ``TfsDataFrame``
             was given and tries to use ``data_frame.headers``.
         save_index (Union[str, bool]): bool or string. Default to ``False``. If ``True``, saves
-            the index of the data_frame to a column identifiable by `INDEX&&&`. If given as string,
-            saves the index of the data_frame to a column named by the provided value.
+            the index of `data_frame` to a column identifiable by `INDEX&&&`. If given as string,
+            saves the index of `data_frame` to a column named by the provided value.
         colwidth (int): Column width, can not be smaller than `MIN_COLUMN_WIDTH`.
         headerswidth (int): Used to format the header width for both keys and values.
         non_unique_behavior (str): behavior to adopt if non-unique indices or columns are found in the
-            dataframe. Accepts **warn** and **raise** as values, case-insensitively, which dictates
+            dataframe. Accepts `warn` and `raise` as values, case-insensitively, which dictates
             to respectively issue a warning or raise an error if non-unique elements are found.
     """
     left_align_first_column = False
@@ -79,23 +79,23 @@ def write_tfs(
 
 def _autoset_pandas_types(data_frame: Union[TfsDataFrame, pd.DataFrame]) -> Union[TfsDataFrame, pd.DataFrame]:
     """
-    Tries to apply the .convert_dtypes() method of pandas on a copy on the provided dataframe. If
-    the operation is not possible, checks if the provided dataframe is empty (which prevents
-    convert_dtypes() to internally use concat) and then return only a copy of the original
-    dataframe. Otherwise, raise the exception given by pandas.
+    Tries to apply the ``.convert_dtypes()`` method of pandas on a copy on the provided dataframe.
+    If the operation is not possible, checks if the provided dataframe is empty (which prevents
+    ``convert_dtypes()`` to internally use ``pd.concat``) and then return only a copy of the original
+    dataframe. Otherwise, raise the exception given by ``pandas``.
 
     NOTE: Starting with pandas 1.3.0, this behavior which was a bug has been fixed. This means no
-    ValueError is raised by calling .convert_dtypes() on an empty DataFrame, and from this function
-    no warning is logged. Testing of this behavior is disabled for Python 3.7+ workers, but the
-    function is kept as to not force a new min version requirement on pandas or Python for users.
+    ``ValueError`` is raised by calling ``.convert_dtypes()`` on an empty ``DataFrame``, and from this
+    function sno warning is logged. Testing of this behavior is disabled for Python 3.7+ workers, but the
+    function is kept as to not force a new min version requirement on ``pandas`` or Python for users.
     See my comment at https://github.com/pylhc/tfs/pull/83#issuecomment-874208869
 
     Args:
-        data_frame (Union[TfsDataFrame, pd.DataFrame]): TfsDataFrame or pandas.DataFrame to
+        data_frame (Union[TfsDataFrame, pd.DataFrame]): ``TfsDataFrame`` or ``pandas.DataFrame`` to
             determine the types of.
 
     Returns:
-        The dataframe with dtypes inferred as much as possible to the pandas dtypes.
+        The dataframe with dtypes inferred as much as possible to the ``pandas`` dtypes.
     """
     LOGGER.debug("Attempting conversion of dataframe to pandas dtypes")
     try:
@@ -121,11 +121,11 @@ def _insert_index_column(data_frame, save_index):
 
 def _get_headers_string(headers_dict: dict, width: int) -> str:
     """
-    Returns the string to write a `TfsDataFrame`'s headers to file. Will return an empty string if
+    Returns the string to write a ``TfsDataFrame`` headers to file. Will return an empty string if
     called for an empty headers dictionary, in order not write an line to file.
 
     Args:
-        headers_dict (dict): the `TfsDataFrame`'s headers.
+        headers_dict (dict): the ``TfsDataFrame`` headers.
         width (int): column width to use when formatting keys and values from the headers dict.
 
     Returns:
@@ -192,10 +192,10 @@ def _value_to_type_string(value) -> str:
 
 def _dtype_to_id_string(type_: type) -> str:
     """
-    Return the proper TFS identifier for the provided dtype.
+    Return the proper **TFS** identifier for the provided dtype.
 
     Args:
-        type_ (type): an instance of the built-in type (in this package, one of numpy or pandas
+        type_ (type): an instance of the built-in type (in this package, one of ``numpy`` or ``pandas``
             types) to get the ID string for.
 
     Returns:
@@ -217,8 +217,8 @@ def _dtype_to_formatter(type_: type, colsize: int) -> str:
     Return the proper string formatter for the provided dtype.
 
     Args:
-        type_ (type): an instance of the built-in type (in this package, one of numpy or pandas
-        types) to get the formatter for.
+        type_ (type): an instance of the built-in type (in this package, one of ``numpy`` or ``pandas``
+            types) to get the formatter for.
         colsize (int): size of the written column to use for the formatter.
 
     Returns:

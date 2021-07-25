@@ -2,7 +2,7 @@
 Frame
 -------------------
 
-Contains the class definitiion of a ``TfsDataFrame``, inherited from the ``pandas`` DataFrame, as well
+Contains the class definition of a ``TfsDataFrame``, inherited from the ``pandas`` ``DataFrame``, as well
 as a utility function to validate the correctness of a ``TfsDataFrame``.
 """
 import logging
@@ -19,9 +19,9 @@ LOGGER = logging.getLogger(__name__)
 
 class TfsDataFrame(pd.DataFrame):
     """
-    Class to hold the information of the built an extended ``pandas`` DataFrame, together with a way of
-    getting the headers of the **TFS** file. As the file headers are stored in a dictionary upon read,
-    to get a header value use ``data_frame["header_name"]``.
+    Class to hold the information of the built an extended ``pandas`` ``DataFrame``, together with a way
+    of getting the headers of the **TFS** file. The file headers are stored in a dictionary upon read.
+    To get a header value use ``data_frame["header_name"]``.
     """
 
     _metadata = ["headers"]
@@ -81,14 +81,14 @@ def validate(
     non_unique_behavior: str = "warn",
 ) -> None:
     """
-    Check if Dataframe contains finite values only, strings as column names and no empty headers
+    Check if a data frame contains finite values only, strings as column names and no empty headers
     or column names.
 
     Args:
         data_frame (Union[TfsDataFrame, pd.DataFrame]): the dataframe to check on.
         info_str (str): additional information to includ in logging statements.
         non_unique_behavior (str): behavior to adopt if non-unique indices or columns are found in the
-            dataframe. Accepts **warn** and **raise** as values, case-insensitively, which dictates
+            dataframe. Accepts `warn` and `raise` as values, case-insensitively, which dictates
             to respectively issue a warning or raise an error if non-unique elements are found.
     """
     if non_unique_behavior.lower() not in ("warn", "raise"):
