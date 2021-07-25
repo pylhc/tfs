@@ -25,10 +25,6 @@ TFS-Pandas Modules
     :members:
 
 
-.. automodule:: tfs.utils
-    :members:
-
-
 .. automodule:: tfs.writer
     :members:
 
