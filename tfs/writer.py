@@ -14,8 +14,7 @@ import pandas as pd
 from pandas.api import types as pdtypes
 
 from tfs.constants import DEFAULT_COLUMN_WIDTH, INDEX_ID, MIN_COLUMN_WIDTH
-from tfs.frame import TfsDataFrame
-from tfs.utils import validate
+from tfs.frame import TfsDataFrame, validate
 
 LOGGER = logging.getLogger(__name__)
 

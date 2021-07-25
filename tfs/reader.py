@@ -15,8 +15,7 @@ import pandas as pd
 
 from tfs.constants import COMMENTS, HEADER, ID_TO_TYPE, INDEX_ID, NAMES, TYPES
 from tfs.errors import TfsFormatError
-from tfs.frame import TfsDataFrame
-from tfs.utils import validate
+from tfs.frame import TfsDataFrame, validate
 
 LOGGER = logging.getLogger(__name__)
 

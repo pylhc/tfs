@@ -287,7 +287,7 @@ class TestFailures:
     def test_validate_raises_on_wrong_unique_behavior(self, caplog):
         df = TfsDataFrame(index=["A", "B", "A"], columns=["A", "B", "A"])
         with pytest.raises(KeyError):
-            tfs.utils.validate(df, "", non_unique_behavior="invalid")
+            tfs.frame.validate(df, "", non_unique_behavior="invalid")
 
 
 def test_id_to_type_handles_madx_string_identifier():
