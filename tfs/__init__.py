@@ -1,7 +1,10 @@
 """
 Exposes TfsDataFrame, read and write directly in tfs namespace, as well as the package version.
 """
-from tfs.handler import TfsDataFrame, read_tfs, write_tfs
+from tfs.errors import TfsFormatError
+from tfs.frame import TfsDataFrame
+from tfs.reader import read_tfs
+from tfs.writer import write_tfs
 
 __title__ = "tfs-pandas"
 __description__ = "Read and write tfs files."

@@ -8,7 +8,9 @@ import pathlib
 
 from pandas import DataFrame
 
-from tfs.handler import TfsDataFrame, read_tfs, write_tfs
+from tfs.frame import TfsDataFrame
+from tfs.reader import read_tfs
+from tfs.writer import write_tfs
 
 
 class _MetaTfsCollection(type):
@@ -110,9 +112,7 @@ class TfsCollection(metaclass=_MetaTfsCollection):
         not present in the Tfs(...) definition, it will also be given the keyword argument
         ``plane="x"`` or ``plane="y"``.
         """
-        raise NotImplementedError(
-            "This is an abstract method, it should be implemented in subclasses."
-        )
+        raise NotImplementedError("This is an abstract method, it should be implemented in subclasses.")
 
     def write_to(self, *args, **kwargs):
         """
@@ -122,9 +122,7 @@ class TfsCollection(metaclass=_MetaTfsCollection):
         find out the filename of the file to be written. It also gets the value assigned as first
         parameter. It must return a tuple (filename, tfs_data_frame).
         """
-        raise NotImplementedError(
-            "This is an abstract method, it should be implemented in subclasses."
-        )
+        raise NotImplementedError("This is an abstract method, it should be implemented in subclasses.")
 
     def clear(self):
         """
@@ -185,7 +183,7 @@ class TfsCollection(metaclass=_MetaTfsCollection):
 
 
 class Tfs:
-    """ Class to mark attributes as Tfs attributes.
+    """Class to mark attributes as Tfs attributes.
 
     Any parameter given to this class will be passed to the ``get_filename()`` and ``write_to()``
     methods, together with the plane if ``two_planes=False`` is not present.

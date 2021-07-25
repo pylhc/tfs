@@ -10,14 +10,16 @@ from typing import List, Tuple, Union
 
 import numpy as np
 
-from tfs.handler import TfsFormatError, read_tfs, write_tfs
+from tfs.errors import TfsFormatError
+from tfs.reader import read_tfs
+from tfs.writer import write_tfs
 
 LOGGER = logging.getLogger(__name__)
 
 
 def significant_digits(
     value: float, error: float, return_floats: bool = False
-) -> Union[Tuple[str, str], Tuple[float,float]]:
+) -> Union[Tuple[str, str], Tuple[float, float]]:
     """
     Computes ``value`` and its error properly rounded with respect to the size of ``error``.
 
