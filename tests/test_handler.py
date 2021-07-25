@@ -13,7 +13,7 @@ from pandas.testing import assert_frame_equal, assert_index_equal
 
 import tfs
 from tfs import TfsDataFrame, read_tfs, write_tfs
-from tfs.handler import TfsFormatError
+from tfs.errors import TfsFormatError
 
 CURRENT_DIR = pathlib.Path(__file__).parent
 
@@ -54,14 +54,10 @@ class TestReadWrite:
         assert pathlib.Path(_test_file).is_file()
 
         new = read_tfs(_test_file)
-        assert_frame_equal(
-            _tfs_dataframe, new, check_exact=False
-        )  # float precision can be an issue
+        assert_frame_equal(_tfs_dataframe, new, check_exact=False)  # float precision can be an issue
         assert_dict_equal(_tfs_dataframe.headers, new.headers, compare_keys=True)
 
-    def test_tfs_write_read_no_headers(
-        self, _dataframe_empty_headers: TfsDataFrame, _test_file: str
-    ):
+    def test_tfs_write_read_no_headers(self, _dataframe_empty_headers: TfsDataFrame, _test_file: str):
         write_tfs(_test_file, _dataframe_empty_headers)
         assert pathlib.Path(_test_file).is_file()
 
@@ -97,9 +93,7 @@ class TestReadWrite:
         assert_index_equal(df.index, df_read.index, check_exact=False)
         assert_dict_equal(_tfs_dataframe.headers, df_read.headers, compare_keys=True)
 
-    def test_tfs_read_write_read_pathlib_input(
-        self, _tfs_file_pathlib: pathlib.Path, _test_file: str
-    ):
+    def test_tfs_read_write_read_pathlib_input(self, _tfs_file_pathlib: pathlib.Path, _test_file: str):
         original = read_tfs(_tfs_file_pathlib)
         write_tfs(_test_file, original)
         new = read_tfs(_test_file)
@@ -231,9 +225,7 @@ class TestFailures:
         with pytest.raises(ValueError):
             write_tfs("", messed_tfs)
 
-    def test_dict_column_dataframe_fails_writes(
-        self, _dict_column_in_dataframe: TfsDataFrame, _test_file
-    ):
+    def test_dict_column_dataframe_fails_writes(self, _dict_column_in_dataframe: TfsDataFrame, _test_file):
         dict_col_tfs = _dict_column_in_dataframe
         with pytest.raises(TypeError):  # tries to format dict.__dict__, can't get a % formatter
             write_tfs("", dict_col_tfs)
@@ -242,9 +234,7 @@ class TestFailures:
         write_tfs(_test_file, dict_col_tfs)
         assert pathlib.Path(_test_file).is_file()
 
-    def test_list_column_dataframe_fails_writes(
-        self, _list_column_in_dataframe: TfsDataFrame, _test_file
-    ):
+    def test_list_column_dataframe_fails_writes(self, _list_column_in_dataframe: TfsDataFrame, _test_file):
         list_col_tfs = _list_column_in_dataframe
         with pytest.raises(ValueError):  # truth value of nested can't be assesed in _validate
             write_tfs("", list_col_tfs)
@@ -256,22 +246,22 @@ class TestFailures:
     def test_dtype_to_format_fails_unexpected_dtypes(self):
         unexpected_list = [1, 2, 3]
         with pytest.raises(TypeError):
-            _ = tfs.handler._dtype_to_formatter(unexpected_list, colsize=10)
+            _ = tfs.writer._dtype_to_formatter(unexpected_list, colsize=10)
 
     def test_dtype_to_str_fails_unexpected_dtypes(self):
         unexpected_list = [1, 2, 3]
         with pytest.raises(TypeError):
-            _ = tfs.handler._dtype_to_id_string(unexpected_list)
+            _ = tfs.writer._dtype_to_id_string(unexpected_list)
 
     def test_id_to_type_fails_unexpected_identifiers(self):
         unexpected_id = "%t"
         with pytest.raises(TfsFormatError):
-            _ = tfs.handler._id_to_type(unexpected_id)
+            _ = tfs.reader._id_to_type(unexpected_id)
 
     def test_header_line_raises_on_non_strings(self):
         not_a_string = dict()
         with pytest.raises(TypeError):
-            _ = tfs.handler._get_header_line(not_a_string, 10, 10)
+            _ = tfs.writer._get_header_line(not_a_string, 10, 10)
 
     def test_fail_read_no_coltypes(self, _no_coltypes_tfs_path, caplog):
         with pytest.raises(TfsFormatError):
@@ -292,17 +282,17 @@ class TestFailures:
     def test_id_to_type_handles_typo_str_id(self):
         typoed_str_id = "%%s"
         with pytest.raises(TfsFormatError):
-            _ = tfs.handler._id_to_type(typoed_str_id)
+            _ = tfs.reader._id_to_type(typoed_str_id)
 
     def test_validate_raises_on_wrong_unique_behavior(self, caplog):
         df = TfsDataFrame(index=["A", "B", "A"], columns=["A", "B", "A"])
         with pytest.raises(KeyError):
-            tfs.handler._validate(df, "", non_unique_behavior="invalid")
+            tfs.utils.validate(df, "", non_unique_behavior="invalid")
 
 
 def test_id_to_type_handles_madx_string_identifier():
     madx_str_id = "%20s"
-    assert tfs.handler._id_to_type(madx_str_id) is str
+    assert tfs.reader._id_to_type(madx_str_id) is str
 
 
 class TestWarnings:
@@ -408,9 +398,7 @@ def _dataframe_empty_headers() -> TfsDataFrame:
 def _messed_up_dataframe() -> TfsDataFrame:
     """Returns a TfsDataFrame with mixed types in each column, some elements being lists."""
     int_row = numpy.array([random.randint(-1e5, 1e5) for _ in range(4)], dtype=numpy.float64)
-    float_row = numpy.array(
-        [round(random.uniform(-1e5, 1e5), 7) for _ in range(4)], dtype=numpy.float64
-    )
+    float_row = numpy.array([round(random.uniform(-1e5, 1e5), 7) for _ in range(4)], dtype=numpy.float64)
     string_row = numpy.array([_rand_string() for _ in range(4)], dtype=numpy.str)
     list_floats_row = [[1.0, 14.777], [2.0, 1243.9], [3.0], [123414.0, 9909.12795]]
     return TfsDataFrame(
@@ -428,10 +416,7 @@ def _dict_column_in_dataframe() -> TfsDataFrame:
     float_elements = [round(random.uniform(-1e5, 1e5), 7) for _ in range(4)]
     string_elements = [_rand_string() for _ in range(4)]
     dict_elements = [{"a": "dict"}, {"b": 14}, {"c": 444.12}, {"d": [1, 2]}]
-    data = [
-        [e[i] for e in (int_elements, float_elements, string_elements, dict_elements)]
-        for i in range(4)
-    ]
+    data = [[e[i] for e in (int_elements, float_elements, string_elements, dict_elements)] for i in range(4)]
     return TfsDataFrame(
         index=range(4),
         columns="a b c d".split(),
@@ -447,10 +432,7 @@ def _list_column_in_dataframe() -> TfsDataFrame:
     float_elements = [round(random.uniform(-1e5, 1e5), 7) for _ in range(4)]
     string_elements = [_rand_string() for _ in range(4)]
     list_elements = [[1.0, 14.777], [2.0, 1243.9], [3.0], [123414.0, 9909.12795]]
-    data = [
-        [e[i] for e in (int_elements, float_elements, string_elements, list_elements)]
-        for i in range(4)
-    ]
+    data = [[e[i] for e in (int_elements, float_elements, string_elements, list_elements)] for i in range(4)]
     return TfsDataFrame(
         index=range(4),
         columns="a b c d".split(),

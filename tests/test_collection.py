@@ -7,7 +7,7 @@ from pandas.testing import assert_frame_equal
 
 from tfs import read_tfs
 from tfs.collection import Tfs, TfsCollection
-from tfs.handler import TfsDataFrame
+from tfs.frame import TfsDataFrame
 
 CURRENT_DIR = pathlib.Path(__file__).parent
 
@@ -27,9 +27,7 @@ class CollectionTest(TfsCollection):
         return template.format(plane)
 
 
-def test_read_pathlib_input(
-    _input_dir_pathlib: pathlib.Path, _tfs_x: TfsDataFrame, _tfs_y: TfsDataFrame
-):
+def test_read_pathlib_input(_input_dir_pathlib: pathlib.Path, _tfs_x: TfsDataFrame, _tfs_y: TfsDataFrame):
     c = CollectionTest(_input_dir_pathlib)
     assert_frame_equal(_tfs_x, c.file_x)
     assert_frame_equal(_tfs_x, c.filex)
