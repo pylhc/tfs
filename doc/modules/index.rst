@@ -5,10 +5,30 @@ TFS-Pandas Modules
     :members:
 
 
-.. automodule:: tfs.handler
+.. automodule:: tfs.constants
+    :members:
+
+
+.. automodule:: tfs.errors
+    :members:
+
+
+.. automodule:: tfs.frame
+    :members:
+
+
+.. automodule:: tfs.reader
     :members:
 
 
 .. automodule:: tfs.tools
+    :members:
+
+
+.. automodule:: tfs.utils
+    :members:
+
+
+.. automodule:: tfs.writer
     :members:
 
