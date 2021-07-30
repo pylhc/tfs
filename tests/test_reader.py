@@ -1,16 +1,12 @@
 import pathlib
-import random
-import string
 import tempfile
 
-import numpy
-import pandas
 import pytest
 from pandas._testing import assert_dict_equal
 from pandas.testing import assert_frame_equal
 
 import tfs
-from tfs import TfsDataFrame, read_tfs, write_tfs
+from tfs import read_tfs, write_tfs
 from tfs.errors import TfsFormatError
 
 CURRENT_DIR = pathlib.Path(__file__).parent
