@@ -32,10 +32,6 @@ tfs.write("path_to_output.tfs", data_frame, save_index="index_column")
 It also provides some tools to manipulate `TfsDataFrames` or lazily manage a collection of TFS files.
 See the [API documentation](https://pylhc.github.io/tfs/) for details.
 
-## Changelog
-
-See the [CHANGELOG](CHANGELOG.md) file.
-
 ## Known Issues
 
 The package currently has the following known caveats:
