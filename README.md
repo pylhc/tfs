@@ -29,7 +29,7 @@ data_frame = tfs.read("path_to_input.tfs", index="index_column")
 tfs.write("path_to_output.tfs", data_frame, save_index="index_column")
 ```
 
-It also provides some tools to manipulate `TfsDataFrames` or lazily manage a collection of TFS files.
+It also provides some tools to validate and manipulate `TfsDataFrames` and their headers; or lazily manage a collection of TFS files.
 See the [API documentation](https://pylhc.github.io/tfs/) for details.
 
 ## Known Issues
