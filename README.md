@@ -8,7 +8,7 @@
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.5070986.svg)](https://doi.org/10.5281/zenodo.5070986)
 
 This package provides reading and writing functionality for [**table format system (tfs)** files](http://mad.web.cern.ch/mad/madx.old/Introduction/tfs.html). 
-The files are read into special `pandas` `Dataframes`, called `TfsDataFrames`, which in addition to the normal behaviour attach an `OrderedDict` of headers to the `DataFrame`.
+Files are read into a `TfsDataFrame`, a class built on top of the famous `pandas.DataFrame`, which in addition to the normal behaviour attaches an `OrderedDict` of headers to the `DataFrame`.
 
 ## Installing
 
@@ -32,14 +32,15 @@ tfs.write("path_to_output.tfs", data_frame, save_index="index_column")
 It also provides some tools to manipulate `TfsDataFrames` or lazily manage a collection of TFS files.
 See the [API documentation](https://pylhc.github.io/tfs/) for details.
 
-### Changelog
+## Changelog
 
 See the [CHANGELOG](CHANGELOG.md) file.
 
 ## Known Issues
 
+The package currently has the following known caveats:
 - Combining multiple `TfsDataFrame` objects, for example via `pandas.DataFrame.append()` or `pandas.concat()`, will convert them back to a `pandas.DataFrame` and therefore lose the headers.
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the `MIT License` - see the [LICENSE](LICENSE) file for details.
