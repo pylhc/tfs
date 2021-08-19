@@ -5,9 +5,8 @@ Tools
 Additional functions to modify **TFS** files.
 """
 import logging
-from collections import OrderedDict
 from pathlib import Path
-from typing import List, Set, Tuple, Union
+from typing import List, Tuple, Union
 
 import numpy as np
 
@@ -100,30 +99,3 @@ def remove_header_comments_from_files(list_of_files: List[Union[str, Path]]) -> 
 
             with open(filepath, "w") as f:
                 f.writelines(f_lines)
-
-
-def merge_headers(headers_left: dict, headers_right: dict, how: str) -> OrderedDict:
-    """
-    Merge new_headers of two ``TfsDataFrames`` together.
-
-    Args:
-        headers_left (dict): TODO.
-        headers_right (dict): TODO.
-        how (str): Type of merge to be performed, either **left** or **right**. If **left*, prioritize keys
-            from **headers_left** in case of duplicate keys. If **right**, prioritize keys from
-            **headers_right** in case of duplicate keys.
-
-    Returns:
-        A new ``OrderedDict`` as the merge of the two provided dictionaries.
-    """
-    accepted_merges: Set[str] = {"left", "right"}
-    if how not in accepted_merges:
-        raise ValueError(f"Invalid 'how' argument, should be one of {accepted_merges}")
-    LOGGER.debug(f"Merging new_headers with method '{how}'")
-    if how == "left":  # we prioritize the contents of headers_left
-        result = headers_right.copy()
-        result.update(headers_left)
-    else:  # we prioritize the contents of headers_right
-        result = headers_left.copy()
-        result.update(headers_right)
-    return OrderedDict(result)  # so that the TfsDataFrame still has an OrderedDict as header
