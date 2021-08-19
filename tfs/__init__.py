@@ -2,7 +2,7 @@
 Exposes TfsDataFrame, read and write directly in tfs namespace, as well as the package version.
 """
 from tfs.errors import TfsFormatError
-from tfs.frame import TfsDataFrame
+from tfs.frame import TfsDataFrame, concat
 from tfs.reader import read_tfs
 from tfs.writer import write_tfs
 
