@@ -295,7 +295,7 @@ def validate(
         LOGGER.error(f"Space(s) found in TFS columns, dataframe {info_str} is invalid")
         raise TfsFormatError("TFS-Columns can not contain spaces.")
 
-    if hasattr(data_frame, "new_headers") and any(" " in h for h in data_frame.headers.keys()):
+    if hasattr(data_frame, "headers") and any(" " in h for h in data_frame.headers.keys()):
         LOGGER.error(f"Space(s) found in TFS header names, dataframe {info_str} is invalid")
         raise TfsFormatError("TFS-Header names can not contain spaces.")
 
