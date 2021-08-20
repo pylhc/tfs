@@ -100,7 +100,7 @@ class TfsDataFrame(pd.DataFrame):
             A new ``TfsDataFrame`` with the appended data and merged new_headers.
         """
         LOGGER.debug("Appending data through 'pandas'")
-        dframe = super(TfsDataFrame, self).append(other, **kwargs)
+        dframe = super().append(other, **kwargs)
 
         LOGGER.debug("Determining headers")
         new_headers = (
@@ -134,7 +134,7 @@ class TfsDataFrame(pd.DataFrame):
             A new ``TfsDataFrame`` with the joined columns and merged new_headers.
         """
         LOGGER.debug("Joining data through 'pandas'")
-        dframe = super(TfsDataFrame, self).join(other, **kwargs)
+        dframe = super().join(other, **kwargs)
 
         LOGGER.debug("Determining headers")
         new_headers = (
@@ -168,7 +168,7 @@ class TfsDataFrame(pd.DataFrame):
             A new ``TfsDataFrame`` with the merged data and merged new_headers.
         """
         LOGGER.debug("Merging data through 'pandas'")
-        dframe = super(TfsDataFrame, self).merge(right, **kwargs)
+        dframe = super().merge(right, **kwargs)
 
         LOGGER.debug("Determining headers")
         new_headers = (
