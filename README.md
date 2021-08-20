@@ -41,11 +41,6 @@ tfs.write("path_to_output.tfs", data_frame, save_index="index_column")
 It also provides some tools to validate and manipulate `TfsDataFrames` and their headers; or lazily manage a collection of TFS files.
 See the [API documentation](https://pylhc.github.io/tfs/) for details.
 
-## Known Issues
-
-The package currently has the following known caveats:
-- Combining multiple `TfsDataFrame` objects, for example via `pandas.DataFrame.append()` or `pandas.concat()`, will convert them back to a `pandas.DataFrame` and therefore lose the headers.
-
 ## License
 
 This project is licensed under the `MIT License` - see the [LICENSE](LICENSE) file for details.
