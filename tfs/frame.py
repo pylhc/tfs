@@ -23,7 +23,8 @@ class TfsDataFrame(pd.DataFrame):
     """
     Class to hold the information of the built an extended ``pandas`` ``DataFrame``, together with a way
     of getting the headers of the **TFS** file. The file headers are stored in a dictionary upon read.
-    To get a header value use ``data_frame["header_name"]``.
+    To get a header value use ``data_frame.headers["header_name"]``, or ``data_frame["header_name"]`` if
+    it does not conflict with a column name in the dataframe.
     """
 
     _metadata = ["headers"]
@@ -86,7 +87,10 @@ class TfsDataFrame(pd.DataFrame):
 
         Args:
             other (TfsDataFrame): The ``TfsDataFrame`` to append to the caller.
-            how_headers (str): TODO. Defaults to None so that you can provide new_headers instead.
+            how_headers (str): Type of merge to be performed for the headers. Either **left** or **right**.
+                Refer to :func:`tfs.frame.merge_headers` for behavior. If ``None`` is provided and
+                **new_headers** is not provided, the final headers will be empty. Case insensitive,
+                defaults to ``None``.
             new_headers (dict): If provided, will be used as new_headers for the merged ``TfsDataFrame``.
                 Otherwise these are determined by merging the headers from the caller and the other
                 ``TfsDataFrame`` according to the method defined by the **how_headers** argument.
@@ -120,7 +124,10 @@ class TfsDataFrame(pd.DataFrame):
 
         Args:
             other (TfsDataFrame): The ``TfsDataFrame`` to join into the caller.
-            how_headers (str): TODO. Defaults to None so that you can provide new_headers instead.
+            how_headers (str): Type of merge to be performed for the headers. Either **left** or **right**.
+                Refer to :func:`tfs.frame.merge_headers` for behavior. If ``None`` is provided and
+                **new_headers** is not provided, the final headers will be empty. Case insensitive,
+                defaults to ``None``.
             new_headers (dict): If provided, will be used as new_headers for the merged ``TfsDataFrame``.
                 Otherwise these are determined by merging the headers from the caller and the other
                 ``TfsDataFrame`` according to the method defined by the **how_headers** argument.
@@ -154,7 +161,10 @@ class TfsDataFrame(pd.DataFrame):
 
         Args:
             right (TfsDataFrame): The ``TfsDataFrame`` to merge with the caller.
-            how_headers (str): TODO. Defaults to None so that you can provide new_headers instead.
+            how_headers (str): Type of merge to be performed for the headers. Either **left** or **right**.
+                Refer to :func:`tfs.frame.merge_headers` for behavior. If ``None`` is provided and
+                **new_headers** is not provided, the final headers will be empty. Case insensitive,
+                defaults to ``None``.
             new_headers (dict): If provided, will be used as headers for the merged ``TfsDataFrame``.
                 Otherwise these are determined by merging the headers from the caller and the other
                 ``TfsDataFrame`` according to the method defined by the **how_headers** argument.
@@ -184,8 +194,11 @@ def merge_headers(headers_left: dict, headers_right: dict, how: str) -> OrderedD
     Merge new_headers of two ``TfsDataFrames`` together.
 
     Args:
-        headers_left (dict): TODO.
-        headers_right (dict): TODO.
+        headers_left (dict): Headers of caller (left) ``TfsDataFrame`` when calling ``.append``, ``.join`` or
+            ``.merge``. Headers of the left (preceeding) ``TfsDataFrame`` when calling ``tfs.frame.concat``.
+        headers_right (dict): Headers of other (right) ``TfsDataFrame`` when calling ``.append``, ``.join``
+            or ``.merge``. Headers of the left (preceeding) ``TfsDataFrame`` when calling
+            ``tfs.frame.concat``.
         how (str): Type of merge to be performed, either **left** or **right**. If **left*, prioritize keys
             from **headers_left** in case of duplicate keys. If **right**, prioritize keys from
             **headers_right** in case of duplicate keys. Case insensitive. If ``None`` is given,
@@ -212,7 +225,7 @@ def merge_headers(headers_left: dict, headers_right: dict, how: str) -> OrderedD
 
 def concat(
     objs: Sequence[TfsDataFrame],
-    how_headers: str,
+    how_headers: str = None,
     new_headers: dict = None,
     **kwargs,
 ) -> TfsDataFrame:
@@ -221,9 +234,18 @@ def concat(
     axes. Data manipulation is done by the ``pandas.concat`` function. Resulting new_headers are either
     merged according to the provided **how_headers** method or as given via **new_headers**.
 
+    ..warning::
+        Please note that when using this function on many ``TfsDataFrames``, leaving the contents of the
+        final headers dictionary to the automatic merger can become unpredictable. In this case it is
+        recommended to provide the **new_headers** argument to ensure the final result, or leave both
+        **how_headers** and **new_headers** as ``None`` (their defaults) to end up with empty headers.
+
     Args:
         objs (Sequence[TfsDataFrame]): the ``TfsDataFrame`` objects to be concatenated.
-        how_headers (str): TODO.
+        how_headers (str): Type of merge to be performed for the headers. Either **left** or **right**.
+            Refer to :func:`tfs.frame.merge_headers` for behavior. If ``None`` is provided and
+            **new_headers** is not provided, the final headers will be empty. Case insensitive, defaults to
+            ``None``.
         new_headers (dict): If provided, will be used as headers for the merged ``TfsDataFrame``.
             Otherwise these are determined by successively merging the headers from all concatenated
             ``TfsDataFrames`` according to the method defined by the **how_headers** argument.
