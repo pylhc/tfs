@@ -97,7 +97,7 @@ class TfsDataFrame(pd.DataFrame):
             [DataFrame.append documentation](https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.append.html).
 
         Returns:
-            A new ``TfsDataFrame`` with the appended data and merged new_headers.
+            A new ``TfsDataFrame`` with the appended data and merged headers.
         """
         LOGGER.debug("Appending data through 'pandas'")
         dframe = super().append(other, **kwargs)
@@ -121,7 +121,7 @@ class TfsDataFrame(pd.DataFrame):
         Args:
             other (TfsDataFrame): The ``TfsDataFrame`` to join into the caller.
             how_headers (str): TODO.
-            new_headers (dict): If provided, will be used as new_headers for the merged``TfsDataFrame``.
+            new_headers (dict): If provided, will be used as new_headers for the merged ``TfsDataFrame``.
                 Otherwise these are determined by merging the headers from the caller and the other
                 ``TfsDataFrame`` according to the method defined by the **how_headers** argument.
 
@@ -131,7 +131,7 @@ class TfsDataFrame(pd.DataFrame):
             [DataFrame.join documentation](https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.join.html).
 
         Returns:
-            A new ``TfsDataFrame`` with the joined columns and merged new_headers.
+            A new ``TfsDataFrame`` with the joined columns and merged headers.
         """
         LOGGER.debug("Joining data through 'pandas'")
         dframe = super().join(other, **kwargs)
@@ -165,7 +165,7 @@ class TfsDataFrame(pd.DataFrame):
             [DataFrame.merge documentation](https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.merge.html).
 
         Returns:
-            A new ``TfsDataFrame`` with the merged data and merged new_headers.
+            A new ``TfsDataFrame`` with the merged data and merged headers.
         """
         LOGGER.debug("Merging data through 'pandas'")
         dframe = super().merge(right, **kwargs)
@@ -188,16 +188,16 @@ def merge_headers(headers_left: dict, headers_right: dict, how: str) -> OrderedD
         headers_right (dict): TODO.
         how (str): Type of merge to be performed, either **left** or **right**. If **left*, prioritize keys
             from **headers_left** in case of duplicate keys. If **right**, prioritize keys from
-            **headers_right** in case of duplicate keys.
+            **headers_right** in case of duplicate keys. Case insensitive.
 
     Returns:
         A new ``OrderedDict`` as the merge of the two provided dictionaries.
     """
     accepted_merges: Set[str] = {"left", "right"}
-    if how not in accepted_merges:
+    if how.lower() not in accepted_merges:
         raise ValueError(f"Invalid 'how' argument, should be one of {accepted_merges}")
-    LOGGER.debug(f"Merging new_headers with method '{how}'")
-    if how == "left":  # we prioritize the contents of headers_left
+    LOGGER.debug(f"Merging headers with method '{how}'")
+    if how.lower() == "left":  # we prioritize the contents of headers_left
         result = headers_right.copy()
         result.update(headers_left)
     else:  # we prioritize the contents of headers_right
@@ -230,13 +230,13 @@ def concat(
         documentation](https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.concat.html).
 
     Returns:
-        A new ``TfsDataFrame`` with the merged data and merged new_headers.
+        A new ``TfsDataFrame`` with the merged data and merged headers.
     """
     LOGGER.debug("Concatenating data through 'pandas'")
     dframe = pd.concat(objs, **kwargs)
 
     LOGGER.debug("Determining headers")
-    merger = partial(merge_headers, how=how_headers)  # so we can reduce on all objs, and use how_headers
+    merger = partial(merge_headers, how=how_headers)  # so we can reduce on all objs, and use 'how_headers'
     new_headers = new_headers if new_headers is not None else reduce(merger, objs)
     return TfsDataFrame(data=dframe, headers=new_headers)
 
