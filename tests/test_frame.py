@@ -15,6 +15,11 @@ class TestFailures:
             tfs.frame.validate(df, "", non_unique_behavior="invalid")
 
 
+class TestMerges:
+    def test_qq(self):
+        pass
+
+
 class TestPrinting:
     def test_header_print(self):
         headers = {"param": 3, "other": "hello"}
