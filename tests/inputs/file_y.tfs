@@ -1,10 +1,10 @@
-@ TITLE %s "Title of tfs file"
+@ TITLE %s "Title of this tfs file"
 @ DPP %le 0.0
 @ Q1 %le 0.289974877952
 @ Q1RMS %le 1.35642567736e-07
 @ NATQ1 %le 0.680041400187
-@ NATQ1RMS %le 0.00102479265802
-@ BPMCOUNT %d 9
+@ NATQ1RMS %le 0.00107479265802
+@ BPMCOUNT %d 12
 # another comment line here
 *            NAME                 S            NUMBER                CO             CORMS           BPM_RES
 $              %s               %le                %d               %le               %le               %le

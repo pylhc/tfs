@@ -1,5 +1,5 @@
-@ TITLE %s "Title of tfs file"
-@ DPP %le 0.0
+@ TITLE %s "Title of your tfs file"
+@ DPP %le 1.0
 @ Q1 %le 0.269974877952
 @ Q1RMS %le 1.75642567736e-07
 @ NATQ1 %le 0.280041400187
