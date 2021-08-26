@@ -77,7 +77,7 @@ class TfsDataFrame(pd.DataFrame):
         return f"{s}{super().__repr__()}"
 
     def append(
-        self, other: "TfsDataFrame", how_headers: str, new_headers: dict = None, **kwargs
+        self, other: "TfsDataFrame", how_headers: str = None, new_headers: dict = None, **kwargs
     ) -> "TfsDataFrame":
         """
         Append rows of the other ``TfsDataFrame`` to the end of caller, returning a new object. Data
@@ -86,7 +86,7 @@ class TfsDataFrame(pd.DataFrame):
 
         Args:
             other (TfsDataFrame): The ``TfsDataFrame`` to append to the caller.
-            how_headers (str): TODO.
+            how_headers (str): TODO. Defaults to None so that you can provide new_headers instead.
             new_headers (dict): If provided, will be used as new_headers for the merged ``TfsDataFrame``.
                 Otherwise these are determined by merging the headers from the caller and the other
                 ``TfsDataFrame`` according to the method defined by the **how_headers** argument.
@@ -111,7 +111,7 @@ class TfsDataFrame(pd.DataFrame):
         return TfsDataFrame(data=dframe, headers=new_headers)
 
     def join(
-        self, other: "TfsDataFrame", how_headers: str, new_headers: dict = None, **kwargs
+        self, other: "TfsDataFrame", how_headers: str = None, new_headers: dict = None, **kwargs
     ) -> "TfsDataFrame":
         """
         Join columns of another ``TfsDataFrame``. Data manipulation is done by the ``pandas.Dataframe``
@@ -120,7 +120,7 @@ class TfsDataFrame(pd.DataFrame):
 
         Args:
             other (TfsDataFrame): The ``TfsDataFrame`` to join into the caller.
-            how_headers (str): TODO.
+            how_headers (str): TODO. Defaults to None so that you can provide new_headers instead.
             new_headers (dict): If provided, will be used as new_headers for the merged ``TfsDataFrame``.
                 Otherwise these are determined by merging the headers from the caller and the other
                 ``TfsDataFrame`` according to the method defined by the **how_headers** argument.
@@ -145,7 +145,7 @@ class TfsDataFrame(pd.DataFrame):
         return TfsDataFrame(data=dframe, headers=new_headers)
 
     def merge(
-        self, right: "TfsDataFrame", how_headers: str, new_headers: dict = None, **kwargs
+        self, right: "TfsDataFrame", how_headers: str = None, new_headers: dict = None, **kwargs
     ) -> "TfsDataFrame":
         """
         Merge ``TfsDataFrame`` objects with a database-style join. Data manipulation is done by the
@@ -154,7 +154,7 @@ class TfsDataFrame(pd.DataFrame):
 
         Args:
             right (TfsDataFrame): The ``TfsDataFrame`` to merge with the caller.
-            how_headers (str): TODO.
+            how_headers (str): TODO. Defaults to None so that you can provide new_headers instead.
             new_headers (dict): If provided, will be used as headers for the merged ``TfsDataFrame``.
                 Otherwise these are determined by merging the headers from the caller and the other
                 ``TfsDataFrame`` according to the method defined by the **how_headers** argument.

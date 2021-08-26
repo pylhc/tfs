@@ -49,6 +49,19 @@ class TestMerges:
             if key in headers_left and key in headers_right:
                 assert result[key] == headers_right[key]
 
+    def test_providing_new_headers_overrides_merging(self, _tfs_file_x_pathlib, _tfs_file_y_pathlib):
+        dframe_x = tfs.read(_tfs_file_x_pathlib)
+        dframe_y = tfs.read(_tfs_file_y_pathlib)
+
+        assert dframe_x.append(other=dframe_y, new_headers={}).headers == OrderedDict()
+        assert dframe_y.append(other=dframe_x, new_headers={}).headers == OrderedDict()
+
+        assert dframe_x.join(other=dframe_y, lsuffix="_l", new_headers={}).headers == OrderedDict()
+        assert dframe_y.join(other=dframe_x, lsuffix="_l", new_headers={}).headers == OrderedDict()
+
+        assert dframe_x.merge(right=dframe_y, new_headers={}).headers == OrderedDict()
+        assert dframe_y.merge(right=dframe_x, new_headers={}).headers == OrderedDict()
+
 
 class TestPrinting:
     def test_header_print(self):
