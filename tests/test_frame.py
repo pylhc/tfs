@@ -49,6 +49,13 @@ class TestMerges:
             if key in headers_left and key in headers_right:
                 assert result[key] == headers_right[key]
 
+    @pytest.mark.parametrize("how", [None, "none", "None", "nOnE"])  # we're case-insensitive
+    def test_headers_merging_none(self, _tfs_file_x_pathlib, _tfs_file_y_pathlib, how):
+        headers_left = tfs.read(_tfs_file_x_pathlib).headers
+        headers_right = tfs.read(_tfs_file_y_pathlib).headers
+        result = merge_headers(headers_left, headers_right, how=how)
+        assert result == OrderedDict()  # giving None returns empty headers
+
     def test_providing_new_headers_overrides_merging(self, _tfs_file_x_pathlib, _tfs_file_y_pathlib):
         dframe_x = tfs.read(_tfs_file_x_pathlib)
         dframe_y = tfs.read(_tfs_file_y_pathlib)

@@ -188,21 +188,25 @@ def merge_headers(headers_left: dict, headers_right: dict, how: str) -> OrderedD
         headers_right (dict): TODO.
         how (str): Type of merge to be performed, either **left** or **right**. If **left*, prioritize keys
             from **headers_left** in case of duplicate keys. If **right**, prioritize keys from
-            **headers_right** in case of duplicate keys. Case insensitive.
+            **headers_right** in case of duplicate keys. Case insensitive. If ``None`` is given,
+            an empty dictionary will be returned.
 
     Returns:
         A new ``OrderedDict`` as the merge of the two provided dictionaries.
     """
-    accepted_merges: Set[str] = {"left", "right"}
-    if how.lower() not in accepted_merges:
+    accepted_merges: Set[str] = {"left", "right", "none"}
+    if str(how).lower() not in accepted_merges:  # handles being given None
         raise ValueError(f"Invalid 'how' argument, should be one of {accepted_merges}")
+
     LOGGER.debug(f"Merging headers with method '{how}'")
-    if how.lower() == "left":  # we prioritize the contents of headers_left
+    if str(how).lower() == "left":  # we prioritize the contents of headers_left
         result = headers_right.copy()
         result.update(headers_left)
-    else:  # we prioritize the contents of headers_right
+    elif str(how).lower() == "right":  # we prioritize the contents of headers_right
         result = headers_left.copy()
         result.update(headers_right)
+    else:  # we were given None, result will be an empty dict
+        result = {}
     return OrderedDict(result)  # so that the TfsDataFrame still has an OrderedDict as header
 
 
