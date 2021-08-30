@@ -279,7 +279,7 @@ def validate(
 
     Args:
         data_frame (Union[TfsDataFrame, pd.DataFrame]): the dataframe to check on.
-        info_str (str): additional information to includ in logging statements.
+        info_str (str): additional information to include in logging statements.
         non_unique_behavior (str): behavior to adopt if non-unique indices or columns are found in the
             dataframe. Accepts `warn` and `raise` as values, case-insensitively, which dictates
             to respectively issue a warning or raise an error if non-unique elements are found.
