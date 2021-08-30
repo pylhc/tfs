@@ -86,8 +86,18 @@ class TestPrinting:
             assert key in print_out
             assert str(val) in print_out
 
+    def test_long_headers_print(self):
+        headers = {"p1": 1, "p2": "hello", "p3": 3, "p4": 4, "p5": 5, "p6": 6, "p7": "string", "p8": "long"}
+        df = TfsDataFrame(headers=headers)
+        print_out = str(df)
+        assert "Headers" in print_out
 
-# TODO: concatenation tests
+        # Check that the ellipsis worked
+        assert not all(key in print_out for key in headers.keys())
+        assert not all(str(val) in print_out for val in headers.values())
+        assert "..." in print_out
+
+
 class TestTfsDataFrameAppending:
     @pytest.mark.parametrize("how_headers", [None, "left", "right"])
     def test_correct_appending(self, _tfs_file_x_pathlib, _tfs_file_y_pathlib, how_headers):
