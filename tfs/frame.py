@@ -263,7 +263,8 @@ def concat(
 
     LOGGER.debug("Determining headers")
     merger = partial(merge_headers, how=how_headers)  # so we can reduce on all objs, and use 'how_headers'
-    new_headers = new_headers if new_headers is not None else reduce(merger, objs)
+    all_headers = (tfsdframe.headers for tfsdframe in objs)
+    new_headers = new_headers if new_headers is not None else reduce(merger, all_headers)
     return TfsDataFrame(data=dframe, headers=new_headers)
 
 
