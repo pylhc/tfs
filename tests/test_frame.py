@@ -1,7 +1,11 @@
 import pathlib
 from collections import OrderedDict
+from functools import partial, reduce
 
+import pandas as pd
 import pytest
+from pandas._testing import assert_dict_equal
+from pandas.testing import assert_frame_equal
 
 import tfs
 from tfs.frame import TfsDataFrame, concat, merge_headers, validate
@@ -83,18 +87,50 @@ class TestPrinting:
             assert str(val) in print_out
 
 
-# TODO: Write the following. Check that result is a TfsDataFrame. Check that headers behave properly. Check
-#  that data part is similar to pd.DataFrame(tfsdframe).append(...)/.join(...)/.merge(...)
+# TODO: concatenation tests
 class TestTfsDataFrameAppending:
-    pass
+    @pytest.mark.parametrize("how_headers", [None, "left", "right"])
+    def test_correct_appending(self, _tfs_file_x_pathlib, _tfs_file_y_pathlib, how_headers):
+        dframe_x = tfs.read(_tfs_file_x_pathlib)
+        dframe_y = tfs.read(_tfs_file_y_pathlib)
+        result = dframe_x.append(dframe_y, how_headers=how_headers)
+
+        assert isinstance(result, TfsDataFrame)
+        assert isinstance(result.headers, OrderedDict)
+        assert_dict_equal(result.headers, merge_headers(dframe_x.headers, dframe_y.headers, how=how_headers))
+        assert_frame_equal(result, pd.DataFrame(dframe_x).append(pd.DataFrame(dframe_y)))
 
 
 class TestTfsDataFrameJoining:
-    pass
+    @pytest.mark.parametrize("how_headers", [None, "left", "right"])
+    @pytest.mark.parametrize("lsuffix", ["left", "_x"])
+    @pytest.mark.parametrize("rsuffix", ["right", "_y"])
+    def test_correct_joining(self, _tfs_file_x_pathlib, _tfs_file_y_pathlib, how_headers, lsuffix, rsuffix):
+        dframe_x = tfs.read(_tfs_file_x_pathlib)
+        dframe_y = tfs.read(_tfs_file_y_pathlib)
+        result = dframe_x.join(dframe_y, how_headers=how_headers, lsuffix=lsuffix, rsuffix=rsuffix)
+
+        assert isinstance(result, TfsDataFrame)
+        assert isinstance(result.headers, OrderedDict)
+        assert_dict_equal(result.headers, merge_headers(dframe_x.headers, dframe_y.headers, how=how_headers))
+        assert_frame_equal(
+            result, pd.DataFrame(dframe_x).join(pd.DataFrame(dframe_y), lsuffix=lsuffix, rsuffix=rsuffix)
+        )
 
 
 class TestTfsDataFrameMerging:
-    pass
+    @pytest.mark.parametrize("how_headers", [None, "left", "right"])
+    @pytest.mark.parametrize("how", ["left", "right", "outer", "inner"])
+    @pytest.mark.parametrize("on", ["NAME", "S", "NUMBER", "CO", "CORMS", "BPM_RES"])
+    def test_correct_merging(self, _tfs_file_x_pathlib, _tfs_file_y_pathlib, how_headers, how, on):
+        dframe_x = tfs.read(_tfs_file_x_pathlib)
+        dframe_y = tfs.read(_tfs_file_y_pathlib)
+        result = dframe_x.merge(dframe_y, how_headers=how_headers, how=how, on=on)
+
+        assert isinstance(result, TfsDataFrame)
+        assert isinstance(result.headers, OrderedDict)
+        assert_dict_equal(result.headers, merge_headers(dframe_x.headers, dframe_y.headers, how=how_headers))
+        assert_frame_equal(result, pd.DataFrame(dframe_x).merge(pd.DataFrame(dframe_y), how=how, on=on))
 
 
 class TestTfsDataFramesConcatenating:
