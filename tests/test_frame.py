@@ -134,7 +134,21 @@ class TestTfsDataFrameMerging:
 
 
 class TestTfsDataFramesConcatenating:
-    pass
+    @pytest.mark.parametrize("how_headers", [None, "left", "right"])
+    @pytest.mark.parametrize("axis", [0, 1])
+    @pytest.mark.parametrize("join", ["inner", "outer"])
+    def test_correct_concatenating(self, _tfs_file_x_pathlib, _tfs_file_y_pathlib, how_headers, axis, join):
+        dframe_x = tfs.read(_tfs_file_x_pathlib)
+        dframe_y = tfs.read(_tfs_file_y_pathlib)
+        objs = [dframe_x] * 4 + [dframe_y] * 4
+        result = concat(objs, how_headers=how_headers, axis=axis, join=join)
+
+        merger = partial(merge_headers, how=how_headers)
+        all_headers = (tfsdframe.headers for tfsdframe in objs)
+        assert isinstance(result, TfsDataFrame)
+        assert isinstance(result.headers, OrderedDict)
+        assert_dict_equal(result.headers, reduce(merger, all_headers))
+        assert_frame_equal(result, pd.concat(objs, axis=axis, join=join))
 
 
 # ------ Fixtures ------ #
