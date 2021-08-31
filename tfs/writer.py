@@ -73,7 +73,7 @@ def write_tfs(
     LOGGER.debug(f"Attempting to write file: {tfs_file_path.name} in {tfs_file_path.parent}")
     with tfs_file_path.open("w") as tfs_data:
         tfs_data.write(
-            "\n".join((line for line in (headers_str, colnames_str, coltypes_str, data_str) if line))
+            "\n".join((line for line in (headers_str, colnames_str, coltypes_str, data_str) if line)) + "\n"
         )
 
 
