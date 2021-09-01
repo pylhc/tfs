@@ -35,7 +35,7 @@ data_frame.headers["NEW_KEY"] = some_variable
 data_frame["NEWCOL"] = data_frame.COL_A * data_frame.COL_B
 
 # You can check the validity of a TfsDataFrame, and choose the behavior in case of errors
-tfs.frame.validate(data_frame, non_unique_behavior="raise")  # this raises if data_frame is invalid
+tfs.frame.validate(data_frame, non_unique_behavior="raise")  # or choose "warn"
 
 # Writing out to disk is simple too
 tfs.write("path_to_output.tfs", data_frame, save_index="index_column")
