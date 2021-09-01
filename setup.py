@@ -27,7 +27,6 @@ ABOUT_TFS = about_package(ABOUT_FILE)
 with README.open("r") as docs:
     long_description = docs.read()
 
-
 # Dependencies for the package itself
 DEPENDENCIES = [
     "numpy>=1.19.0",
@@ -36,7 +35,7 @@ DEPENDENCIES = [
 
 # Extra dependencies
 EXTRA_DEPENDENCIES = {
-    "test": ["pytest>=5.2", "pytest-cov>=2.9"],
+    "test": ["pytest>=5.2", "pytest-cov>=2.9", "cpymad>=1.8.1"],
     "doc": ["sphinx", "sphinx_rtd_theme"],
 }
 EXTRA_DEPENDENCIES.update({"all": [elem for list_ in EXTRA_DEPENDENCIES.values() for elem in list_]})

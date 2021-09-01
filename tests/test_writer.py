@@ -7,6 +7,7 @@ import tempfile
 import numpy
 import pandas
 import pytest
+from cpymad.madx import Madx
 from pandas._testing import assert_dict_equal
 from pandas.testing import assert_frame_equal, assert_index_equal
 
@@ -32,6 +33,14 @@ class TestWrites:
         new = read_tfs(_test_file)
         assert_frame_equal(df, new)
         assert_dict_equal(df.headers, new.headers, compare_keys=True)
+
+    def test_eol_at_eof_accepted_by_madx(self, _tfs_dataframe, _test_file):
+        dframe = _tfs_dataframe
+        write_tfs(_test_file, dframe)  # this will write an eol at eof
+
+        # The written TFS file should be accepted by MAD-X
+        with Madx() as madx:
+            madx.command.readtable(file=str(_test_file), table="test_table")
 
     def test_tfs_write_empty_index_dataframe(self, _test_file: str):
         df = TfsDataFrame(
