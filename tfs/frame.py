@@ -60,7 +60,7 @@ class TfsDataFrame(pd.DataFrame):
     def _constructor(self):
         return TfsDataFrame
 
-    def __repr__(self) -> str:
+    def _headers_repr(self) -> str:
         space: str = " " * 4
 
         def _str_items(items_list: Sequence[str]) -> str:
@@ -75,7 +75,11 @@ class TfsDataFrame(pd.DataFrame):
             else:
                 s += f"{_str_items(self.headers.items())}\n"
             s += "\n"
-        return f"{s}{super().__repr__()}"
+            return s
+
+    def __repr__(self) -> str:
+        headers_string = self._headers_repr()
+        return f"{headers_string}{super().__repr__()}"
 
     def append(
         self, other: "TfsDataFrame", how_headers: str = None, new_headers: dict = None, **kwargs
