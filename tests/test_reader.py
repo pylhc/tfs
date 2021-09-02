@@ -1,5 +1,4 @@
 import pathlib
-import tempfile
 
 import pytest
 from pandas._testing import assert_dict_equal
@@ -47,10 +46,11 @@ class TestRead:
         madx_str_id = "%20s"
         assert tfs.reader._id_to_type(madx_str_id) is str
 
-    def test_tfs_read_write_read_pathlib_input(self, _tfs_file_pathlib: pathlib.Path, _test_file: str):
+    def test_tfs_read_write_read_pathlib_input(self, _tfs_file_pathlib: pathlib.Path, tmp_path):
         original = read_tfs(_tfs_file_pathlib)
-        write_tfs(_test_file, original)
-        new = read_tfs(_test_file)
+        write_location = tmp_path / "test_file.tfs"
+        write_tfs(write_location, original)
+        new = read_tfs(write_location)
         assert_frame_equal(original, new)
         assert_dict_equal(original.headers, new.headers, compare_keys=True)
 
@@ -111,12 +111,6 @@ def _tfs_file_pathlib() -> pathlib.Path:
 @pytest.fixture()
 def _tfs_file_str() -> str:
     return str((CURRENT_DIR / "inputs" / "file_x.tfs").absolute())
-
-
-@pytest.fixture()
-def _test_file() -> str:
-    with tempfile.TemporaryDirectory() as cwd:
-        yield str(pathlib.Path(cwd) / "test_file.tfs")
 
 
 @pytest.fixture()
