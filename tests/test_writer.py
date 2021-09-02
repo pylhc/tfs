@@ -36,7 +36,7 @@ class TestWrites:
 
     def test_madx_reads_written_tfsdataframes(self, _bigger_tfs_dataframe, tmp_path):
         dframe = _bigger_tfs_dataframe
-        dframe.headers["TYPE"] = "TWISS"  # MAD-X complains on TFS files with no "TYPE" entry
+        dframe.headers["TYPE"] = "TWISS"  # MAD-X complains on TFS files with no "TYPE" header
         write_location = tmp_path / "test.tfs"
         write_tfs(write_location, dframe)  # this will write an eol at eof
 
@@ -45,14 +45,13 @@ class TestWrites:
             madx.command.readtable(file=str(write_location), table="test_table")
             assert madx.table.test_table is not None  # check table has loaded
 
-            # Check the validity of the loaded data, here we use pandas.Series and assert_series_equal
-            # instead of numpy.array_equal to allow for small numerical differences on loading
+            # Check validity of the loaded table, here we use pandas.Series and assert_series_equal instead
+            # of numpy.array_equal to allow for (very) small relative numerical differences on loading
             for column in dframe.columns:
                 assert column in madx.table.test_table
-                if column != "NAME":  # cpymad makes string names lowercase
-                    assert_series_equal(
-                        pandas.Series(madx.table.test_table[column]), dframe[column], check_names=False
-                    )
+                assert_series_equal(
+                    pandas.Series(madx.table.test_table[column]), dframe[column], check_names=False
+                )
 
     def test_tfs_write_empty_index_dataframe(self, tmp_path):
         df = TfsDataFrame(
