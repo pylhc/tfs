@@ -2,7 +2,6 @@ import pathlib
 import random
 import string
 import sys
-import tempfile
 
 import numpy
 import pandas
@@ -19,7 +18,7 @@ CURRENT_DIR = pathlib.Path(__file__).parent
 
 
 class TestWrites:
-    def test_tfs_write_empty_columns_dataframe(self, _test_file: str):
+    def test_tfs_write_empty_columns_dataframe(self, tmp_path):
         df = TfsDataFrame(
             index=range(3),
             columns=[],
@@ -27,22 +26,24 @@ class TestWrites:
             headers={"Title": "Tfs Title", "Value": 3.3663},
         )
 
-        write_tfs(_test_file, df, save_index=True)
-        assert pathlib.Path(_test_file).is_file()
+        write_location = tmp_path / "test.tfs"
+        write_tfs(write_location, df, save_index=True)
+        assert write_location.is_file()
 
-        new = read_tfs(_test_file)
+        new = read_tfs(write_location)
         assert_frame_equal(df, new)
         assert_dict_equal(df.headers, new.headers, compare_keys=True)
 
-    def test_eol_at_eof_accepted_by_madx(self, _tfs_dataframe, _test_file):
+    def test_eol_at_eof_accepted_by_madx(self, _tfs_dataframe, tmp_path):
         dframe = _tfs_dataframe
-        write_tfs(_test_file, dframe)  # this will write an eol at eof
+        write_location = tmp_path / "test.tfs"
+        write_tfs(write_location, dframe)  # this will write an eol at eof
 
         # The written TFS file should be accepted by MAD-X
         with Madx() as madx:
-            madx.command.readtable(file=str(_test_file), table="test_table")
+            madx.command.readtable(file=str(write_location), table="test_table")
 
-    def test_tfs_write_empty_index_dataframe(self, _test_file: str):
+    def test_tfs_write_empty_index_dataframe(self, tmp_path):
         df = TfsDataFrame(
             index=[],
             columns=["a", "b", "c"],
@@ -50,53 +51,59 @@ class TestWrites:
             headers={"Title": "Tfs Title", "Value": 3.3663},
         )
 
-        write_tfs(_test_file, df)
-        assert pathlib.Path(_test_file).is_file()
+        write_location = tmp_path / "test.tfs"
+        write_tfs(write_location, df)
+        assert write_location.is_file()
 
-        new = read_tfs(_test_file)
+        new = read_tfs(write_location)
         assert_frame_equal(df, new)
         assert_dict_equal(df.headers, new.headers, compare_keys=True)
 
-    def test_write_int_float_str_columns(self, _test_file: str):
+    def test_write_int_float_str_columns(self, tmp_path):
         """This test is more of an extension of the test below
         (this dataframe was not affected by the bug)"""
         df = TfsDataFrame(
             data=[[1, 1.0, "one"], [2, 2.0, "two"], [3, 3.0, "three"]],
             columns=["Int", "Float", "String"],
         )
-        write_tfs(_test_file, df)
-        new = read_tfs(_test_file)
+        write_location = tmp_path / "test.tfs"
+        write_tfs(write_location, df)
+        new = read_tfs(write_location)
         assert_frame_equal(df, new)
 
-    def test_write_int_float_columns(self, _test_file: str):
+    def test_write_int_float_columns(self, tmp_path):
         """This test is here because of numeric conversion bug
         upon writing back in v2.0.1"""
         df = TfsDataFrame(data=[[1, 1.0], [2, 2.0], [3, 3.0]], columns=["Int", "Float"])
-        write_tfs(_test_file, df)
-        new = read_tfs(_test_file)
+        write_location = tmp_path / "test.tfs"
+        write_tfs(write_location, df)
+        new = read_tfs(write_location)
         assert_frame_equal(df, new)
 
-    def test_tfs_write_read(self, _tfs_dataframe, _test_file: str):
-        write_tfs(_test_file, _tfs_dataframe)
-        assert pathlib.Path(_test_file).is_file()
+    def test_tfs_write_read(self, _tfs_dataframe, tmp_path):
+        write_location = tmp_path / "test.tfs"
+        write_tfs(write_location, _tfs_dataframe)
+        assert write_location.is_file()
 
-        new = read_tfs(_test_file)
+        new = read_tfs(write_location)
         assert_frame_equal(_tfs_dataframe, new, check_exact=False)  # float precision can be an issue
         assert_dict_equal(_tfs_dataframe.headers, new.headers, compare_keys=True)
 
-    def test_tfs_write_read_no_headers(self, _dataframe_empty_headers: TfsDataFrame, _test_file: str):
-        write_tfs(_test_file, _dataframe_empty_headers)
-        assert pathlib.Path(_test_file).is_file()
+    def test_tfs_write_read_no_headers(self, _dataframe_empty_headers: TfsDataFrame, tmp_path):
+        write_location = tmp_path / "test.tfs"
+        write_tfs(write_location, _dataframe_empty_headers)
+        assert write_location.is_file()
 
-        new = read_tfs(_test_file)
+        new = read_tfs(write_location)
         assert_frame_equal(_dataframe_empty_headers, new, check_exact=False)  # float precision
         assert_dict_equal(_dataframe_empty_headers.headers, new.headers, compare_keys=True)
 
-    def test_tfs_write_read_pandasdf(self, _pd_dataframe, _test_file: str):
-        write_tfs(_test_file, _pd_dataframe)
-        assert pathlib.Path(_test_file).is_file()
+    def test_tfs_write_read_pandasdf(self, _pd_dataframe, tmp_path):
+        write_location = tmp_path / "test.tfs"
+        write_tfs(write_location, _pd_dataframe)
+        assert write_location.is_file()
 
-        new = read_tfs(_test_file)
+        new = read_tfs(write_location)
         assert_frame_equal(
             _pd_dataframe,
             new,
@@ -104,19 +111,21 @@ class TestWrites:
             check_frame_type=False,  # read df is TfsDF
         )
 
-    def test_write_read_spaces_in_strings(self, _test_file: str):
+    def test_write_read_spaces_in_strings(self, tmp_path):
         df = TfsDataFrame(data=["This is", "a test", "with spaces"], columns=["A"])
-        write_tfs(_test_file, df)
-        new = read_tfs(_test_file)
+        write_location = tmp_path / "test.tfs"
+        write_tfs(write_location, df)
+        new = read_tfs(write_location)
         assert_frame_equal(df, new)
 
-    def test_tfs_write_read_autoindex(self, _tfs_dataframe, _test_file: str):
+    def test_tfs_write_read_autoindex(self, _tfs_dataframe, tmp_path):
         df = _tfs_dataframe.set_index("a")
         df1 = _tfs_dataframe.set_index("a")
-        write_tfs(_test_file, df, save_index=True)
+        write_location = tmp_path / "test.tfs"
+        write_tfs(write_location, df, save_index=True)
         assert_frame_equal(df, df1)
 
-        df_read = read_tfs(_test_file)
+        df_read = read_tfs(write_location)
         assert_index_equal(df.index, df_read.index, check_exact=False)
         assert_dict_equal(_tfs_dataframe.headers, df_read.headers, compare_keys=True)
 
@@ -181,23 +190,25 @@ class TestFailures:
         with pytest.raises(ValueError):
             write_tfs("", messed_tfs)
 
-    def test_dict_column_dataframe_fails_writes(self, _dict_column_in_dataframe: TfsDataFrame, _test_file):
+    def test_dict_column_dataframe_fails_writes(self, _dict_column_in_dataframe: TfsDataFrame, tmp_path):
         dict_col_tfs = _dict_column_in_dataframe
         with pytest.raises(TypeError):  # tries to format dict.__dict__, can't get a % formatter
             write_tfs("", dict_col_tfs)
 
         del dict_col_tfs["d"]  # should work without the column of dicts
-        write_tfs(_test_file, dict_col_tfs)
-        assert pathlib.Path(_test_file).is_file()
+        write_location = tmp_path / "test.tfs"
+        write_tfs(write_location, dict_col_tfs)
+        assert write_location.is_file()
 
-    def test_list_column_dataframe_fails_writes(self, _list_column_in_dataframe: TfsDataFrame, _test_file):
+    def test_list_column_dataframe_fails_writes(self, _list_column_in_dataframe: TfsDataFrame, tmp_path):
         list_col_tfs = _list_column_in_dataframe
         with pytest.raises(ValueError):  # truth value of nested can't be assesed in _validate
             write_tfs("", list_col_tfs)
 
         del list_col_tfs["d"]  # should work without the column of lists
-        write_tfs(_test_file, list_col_tfs)
-        assert pathlib.Path(_test_file).is_file()
+        write_location = tmp_path / "test.tfs"
+        write_tfs(write_location, list_col_tfs)
+        assert write_location.is_file()
 
     def test_dtype_to_format_fails_unexpected_dtypes(self):
         unexpected_list = [1, 2, 3]
@@ -257,12 +268,6 @@ class TestWarnings:
 
 
 # ------ Fixtures ------ #
-
-
-@pytest.fixture()
-def _test_file() -> str:
-    with tempfile.TemporaryDirectory() as cwd:
-        yield str(pathlib.Path(cwd) / "test_file.tfs")
 
 
 @pytest.fixture()
