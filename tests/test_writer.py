@@ -8,7 +8,7 @@ import pandas
 import pytest
 from cpymad.madx import Madx
 from pandas._testing import assert_dict_equal
-from pandas.testing import assert_frame_equal, assert_index_equal
+from pandas.testing import assert_frame_equal, assert_index_equal, assert_series_equal
 
 import tfs
 from tfs import TfsDataFrame, read_tfs, write_tfs
@@ -34,14 +34,25 @@ class TestWrites:
         assert_frame_equal(df, new)
         assert_dict_equal(df.headers, new.headers, compare_keys=True)
 
-    def test_eol_at_eof_accepted_by_madx(self, _tfs_dataframe, tmp_path):
-        dframe = _tfs_dataframe
+    def test_madx_reads_written_tfsdataframes(self, _bigger_tfs_dataframe, tmp_path):
+        dframe = _bigger_tfs_dataframe
+        dframe.headers["TYPE"] = "TWISS"  # MAD-X complains on TFS files with no "TYPE" entry
         write_location = tmp_path / "test.tfs"
         write_tfs(write_location, dframe)  # this will write an eol at eof
 
         # The written TFS file should be accepted by MAD-X
         with Madx() as madx:
             madx.command.readtable(file=str(write_location), table="test_table")
+            assert madx.table.test_table is not None  # check table has loaded
+
+            # Check the validity of the loaded data, here we use pandas.Series and assert_series_equal
+            # instead of numpy.array_equal to allow for small numerical differences on loading
+            for column in dframe.columns:
+                assert column in madx.table.test_table
+                if column != "NAME":  # cpymad makes string names lowercase
+                    assert_series_equal(
+                        pandas.Series(madx.table.test_table[column]), dframe[column], check_names=False
+                    )
 
     def test_tfs_write_empty_index_dataframe(self, tmp_path):
         df = TfsDataFrame(
@@ -276,6 +287,16 @@ def _tfs_dataframe() -> TfsDataFrame:
         index=range(3),
         columns="a b c d e".split(),
         data=numpy.random.rand(3, 5),
+        headers={"Title": "Tfs Title", "Value": 3.3663},
+    )
+
+
+@pytest.fixture()
+def _bigger_tfs_dataframe() -> TfsDataFrame:
+    return TfsDataFrame(
+        index=range(50),
+        columns=list(string.ascii_lowercase),
+        data=numpy.random.rand(50, len(list(string.ascii_lowercase))),
         headers={"Title": "Tfs Title", "Value": 3.3663},
     )
 
