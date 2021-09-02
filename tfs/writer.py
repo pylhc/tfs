@@ -90,6 +90,9 @@ def _autoset_pandas_types(data_frame: Union[TfsDataFrame, pd.DataFrame]) -> Unio
     function is kept as to not force a new min version requirement on ``pandas`` or Python for users.
     See my comment at https://github.com/pylhc/tfs/pull/83#issuecomment-874208869
 
+    TODO: remove the aforementioned check when we make Python 3.7 the minimum version for tfs-pandas,
+        aka when Python 3.6 reaches EOL.
+
     Args:
         data_frame (Union[TfsDataFrame, pd.DataFrame]): ``TfsDataFrame`` or ``pandas.DataFrame`` to
             determine the types of.
