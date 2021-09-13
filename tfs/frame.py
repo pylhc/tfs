@@ -86,7 +86,7 @@ class TfsDataFrame(pd.DataFrame):
     ) -> "TfsDataFrame":
         """
         Append rows of the other ``TfsDataFrame`` to the end of caller, returning a new object. Data
-        manipulation is done by the ``pandas.Dataframe`` method of the same name. Resulting new_headers are
+        manipulation is done by the ``pandas.Dataframe`` method of the same name. Resulting headers are
         either merged according to the provided **how_headers** method or as given via **new_headers**.
 
         Args:
@@ -123,7 +123,7 @@ class TfsDataFrame(pd.DataFrame):
     ) -> "TfsDataFrame":
         """
         Join columns of another ``TfsDataFrame``. Data manipulation is done by the ``pandas.Dataframe``
-        method of the same name. Resulting new_headers are either merged according to the provided
+        method of the same name. Resulting headers are either merged according to the provided
         **how_headers** method or as given via **new_headers**.
 
         Args:
@@ -160,7 +160,7 @@ class TfsDataFrame(pd.DataFrame):
     ) -> "TfsDataFrame":
         """
         Merge ``TfsDataFrame`` objects with a database-style join. Data manipulation is done by the
-        ``pandas.Dataframe`` method of the same name. Resulting new_headers are either merged according to the
+        ``pandas.Dataframe`` method of the same name. Resulting headers are either merged according to the
         provided **how_headers** method or as given via **new_headers**.
 
         Args:
@@ -195,7 +195,7 @@ class TfsDataFrame(pd.DataFrame):
 
 def merge_headers(headers_left: dict, headers_right: dict, how: str) -> OrderedDict:
     """
-    Merge new_headers of two ``TfsDataFrames`` together.
+    Merge headers of two ``TfsDataFrames`` together.
 
     Args:
         headers_left (dict): Headers of caller (left) ``TfsDataFrame`` when calling ``.append``, ``.join`` or
@@ -235,7 +235,7 @@ def concat(
 ) -> TfsDataFrame:
     """
     Concatenate ``TfsDataFrame`` objects along a particular axis with optional set logic along the other
-    axes. Data manipulation is done by the ``pandas.concat`` function. Resulting new_headers are either
+    axes. Data manipulation is done by the ``pandas.concat`` function. Resulting headers are either
     merged according to the provided **how_headers** method or as given via **new_headers**.
 
     ..warning::
@@ -278,7 +278,7 @@ def validate(
     non_unique_behavior: str = "warn",
 ) -> None:
     """
-    Check if a data frame contains finite values only, strings as column names and no empty new_headers
+    Check if a data frame contains finite values only, strings as column names and no empty headers
     or column names.
 
     Args:

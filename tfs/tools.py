@@ -72,7 +72,7 @@ def remove_nan_from_files(list_of_files: List[Union[str, Path]], replace: bool =
 
 def remove_header_comments_from_files(list_of_files: List[Union[str, Path]]) -> None:
     """
-    Check the files in the provided list for invalid new_headers (no type defined) and removes those
+    Check the files in the provided list for invalid headers (no type defined) and removes those
     inplace when found.
 
     Args:
