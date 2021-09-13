@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>Welcome to tfs-pandas’ documentation! &mdash; tfs-pandas 2.1.0 documentation</title>
+  <title>Welcome to tfs-pandas’ documentation! &mdash; tfs-pandas 3.0.0 documentation</title>
   
 
   
@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                2.1
+                3.0
               </div>
             
           
@@ -95,8 +95,12 @@
               <ul>
 <li class="toctree-l1"><a class="reference internal" href="modules/index.html">TFS-Pandas Modules</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="modules/index.html#collection">Collection</a></li>
-<li class="toctree-l2"><a class="reference internal" href="modules/index.html#handler">Handler</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/index.html#constants">Constants</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/index.html#errors">Errors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/index.html#frame">Frame</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/index.html#reader">Reader</a></li>
 <li class="toctree-l2"><a class="reference internal" href="modules/index.html#tools">Tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/index.html#writer">Writer</a></li>
 </ul>
 </li>
 </ul>
@@ -141,6 +145,8 @@
 
 
 
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
 
   <ul class="wy-breadcrumbs">
@@ -153,7 +159,10 @@
       <li class="wy-breadcrumbs-aside">
         
           
-            <a href="_sources/index.rst.txt" rel="nofollow"> View page source</a>
+            
+              <!-- User defined GitHub URL -->
+              <a href="https://github.com/pylhc/tfs" class="fa fa-github"> Edit on GitHub</a>
+            
           
         
       </li>
@@ -169,7 +178,8 @@
   <div class="section" id="welcome-to-tfs-pandas-documentation">
 <h1>Welcome to tfs-pandas’ documentation!<a class="headerlink" href="#welcome-to-tfs-pandas-documentation" title="Permalink to this headline">¶</a></h1>
 <p><code class="docutils literal notranslate"><span class="pre">tfs-pandas</span></code> is a library for reading and writing capabilities for <a class="reference external" href="http://mad.web.cern.ch/mad/madx.old/Introduction/tfs.html">TFS files</a> used at <a class="reference external" href="https://home.cern/">CERN</a>.</p>
-<p>It provides an extension of the popular <code class="docutils literal notranslate"><span class="pre">pandas</span></code> <cite>Dataframes</cite>, called <cite>TfsDataFrames</cite> to do so, which in addition to the normal behaviour attach an <cite>OrderedDict</cite> of headers to the <cite>DataFrame</cite>.</p>
+<p>It provides functionality through a <code class="docutils literal notranslate"><span class="pre">TfsDataFrame</span></code> object, an extension of the popular <strong>pandas</strong> <code class="docutils literal notranslate"><span class="pre">DataFrame</span></code>, which in addition to the normal behaviour attaches a dictionary of headers to the <code class="docutils literal notranslate"><span class="pre">DataFrame</span></code>.
+Functions are also exported that handle reading and writing of <strong>TFS</strong> files to and from <code class="docutils literal notranslate"><span class="pre">TfsDataFrames</span></code> as well as merging and validating for <code class="docutils literal notranslate"><span class="pre">TfsDataFrames</span></code>.</p>
 </div>
 <div class="section" id="package-reference">
 <h1>Package Reference<a class="headerlink" href="#package-reference" title="Permalink to this headline">¶</a></h1>
@@ -177,8 +187,12 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="modules/index.html">TFS-Pandas Modules</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="modules/index.html#collection">Collection</a></li>
-<li class="toctree-l2"><a class="reference internal" href="modules/index.html#handler">Handler</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/index.html#constants">Constants</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/index.html#errors">Errors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/index.html#frame">Frame</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/index.html#reader">Reader</a></li>
 <li class="toctree-l2"><a class="reference internal" href="modules/index.html#tools">Tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/index.html#writer">Writer</a></li>
 </ul>
 </li>
 </ul>

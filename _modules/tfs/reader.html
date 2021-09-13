@@ -1,0 +1,393 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>tfs.reader &mdash; tfs-pandas 3.0.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/css/custom.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html">
+          
+
+          
+            
+            <img src="../../_static/omc_logo.svg" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                3.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../modules/index.html">TFS-Pandas Modules</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#collection">Collection</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#constants">Constants</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#errors">Errors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#frame">Frame</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#reader">Reader</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#tools">Tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#writer">Writer</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">tfs-pandas</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>tfs.reader</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for tfs.reader</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Reader</span>
+<span class="sd">-------------------</span>
+
+<span class="sd">Reading functionalty for **TFS** files.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">pathlib</span>
+<span class="kn">import</span> <span class="nn">shlex</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Union</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+<span class="kn">from</span> <span class="nn">tfs.constants</span> <span class="kn">import</span> <span class="n">COMMENTS</span><span class="p">,</span> <span class="n">HEADER</span><span class="p">,</span> <span class="n">ID_TO_TYPE</span><span class="p">,</span> <span class="n">INDEX_ID</span><span class="p">,</span> <span class="n">NAMES</span><span class="p">,</span> <span class="n">TYPES</span>
+<span class="kn">from</span> <span class="nn">tfs.errors</span> <span class="kn">import</span> <span class="n">TfsFormatError</span>
+<span class="kn">from</span> <span class="nn">tfs.frame</span> <span class="kn">import</span> <span class="n">TfsDataFrame</span><span class="p">,</span> <span class="n">validate</span>
+
+<span class="n">LOGGER</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="read_tfs"><a class="viewcode-back" href="../../modules/index.html#tfs.reader.read_tfs">[docs]</a><span class="k">def</span> <span class="nf">read_tfs</span><span class="p">(</span>
+    <span class="n">tfs_file_path</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span> <span class="n">index</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">non_unique_behavior</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;warn&quot;</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TfsDataFrame</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Parses the **TFS** table present in **tfs_file_path** and returns a ``TfsDataFrame``.</span>
+
+<span class="sd">    Methodology: This function parses the first lines of the file until it gets to the `types` line.</span>
+<span class="sd">    While parsed, the appropriate information is gathered (headers content, column names &amp; types,</span>
+<span class="sd">    number of lines parsed). After reaching the `types` line, the rest of the file is given to parse</span>
+<span class="sd">    to ``pandas.read_csv`` with the right options to make use of its C engine&#39;s speed. After this,</span>
+<span class="sd">    conversion to ``TfsDataDrame`` is made, proper types are applied to columns, the index is set and</span>
+<span class="sd">    the frame is validated before being returned.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        tfs_file_path (Union[pathlib.Path, str]): Path object to the **TFS** file to read. Can be</span>
+<span class="sd">            a string, in which case it will be cast to a Path object.</span>
+<span class="sd">        index (str): Name of the column to set as index. If not given, looks in **tfs_file_path**</span>
+<span class="sd">            for a column starting with `INDEX&amp;&amp;&amp;`.</span>
+<span class="sd">        non_unique_behavior (str): behavior to adopt if non-unique indices or columns are found in the</span>
+<span class="sd">            dataframe. Accepts `warn` and `raise` as values, case-insensitively, which dictates</span>
+<span class="sd">            to respectively issue a warning or raise an error if non-unique elements are found.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        A ``TfsDataFrame`` object with the loaded data from the file.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">tfs_file_path</span> <span class="o">=</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="n">tfs_file_path</span><span class="p">)</span>
+    <span class="n">headers</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+    <span class="n">non_data_lines</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">column_names</span> <span class="o">=</span> <span class="n">column_types</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="n">LOGGER</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Reading path: </span><span class="si">{</span><span class="n">tfs_file_path</span><span class="o">.</span><span class="n">absolute</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">with</span> <span class="n">tfs_file_path</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">tfs_data</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">tfs_data</span><span class="p">:</span>
+            <span class="n">non_data_lines</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">line_components</span> <span class="o">=</span> <span class="n">shlex</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">line_components</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="k">if</span> <span class="n">line_components</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">HEADER</span><span class="p">:</span>
+                <span class="n">name</span><span class="p">,</span> <span class="n">value</span> <span class="o">=</span> <span class="n">_parse_header</span><span class="p">(</span><span class="n">line_components</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span>
+                <span class="n">headers</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+            <span class="k">elif</span> <span class="n">line_components</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">NAMES</span><span class="p">:</span>
+                <span class="n">LOGGER</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Parsing column names.&quot;</span><span class="p">)</span>
+                <span class="n">column_names</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">line_components</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span>
+            <span class="k">elif</span> <span class="n">line_components</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">TYPES</span><span class="p">:</span>
+                <span class="n">LOGGER</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Parsing column types.&quot;</span><span class="p">)</span>
+                <span class="n">column_types</span> <span class="o">=</span> <span class="n">_compute_types</span><span class="p">(</span><span class="n">line_components</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span>
+            <span class="k">elif</span> <span class="n">line_components</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">COMMENTS</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="k">else</span><span class="p">:</span>  <span class="c1"># After all previous cases should only be data lines. If not, file is fucked.</span>
+                <span class="k">break</span>  <span class="c1"># Break to not go over all lines, saves a lot of time on big files</span>
+
+    <span class="k">if</span> <span class="n">column_names</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">LOGGER</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;No column names in file </span><span class="si">{</span><span class="n">tfs_file_path</span><span class="o">.</span><span class="n">absolute</span><span class="p">()</span><span class="si">}</span><span class="s2">, aborting&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="n">TfsFormatError</span><span class="p">(</span><span class="s2">&quot;Column names have not been set.&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">column_types</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">LOGGER</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;No column types in file </span><span class="si">{</span><span class="n">tfs_file_path</span><span class="o">.</span><span class="n">absolute</span><span class="p">()</span><span class="si">}</span><span class="s2">, aborting&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="n">TfsFormatError</span><span class="p">(</span><span class="s2">&quot;Column types have not been set.&quot;</span><span class="p">)</span>
+
+    <span class="n">LOGGER</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Parsing data part of the file&quot;</span><span class="p">)</span>
+    <span class="c1"># DO NOT use comment=COMMENTS in here, if you do and the symbol is in an element for some</span>
+    <span class="c1"># reason then the entire parsing will crash</span>
+    <span class="n">data_frame</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span>
+        <span class="n">tfs_file_path</span><span class="p">,</span>
+        <span class="n">engine</span><span class="o">=</span><span class="s2">&quot;c&quot;</span><span class="p">,</span>  <span class="c1"># faster, and we do not need the features of the python engine</span>
+        <span class="n">skiprows</span><span class="o">=</span><span class="n">non_data_lines</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span>  <span class="c1"># because we incremented for the first data line in loop above</span>
+        <span class="n">delim_whitespace</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>  <span class="c1"># understands &#39; &#39; is our delimiter</span>
+        <span class="n">skipinitialspace</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>  <span class="c1"># understands &#39; &#39; and &#39;     &#39; are both valid delimiters</span>
+        <span class="n">quotechar</span><span class="o">=</span><span class="s1">&#39;&quot;&#39;</span><span class="p">,</span>  <span class="c1"># elements surrounded by &quot; are one entry -&gt; correct parsing of strings with spaces</span>
+        <span class="n">names</span><span class="o">=</span><span class="n">column_names</span><span class="p">,</span>  <span class="c1"># column names we have determined, avoids using first read row for columns</span>
+    <span class="p">)</span>
+
+    <span class="n">LOGGER</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Converting to TfsDataFrame&quot;</span><span class="p">)</span>
+    <span class="n">tfs_data_frame</span> <span class="o">=</span> <span class="n">TfsDataFrame</span><span class="p">(</span><span class="n">data_frame</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">)</span>
+    <span class="n">_assign_column_types</span><span class="p">(</span><span class="n">tfs_data_frame</span><span class="p">,</span> <span class="n">column_names</span><span class="p">,</span> <span class="n">column_types</span><span class="p">)</span>  <span class="c1"># ensure proper types</span>
+
+    <span class="k">if</span> <span class="n">index</span><span class="p">:</span>
+        <span class="n">LOGGER</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Setting &#39;</span><span class="si">{</span><span class="n">index</span><span class="si">}</span><span class="s2">&#39; column as index&quot;</span><span class="p">)</span>
+        <span class="n">tfs_data_frame</span> <span class="o">=</span> <span class="n">tfs_data_frame</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">LOGGER</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Attempting to find index identifier in columns&quot;</span><span class="p">)</span>
+        <span class="n">tfs_data_frame</span> <span class="o">=</span> <span class="n">_find_and_set_index</span><span class="p">(</span><span class="n">tfs_data_frame</span><span class="p">)</span>
+
+    <span class="n">validate</span><span class="p">(</span><span class="n">tfs_data_frame</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;from file </span><span class="si">{</span><span class="n">tfs_file_path</span><span class="o">.</span><span class="n">absolute</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">non_unique_behavior</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">tfs_data_frame</span></div>
+
+
+<span class="k">def</span> <span class="nf">_parse_header</span><span class="p">(</span><span class="n">str_list</span><span class="p">:</span> <span class="nb">list</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">:</span>
+    <span class="n">type_index</span> <span class="o">=</span> <span class="nb">next</span><span class="p">((</span><span class="n">index</span> <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">part</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">str_list</span><span class="p">)</span> <span class="k">if</span> <span class="n">part</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;%&quot;</span><span class="p">)),</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">type_index</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">TfsFormatError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;No data type found in header: &#39;</span><span class="si">{</span><span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">str_list</span><span class="p">)</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
+
+    <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">str_list</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">type_index</span><span class="p">])</span>
+    <span class="n">value_string</span> <span class="o">=</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">str_list</span><span class="p">[(</span><span class="n">type_index</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="p">:])</span>
+    <span class="k">return</span> <span class="n">name</span><span class="p">,</span> <span class="n">_id_to_type</span><span class="p">(</span><span class="n">str_list</span><span class="p">[</span><span class="n">type_index</span><span class="p">])(</span><span class="n">value_string</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s1">&#39;&quot;&#39;</span><span class="p">))</span>
+
+
+<span class="k">def</span> <span class="nf">_find_and_set_index</span><span class="p">(</span><span class="n">data_frame</span><span class="p">:</span> <span class="n">TfsDataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TfsDataFrame</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Looks for a column with a name starting with the index identifier, and sets it as index if found.</span>
+<span class="sd">    The index identifier will be stripped from the column name first.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        data_frame (TfsDataFrame): the ``TfsDataFrame`` to look for an index in.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        The ``TfsDataFrame`` after operation, whether an index was found or not.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">index_column</span> <span class="o">=</span> <span class="p">[</span><span class="n">colname</span> <span class="k">for</span> <span class="n">colname</span> <span class="ow">in</span> <span class="n">data_frame</span><span class="o">.</span><span class="n">columns</span> <span class="k">if</span> <span class="n">colname</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">INDEX_ID</span><span class="p">)]</span>
+    <span class="k">if</span> <span class="n">index_column</span><span class="p">:</span>
+        <span class="n">data_frame</span> <span class="o">=</span> <span class="n">data_frame</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="n">index_column</span><span class="p">)</span>
+        <span class="n">index_name</span> <span class="o">=</span> <span class="n">index_column</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">INDEX_ID</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">index_name</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+            <span class="n">index_name</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># to remove it completely (Pandas makes a difference)</span>
+        <span class="n">data_frame</span> <span class="o">=</span> <span class="n">data_frame</span><span class="o">.</span><span class="n">rename_axis</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="n">index_name</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">data_frame</span>
+
+
+<span class="k">def</span> <span class="nf">_assign_column_types</span><span class="p">(</span><span class="n">data_frame</span><span class="p">,</span> <span class="n">column_names</span><span class="p">,</span> <span class="n">column_types</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">names_to_types</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">column_names</span><span class="p">,</span> <span class="n">column_types</span><span class="p">))</span>
+    <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">names_to_types</span><span class="p">:</span>
+        <span class="n">data_frame</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">data_frame</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">names_to_types</span><span class="p">[</span><span class="n">name</span><span class="p">])</span>
+
+
+<span class="k">def</span> <span class="nf">_compute_types</span><span class="p">(</span><span class="n">str_list</span><span class="p">:</span> <span class="nb">list</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">_id_to_type</span><span class="p">(</span><span class="n">string</span><span class="p">)</span> <span class="k">for</span> <span class="n">string</span> <span class="ow">in</span> <span class="n">str_list</span><span class="p">]</span>
+
+
+<span class="k">def</span> <span class="nf">_id_to_type</span><span class="p">(</span><span class="n">type_str</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">type</span><span class="p">:</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">ID_TO_TYPE</span><span class="p">[</span><span class="n">type_str</span><span class="p">]</span>
+    <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>  <span class="c1"># could be a &quot;%[num]s&quot; that MAD-X likes to output</span>
+        <span class="k">if</span> <span class="n">_is_madx_string_col_identifier</span><span class="p">(</span><span class="n">type_str</span><span class="p">):</span>
+            <span class="k">return</span> <span class="nb">str</span>
+        <span class="k">raise</span> <span class="n">TfsFormatError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unknown data type: </span><span class="si">{</span><span class="n">type_str</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_is_madx_string_col_identifier</span><span class="p">(</span><span class="n">type_str</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    ``MAD-X`` likes to return the string columns by also indicating their width, so trying to parse</span>
+<span class="sd">    `%s` identifiers only we might miss those looking like `%20s` specifying (here) a 20-character</span>
+<span class="sd">     wide column for strings.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        type_str (str): the suspicious identifier.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        ``True`` if the identifier is identified as coming from ``MAD-X``, ``False`` otherwise.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">type_str</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;%&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">type_str</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;s&quot;</span><span class="p">)):</span>
+        <span class="k">return</span> <span class="kc">False</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">_</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">type_str</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+        <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright .
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

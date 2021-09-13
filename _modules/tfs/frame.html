@@ -1,0 +1,549 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>tfs.frame &mdash; tfs-pandas 3.0.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/css/custom.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html">
+          
+
+          
+            
+            <img src="../../_static/omc_logo.svg" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                3.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../modules/index.html">TFS-Pandas Modules</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#collection">Collection</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#constants">Constants</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#errors">Errors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#frame">Frame</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#reader">Reader</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#tools">Tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#writer">Writer</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">tfs-pandas</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>tfs.frame</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for tfs.frame</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Frame</span>
+<span class="sd">-------------------</span>
+
+<span class="sd">Contains the class definition of a ``TfsDataFrame``, inherited from the ``pandas`` ``DataFrame``, as well</span>
+<span class="sd">as a utility function to validate the correctness of a ``TfsDataFrame``.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
+<span class="kn">from</span> <span class="nn">contextlib</span> <span class="kn">import</span> <span class="n">suppress</span>
+<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">partial</span><span class="p">,</span> <span class="n">reduce</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">Union</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+<span class="kn">from</span> <span class="nn">tfs.errors</span> <span class="kn">import</span> <span class="n">TfsFormatError</span>
+
+<span class="n">LOGGER</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="TfsDataFrame"><a class="viewcode-back" href="../../modules/index.html#tfs.frame.TfsDataFrame">[docs]</a><span class="k">class</span> <span class="nc">TfsDataFrame</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Class to hold the information of the built an extended ``pandas`` ``DataFrame``, together with a way</span>
+<span class="sd">    of getting the headers of the **TFS** file. The file headers are stored in a dictionary upon read.</span>
+<span class="sd">    To get a header value use ``data_frame.headers[&quot;header_name&quot;]``, or ``data_frame[&quot;header_name&quot;]`` if</span>
+<span class="sd">    it does not conflict with a column name in the dataframe.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">_metadata</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;headers&quot;</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">headers</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">with</span> <span class="n">suppress</span><span class="p">(</span><span class="ne">IndexError</span><span class="p">,</span> <span class="ne">AttributeError</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">headers</span> <span class="o">=</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">headers</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">headers</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;headers&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">headers</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">object</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">object</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__getitem__</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">KeyError</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">headers</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+            <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2"> is neither in the DataFrame nor in headers.&quot;</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">error</span>
+
+    <span class="k">def</span> <span class="fm">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">object</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__getattr__</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">headers</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+            <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> is neither in the DataFrame nor in headers.&quot;</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">_constructor</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">TfsDataFrame</span>
+
+    <span class="k">def</span> <span class="nf">_headers_repr</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="n">space</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot; &quot;</span> <span class="o">*</span> <span class="mi">4</span>
+
+        <span class="k">def</span> <span class="nf">_str_items</span><span class="p">(</span><span class="n">items_list</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">space</span><span class="si">}{</span><span class="n">k</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">v</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">items_list</span><span class="p">)</span>
+
+        <span class="n">s</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">headers</span><span class="p">):</span>
+            <span class="n">s</span> <span class="o">+=</span> <span class="s2">&quot;Headers:</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">headers</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">7</span><span class="p">:</span>
+                <span class="n">items</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">headers</span><span class="o">.</span><span class="n">items</span><span class="p">())</span>
+                <span class="n">s</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">_str_items</span><span class="p">(</span><span class="n">items</span><span class="p">[:</span><span class="mi">3</span><span class="p">])</span><span class="si">}</span><span class="se">\n</span><span class="si">{</span><span class="n">space</span><span class="si">}</span><span class="s2">...</span><span class="se">\n</span><span class="si">{</span><span class="n">_str_items</span><span class="p">(</span><span class="n">items</span><span class="p">[</span><span class="o">-</span><span class="mi">3</span><span class="p">:])</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">s</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">_str_items</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">headers</span><span class="o">.</span><span class="n">items</span><span class="p">())</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="n">s</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="k">return</span> <span class="n">s</span>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="n">headers_string</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_headers_repr</span><span class="p">()</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">headers_string</span><span class="si">}{</span><span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span>
+
+<div class="viewcode-block" id="TfsDataFrame.append"><a class="viewcode-back" href="../../modules/index.html#tfs.frame.TfsDataFrame.append">[docs]</a>    <span class="k">def</span> <span class="nf">append</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="s2">&quot;TfsDataFrame&quot;</span><span class="p">,</span> <span class="n">how_headers</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">new_headers</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;TfsDataFrame&quot;</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Append rows of the other ``TfsDataFrame`` to the end of caller, returning a new object. Data</span>
+<span class="sd">        manipulation is done by the ``pandas.Dataframe`` method of the same name. Resulting headers are</span>
+<span class="sd">        either merged according to the provided **how_headers** method or as given via **new_headers**.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            other (TfsDataFrame): The ``TfsDataFrame`` to append to the caller.</span>
+<span class="sd">            how_headers (str): Type of merge to be performed for the headers. Either **left** or **right**.</span>
+<span class="sd">                Refer to :func:`tfs.frame.merge_headers` for behavior. If ``None`` is provided and</span>
+<span class="sd">                **new_headers** is not provided, the final headers will be empty. Case insensitive,</span>
+<span class="sd">                defaults to ``None``.</span>
+<span class="sd">            new_headers (dict): If provided, will be used as new_headers for the merged ``TfsDataFrame``.</span>
+<span class="sd">                Otherwise these are determined by merging the headers from the caller and the other</span>
+<span class="sd">                ``TfsDataFrame`` according to the method defined by the **how_headers** argument.</span>
+
+<span class="sd">        Keyword Args:</span>
+<span class="sd">            Any keyword argument is given to ``pandas.DataFrame.append()``. The default values for all these</span>
+<span class="sd">            parameters are left as set in the ``pandas`` codebase. To see these, refer to the pandas</span>
+<span class="sd">            [DataFrame.append documentation](https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.append.html).</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            A new ``TfsDataFrame`` with the appended data and merged headers.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">LOGGER</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Appending data through &#39;pandas&#39;&quot;</span><span class="p">)</span>
+        <span class="n">dframe</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="n">LOGGER</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Determining headers&quot;</span><span class="p">)</span>
+        <span class="n">new_headers</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">new_headers</span>
+            <span class="k">if</span> <span class="n">new_headers</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+            <span class="k">else</span> <span class="n">merge_headers</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">headers</span><span class="p">,</span> <span class="n">other</span><span class="o">.</span><span class="n">headers</span><span class="p">,</span> <span class="n">how</span><span class="o">=</span><span class="n">how_headers</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">TfsDataFrame</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">dframe</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">new_headers</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TfsDataFrame.join"><a class="viewcode-back" href="../../modules/index.html#tfs.frame.TfsDataFrame.join">[docs]</a>    <span class="k">def</span> <span class="nf">join</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="s2">&quot;TfsDataFrame&quot;</span><span class="p">,</span> <span class="n">how_headers</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">new_headers</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;TfsDataFrame&quot;</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Join columns of another ``TfsDataFrame``. Data manipulation is done by the ``pandas.Dataframe``</span>
+<span class="sd">        method of the same name. Resulting headers are either merged according to the provided</span>
+<span class="sd">        **how_headers** method or as given via **new_headers**.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            other (TfsDataFrame): The ``TfsDataFrame`` to join into the caller.</span>
+<span class="sd">            how_headers (str): Type of merge to be performed for the headers. Either **left** or **right**.</span>
+<span class="sd">                Refer to :func:`tfs.frame.merge_headers` for behavior. If ``None`` is provided and</span>
+<span class="sd">                **new_headers** is not provided, the final headers will be empty. Case insensitive,</span>
+<span class="sd">                defaults to ``None``.</span>
+<span class="sd">            new_headers (dict): If provided, will be used as new_headers for the merged ``TfsDataFrame``.</span>
+<span class="sd">                Otherwise these are determined by merging the headers from the caller and the other</span>
+<span class="sd">                ``TfsDataFrame`` according to the method defined by the **how_headers** argument.</span>
+
+<span class="sd">        Keyword Args:</span>
+<span class="sd">            Any keyword argument is given to ``pandas.DataFrame.join()``. The default values for all these</span>
+<span class="sd">            parameters are left as set in the ``pandas`` codebase. To see these, refer to the pandas</span>
+<span class="sd">            [DataFrame.join documentation](https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.join.html).</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            A new ``TfsDataFrame`` with the joined columns and merged headers.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">LOGGER</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Joining data through &#39;pandas&#39;&quot;</span><span class="p">)</span>
+        <span class="n">dframe</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="n">LOGGER</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Determining headers&quot;</span><span class="p">)</span>
+        <span class="n">new_headers</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">new_headers</span>
+            <span class="k">if</span> <span class="n">new_headers</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+            <span class="k">else</span> <span class="n">merge_headers</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">headers</span><span class="p">,</span> <span class="n">other</span><span class="o">.</span><span class="n">headers</span><span class="p">,</span> <span class="n">how</span><span class="o">=</span><span class="n">how_headers</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">TfsDataFrame</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">dframe</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">new_headers</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TfsDataFrame.merge"><a class="viewcode-back" href="../../modules/index.html#tfs.frame.TfsDataFrame.merge">[docs]</a>    <span class="k">def</span> <span class="nf">merge</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">right</span><span class="p">:</span> <span class="s2">&quot;TfsDataFrame&quot;</span><span class="p">,</span> <span class="n">how_headers</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">new_headers</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;TfsDataFrame&quot;</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Merge ``TfsDataFrame`` objects with a database-style join. Data manipulation is done by the</span>
+<span class="sd">        ``pandas.Dataframe`` method of the same name. Resulting headers are either merged according to the</span>
+<span class="sd">        provided **how_headers** method or as given via **new_headers**.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            right (TfsDataFrame): The ``TfsDataFrame`` to merge with the caller.</span>
+<span class="sd">            how_headers (str): Type of merge to be performed for the headers. Either **left** or **right**.</span>
+<span class="sd">                Refer to :func:`tfs.frame.merge_headers` for behavior. If ``None`` is provided and</span>
+<span class="sd">                **new_headers** is not provided, the final headers will be empty. Case insensitive,</span>
+<span class="sd">                defaults to ``None``.</span>
+<span class="sd">            new_headers (dict): If provided, will be used as headers for the merged ``TfsDataFrame``.</span>
+<span class="sd">                Otherwise these are determined by merging the headers from the caller and the other</span>
+<span class="sd">                ``TfsDataFrame`` according to the method defined by the **how_headers** argument.</span>
+
+<span class="sd">        Keyword Args:</span>
+<span class="sd">            Any keyword argument is given to ``pandas.DataFrame.merge()``. The default values for all these</span>
+<span class="sd">            parameters are left as set in the ``pandas`` codebase. To see these, refer to the pandas</span>
+<span class="sd">            [DataFrame.merge documentation](https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.merge.html).</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            A new ``TfsDataFrame`` with the merged data and merged headers.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">LOGGER</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Merging data through &#39;pandas&#39;&quot;</span><span class="p">)</span>
+        <span class="n">dframe</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">right</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="n">LOGGER</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Determining headers&quot;</span><span class="p">)</span>
+        <span class="n">new_headers</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">new_headers</span>
+            <span class="k">if</span> <span class="n">new_headers</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+            <span class="k">else</span> <span class="n">merge_headers</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">headers</span><span class="p">,</span> <span class="n">right</span><span class="o">.</span><span class="n">headers</span><span class="p">,</span> <span class="n">how</span><span class="o">=</span><span class="n">how_headers</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">TfsDataFrame</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">dframe</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">new_headers</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="merge_headers"><a class="viewcode-back" href="../../modules/index.html#tfs.frame.merge_headers">[docs]</a><span class="k">def</span> <span class="nf">merge_headers</span><span class="p">(</span><span class="n">headers_left</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">headers_right</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">how</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">OrderedDict</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Merge headers of two ``TfsDataFrames`` together.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        headers_left (dict): Headers of caller (left) ``TfsDataFrame`` when calling ``.append``, ``.join`` or</span>
+<span class="sd">            ``.merge``. Headers of the left (preceeding) ``TfsDataFrame`` when calling ``tfs.frame.concat``.</span>
+<span class="sd">        headers_right (dict): Headers of other (right) ``TfsDataFrame`` when calling ``.append``, ``.join``</span>
+<span class="sd">            or ``.merge``. Headers of the left (preceeding) ``TfsDataFrame`` when calling</span>
+<span class="sd">            ``tfs.frame.concat``.</span>
+<span class="sd">        how (str): Type of merge to be performed, either **left** or **right**. If **left*, prioritize keys</span>
+<span class="sd">            from **headers_left** in case of duplicate keys. If **right**, prioritize keys from</span>
+<span class="sd">            **headers_right** in case of duplicate keys. Case insensitive. If ``None`` is given,</span>
+<span class="sd">            an empty dictionary will be returned.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        A new ``OrderedDict`` as the merge of the two provided dictionaries.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">accepted_merges</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;left&quot;</span><span class="p">,</span> <span class="s2">&quot;right&quot;</span><span class="p">,</span> <span class="s2">&quot;none&quot;</span><span class="p">}</span>
+    <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">how</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">accepted_merges</span><span class="p">:</span>  <span class="c1"># handles being given None</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid &#39;how&#39; argument, should be one of </span><span class="si">{</span><span class="n">accepted_merges</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="n">LOGGER</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Merging headers with method &#39;</span><span class="si">{</span><span class="n">how</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">how</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;left&quot;</span><span class="p">:</span>  <span class="c1"># we prioritize the contents of headers_left</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">headers_right</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">result</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">headers_left</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="nb">str</span><span class="p">(</span><span class="n">how</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;right&quot;</span><span class="p">:</span>  <span class="c1"># we prioritize the contents of headers_right</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">headers_left</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">result</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">headers_right</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>  <span class="c1"># we were given None, result will be an empty dict</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">return</span> <span class="n">OrderedDict</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>  <span class="c1"># so that the TfsDataFrame still has an OrderedDict as header</span></div>
+
+
+<div class="viewcode-block" id="concat"><a class="viewcode-back" href="../../modules/index.html#tfs.frame.concat">[docs]</a><span class="k">def</span> <span class="nf">concat</span><span class="p">(</span>
+    <span class="n">objs</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">TfsDataFrame</span><span class="p">],</span>
+    <span class="n">how_headers</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">new_headers</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TfsDataFrame</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Concatenate ``TfsDataFrame`` objects along a particular axis with optional set logic along the other</span>
+<span class="sd">    axes. Data manipulation is done by the ``pandas.concat`` function. Resulting headers are either</span>
+<span class="sd">    merged according to the provided **how_headers** method or as given via **new_headers**.</span>
+
+<span class="sd">    ..warning::</span>
+<span class="sd">        Please note that when using this function on many ``TfsDataFrames``, leaving the contents of the</span>
+<span class="sd">        final headers dictionary to the automatic merger can become unpredictable. In this case it is</span>
+<span class="sd">        recommended to provide the **new_headers** argument to ensure the final result, or leave both</span>
+<span class="sd">        **how_headers** and **new_headers** as ``None`` (their defaults) to end up with empty headers.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        objs (Sequence[TfsDataFrame]): the ``TfsDataFrame`` objects to be concatenated.</span>
+<span class="sd">        how_headers (str): Type of merge to be performed for the headers. Either **left** or **right**.</span>
+<span class="sd">            Refer to :func:`tfs.frame.merge_headers` for behavior. If ``None`` is provided and</span>
+<span class="sd">            **new_headers** is not provided, the final headers will be empty. Case insensitive, defaults to</span>
+<span class="sd">            ``None``.</span>
+<span class="sd">        new_headers (dict): If provided, will be used as headers for the merged ``TfsDataFrame``.</span>
+<span class="sd">            Otherwise these are determined by successively merging the headers from all concatenated</span>
+<span class="sd">            ``TfsDataFrames`` according to the method defined by the **how_headers** argument.</span>
+
+<span class="sd">    Keyword Args:</span>
+<span class="sd">        Any keyword argument is given to ``pandas.concat()``. The default values for all these parameters</span>
+<span class="sd">        are left as set in the ``pandas`` codebase. To see these, refer to the [pandas.concat</span>
+<span class="sd">        documentation](https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.concat.html).</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        A new ``TfsDataFrame`` with the merged data and merged headers.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">LOGGER</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Concatenating data through &#39;pandas&#39;&quot;</span><span class="p">)</span>
+    <span class="n">dframe</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">objs</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="n">LOGGER</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Determining headers&quot;</span><span class="p">)</span>
+    <span class="n">merger</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="n">merge_headers</span><span class="p">,</span> <span class="n">how</span><span class="o">=</span><span class="n">how_headers</span><span class="p">)</span>  <span class="c1"># so we can reduce on all objs, and use &#39;how_headers&#39;</span>
+    <span class="n">all_headers</span> <span class="o">=</span> <span class="p">(</span><span class="n">tfsdframe</span><span class="o">.</span><span class="n">headers</span> <span class="k">for</span> <span class="n">tfsdframe</span> <span class="ow">in</span> <span class="n">objs</span><span class="p">)</span>
+    <span class="n">new_headers</span> <span class="o">=</span> <span class="n">new_headers</span> <span class="k">if</span> <span class="n">new_headers</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">reduce</span><span class="p">(</span><span class="n">merger</span><span class="p">,</span> <span class="n">all_headers</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">TfsDataFrame</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">dframe</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">new_headers</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="validate"><a class="viewcode-back" href="../../modules/index.html#tfs.frame.validate">[docs]</a><span class="k">def</span> <span class="nf">validate</span><span class="p">(</span>
+    <span class="n">data_frame</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">TfsDataFrame</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">],</span>
+    <span class="n">info_str</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+    <span class="n">non_unique_behavior</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;warn&quot;</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Check if a data frame contains finite values only, strings as column names and no empty headers</span>
+<span class="sd">    or column names.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        data_frame (Union[TfsDataFrame, pd.DataFrame]): the dataframe to check on.</span>
+<span class="sd">        info_str (str): additional information to include in logging statements.</span>
+<span class="sd">        non_unique_behavior (str): behavior to adopt if non-unique indices or columns are found in the</span>
+<span class="sd">            dataframe. Accepts `warn` and `raise` as values, case-insensitively, which dictates</span>
+<span class="sd">            to respectively issue a warning or raise an error if non-unique elements are found.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">non_unique_behavior</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;warn&quot;</span><span class="p">,</span> <span class="s2">&quot;raise&quot;</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s2">&quot;Invalid value for parameter &#39;validate_unique&#39;&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">is_not_finite</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>  <span class="c1"># most likely string</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>  <span class="c1"># single entry</span>
+                <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+
+    <span class="n">boolean_df</span> <span class="o">=</span> <span class="n">data_frame</span><span class="o">.</span><span class="n">applymap</span><span class="p">(</span><span class="n">is_not_finite</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">boolean_df</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
+        <span class="n">LOGGER</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;DataFrame </span><span class="si">{</span><span class="n">info_str</span><span class="si">}</span><span class="s2"> contains non-physical values at Index: &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">boolean_df</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="n">boolean_df</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s1">&#39;columns&#39;</span><span class="p">)]</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">data_frame</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">has_duplicates</span><span class="p">:</span>
+        <span class="n">LOGGER</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Non-unique indices found.&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">non_unique_behavior</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;raise&quot;</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">TfsFormatError</span><span class="p">(</span><span class="s2">&quot;The dataframe contains non-unique indices&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">data_frame</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">has_duplicates</span><span class="p">:</span>
+        <span class="n">LOGGER</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Non-unique column names found.&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">non_unique_behavior</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;raise&quot;</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">TfsFormatError</span><span class="p">(</span><span class="s2">&quot;The dataframe contains non-unique columns.&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">data_frame</span><span class="o">.</span><span class="n">columns</span><span class="p">):</span>
+        <span class="n">LOGGER</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Some column-names are not of string-type, dataframe </span><span class="si">{</span><span class="n">info_str</span><span class="si">}</span><span class="s2"> is invalid.&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="n">TfsFormatError</span><span class="p">(</span><span class="s2">&quot;TFS-Columns need to be strings.&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="s2">&quot; &quot;</span> <span class="ow">in</span> <span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">data_frame</span><span class="o">.</span><span class="n">columns</span><span class="p">):</span>
+        <span class="n">LOGGER</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Space(s) found in TFS columns, dataframe </span><span class="si">{</span><span class="n">info_str</span><span class="si">}</span><span class="s2"> is invalid&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="n">TfsFormatError</span><span class="p">(</span><span class="s2">&quot;TFS-Columns can not contain spaces.&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">data_frame</span><span class="p">,</span> <span class="s2">&quot;headers&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">any</span><span class="p">(</span><span class="s2">&quot; &quot;</span> <span class="ow">in</span> <span class="n">h</span> <span class="k">for</span> <span class="n">h</span> <span class="ow">in</span> <span class="n">data_frame</span><span class="o">.</span><span class="n">headers</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+        <span class="n">LOGGER</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Space(s) found in TFS header names, dataframe </span><span class="si">{</span><span class="n">info_str</span><span class="si">}</span><span class="s2"> is invalid&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="n">TfsFormatError</span><span class="p">(</span><span class="s2">&quot;TFS-Header names can not contain spaces.&quot;</span><span class="p">)</span>
+
+    <span class="n">LOGGER</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;DataFrame </span><span class="si">{</span><span class="n">info_str</span><span class="si">}</span><span class="s2"> validated&quot;</span><span class="p">)</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright .
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

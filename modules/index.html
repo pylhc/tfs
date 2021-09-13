@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>TFS-Pandas Modules &mdash; tfs-pandas 2.1.0 documentation</title>
+  <title>TFS-Pandas Modules &mdash; tfs-pandas 3.0.0 documentation</title>
   
 
   
@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                2.1
+                3.0
               </div>
             
           
@@ -95,8 +95,12 @@
               <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">TFS-Pandas Modules</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#collection">Collection</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#handler">Handler</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#constants">Constants</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#errors">Errors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#frame">Frame</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#reader">Reader</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#tools">Tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#writer">Writer</a></li>
 </ul>
 </li>
 </ul>
@@ -141,6 +145,8 @@
 
 
 
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
 
   <ul class="wy-breadcrumbs">
@@ -153,7 +159,10 @@
       <li class="wy-breadcrumbs-aside">
         
           
-            <a href="../_sources/modules/index.rst.txt" rel="nofollow"> View page source</a>
+            
+              <!-- User defined GitHub URL -->
+              <a href="https://github.com/pylhc/tfs" class="fa fa-github"> Edit on GitHub</a>
+            
           
         
       </li>
@@ -170,11 +179,11 @@
 <span id="tfs-pandas-modules"></span><h1>TFS-Pandas Modules<a class="headerlink" href="#module-tfs.collection" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="collection">
 <h2>Collection<a class="headerlink" href="#collection" title="Permalink to this headline">¶</a></h2>
-<p>Advanced tfs reading and writing functionality.</p>
+<p>Advanced <strong>TFS</strong> files reading and writing functionality.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="tfs.collection.Tfs">
 <em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">tfs.collection.</span></span><span class="sig-name descname"><span class="pre">Tfs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tfs/collection.html#Tfs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tfs.collection.Tfs" title="Permalink to this definition">¶</a></dt>
-<dd><p>Class to mark attributes as Tfs attributes.</p>
+<dd><p>Class to mark attributes as <strong>TFS</strong> attributes.</p>
 <p>Any parameter given to this class will be passed to the <code class="docutils literal notranslate"><span class="pre">get_filename()</span></code> and <code class="docutils literal notranslate"><span class="pre">write_to()</span></code>
 methods, together with the plane if <code class="docutils literal notranslate"><span class="pre">two_planes=False</span></code> is not present.</p>
 </dd></dl>
@@ -182,13 +191,13 @@ methods, together with the plane if <code class="docutils literal notranslate"><
 <dl class="py class">
 <dt class="sig sig-object py" id="tfs.collection.TfsCollection">
 <em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">tfs.collection.</span></span><span class="sig-name descname"><span class="pre">TfsCollection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">directory</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">pathlib.Path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allow_write</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">bool</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tfs/collection.html#TfsCollection"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tfs.collection.TfsCollection" title="Permalink to this definition">¶</a></dt>
-<dd><p>Abstract class to lazily load and write TFS files.</p>
-<p>Classes inheriting from this abstract class will be able to define TFS files
+<dd><p>Abstract class to lazily load and write <strong>TFS</strong> files.</p>
+<p>Classes inheriting from this abstract class will be able to define <strong>TFS</strong> files
 as readable or writable, and read or write them just as attribute access or
-assignments. All attributes will be read and written as <cite>TfsDataFrames</cite>.</p>
+assignments. All attributes will be read and written as <code class="docutils literal notranslate"><span class="pre">TfsDataFrame</span></code> objects.</p>
 <p class="rubric">Example</p>
-<p>If <strong>./example</strong> is a directory that contains two TFS files <cite>beta_phase_x.tfs</cite>
-and <cite>beta_phase_y.tfs</cite> with BETX and BETY columns respectively:</p>
+<p>If <strong>./example</strong> is a directory that contains two <strong>TFS</strong> files <strong>beta_phase_x.tfs</strong>
+and <strong>beta_phase_y.tfs</strong> with <cite>BETX</cite> and <cite>BETY</cite> columns respectively:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">ExampleCollection</span><span class="p">(</span><span class="n">TfsCollection</span><span class="p">)</span>
    <span class="c1"># All TFS attributes must be marked with the Tfs(...) class, and generated attribute</span>
    <span class="c1"># names will be appended with _x / _y depending on files found in &quot;./example&quot;</span>
@@ -220,11 +229,11 @@ and <cite>beta_phase_y.tfs</cite> with BETX and BETY columns respectively:</p>
 <code class="docutils literal notranslate"><span class="pre">coupling</span> <span class="pre">=</span> <span class="pre">Tfs(&quot;getcouple.tfs&quot;,</span> <span class="pre">two_planes=False)</span></code> and then accessed as
 <code class="docutils literal notranslate"><span class="pre">f1001w_column</span> <span class="pre">=</span> <span class="pre">example.coupling.F1001W</span></code>.</p>
 <p>No file will be loaded until the corresponding attribute is accessed and the loaded
-<cite>TfsDataFrame</cite> will be buffered, thus the user should expect an <strong>IOError</strong> if the requested
+<code class="docutils literal notranslate"><span class="pre">TfsDataFrame</span></code> will be buffered, thus the user should expect an <code class="docutils literal notranslate"><span class="pre">IOError</span></code> if the requested
 file is not in the provided directory (only the first time, but is better to always take it
 into account!).</p>
-<p>When a <cite>TfsDataFrame</cite> is assigned to one attribute, it will be set as the buffer value. If the
-<code class="docutils literal notranslate"><span class="pre">self.allow_write</span></code> attribute is set to true, an assignment on one of the attributes will
+<p>When a <code class="docutils literal notranslate"><span class="pre">TfsDataFrame</span></code> is assigned to one attribute, it will be set as the buffer value. If the
+<code class="docutils literal notranslate"><span class="pre">self.allow_write</span></code> attribute is set to <code class="docutils literal notranslate"><span class="pre">True</span></code>, an assignment on one of the attributes will
 trigger the corresponding file write.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="tfs.collection.TfsCollection.clear">
@@ -245,16 +254,16 @@ not present in the Tfs(…) definition, it will also be given the keyword argume
 
 <dl class="py method">
 <dt class="sig sig-object py" id="tfs.collection.TfsCollection.read_tfs">
-<span class="sig-name descname"><span class="pre">read_tfs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#tfs.handler.TfsDataFrame" title="tfs.handler.TfsDataFrame"><span class="pre">tfs.handler.TfsDataFrame</span></a><a class="reference internal" href="../_modules/tfs/collection.html#TfsCollection.read_tfs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tfs.collection.TfsCollection.read_tfs" title="Permalink to this definition">¶</a></dt>
-<dd><p>Reads the TFS file from <strong>self.directory</strong> with the given filename.</p>
-<p>This function can be overwritten to use something instead of the <cite>tfs</cite> module to load the
+<span class="sig-name descname"><span class="pre">read_tfs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#tfs.frame.TfsDataFrame" title="tfs.frame.TfsDataFrame"><span class="pre">tfs.frame.TfsDataFrame</span></a></span></span><a class="reference internal" href="../_modules/tfs/collection.html#TfsCollection.read_tfs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tfs.collection.TfsCollection.read_tfs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reads the <strong>TFS</strong> file from <code class="docutils literal notranslate"><span class="pre">self.directory</span></code> with the given filename.</p>
+<p>This function can be overwritten to use something instead of <code class="docutils literal notranslate"><span class="pre">tfs-pandas</span></code> to load the
 files.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>filename</strong> (<em>str</em>) -- The name of the file to load.</p>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>A <cite>TfsDataFrame</cite> built from reading the requested file.</p>
+<dd class="field-even"><p>A <code class="docutils literal notranslate"><span class="pre">TfsDataFrame</span></code> built from reading the requested file.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -271,73 +280,204 @@ parameter. It must return a tuple (filename, tfs_data_frame).</p>
 </dd></dl>
 
 </div>
-<span class="target" id="module-tfs.handler"></span><div class="section" id="handler">
-<h2>Handler<a class="headerlink" href="#handler" title="Permalink to this headline">¶</a></h2>
-<p>Basic tfs files IO functionality.</p>
-<dl class="py class">
-<dt class="sig sig-object py" id="tfs.handler.TfsDataFrame">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">tfs.handler.</span></span><span class="sig-name descname"><span class="pre">TfsDataFrame</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tfs/handler.html#TfsDataFrame"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tfs.handler.TfsDataFrame" title="Permalink to this definition">¶</a></dt>
-<dd><p>Class to hold the information of the built extended <cite>pandas</cite> DataFrame, together with a way of
-getting the headers of the TFS file. As the file headers are stored in a dictionary upon read,
-to get a header value use <code class="docutils literal notranslate"><span class="pre">data_frame[&quot;header_name&quot;]</span></code>.</p>
-</dd></dl>
-
+<span class="target" id="module-tfs.constants"></span><div class="section" id="constants">
+<h2>Constants<a class="headerlink" href="#constants" title="Permalink to this headline">¶</a></h2>
+<p>General constants used throughout <code class="docutils literal notranslate"><span class="pre">tfs-pandas</span></code>, relating to the standard of <strong>TFS</strong> files.</p>
+</div>
+<span class="target" id="module-tfs.errors"></span><div class="section" id="errors">
+<h2>Errors<a class="headerlink" href="#errors" title="Permalink to this headline">¶</a></h2>
+<p>Errors that can be raised during the handling of <strong>TFS</strong> files.</p>
 <dl class="py exception">
-<dt class="sig sig-object py" id="tfs.handler.TfsFormatError">
-<em class="property"><span class="pre">exception</span> </em><span class="sig-prename descclassname"><span class="pre">tfs.handler.</span></span><span class="sig-name descname"><span class="pre">TfsFormatError</span></span><a class="reference internal" href="../_modules/tfs/handler.html#TfsFormatError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tfs.handler.TfsFormatError" title="Permalink to this definition">¶</a></dt>
-<dd><p>Raised when a wrong format is detected in the TFS file.</p>
+<dt class="sig sig-object py" id="tfs.errors.TfsFormatError">
+<em class="property"><span class="pre">exception</span> </em><span class="sig-prename descclassname"><span class="pre">tfs.errors.</span></span><span class="sig-name descname"><span class="pre">TfsFormatError</span></span><a class="reference internal" href="../_modules/tfs/errors.html#TfsFormatError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tfs.errors.TfsFormatError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Raised when a wrong format is detected in the <strong>TFS</strong> file.</p>
 </dd></dl>
 
-<dl class="py function">
-<dt class="sig sig-object py" id="tfs.handler.read_tfs">
-<span class="sig-prename descclassname"><span class="pre">tfs.handler.</span></span><span class="sig-name descname"><span class="pre">read_tfs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tfs_file_path</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">pathlib.Path</span><span class="p"><span class="pre">,</span> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">non_unique_behavior</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'warn'</span></span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#tfs.handler.TfsDataFrame" title="tfs.handler.TfsDataFrame"><span class="pre">tfs.handler.TfsDataFrame</span></a><a class="reference internal" href="../_modules/tfs/handler.html#read_tfs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tfs.handler.read_tfs" title="Permalink to this definition">¶</a></dt>
-<dd><p>Parses the TFS table present in <strong>tfs_file_path</strong> and returns a customized version of a Pandas
-DataFrame (a TfsDataFrame).</p>
-<p>Methodology: This function parses the first lines of the file until it gets to the <cite>types</cite> line.
-While parsed, the appropriate information is gathered (headers content, column names &amp; types,
-number of lines parsed). After reaching the types lines, the rest of the file is given to parse
-to <code class="docutils literal notranslate"><span class="pre">pandas.read_csv</span></code> with the right options to make use of it’s C engine’s speed. After this,
-conversion to <code class="docutils literal notranslate"><span class="pre">TfsDataDrame</span></code> is made, proper types are applied to columns, the index is set and
-the frame is validated before being returned.</p>
+</div>
+<span class="target" id="module-tfs.frame"></span><div class="section" id="frame">
+<h2>Frame<a class="headerlink" href="#frame" title="Permalink to this headline">¶</a></h2>
+<p>Contains the class definition of a <code class="docutils literal notranslate"><span class="pre">TfsDataFrame</span></code>, inherited from the <code class="docutils literal notranslate"><span class="pre">pandas</span></code> <code class="docutils literal notranslate"><span class="pre">DataFrame</span></code>, as well
+as a utility function to validate the correctness of a <code class="docutils literal notranslate"><span class="pre">TfsDataFrame</span></code>.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="tfs.frame.TfsDataFrame">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">tfs.frame.</span></span><span class="sig-name descname"><span class="pre">TfsDataFrame</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tfs/frame.html#TfsDataFrame"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tfs.frame.TfsDataFrame" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class to hold the information of the built an extended <code class="docutils literal notranslate"><span class="pre">pandas</span></code> <code class="docutils literal notranslate"><span class="pre">DataFrame</span></code>, together with a way
+of getting the headers of the <strong>TFS</strong> file. The file headers are stored in a dictionary upon read.
+To get a header value use <code class="docutils literal notranslate"><span class="pre">data_frame.headers[&quot;header_name&quot;]</span></code>, or <code class="docutils literal notranslate"><span class="pre">data_frame[&quot;header_name&quot;]</span></code> if
+it does not conflict with a column name in the dataframe.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="tfs.frame.TfsDataFrame.append">
+<span class="sig-name descname"><span class="pre">append</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">other</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="#tfs.frame.TfsDataFrame" title="tfs.frame.TfsDataFrame"><span class="pre">tfs.frame.TfsDataFrame</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">how_headers</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_headers</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#tfs.frame.TfsDataFrame" title="tfs.frame.TfsDataFrame"><span class="pre">tfs.frame.TfsDataFrame</span></a></span></span><a class="reference internal" href="../_modules/tfs/frame.html#TfsDataFrame.append"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tfs.frame.TfsDataFrame.append" title="Permalink to this definition">¶</a></dt>
+<dd><p>Append rows of the other <code class="docutils literal notranslate"><span class="pre">TfsDataFrame</span></code> to the end of caller, returning a new object. Data
+manipulation is done by the <code class="docutils literal notranslate"><span class="pre">pandas.Dataframe</span></code> method of the same name. Resulting headers are
+either merged according to the provided <strong>how_headers</strong> method or as given via <strong>new_headers</strong>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>tfs_file_path</strong> (<em>Union</em><em>[</em><em>pathlib.Path</em><em>, </em><em>str</em><em>]</em>) -- PosixPath object to the output TFS file. Can be
-a string, in which case it will be cast to a PosixPath object.</p></li>
-<li><p><strong>index</strong> (<em>str</em>) -- Name of the column to set as index. If not given, looks in <strong>tfs_file_path</strong>
-for a column starting with <cite>INDEX&amp;&amp;&amp;</cite>.</p></li>
-<li><p><strong>non_unique_behavior</strong> (<em>str</em>) -- behavior to adopt if non-unique indices or columns are found in the
-dataframe. Accepts <strong>warn</strong> and <strong>raise</strong> as values, case-insensitively, which dictates
-to respectively issue a warning or raise an error if non-unique elements are found.</p></li>
+<li><p><strong>other</strong> (<a class="reference internal" href="#tfs.frame.TfsDataFrame" title="tfs.frame.TfsDataFrame"><em>TfsDataFrame</em></a>) -- The <code class="docutils literal notranslate"><span class="pre">TfsDataFrame</span></code> to append to the caller.</p></li>
+<li><p><strong>how_headers</strong> (<em>str</em>) -- Type of merge to be performed for the headers. Either <strong>left</strong> or <strong>right</strong>.
+Refer to <a class="reference internal" href="#tfs.frame.merge_headers" title="tfs.frame.merge_headers"><code class="xref py py-func docutils literal notranslate"><span class="pre">tfs.frame.merge_headers()</span></code></a> for behavior. If <code class="docutils literal notranslate"><span class="pre">None</span></code> is provided and
+<strong>new_headers</strong> is not provided, the final headers will be empty. Case insensitive,
+defaults to <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p></li>
+<li><p><strong>new_headers</strong> (<em>dict</em>) -- If provided, will be used as new_headers for the merged <code class="docutils literal notranslate"><span class="pre">TfsDataFrame</span></code>.
+Otherwise these are determined by merging the headers from the caller and the other
+<code class="docutils literal notranslate"><span class="pre">TfsDataFrame</span></code> according to the method defined by the <strong>how_headers</strong> argument.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>A TfsDataFrame object with the loaded data from the file.</p>
+<dt class="field-even">Keyword Arguments</dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>these</strong> (<em>Any keyword argument is given to pandas.DataFrame.append</em><em>(</em><em>)</em><em> The default values for all</em>) -- </p></li>
+<li><p><strong>pandas</strong> (<em>parameters are left as set in the pandas codebase. To see these</em><em>, </em><em>refer to the</em>) -- </p></li>
+<li><p><strong>documentation</strong><strong>]</strong><strong>(</strong><strong>https</strong> (<em>[</em><em>DataFrame.append</em>) -- //pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.append.html).</p></li>
+</ul>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>A new <code class="docutils literal notranslate"><span class="pre">TfsDataFrame</span></code> with the appended data and merged headers.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tfs.frame.TfsDataFrame.join">
+<span class="sig-name descname"><span class="pre">join</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">other</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="#tfs.frame.TfsDataFrame" title="tfs.frame.TfsDataFrame"><span class="pre">tfs.frame.TfsDataFrame</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">how_headers</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_headers</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#tfs.frame.TfsDataFrame" title="tfs.frame.TfsDataFrame"><span class="pre">tfs.frame.TfsDataFrame</span></a></span></span><a class="reference internal" href="../_modules/tfs/frame.html#TfsDataFrame.join"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tfs.frame.TfsDataFrame.join" title="Permalink to this definition">¶</a></dt>
+<dd><p>Join columns of another <code class="docutils literal notranslate"><span class="pre">TfsDataFrame</span></code>. Data manipulation is done by the <code class="docutils literal notranslate"><span class="pre">pandas.Dataframe</span></code>
+method of the same name. Resulting headers are either merged according to the provided
+<strong>how_headers</strong> method or as given via <strong>new_headers</strong>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>other</strong> (<a class="reference internal" href="#tfs.frame.TfsDataFrame" title="tfs.frame.TfsDataFrame"><em>TfsDataFrame</em></a>) -- The <code class="docutils literal notranslate"><span class="pre">TfsDataFrame</span></code> to join into the caller.</p></li>
+<li><p><strong>how_headers</strong> (<em>str</em>) -- Type of merge to be performed for the headers. Either <strong>left</strong> or <strong>right</strong>.
+Refer to <a class="reference internal" href="#tfs.frame.merge_headers" title="tfs.frame.merge_headers"><code class="xref py py-func docutils literal notranslate"><span class="pre">tfs.frame.merge_headers()</span></code></a> for behavior. If <code class="docutils literal notranslate"><span class="pre">None</span></code> is provided and
+<strong>new_headers</strong> is not provided, the final headers will be empty. Case insensitive,
+defaults to <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p></li>
+<li><p><strong>new_headers</strong> (<em>dict</em>) -- If provided, will be used as new_headers for the merged <code class="docutils literal notranslate"><span class="pre">TfsDataFrame</span></code>.
+Otherwise these are determined by merging the headers from the caller and the other
+<code class="docutils literal notranslate"><span class="pre">TfsDataFrame</span></code> according to the method defined by the <strong>how_headers</strong> argument.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Keyword Arguments</dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>these</strong> (<em>Any keyword argument is given to pandas.DataFrame.join</em><em>(</em><em>)</em><em> The default values for all</em>) -- </p></li>
+<li><p><strong>pandas</strong> (<em>parameters are left as set in the pandas codebase. To see these</em><em>, </em><em>refer to the</em>) -- </p></li>
+<li><p><strong>documentation</strong><strong>]</strong><strong>(</strong><strong>https</strong> (<em>[</em><em>DataFrame.join</em>) -- //pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.join.html).</p></li>
+</ul>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>A new <code class="docutils literal notranslate"><span class="pre">TfsDataFrame</span></code> with the joined columns and merged headers.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tfs.frame.TfsDataFrame.merge">
+<span class="sig-name descname"><span class="pre">merge</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">right</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="#tfs.frame.TfsDataFrame" title="tfs.frame.TfsDataFrame"><span class="pre">tfs.frame.TfsDataFrame</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">how_headers</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_headers</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#tfs.frame.TfsDataFrame" title="tfs.frame.TfsDataFrame"><span class="pre">tfs.frame.TfsDataFrame</span></a></span></span><a class="reference internal" href="../_modules/tfs/frame.html#TfsDataFrame.merge"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tfs.frame.TfsDataFrame.merge" title="Permalink to this definition">¶</a></dt>
+<dd><p>Merge <code class="docutils literal notranslate"><span class="pre">TfsDataFrame</span></code> objects with a database-style join. Data manipulation is done by the
+<code class="docutils literal notranslate"><span class="pre">pandas.Dataframe</span></code> method of the same name. Resulting headers are either merged according to the
+provided <strong>how_headers</strong> method or as given via <strong>new_headers</strong>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>right</strong> (<a class="reference internal" href="#tfs.frame.TfsDataFrame" title="tfs.frame.TfsDataFrame"><em>TfsDataFrame</em></a>) -- The <code class="docutils literal notranslate"><span class="pre">TfsDataFrame</span></code> to merge with the caller.</p></li>
+<li><p><strong>how_headers</strong> (<em>str</em>) -- Type of merge to be performed for the headers. Either <strong>left</strong> or <strong>right</strong>.
+Refer to <a class="reference internal" href="#tfs.frame.merge_headers" title="tfs.frame.merge_headers"><code class="xref py py-func docutils literal notranslate"><span class="pre">tfs.frame.merge_headers()</span></code></a> for behavior. If <code class="docutils literal notranslate"><span class="pre">None</span></code> is provided and
+<strong>new_headers</strong> is not provided, the final headers will be empty. Case insensitive,
+defaults to <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p></li>
+<li><p><strong>new_headers</strong> (<em>dict</em>) -- If provided, will be used as headers for the merged <code class="docutils literal notranslate"><span class="pre">TfsDataFrame</span></code>.
+Otherwise these are determined by merging the headers from the caller and the other
+<code class="docutils literal notranslate"><span class="pre">TfsDataFrame</span></code> according to the method defined by the <strong>how_headers</strong> argument.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Keyword Arguments</dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>these</strong> (<em>Any keyword argument is given to pandas.DataFrame.merge</em><em>(</em><em>)</em><em> The default values for all</em>) -- </p></li>
+<li><p><strong>pandas</strong> (<em>parameters are left as set in the pandas codebase. To see these</em><em>, </em><em>refer to the</em>) -- </p></li>
+<li><p><strong>documentation</strong><strong>]</strong><strong>(</strong><strong>https</strong> (<em>[</em><em>DataFrame.merge</em>) -- //pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.merge.html).</p></li>
+</ul>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>A new <code class="docutils literal notranslate"><span class="pre">TfsDataFrame</span></code> with the merged data and merged headers.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tfs.frame.concat">
+<span class="sig-prename descclassname"><span class="pre">tfs.frame.</span></span><span class="sig-name descname"><span class="pre">concat</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">objs</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#tfs.frame.TfsDataFrame" title="tfs.frame.TfsDataFrame"><span class="pre">tfs.frame.TfsDataFrame</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">how_headers</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_headers</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#tfs.frame.TfsDataFrame" title="tfs.frame.TfsDataFrame"><span class="pre">tfs.frame.TfsDataFrame</span></a></span></span><a class="reference internal" href="../_modules/tfs/frame.html#concat"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tfs.frame.concat" title="Permalink to this definition">¶</a></dt>
+<dd><p>Concatenate <code class="docutils literal notranslate"><span class="pre">TfsDataFrame</span></code> objects along a particular axis with optional set logic along the other
+axes. Data manipulation is done by the <code class="docutils literal notranslate"><span class="pre">pandas.concat</span></code> function. Resulting headers are either
+merged according to the provided <strong>how_headers</strong> method or as given via <strong>new_headers</strong>.</p>
+<dl class="simple">
+<dt>..warning::</dt><dd><p>Please note that when using this function on many <code class="docutils literal notranslate"><span class="pre">TfsDataFrames</span></code>, leaving the contents of the
+final headers dictionary to the automatic merger can become unpredictable. In this case it is
+recommended to provide the <strong>new_headers</strong> argument to ensure the final result, or leave both
+<strong>how_headers</strong> and <strong>new_headers</strong> as <code class="docutils literal notranslate"><span class="pre">None</span></code> (their defaults) to end up with empty headers.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>objs</strong> (<em>Sequence</em><em>[</em><a class="reference internal" href="#tfs.frame.TfsDataFrame" title="tfs.frame.TfsDataFrame"><em>TfsDataFrame</em></a><em>]</em>) -- the <code class="docutils literal notranslate"><span class="pre">TfsDataFrame</span></code> objects to be concatenated.</p></li>
+<li><p><strong>how_headers</strong> (<em>str</em>) -- Type of merge to be performed for the headers. Either <strong>left</strong> or <strong>right</strong>.
+Refer to <a class="reference internal" href="#tfs.frame.merge_headers" title="tfs.frame.merge_headers"><code class="xref py py-func docutils literal notranslate"><span class="pre">tfs.frame.merge_headers()</span></code></a> for behavior. If <code class="docutils literal notranslate"><span class="pre">None</span></code> is provided and
+<strong>new_headers</strong> is not provided, the final headers will be empty. Case insensitive, defaults to
+<code class="docutils literal notranslate"><span class="pre">None</span></code>.</p></li>
+<li><p><strong>new_headers</strong> (<em>dict</em>) -- If provided, will be used as headers for the merged <code class="docutils literal notranslate"><span class="pre">TfsDataFrame</span></code>.
+Otherwise these are determined by successively merging the headers from all concatenated
+<code class="docutils literal notranslate"><span class="pre">TfsDataFrames</span></code> according to the method defined by the <strong>how_headers</strong> argument.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Keyword Arguments</dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>parameters</strong> (<em>Any keyword argument is given to pandas.concat</em><em>(</em><em>)</em><em> The default values for all these</em>) -- </p></li>
+<li><p><strong>[</strong><strong>pandas.concat</strong> (<em>are left as set in the pandas codebase. To see these</em><em>, </em><em>refer to the</em>) -- </p></li>
+<li><p><strong>documentation</strong><strong>]</strong><strong>(</strong><strong>https</strong> -- //pandas.pydata.org/pandas-docs/stable/reference/api/pandas.concat.html).</p></li>
+</ul>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>A new <code class="docutils literal notranslate"><span class="pre">TfsDataFrame</span></code> with the merged data and merged headers.</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="tfs.handler.write_tfs">
-<span class="sig-prename descclassname"><span class="pre">tfs.handler.</span></span><span class="sig-name descname"><span class="pre">write_tfs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tfs_file_path</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">pathlib.Path</span><span class="p"><span class="pre">,</span> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_frame</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">pandas.core.frame.DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">headers_dict</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_index</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">bool</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">colwidth</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">20</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">headerswidth</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">20</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">non_unique_behavior</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'warn'</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">None</span><a class="reference internal" href="../_modules/tfs/handler.html#write_tfs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tfs.handler.write_tfs" title="Permalink to this definition">¶</a></dt>
-<dd><p>Writes the DataFrame into <strong>tfs_file_path</strong> with the <cite>headers_dict</cite> as headers dictionary. If
-you want to keep the order of the headers upon write, use a <code class="docutils literal notranslate"><span class="pre">collections.OrderedDict</span></code>.</p>
+<dt class="sig sig-object py" id="tfs.frame.merge_headers">
+<span class="sig-prename descclassname"><span class="pre">tfs.frame.</span></span><span class="sig-name descname"><span class="pre">merge_headers</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">headers_left</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">headers_right</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">how</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">collections.OrderedDict</span></span></span><a class="reference internal" href="../_modules/tfs/frame.html#merge_headers"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tfs.frame.merge_headers" title="Permalink to this definition">¶</a></dt>
+<dd><p>Merge headers of two <code class="docutils literal notranslate"><span class="pre">TfsDataFrames</span></code> together.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>tfs_file_path</strong> (<em>Union</em><em>[</em><em>pathlib.Path</em><em>, </em><em>str</em><em>]</em>) -- PosixPath object to the output TFS file. Can be
-a string, in which case it will be cast to a PosixPath object.</p></li>
-<li><p><strong>data_frame</strong> (<em>Union</em><em>[</em><a class="reference internal" href="#tfs.handler.TfsDataFrame" title="tfs.handler.TfsDataFrame"><em>TfsDataFrame</em></a><em>, </em><em>pd.DataFrame</em><em>]</em>) -- <cite>TfsDataFrame</cite> or <cite>pandas.DataFrame</cite> to
-write to file.</p></li>
-<li><p><strong>headers_dict</strong> (<em>dict</em>) -- Headers of the data_frame. If not provided, assumes a <cite>TfsDataFrame</cite>
-was given and tries to use <code class="docutils literal notranslate"><span class="pre">data_frame.headers</span></code>.</p></li>
-<li><p><strong>save_index</strong> (<em>Union</em><em>[</em><em>str</em><em>, </em><em>bool</em><em>]</em>) -- bool or string. Default to <code class="docutils literal notranslate"><span class="pre">False</span></code>. If <code class="docutils literal notranslate"><span class="pre">True</span></code>, saves
-the index of the data_frame to a column identifiable by <cite>INDEX&amp;&amp;&amp;</cite>. If given as string,
-saves the index of the data_frame to a column named by the provided value.</p></li>
-<li><p><strong>colwidth</strong> (<em>int</em>) -- Column width, can not be smaller than <cite>MIN_COLUMN_WIDTH</cite>.</p></li>
-<li><p><strong>headerswidth</strong> (<em>int</em>) -- Used to format the header width for both keys and values.</p></li>
+<li><p><strong>headers_left</strong> (<em>dict</em>) -- Headers of caller (left) <code class="docutils literal notranslate"><span class="pre">TfsDataFrame</span></code> when calling <code class="docutils literal notranslate"><span class="pre">.append</span></code>, <code class="docutils literal notranslate"><span class="pre">.join</span></code> or
+<code class="docutils literal notranslate"><span class="pre">.merge</span></code>. Headers of the left (preceeding) <code class="docutils literal notranslate"><span class="pre">TfsDataFrame</span></code> when calling <code class="docutils literal notranslate"><span class="pre">tfs.frame.concat</span></code>.</p></li>
+<li><p><strong>headers_right</strong> (<em>dict</em>) -- Headers of other (right) <code class="docutils literal notranslate"><span class="pre">TfsDataFrame</span></code> when calling <code class="docutils literal notranslate"><span class="pre">.append</span></code>, <code class="docutils literal notranslate"><span class="pre">.join</span></code>
+or <code class="docutils literal notranslate"><span class="pre">.merge</span></code>. Headers of the left (preceeding) <code class="docutils literal notranslate"><span class="pre">TfsDataFrame</span></code> when calling
+<code class="docutils literal notranslate"><span class="pre">tfs.frame.concat</span></code>.</p></li>
+<li><p><strong>how</strong> (<em>str</em>) -- Type of merge to be performed, either <strong>left</strong> or <strong>right</strong>. If <strong>left*, prioritize keys
+from **headers_left</strong> in case of duplicate keys. If <strong>right</strong>, prioritize keys from
+<strong>headers_right</strong> in case of duplicate keys. Case insensitive. If <code class="docutils literal notranslate"><span class="pre">None</span></code> is given,
+an empty dictionary will be returned.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A new <code class="docutils literal notranslate"><span class="pre">OrderedDict</span></code> as the merge of the two provided dictionaries.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tfs.frame.validate">
+<span class="sig-prename descclassname"><span class="pre">tfs.frame.</span></span><span class="sig-name descname"><span class="pre">validate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_frame</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">pandas.core.frame.DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">info_str</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">non_unique_behavior</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'warn'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/tfs/frame.html#validate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tfs.frame.validate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if a data frame contains finite values only, strings as column names and no empty headers
+or column names.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data_frame</strong> (<em>Union</em><em>[</em><a class="reference internal" href="#tfs.frame.TfsDataFrame" title="tfs.frame.TfsDataFrame"><em>TfsDataFrame</em></a><em>, </em><em>pd.DataFrame</em><em>]</em>) -- the dataframe to check on.</p></li>
+<li><p><strong>info_str</strong> (<em>str</em>) -- additional information to include in logging statements.</p></li>
 <li><p><strong>non_unique_behavior</strong> (<em>str</em>) -- behavior to adopt if non-unique indices or columns are found in the
-dataframe. Accepts <strong>warn</strong> and <strong>raise</strong> as values, case-insensitively, which dictates
+dataframe. Accepts <cite>warn</cite> and <cite>raise</cite> as values, case-insensitively, which dictates
 to respectively issue a warning or raise an error if non-unique elements are found.</p></li>
 </ul>
 </dd>
@@ -345,31 +485,63 @@ to respectively issue a warning or raise an error if non-unique elements are fou
 </dd></dl>
 
 </div>
+<span class="target" id="module-tfs.reader"></span><div class="section" id="reader">
+<h2>Reader<a class="headerlink" href="#reader" title="Permalink to this headline">¶</a></h2>
+<p>Reading functionalty for <strong>TFS</strong> files.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="tfs.reader.read_tfs">
+<span class="sig-prename descclassname"><span class="pre">tfs.reader.</span></span><span class="sig-name descname"><span class="pre">read_tfs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tfs_file_path</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">pathlib.Path</span><span class="p"><span class="pre">,</span> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">non_unique_behavior</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'warn'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#tfs.frame.TfsDataFrame" title="tfs.frame.TfsDataFrame"><span class="pre">tfs.frame.TfsDataFrame</span></a></span></span><a class="reference internal" href="../_modules/tfs/reader.html#read_tfs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tfs.reader.read_tfs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parses the <strong>TFS</strong> table present in <strong>tfs_file_path</strong> and returns a <code class="docutils literal notranslate"><span class="pre">TfsDataFrame</span></code>.</p>
+<p>Methodology: This function parses the first lines of the file until it gets to the <cite>types</cite> line.
+While parsed, the appropriate information is gathered (headers content, column names &amp; types,
+number of lines parsed). After reaching the <cite>types</cite> line, the rest of the file is given to parse
+to <code class="docutils literal notranslate"><span class="pre">pandas.read_csv</span></code> with the right options to make use of its C engine’s speed. After this,
+conversion to <code class="docutils literal notranslate"><span class="pre">TfsDataDrame</span></code> is made, proper types are applied to columns, the index is set and
+the frame is validated before being returned.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>tfs_file_path</strong> (<em>Union</em><em>[</em><em>pathlib.Path</em><em>, </em><em>str</em><em>]</em>) -- Path object to the <strong>TFS</strong> file to read. Can be
+a string, in which case it will be cast to a Path object.</p></li>
+<li><p><strong>index</strong> (<em>str</em>) -- Name of the column to set as index. If not given, looks in <strong>tfs_file_path</strong>
+for a column starting with <cite>INDEX&amp;&amp;&amp;</cite>.</p></li>
+<li><p><strong>non_unique_behavior</strong> (<em>str</em>) -- behavior to adopt if non-unique indices or columns are found in the
+dataframe. Accepts <cite>warn</cite> and <cite>raise</cite> as values, case-insensitively, which dictates
+to respectively issue a warning or raise an error if non-unique elements are found.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A <code class="docutils literal notranslate"><span class="pre">TfsDataFrame</span></code> object with the loaded data from the file.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
 <span class="target" id="module-tfs.tools"></span><div class="section" id="tools">
 <h2>Tools<a class="headerlink" href="#tools" title="Permalink to this headline">¶</a></h2>
-<p>Additional functions to modify tfs files.</p>
+<p>Additional functions to modify <strong>TFS</strong> files.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="tfs.tools.remove_header_comments_from_files">
-<span class="sig-prename descclassname"><span class="pre">tfs.tools.</span></span><span class="sig-name descname"><span class="pre">remove_header_comments_from_files</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">list_of_files</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">pathlib.Path</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">None</span><a class="reference internal" href="../_modules/tfs/tools.html#remove_header_comments_from_files"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tfs.tools.remove_header_comments_from_files" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">tfs.tools.</span></span><span class="sig-name descname"><span class="pre">remove_header_comments_from_files</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">list_of_files</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">pathlib.Path</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/tfs/tools.html#remove_header_comments_from_files"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tfs.tools.remove_header_comments_from_files" title="Permalink to this definition">¶</a></dt>
 <dd><p>Check the files in the provided list for invalid headers (no type defined) and removes those
 inplace when found.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>list_of_files</strong> (<em>List</em><em>[</em><em>Union</em><em>[</em><em>str</em><em>, </em><em>Path</em><em>]</em><em>]</em>) -- list of paths to tfs files meant to be checked.
-The entries of the list can be strings or PosixPath objects.</p>
+<dd class="field-odd"><p><strong>list_of_files</strong> (<em>List</em><em>[</em><em>Union</em><em>[</em><em>str</em><em>, </em><em>Path</em><em>]</em><em>]</em>) -- list of Paths to <strong>TFS</strong> files meant to be checked.
+The entries of the list can be strings or Path objects.</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="tfs.tools.remove_nan_from_files">
-<span class="sig-prename descclassname"><span class="pre">tfs.tools.</span></span><span class="sig-name descname"><span class="pre">remove_nan_from_files</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">list_of_files</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">pathlib.Path</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">replace</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">None</span><a class="reference internal" href="../_modules/tfs/tools.html#remove_nan_from_files"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tfs.tools.remove_nan_from_files" title="Permalink to this definition">¶</a></dt>
-<dd><p>Remove NAN-Entries from files in <code class="docutils literal notranslate"><span class="pre">list_of_files</span></code>.</p>
+<span class="sig-prename descclassname"><span class="pre">tfs.tools.</span></span><span class="sig-name descname"><span class="pre">remove_nan_from_files</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">list_of_files</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">pathlib.Path</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">replace</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/tfs/tools.html#remove_nan_from_files"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tfs.tools.remove_nan_from_files" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove NaN entries from files in <cite>list_of_files</cite>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>list_of_files</strong> (<em>List</em><em>[</em><em>Union</em><em>[</em><em>str</em><em>, </em><em>Path</em><em>]</em><em>]</em>) -- list of paths to tfs files meant to be sanitized.
-The entries of the list can be strings or PosixPath objects.</p></li>
+<li><p><strong>list_of_files</strong> (<em>List</em><em>[</em><em>Union</em><em>[</em><em>str</em><em>, </em><em>Path</em><em>]</em><em>]</em>) -- list of Paths to <strong>TFS</strong> files meant to be sanitized.
+The elements of the list can be strings or Path objects.</p></li>
 <li><p><strong>replace</strong> (<em>bool</em>) -- if <code class="docutils literal notranslate"><span class="pre">True</span></code>, the provided files will be overwritten. Otherwise new files
 with <cite>.dropna</cite> appended to the original filenames will be written to disk. Defaults to
 <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p></li>
@@ -380,8 +552,8 @@ with <cite>.dropna</cite> appended to the original filenames will be written to 
 
 <dl class="py function">
 <dt class="sig sig-object py" id="tfs.tools.significant_digits">
-<span class="sig-prename descclassname"><span class="pre">tfs.tools.</span></span><span class="sig-name descname"><span class="pre">significant_digits</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">error</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_floats</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span> </span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><a class="reference internal" href="../_modules/tfs/tools.html#significant_digits"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tfs.tools.significant_digits" title="Permalink to this definition">¶</a></dt>
-<dd><p>Computes <code class="docutils literal notranslate"><span class="pre">value</span></code> and its error properly rounded with respect to the size of <code class="docutils literal notranslate"><span class="pre">error</span></code>.</p>
+<span class="sig-prename descclassname"><span class="pre">tfs.tools.</span></span><span class="sig-name descname"><span class="pre">significant_digits</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">error</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_floats</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span> </span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/tfs/tools.html#significant_digits"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tfs.tools.significant_digits" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes <cite>value</cite> and its error properly rounded with respect to the size of <cite>error</cite>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -393,6 +565,37 @@ strings. Defaults to <code class="docutils literal notranslate"><span class="pre
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>A tuple of the rounded value and error with regards to the size of the error.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<span class="target" id="module-tfs.writer"></span><div class="section" id="writer">
+<h2>Writer<a class="headerlink" href="#writer" title="Permalink to this headline">¶</a></h2>
+<p>Writing functionalty for <strong>TFS</strong> files.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="tfs.writer.write_tfs">
+<span class="sig-prename descclassname"><span class="pre">tfs.writer.</span></span><span class="sig-name descname"><span class="pre">write_tfs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tfs_file_path</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">pathlib.Path</span><span class="p"><span class="pre">,</span> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_frame</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">pandas.core.frame.DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">headers_dict</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_index</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">bool</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">colwidth</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">20</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">headerswidth</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">20</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">non_unique_behavior</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'warn'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/tfs/writer.html#write_tfs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tfs.writer.write_tfs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Writes the provided <code class="docutils literal notranslate"><span class="pre">DataFrame</span></code> to disk at <strong>tfs_file_path</strong>, eventually with the <cite>headers_dict</cite> as
+headers dictionary.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>tfs_file_path</strong> (<em>Union</em><em>[</em><em>pathlib.Path</em><em>, </em><em>str</em><em>]</em>) -- Path object to the output <strong>TFS</strong> file. Can be
+a string, in which case it will be cast to a Path object.</p></li>
+<li><p><strong>data_frame</strong> (<em>Union</em><em>[</em><a class="reference internal" href="#tfs.frame.TfsDataFrame" title="tfs.frame.TfsDataFrame"><em>TfsDataFrame</em></a><em>, </em><em>pd.DataFrame</em><em>]</em>) -- <code class="docutils literal notranslate"><span class="pre">TfsDataFrame</span></code> or <code class="docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code> to
+write to file.</p></li>
+<li><p><strong>headers_dict</strong> (<em>dict</em>) -- Headers for the <cite>data_frame</cite>. If not provided, assumes a <code class="docutils literal notranslate"><span class="pre">TfsDataFrame</span></code>
+was given and tries to use <code class="docutils literal notranslate"><span class="pre">data_frame.headers</span></code>.</p></li>
+<li><p><strong>save_index</strong> (<em>Union</em><em>[</em><em>str</em><em>, </em><em>bool</em><em>]</em>) -- bool or string. Default to <code class="docutils literal notranslate"><span class="pre">False</span></code>. If <code class="docutils literal notranslate"><span class="pre">True</span></code>, saves
+the index of <cite>data_frame</cite> to a column identifiable by <cite>INDEX&amp;&amp;&amp;</cite>. If given as string,
+saves the index of <cite>data_frame</cite> to a column named by the provided value.</p></li>
+<li><p><strong>colwidth</strong> (<em>int</em>) -- Column width, can not be smaller than <cite>MIN_COLUMN_WIDTH</cite>.</p></li>
+<li><p><strong>headerswidth</strong> (<em>int</em>) -- Used to format the header width for both keys and values.</p></li>
+<li><p><strong>non_unique_behavior</strong> (<em>str</em>) -- behavior to adopt if non-unique indices or columns are found in the
+dataframe. Accepts <cite>warn</cite> and <cite>raise</cite> as values, case-insensitively, which dictates
+to respectively issue a warning or raise an error if non-unique elements are found.</p></li>
+</ul>
 </dd>
 </dl>
 </dd></dl>

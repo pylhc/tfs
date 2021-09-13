@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>Index &mdash; tfs-pandas 2.1.0 documentation</title>
+  <title>Index &mdash; tfs-pandas 3.0.0 documentation</title>
   
 
   
@@ -66,7 +66,7 @@
             
             
               <div class="version">
-                2.1
+                3.0
               </div>
             
           
@@ -94,8 +94,12 @@
               <ul>
 <li class="toctree-l1"><a class="reference internal" href="modules/index.html">TFS-Pandas Modules</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="modules/index.html#collection">Collection</a></li>
-<li class="toctree-l2"><a class="reference internal" href="modules/index.html#handler">Handler</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/index.html#constants">Constants</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/index.html#errors">Errors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/index.html#frame">Frame</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/index.html#reader">Reader</a></li>
 <li class="toctree-l2"><a class="reference internal" href="modules/index.html#tools">Tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/index.html#writer">Writer</a></li>
 </ul>
 </li>
 </ul>
@@ -152,6 +156,10 @@
       <li class="wy-breadcrumbs-aside">
         
           
+            
+              <a href="https://github.com/pylhc/tfs-pandas/blob/master/doc/genindex" class="fa fa-github"> Edit on GitHub</a>
+            
+          
         
       </li>
     
@@ -167,19 +175,34 @@
 <h1 id="index">Index</h1>
 
 <div class="genindex-jumpbox">
- <a href="#C"><strong>C</strong></a>
+ <a href="#A"><strong>A</strong></a>
+ | <a href="#C"><strong>C</strong></a>
  | <a href="#G"><strong>G</strong></a>
+ | <a href="#J"><strong>J</strong></a>
  | <a href="#M"><strong>M</strong></a>
  | <a href="#R"><strong>R</strong></a>
  | <a href="#S"><strong>S</strong></a>
  | <a href="#T"><strong>T</strong></a>
+ | <a href="#V"><strong>V</strong></a>
  | <a href="#W"><strong>W</strong></a>
  
 </div>
+<h2 id="A">A</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="modules/index.html#tfs.frame.TfsDataFrame.append">append() (tfs.frame.TfsDataFrame method)</a>
+</li>
+  </ul></td>
+</tr></table>
+
 <h2 id="C">C</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="modules/index.html#tfs.collection.TfsCollection.clear">clear() (tfs.collection.TfsCollection method)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="modules/index.html#tfs.frame.concat">concat() (in module tfs.frame)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -192,18 +215,38 @@
   </ul></td>
 </tr></table>
 
+<h2 id="J">J</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="modules/index.html#tfs.frame.TfsDataFrame.join">join() (tfs.frame.TfsDataFrame method)</a>
+</li>
+  </ul></td>
+</tr></table>
+
 <h2 id="M">M</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="modules/index.html#tfs.frame.TfsDataFrame.merge">merge() (tfs.frame.TfsDataFrame method)</a>
+</li>
+      <li><a href="modules/index.html#tfs.frame.merge_headers">merge_headers() (in module tfs.frame)</a>
+</li>
       <li>
     module
 
       <ul>
         <li><a href="modules/index.html#module-tfs.collection">tfs.collection</a>
 </li>
-        <li><a href="modules/index.html#module-tfs.handler">tfs.handler</a>
+        <li><a href="modules/index.html#module-tfs.constants">tfs.constants</a>
+</li>
+        <li><a href="modules/index.html#module-tfs.errors">tfs.errors</a>
+</li>
+        <li><a href="modules/index.html#module-tfs.frame">tfs.frame</a>
+</li>
+        <li><a href="modules/index.html#module-tfs.reader">tfs.reader</a>
 </li>
         <li><a href="modules/index.html#module-tfs.tools">tfs.tools</a>
+</li>
+        <li><a href="modules/index.html#module-tfs.writer">tfs.writer</a>
 </li>
       </ul></li>
   </ul></td>
@@ -212,7 +255,7 @@
 <h2 id="R">R</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="modules/index.html#tfs.handler.read_tfs">read_tfs() (in module tfs.handler)</a>
+      <li><a href="modules/index.html#tfs.reader.read_tfs">read_tfs() (in module tfs.reader)</a>
 
       <ul>
         <li><a href="modules/index.html#tfs.collection.TfsCollection.read_tfs">(tfs.collection.TfsCollection method)</a>
@@ -248,14 +291,35 @@
 </li>
       </ul></li>
       <li>
-    tfs.handler
+    tfs.constants
 
       <ul>
-        <li><a href="modules/index.html#module-tfs.handler">module</a>
+        <li><a href="modules/index.html#module-tfs.constants">module</a>
+</li>
+      </ul></li>
+      <li>
+    tfs.errors
+
+      <ul>
+        <li><a href="modules/index.html#module-tfs.errors">module</a>
+</li>
+      </ul></li>
+      <li>
+    tfs.frame
+
+      <ul>
+        <li><a href="modules/index.html#module-tfs.frame">module</a>
 </li>
       </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li>
+    tfs.reader
+
+      <ul>
+        <li><a href="modules/index.html#module-tfs.reader">module</a>
+</li>
+      </ul></li>
       <li>
     tfs.tools
 
@@ -263,11 +327,26 @@
         <li><a href="modules/index.html#module-tfs.tools">module</a>
 </li>
       </ul></li>
+      <li>
+    tfs.writer
+
+      <ul>
+        <li><a href="modules/index.html#module-tfs.writer">module</a>
+</li>
+      </ul></li>
       <li><a href="modules/index.html#tfs.collection.TfsCollection">TfsCollection (class in tfs.collection)</a>
 </li>
-      <li><a href="modules/index.html#tfs.handler.TfsDataFrame">TfsDataFrame (class in tfs.handler)</a>
+      <li><a href="modules/index.html#tfs.frame.TfsDataFrame">TfsDataFrame (class in tfs.frame)</a>
 </li>
-      <li><a href="modules/index.html#tfs.handler.TfsFormatError">TfsFormatError</a>
+      <li><a href="modules/index.html#tfs.errors.TfsFormatError">TfsFormatError</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="V">V</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="modules/index.html#tfs.frame.validate">validate() (in module tfs.frame)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -275,7 +354,7 @@
 <h2 id="W">W</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="modules/index.html#tfs.handler.write_tfs">write_tfs() (in module tfs.handler)</a>
+      <li><a href="modules/index.html#tfs.writer.write_tfs">write_tfs() (in module tfs.writer)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>

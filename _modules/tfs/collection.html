@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>tfs.collection &mdash; tfs-pandas 2.1.0 documentation</title>
+  <title>tfs.collection &mdash; tfs-pandas 3.0.0 documentation</title>
   
 
   
@@ -66,7 +66,7 @@
             
             
               <div class="version">
-                2.1
+                3.0
               </div>
             
           
@@ -94,8 +94,12 @@
               <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../modules/index.html">TFS-Pandas Modules</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#collection">Collection</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#handler">Handler</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#constants">Constants</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#errors">Errors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#frame">Frame</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#reader">Reader</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#tools">Tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#writer">Writer</a></li>
 </ul>
 </li>
 </ul>
@@ -168,13 +172,15 @@
 <span class="sd">Collection</span>
 <span class="sd">----------------------</span>
 
-<span class="sd">Advanced tfs reading and writing functionality.</span>
+<span class="sd">Advanced **TFS** files reading and writing functionality.</span>
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">import</span> <span class="nn">pathlib</span>
 
 <span class="kn">from</span> <span class="nn">pandas</span> <span class="kn">import</span> <span class="n">DataFrame</span>
 
-<span class="kn">from</span> <span class="nn">tfs.handler</span> <span class="kn">import</span> <span class="n">TfsDataFrame</span><span class="p">,</span> <span class="n">read_tfs</span><span class="p">,</span> <span class="n">write_tfs</span>
+<span class="kn">from</span> <span class="nn">tfs.frame</span> <span class="kn">import</span> <span class="n">TfsDataFrame</span>
+<span class="kn">from</span> <span class="nn">tfs.reader</span> <span class="kn">import</span> <span class="n">read_tfs</span>
+<span class="kn">from</span> <span class="nn">tfs.writer</span> <span class="kn">import</span> <span class="n">write_tfs</span>
 
 
 <span class="k">class</span> <span class="nc">_MetaTfsCollection</span><span class="p">(</span><span class="nb">type</span><span class="p">):</span>
@@ -208,15 +214,15 @@
 
 <div class="viewcode-block" id="TfsCollection"><a class="viewcode-back" href="../../modules/index.html#tfs.collection.TfsCollection">[docs]</a><span class="k">class</span> <span class="nc">TfsCollection</span><span class="p">(</span><span class="n">metaclass</span><span class="o">=</span><span class="n">_MetaTfsCollection</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Abstract class to lazily load and write TFS files.</span>
+<span class="sd">    Abstract class to lazily load and write **TFS** files.</span>
 
-<span class="sd">    Classes inheriting from this abstract class will be able to define TFS files</span>
+<span class="sd">    Classes inheriting from this abstract class will be able to define **TFS** files</span>
 <span class="sd">    as readable or writable, and read or write them just as attribute access or</span>
-<span class="sd">    assignments. All attributes will be read and written as `TfsDataFrames`.</span>
+<span class="sd">    assignments. All attributes will be read and written as ``TfsDataFrame`` objects.</span>
 
 <span class="sd">    Example:</span>
-<span class="sd">        If **./example** is a directory that contains two TFS files `beta_phase_x.tfs`</span>
-<span class="sd">        and `beta_phase_y.tfs` with BETX and BETY columns respectively:</span>
+<span class="sd">        If **./example** is a directory that contains two **TFS** files **beta_phase_x.tfs**</span>
+<span class="sd">        and **beta_phase_y.tfs** with `BETX` and `BETY` columns respectively:</span>
 
 <span class="sd">    .. sourcecode:: python</span>
 
@@ -252,12 +258,12 @@
 <span class="sd">    ``f1001w_column = example.coupling.F1001W``.</span>
 
 <span class="sd">    No file will be loaded until the corresponding attribute is accessed and the loaded</span>
-<span class="sd">    `TfsDataFrame` will be buffered, thus the user should expect an **IOError** if the requested</span>
+<span class="sd">    ``TfsDataFrame`` will be buffered, thus the user should expect an ``IOError`` if the requested</span>
 <span class="sd">    file is not in the provided directory (only the first time, but is better to always take it</span>
 <span class="sd">    into account!).</span>
 
-<span class="sd">    When a `TfsDataFrame` is assigned to one attribute, it will be set as the buffer value. If the</span>
-<span class="sd">    ``self.allow_write`` attribute is set to true, an assignment on one of the attributes will</span>
+<span class="sd">    When a ``TfsDataFrame`` is assigned to one attribute, it will be set as the buffer value. If the</span>
+<span class="sd">    ``self.allow_write`` attribute is set to ``True``, an assignment on one of the attributes will</span>
 <span class="sd">    trigger the corresponding file write.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
@@ -276,9 +282,7 @@
 <span class="sd">        not present in the Tfs(...) definition, it will also be given the keyword argument</span>
 <span class="sd">        ``plane=&quot;x&quot;`` or ``plane=&quot;y&quot;``.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
-            <span class="s2">&quot;This is an abstract method, it should be implemented in subclasses.&quot;</span>
-        <span class="p">)</span></div>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;This is an abstract method, it should be implemented in subclasses.&quot;</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="TfsCollection.write_to"><a class="viewcode-back" href="../../modules/index.html#tfs.collection.TfsCollection.write_to">[docs]</a>    <span class="k">def</span> <span class="nf">write_to</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -288,9 +292,7 @@
 <span class="sd">        find out the filename of the file to be written. It also gets the value assigned as first</span>
 <span class="sd">        parameter. It must return a tuple (filename, tfs_data_frame).</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
-            <span class="s2">&quot;This is an abstract method, it should be implemented in subclasses.&quot;</span>
-        <span class="p">)</span></div>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;This is an abstract method, it should be implemented in subclasses.&quot;</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="TfsCollection.clear"><a class="viewcode-back" href="../../modules/index.html#tfs.collection.TfsCollection.clear">[docs]</a>    <span class="k">def</span> <span class="nf">clear</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -302,16 +304,16 @@
 
 <div class="viewcode-block" id="TfsCollection.read_tfs"><a class="viewcode-back" href="../../modules/index.html#tfs.collection.TfsCollection.read_tfs">[docs]</a>    <span class="k">def</span> <span class="nf">read_tfs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TfsDataFrame</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Reads the TFS file from **self.directory** with the given filename.</span>
+<span class="sd">        Reads the **TFS** file from ``self.directory`` with the given filename.</span>
 
-<span class="sd">        This function can be overwritten to use something instead of the `tfs` module to load the</span>
+<span class="sd">        This function can be overwritten to use something instead of ``tfs-pandas`` to load the</span>
 <span class="sd">        files.</span>
 
 <span class="sd">        Arguments:</span>
 <span class="sd">            filename (str): The name of the file to load.</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            A `TfsDataFrame` built from reading the requested file.</span>
+<span class="sd">            A ``TfsDataFrame`` built from reading the requested file.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">tfs_data_df</span> <span class="o">=</span> <span class="n">read_tfs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">directory</span> <span class="o">/</span> <span class="n">filename</span><span class="p">)</span>
         <span class="k">if</span> <span class="s2">&quot;NAME&quot;</span> <span class="ow">in</span> <span class="n">tfs_data_df</span><span class="p">:</span>
@@ -351,7 +353,7 @@
 
 
 <div class="viewcode-block" id="Tfs"><a class="viewcode-back" href="../../modules/index.html#tfs.collection.Tfs">[docs]</a><span class="k">class</span> <span class="nc">Tfs</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot; Class to mark attributes as Tfs attributes.</span>
+    <span class="sd">&quot;&quot;&quot;Class to mark attributes as **TFS** attributes.</span>
 
 <span class="sd">    Any parameter given to this class will be passed to the ``get_filename()`` and ``write_to()``</span>
 <span class="sd">    methods, together with the plane if ``two_planes=False`` is not present.</span>
