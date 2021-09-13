@@ -1,42 +1,44 @@
 import os
 import pathlib
-import tempfile
 from shutil import copyfile
 
 import pytest
 
-from tfs.handler import TfsFormatError, read_tfs
+from tfs.errors import TfsFormatError
+from tfs.reader import read_tfs
 from tfs.tools import remove_header_comments_from_files, remove_nan_from_files, significant_digits
 
 CURRENT_DIR = pathlib.Path(__file__).parent
 
 
-def test_clean_file_pathlib_input(_bad_file_pathlib: pathlib.Path, _clean_file: str):
-    copyfile(_bad_file_pathlib, _clean_file)
+def test_clean_file_pathlib_input(_bad_file_pathlib: pathlib.Path, tmp_path):
+    clean_location = tmp_path / "clean_file.tfs"
+    copyfile(_bad_file_pathlib, clean_location)
     with pytest.raises(TfsFormatError):
         read_tfs(_bad_file_pathlib)
 
-    remove_header_comments_from_files([_clean_file])
-    df = read_tfs(_clean_file)
+    remove_header_comments_from_files([clean_location])
+    df = read_tfs(clean_location)
     assert df.isna().any().any()
 
-    remove_nan_from_files([_clean_file])
-    df = read_tfs(_clean_file + ".dropna")
+    remove_nan_from_files([str(clean_location)])
+    df = read_tfs(str(clean_location) + ".dropna")
     assert len(df) > 0
     assert not df.isna().any().any()
 
 
-def test_clean_file_str_input(_bad_file_str: str, _clean_file: str):
-    copyfile(_bad_file_str, _clean_file)
+def test_clean_file_str_input(_bad_file_str: str, tmp_path):
+    clean_location = tmp_path / "clean_file.tfs"
+    copyfile(_bad_file_str, clean_location)
     with pytest.raises(TfsFormatError):
         read_tfs(_bad_file_str)
 
-    remove_header_comments_from_files([_clean_file])
-    df = read_tfs(_clean_file)
+    remove_header_comments_from_files([clean_location])
+    df = read_tfs(clean_location)
     assert df.isna().any().any()
 
-    remove_nan_from_files([_clean_file])
-    df = read_tfs(_clean_file + ".dropna")
+    remove_nan_from_files([str(clean_location)])
+    df = read_tfs(str(clean_location) + ".dropna")
     assert len(df) > 0
     assert not df.isna().any().any()
 
@@ -76,9 +78,3 @@ def _bad_file_pathlib() -> pathlib.Path:
 @pytest.fixture()
 def _bad_file_str() -> str:
     return os.path.join(os.path.dirname(__file__), "inputs", "bad_file.tfs")
-
-
-@pytest.fixture()
-def _clean_file() -> str:
-    with tempfile.TemporaryDirectory() as cwd:
-        yield os.path.join(cwd, "clean_file.tfs")

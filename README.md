@@ -1,4 +1,5 @@
 # TFS-Pandas
+
 [![Cron Testing](https://github.com/pylhc/tfs/workflows/Cron%20Testing/badge.svg)](https://github.com/pylhc/tfs/actions?query=workflow%3A%22Cron+Testing%22)
 [![Code Climate coverage](https://img.shields.io/codeclimate/coverage/pylhc/tfs.svg?style=popout)](https://codeclimate.com/github/pylhc/tfs)
 [![Code Climate maintainability (percentage)](https://img.shields.io/codeclimate/maintainability-percentage/pylhc/tfs.svg?style=popout)](https://codeclimate.com/github/pylhc/tfs)
@@ -6,56 +7,43 @@
 [![GitHub release](https://img.shields.io/github/release/pylhc/tfs.svg?style=popout)](https://github.com/pylhc/tfs/)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.5070986.svg)](https://doi.org/10.5281/zenodo.5070986)
 
-This package provides reading and writing functionality for **table format system (tfs)** files. 
+This package provides reading and writing functionality for [**table format system (tfs)** files](http://mad.web.cern.ch/mad/madx.old/Introduction/tfs.html). 
+Files are read into a `TfsDataFrame`, a class built on top of the famous `pandas.DataFrame`, which in addition to the normal behaviour attaches an `OrderedDict` of headers to the `DataFrame`.
 
-## Getting Started
+## Installing
 
-### Prerequisites
-
-The package depends heavily on `pandas` and also on `numpy`, so these packages need
-to be installed in your python environment.
-
-### Installing
-
-Installation is easily done via `pip`. The package is then used as `tfs`.
+Installation is easily done via `pip`:
 
 ```
 pip install tfs-pandas
 ```
 
-Example:
+## Example Usage
 
+ The package is imported as `tfs`, and exports top-level functions for reading and writing:
 ```python
 import tfs
 
-data_frame = tfs.read('path_to_input.tfs', index="index_column")
-tfs.write('path_to_output.tfs', data_frame, save_index="index_column")
+# Loading a TFS file is simple
+data_frame = tfs.read("path_to_input.tfs", index="index_column")
+
+# You can access and modify the headers with the .headers attribute
+useful_variable = data_frame.headers["SOME_KEY"]
+data_frame.headers["NEW_KEY"] = some_variable
+
+# Manipulate data as you do with pandas DataFrames
+data_frame["NEWCOL"] = data_frame.COL_A * data_frame.COL_B
+
+# You can check the validity of a TfsDataFrame, and choose the behavior in case of errors
+tfs.frame.validate(data_frame, non_unique_behavior="raise")  # or choose "warn"
+
+# Writing out to disk is simple too
+tfs.write("path_to_output.tfs", data_frame, save_index="index_column")
 ```
-## Description
 
-Reading and writing capabilities for [tfs-files](http://mad.web.cern.ch/mad/madx.old/Introduction/tfs.html)
-are provided by this package. The files are read into special `pandas` `Dataframes`, called `TfsDataFrames`,
-which in addition to the normal behaviour attach an `OrderedDict` of headers to the `DataFrame`.
-
-### Changelog
-
-See the [CHANGELOG](CHANGELOG.md) file.
-
-## Known Issues
-
-- Creating a new `DataFrame` by combining multiple `TfsDataFrame`,
-for example via `pandas.DataFrame.append()` or `pandas.concat()`, 
-will convert the `TfsDataFrame` back to a `DataFrame` and lose therefore the headers.
-
-## Authors
-
-* **Jaime** - [jaimecp89](https://github.com/jaimecp89)
-* **Lukáš** - [lmalina](https://github.com/lmalina)
-* **Josch** - [JoschD](https://github.com/JoschD)
-* **Felix** - [fsoubelet](https://github.com/fsoubelet)
-* **pyLHC/OMC-Team** - *Working Group* - [pyLHC](https://github.com/orgs/pylhc/teams/omc-team)
-
+It also provides some tools to validate and manipulate `TfsDataFrames` and their headers; or lazily manage a collection of TFS files.
+See the [API documentation](https://pylhc.github.io/tfs/) for details.
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the `MIT License` - see the [LICENSE](LICENSE) file for details.

@@ -2,13 +2,15 @@
 Collection
 ----------------------
 
-Advanced tfs reading and writing functionality.
+Advanced **TFS** files reading and writing functionality.
 """
 import pathlib
 
 from pandas import DataFrame
 
-from tfs.handler import TfsDataFrame, read_tfs, write_tfs
+from tfs.frame import TfsDataFrame
+from tfs.reader import read_tfs
+from tfs.writer import write_tfs
 
 
 class _MetaTfsCollection(type):
@@ -42,15 +44,15 @@ class _MetaTfsCollection(type):
 
 class TfsCollection(metaclass=_MetaTfsCollection):
     """
-    Abstract class to lazily load and write TFS files.
+    Abstract class to lazily load and write **TFS** files.
 
-    Classes inheriting from this abstract class will be able to define TFS files
+    Classes inheriting from this abstract class will be able to define **TFS** files
     as readable or writable, and read or write them just as attribute access or
-    assignments. All attributes will be read and written as `TfsDataFrames`.
+    assignments. All attributes will be read and written as ``TfsDataFrame`` objects.
 
     Example:
-        If **./example** is a directory that contains two TFS files `beta_phase_x.tfs`
-        and `beta_phase_y.tfs` with BETX and BETY columns respectively:
+        If **./example** is a directory that contains two **TFS** files **beta_phase_x.tfs**
+        and **beta_phase_y.tfs** with `BETX` and `BETY` columns respectively:
 
     .. sourcecode:: python
 
@@ -86,12 +88,12 @@ class TfsCollection(metaclass=_MetaTfsCollection):
     ``f1001w_column = example.coupling.F1001W``.
 
     No file will be loaded until the corresponding attribute is accessed and the loaded
-    `TfsDataFrame` will be buffered, thus the user should expect an **IOError** if the requested
+    ``TfsDataFrame`` will be buffered, thus the user should expect an ``IOError`` if the requested
     file is not in the provided directory (only the first time, but is better to always take it
     into account!).
 
-    When a `TfsDataFrame` is assigned to one attribute, it will be set as the buffer value. If the
-    ``self.allow_write`` attribute is set to true, an assignment on one of the attributes will
+    When a ``TfsDataFrame`` is assigned to one attribute, it will be set as the buffer value. If the
+    ``self.allow_write`` attribute is set to ``True``, an assignment on one of the attributes will
     trigger the corresponding file write.
     """
 
@@ -110,9 +112,7 @@ class TfsCollection(metaclass=_MetaTfsCollection):
         not present in the Tfs(...) definition, it will also be given the keyword argument
         ``plane="x"`` or ``plane="y"``.
         """
-        raise NotImplementedError(
-            "This is an abstract method, it should be implemented in subclasses."
-        )
+        raise NotImplementedError("This is an abstract method, it should be implemented in subclasses.")
 
     def write_to(self, *args, **kwargs):
         """
@@ -122,9 +122,7 @@ class TfsCollection(metaclass=_MetaTfsCollection):
         find out the filename of the file to be written. It also gets the value assigned as first
         parameter. It must return a tuple (filename, tfs_data_frame).
         """
-        raise NotImplementedError(
-            "This is an abstract method, it should be implemented in subclasses."
-        )
+        raise NotImplementedError("This is an abstract method, it should be implemented in subclasses.")
 
     def clear(self):
         """
@@ -136,16 +134,16 @@ class TfsCollection(metaclass=_MetaTfsCollection):
 
     def read_tfs(self, filename: str) -> TfsDataFrame:
         """
-        Reads the TFS file from **self.directory** with the given filename.
+        Reads the **TFS** file from ``self.directory`` with the given filename.
 
-        This function can be overwritten to use something instead of the `tfs` module to load the
+        This function can be overwritten to use something instead of ``tfs-pandas`` to load the
         files.
 
         Arguments:
             filename (str): The name of the file to load.
 
         Returns:
-            A `TfsDataFrame` built from reading the requested file.
+            A ``TfsDataFrame`` built from reading the requested file.
         """
         tfs_data_df = read_tfs(self.directory / filename)
         if "NAME" in tfs_data_df:
@@ -185,7 +183,7 @@ class TfsCollection(metaclass=_MetaTfsCollection):
 
 
 class Tfs:
-    """ Class to mark attributes as Tfs attributes.
+    """Class to mark attributes as **TFS** attributes.
 
     Any parameter given to this class will be passed to the ``get_filename()`` and ``write_to()``
     methods, together with the plane if ``two_planes=False`` is not present.

@@ -2,7 +2,7 @@
 Tools
 -----------------
 
-Additional functions to modify tfs files.
+Additional functions to modify **TFS** files.
 """
 import logging
 from pathlib import Path
@@ -10,16 +10,18 @@ from typing import List, Tuple, Union
 
 import numpy as np
 
-from tfs.handler import TfsFormatError, read_tfs, write_tfs
+from tfs.errors import TfsFormatError
+from tfs.reader import read_tfs
+from tfs.writer import write_tfs
 
 LOGGER = logging.getLogger(__name__)
 
 
 def significant_digits(
     value: float, error: float, return_floats: bool = False
-) -> Union[Tuple[str, str], Tuple[float,float]]:
+) -> Union[Tuple[str, str], Tuple[float, float]]:
     """
-    Computes ``value`` and its error properly rounded with respect to the size of ``error``.
+    Computes `value` and its error properly rounded with respect to the size of `error`.
 
     Args:
         value (float): a number.
@@ -46,11 +48,11 @@ def significant_digits(
 
 def remove_nan_from_files(list_of_files: List[Union[str, Path]], replace: bool = False) -> None:
     """
-    Remove NAN-Entries from files in ``list_of_files``.
+    Remove NaN entries from files in `list_of_files`.
 
     Args:
-        list_of_files (List[Union[str, Path]]): list of paths to tfs files meant to be sanitized.
-            The entries of the list can be strings or PosixPath objects.
+        list_of_files (List[Union[str, Path]]): list of Paths to **TFS** files meant to be sanitized.
+            The elements of the list can be strings or Path objects.
         replace (bool): if ``True``, the provided files will be overwritten. Otherwise new files
             with `.dropna` appended to the original filenames will be written to disk. Defaults to
             ``False``.
@@ -74,8 +76,8 @@ def remove_header_comments_from_files(list_of_files: List[Union[str, Path]]) -> 
     inplace when found.
 
     Args:
-        list_of_files (List[Union[str, Path]]): list of paths to tfs files meant to be checked.
-            The entries of the list can be strings or PosixPath objects.
+        list_of_files (List[Union[str, Path]]): list of Paths to **TFS** files meant to be checked.
+            The entries of the list can be strings or Path objects.
     """
     for filepath in list_of_files:
         LOGGER.info(f"Checking file: {filepath}")
