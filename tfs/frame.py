@@ -289,7 +289,7 @@ def validate(
             to respectively issue a warning or raise an error if non-unique elements are found.
     """
     if non_unique_behavior.lower() not in ("warn", "raise"):
-        raise KeyError("Invalid value for parameter 'validate_unique'")
+        raise KeyError("Invalid value for parameter 'non_unique_behavior'")
 
     def is_not_finite(x):
         try:
