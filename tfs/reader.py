@@ -8,7 +8,7 @@ import logging
 import pathlib
 import shlex
 from collections import OrderedDict
-from typing import Union
+from typing import List, Union
 
 import numpy as np
 import pandas as pd
@@ -106,7 +106,7 @@ def read_tfs(
     return tfs_data_frame
 
 
-def _parse_header(str_list: list) -> tuple:
+def _parse_header(str_list: List[str]) -> tuple:
     type_index = next((index for index, part in enumerate(str_list) if part.startswith("%")), None)
     if type_index is None:
         raise TfsFormatError(f"No data type found in header: '{''.join(str_list)}'")
@@ -137,13 +137,13 @@ def _find_and_set_index(data_frame: TfsDataFrame) -> TfsDataFrame:
     return data_frame
 
 
-def _assign_column_types(data_frame, column_names, column_types) -> None:
+def _assign_column_types(data_frame: TfsDataFrame, column_names: List[str], column_types: List[type]) -> None:
     names_to_types = dict(zip(column_names, column_types))
     for name in names_to_types:
         data_frame[name] = data_frame[name].astype(names_to_types[name])
 
 
-def _compute_types(str_list: list) -> list:
+def _compute_types(str_list: List[str]) -> List[type]:
     return [_id_to_type(string) for string in str_list]
 
 
