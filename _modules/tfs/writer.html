@@ -1,77 +1,34 @@
-
-
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
   <meta charset="utf-8" />
-  
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  
   <title>tfs.writer &mdash; tfs-pandas 3.0.0 documentation</title>
-  
-
-  
-  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/css/custom.css" type="text/css" />
-
-  
-  
-
-  
-  
-
-  
-
-  
+      <link rel="stylesheet" href="../../_static/css/custom.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
         <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
         <script src="../../_static/jquery.js"></script>
         <script src="../../_static/underscore.js"></script>
         <script src="../../_static/doctools.js"></script>
-    
-    <script type="text/javascript" src="../../_static/js/theme.js"></script>
-
-    
+    <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" /> 
 </head>
 
-<body class="wy-body-for-nav">
-
-   
+<body class="wy-body-for-nav"> 
   <div class="wy-grid-for-nav">
-    
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-          
-
-          
             <a href="../../index.html">
-          
-
-          
-            
             <img src="../../_static/omc_logo.svg" class="logo" alt="Logo"/>
-          
           </a>
-
-          
-            
-            
               <div class="version">
                 3.0
               </div>
-            
-          
-
-          
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" />
@@ -79,18 +36,7 @@
     <input type="hidden" name="area" value="default" />
   </form>
 </div>
-
-          
-        </div>
-
-        
-        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
-          
-            
-            
-              
-            
-            
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../modules/index.html">TFS-Pandas Modules</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#collection">Collection</a></li>
@@ -104,69 +50,30 @@
 </li>
 </ul>
 
-            
-          
         </div>
-        
       </div>
     </nav>
 
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
-
-      
-      <nav class="wy-nav-top" aria-label="top navigation">
-        
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="../../index.html">tfs-pandas</a>
-        
       </nav>
 
-
       <div class="wy-nav-content">
-        
         <div class="rst-content">
-        
-          
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<div role="navigation" aria-label="breadcrumbs navigation">
-
+          <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-    
       <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
-        
           <li><a href="../index.html">Module code</a> &raquo;</li>
-        
       <li>tfs.writer</li>
-    
-    
       <li class="wy-breadcrumbs-aside">
-        
       </li>
-    
   </ul>
-
-  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
-            
+             
   <h1>Source code for tfs.writer</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">Writer</span>
@@ -256,12 +163,12 @@
 
 <span class="sd">    NOTE: Starting with pandas 1.3.0, this behavior which was a bug has been fixed. This means no</span>
 <span class="sd">    ``ValueError`` is raised by calling ``.convert_dtypes()`` on an empty ``DataFrame``, and from this</span>
-<span class="sd">    function sno warning is logged. Testing of this behavior is disabled for Python 3.7+ workers, but the</span>
+<span class="sd">    function a warning is logged. Testing of this behavior is disabled for Python 3.7+ workers, but the</span>
 <span class="sd">    function is kept as to not force a new min version requirement on ``pandas`` or Python for users.</span>
 <span class="sd">    See my comment at https://github.com/pylhc/tfs/pull/83#issuecomment-874208869</span>
 
 <span class="sd">    TODO: remove the aforementioned check when we make Python 3.7 the minimum version for tfs-pandas,</span>
-<span class="sd">        aka when Python 3.6 reaches EOL.</span>
+<span class="sd">        aka when Python 3.6 reaches EOL (end of 2021).</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        data_frame (Union[TfsDataFrame, pd.DataFrame]): ``TfsDataFrame`` or ``pandas.DataFrame`` to</span>
@@ -281,7 +188,7 @@
             <span class="k">raise</span> <span class="n">pd_convert_error</span>
 
 
-<span class="k">def</span> <span class="nf">_insert_index_column</span><span class="p">(</span><span class="n">data_frame</span><span class="p">,</span> <span class="n">save_index</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">_insert_index_column</span><span class="p">(</span><span class="n">data_frame</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">TfsDataFrame</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">],</span> <span class="n">save_index</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">save_index</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>  <span class="c1"># save index into column by name given</span>
         <span class="n">idx_name</span> <span class="o">=</span> <span class="n">save_index</span>
     <span class="k">else</span><span class="p">:</span>  <span class="c1"># save index into column, which can be found by INDEX_ID</span>
@@ -319,17 +226,21 @@
     <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;@ </span><span class="si">{</span><span class="n">name</span><span class="si">:</span><span class="s2">&lt;</span><span class="si">{</span><span class="n">width</span><span class="si">}}</span><span class="s2"> </span><span class="si">{</span><span class="n">type_str</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">value</span><span class="si">:</span><span class="s2">&gt;</span><span class="si">{</span><span class="n">width</span><span class="si">}}</span><span class="s2">&quot;</span>
 
 
-<span class="k">def</span> <span class="nf">_get_colnames_string</span><span class="p">(</span><span class="n">colnames</span><span class="p">,</span> <span class="n">colwidth</span><span class="p">,</span> <span class="n">left_align_first_column</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="k">def</span> <span class="nf">_get_colnames_string</span><span class="p">(</span><span class="n">colnames</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">colwidth</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">left_align_first_column</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
     <span class="n">format_string</span> <span class="o">=</span> <span class="n">_get_row_format_string</span><span class="p">([</span><span class="kc">None</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">colnames</span><span class="p">),</span> <span class="n">colwidth</span><span class="p">,</span> <span class="n">left_align_first_column</span><span class="p">)</span>
     <span class="k">return</span> <span class="s2">&quot;* &quot;</span> <span class="o">+</span> <span class="n">format_string</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">*</span><span class="n">colnames</span><span class="p">)</span>
 
 
-<span class="k">def</span> <span class="nf">_get_coltypes_string</span><span class="p">(</span><span class="n">types</span><span class="p">,</span> <span class="n">colwidth</span><span class="p">,</span> <span class="n">left_align_first_column</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="k">def</span> <span class="nf">_get_coltypes_string</span><span class="p">(</span><span class="n">types</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">,</span> <span class="n">colwidth</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">left_align_first_column</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
     <span class="n">fmt</span> <span class="o">=</span> <span class="n">_get_row_format_string</span><span class="p">([</span><span class="nb">str</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">types</span><span class="p">),</span> <span class="n">colwidth</span><span class="p">,</span> <span class="n">left_align_first_column</span><span class="p">)</span>
     <span class="k">return</span> <span class="s2">&quot;$ &quot;</span> <span class="o">+</span> <span class="n">fmt</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">*</span><span class="p">[</span><span class="n">_dtype_to_id_string</span><span class="p">(</span><span class="n">type_</span><span class="p">)</span> <span class="k">for</span> <span class="n">type_</span> <span class="ow">in</span> <span class="n">types</span><span class="p">])</span>
 
 
-<span class="k">def</span> <span class="nf">_get_data_string</span><span class="p">(</span><span class="n">data_frame</span><span class="p">,</span> <span class="n">colwidth</span><span class="p">,</span> <span class="n">left_align_first_column</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="k">def</span> <span class="nf">_get_data_string</span><span class="p">(</span>
+    <span class="n">data_frame</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">TfsDataFrame</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">],</span>
+    <span class="n">colwidth</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">left_align_first_column</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">data_frame</span><span class="o">.</span><span class="n">index</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">data_frame</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
         <span class="k">return</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
     <span class="n">format_strings</span> <span class="o">=</span> <span class="s2">&quot;  &quot;</span> <span class="o">+</span> <span class="n">_get_row_format_string</span><span class="p">(</span><span class="n">data_frame</span><span class="o">.</span><span class="n">dtypes</span><span class="p">,</span> <span class="n">colwidth</span><span class="p">,</span> <span class="n">left_align_first_column</span><span class="p">)</span>
@@ -347,7 +258,7 @@
     <span class="p">)</span>
 
 
-<span class="k">def</span> <span class="nf">_quote_string_columns</span><span class="p">(</span><span class="n">data_frame</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">_quote_string_columns</span><span class="p">(</span><span class="n">data_frame</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">TfsDataFrame</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">TfsDataFrame</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]:</span>
     <span class="k">def</span> <span class="nf">quote_strings</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;&quot;&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">s</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;&#39;&quot;</span><span class="p">)):</span>
@@ -411,46 +322,30 @@
 </pre></div>
 
            </div>
-           
           </div>
           <footer>
 
   <hr/>
 
   <div role="contentinfo">
-    <p>
-        &#169; Copyright .
-
-    </p>
+    <p>&#169; Copyright .</p>
   </div>
-    
-    
-    
-    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
-    
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
     <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
-    
-    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
 
 </footer>
         </div>
       </div>
-
     </section>
-
   </div>
-  
-
-  <script type="text/javascript">
+  <script>
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script>
-
-  
-  
-    
-   
+  </script> 
 
 </body>
 </html>
