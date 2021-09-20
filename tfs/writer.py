@@ -86,12 +86,12 @@ def _autoset_pandas_types(data_frame: Union[TfsDataFrame, pd.DataFrame]) -> Unio
 
     NOTE: Starting with pandas 1.3.0, this behavior which was a bug has been fixed. This means no
     ``ValueError`` is raised by calling ``.convert_dtypes()`` on an empty ``DataFrame``, and from this
-    function sno warning is logged. Testing of this behavior is disabled for Python 3.7+ workers, but the
+    function a warning is logged. Testing of this behavior is disabled for Python 3.7+ workers, but the
     function is kept as to not force a new min version requirement on ``pandas`` or Python for users.
     See my comment at https://github.com/pylhc/tfs/pull/83#issuecomment-874208869
 
     TODO: remove the aforementioned check when we make Python 3.7 the minimum version for tfs-pandas,
-        aka when Python 3.6 reaches EOL.
+        aka when Python 3.6 reaches EOL (end of 2021).
 
     Args:
         data_frame (Union[TfsDataFrame, pd.DataFrame]): ``TfsDataFrame`` or ``pandas.DataFrame`` to
@@ -111,7 +111,7 @@ def _autoset_pandas_types(data_frame: Union[TfsDataFrame, pd.DataFrame]) -> Unio
             raise pd_convert_error
 
 
-def _insert_index_column(data_frame, save_index):
+def _insert_index_column(data_frame: Union[TfsDataFrame, pd.DataFrame], save_index: str) -> None:
     if isinstance(save_index, str):  # save index into column by name given
         idx_name = save_index
     else:  # save index into column, which can be found by INDEX_ID
@@ -149,17 +149,21 @@ def _get_header_line(name: str, value, width: int) -> str:
     return f"@ {name:<{width}} {type_str} {value:>{width}}"
 
 
-def _get_colnames_string(colnames, colwidth, left_align_first_column) -> str:
+def _get_colnames_string(colnames: List[str], colwidth: int, left_align_first_column: bool) -> str:
     format_string = _get_row_format_string([None] * len(colnames), colwidth, left_align_first_column)
     return "* " + format_string.format(*colnames)
 
 
-def _get_coltypes_string(types, colwidth, left_align_first_column) -> str:
+def _get_coltypes_string(types: pd.Series, colwidth: int, left_align_first_column: bool) -> str:
     fmt = _get_row_format_string([str] * len(types), colwidth, left_align_first_column)
     return "$ " + fmt.format(*[_dtype_to_id_string(type_) for type_ in types])
 
 
-def _get_data_string(data_frame, colwidth, left_align_first_column) -> str:
+def _get_data_string(
+    data_frame: Union[TfsDataFrame, pd.DataFrame],
+    colwidth: int,
+    left_align_first_column: bool,
+) -> str:
     if len(data_frame.index) == 0 or len(data_frame.columns) == 0:
         return "\n"
     format_strings = "  " + _get_row_format_string(data_frame.dtypes, colwidth, left_align_first_column)
@@ -177,7 +181,7 @@ def _get_row_format_string(dtypes: List[type], colwidth: int, left_align_first_c
     )
 
 
-def _quote_string_columns(data_frame):
+def _quote_string_columns(data_frame: Union[TfsDataFrame, pd.DataFrame]) -> Union[TfsDataFrame, pd.DataFrame]:
     def quote_strings(s):
         if isinstance(s, str):
             if not (s.startswith('"') or s.startswith("'")):

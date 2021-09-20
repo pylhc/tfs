@@ -289,7 +289,7 @@ def validate(
             to respectively issue a warning or raise an error if non-unique elements are found.
     """
     if non_unique_behavior.lower() not in ("warn", "raise"):
-        raise KeyError("Invalid value for parameter 'validate_unique'")
+        raise KeyError("Invalid value for parameter 'non_unique_behavior'")
 
     def is_not_finite(x):
         try:
@@ -318,6 +318,7 @@ def validate(
         if non_unique_behavior.lower() == "raise":
             raise TfsFormatError("The dataframe contains non-unique columns.")
 
+    # The following are deal-breakers for the TFS format and would not, for instance, be accepted by MAD-X
     if any(not isinstance(c, str) for c in data_frame.columns):
         LOGGER.error(f"Some column-names are not of string-type, dataframe {info_str} is invalid.")
         raise TfsFormatError("TFS-Columns need to be strings.")

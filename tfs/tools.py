@@ -48,7 +48,7 @@ def significant_digits(
 
 def remove_nan_from_files(list_of_files: List[Union[str, Path]], replace: bool = False) -> None:
     """
-    Remove NaN entries from files in `list_of_files`.
+    Remove ``NaN`` entries from files in `list_of_files`.
 
     Args:
         list_of_files (List[Union[str, Path]]): list of Paths to **TFS** files meant to be sanitized.
