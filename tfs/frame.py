@@ -190,9 +190,9 @@ class TfsDataFrame(pd.DataFrame):
             A new ``TfsDataFrame`` with the merged data and merged headers.
         """
         LOGGER.debug("Merging data through 'pandas'")
-        if not hasattr(other, "headers"):
+        if not hasattr(right, "headers"):
             LOGGER.debug("Converting 'right' to TfsDataFrame for appending")
-            other = TfsDataFrame(other)  # so we accept pandas.DataFrame input here
+            other = TfsDataFrame(right)  # so we accept pandas.DataFrame input here
         dframe = super().merge(right, **kwargs)
 
         LOGGER.debug("Determining headers")
