@@ -82,7 +82,11 @@ class TfsDataFrame(pd.DataFrame):
         return f"{headers_string}{super().__repr__()}"
 
     def append(
-        self, other: Union["TfsDataFrame", pd.DataFrame], how_headers: str = None, new_headers: dict = None, **kwargs
+        self,
+        other: Union["TfsDataFrame", pd.DataFrame],
+        how_headers: str = None,
+        new_headers: dict = None,
+        **kwargs,
     ) -> "TfsDataFrame":
         """
         Append rows of the other ``TfsDataFrame`` to the end of caller, returning a new object. Data
@@ -123,7 +127,11 @@ class TfsDataFrame(pd.DataFrame):
         return TfsDataFrame(data=dframe, headers=new_headers)
 
     def join(
-        self, other: Union["TfsDataFrame", pd.DataFrame], how_headers: str = None, new_headers: dict = None, **kwargs
+        self,
+        other: Union["TfsDataFrame", pd.DataFrame],
+        how_headers: str = None,
+        new_headers: dict = None,
+        **kwargs,
     ) -> "TfsDataFrame":
         """
         Join columns of another ``TfsDataFrame``. Data manipulation is done by the ``pandas.Dataframe``
@@ -163,8 +171,11 @@ class TfsDataFrame(pd.DataFrame):
         return TfsDataFrame(data=dframe, headers=new_headers)
 
     def merge(
-        self, right: Union["TfsDataFrame", pd.DataFrame], how_headers: str = None, new_headers: dict = None,
-            **kwargs
+        self,
+        right: Union["TfsDataFrame", pd.DataFrame],
+        how_headers: str = None,
+        new_headers: dict = None,
+        **kwargs,
     ) -> "TfsDataFrame":
         """
         Merge ``TfsDataFrame`` objects with a database-style join. Data manipulation is done by the
