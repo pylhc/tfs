@@ -82,7 +82,11 @@ class TfsDataFrame(pd.DataFrame):
         return f"{headers_string}{super().__repr__()}"
 
     def append(
-        self, other: "TfsDataFrame", how_headers: str = None, new_headers: dict = None, **kwargs
+        self,
+        other: Union["TfsDataFrame", pd.DataFrame],
+        how_headers: str = None,
+        new_headers: dict = None,
+        **kwargs,
     ) -> "TfsDataFrame":
         """
         Append rows of the other ``TfsDataFrame`` to the end of caller, returning a new object. Data
@@ -90,7 +94,7 @@ class TfsDataFrame(pd.DataFrame):
         either merged according to the provided **how_headers** method or as given via **new_headers**.
 
         Args:
-            other (TfsDataFrame): The ``TfsDataFrame`` to append to the caller.
+            other (Union[TfsDataFrame, pd.DataFrame]): The ``TfsDataFrame`` to append to the caller.
             how_headers (str): Type of merge to be performed for the headers. Either **left** or **right**.
                 Refer to :func:`tfs.frame.merge_headers` for behavior. If ``None`` is provided and
                 **new_headers** is not provided, the final headers will be empty. Case insensitive,
@@ -108,6 +112,10 @@ class TfsDataFrame(pd.DataFrame):
             A new ``TfsDataFrame`` with the appended data and merged headers.
         """
         LOGGER.debug("Appending data through 'pandas'")
+        if not hasattr(other, "headers"):
+            LOGGER.debug("Converting 'other' to TfsDataFrame for appending")
+            other = TfsDataFrame(other)  # so we accept pandas.DataFrame input here
+
         dframe = super().append(other, **kwargs)
 
         LOGGER.debug("Determining headers")
@@ -119,7 +127,11 @@ class TfsDataFrame(pd.DataFrame):
         return TfsDataFrame(data=dframe, headers=new_headers)
 
     def join(
-        self, other: "TfsDataFrame", how_headers: str = None, new_headers: dict = None, **kwargs
+        self,
+        other: Union["TfsDataFrame", pd.DataFrame],
+        how_headers: str = None,
+        new_headers: dict = None,
+        **kwargs,
     ) -> "TfsDataFrame":
         """
         Join columns of another ``TfsDataFrame``. Data manipulation is done by the ``pandas.Dataframe``
@@ -127,7 +139,7 @@ class TfsDataFrame(pd.DataFrame):
         **how_headers** method or as given via **new_headers**.
 
         Args:
-            other (TfsDataFrame): The ``TfsDataFrame`` to join into the caller.
+            other (Union[TfsDataFrame, pd.DataFrame]): The ``TfsDataFrame`` to join into the caller.
             how_headers (str): Type of merge to be performed for the headers. Either **left** or **right**.
                 Refer to :func:`tfs.frame.merge_headers` for behavior. If ``None`` is provided and
                 **new_headers** is not provided, the final headers will be empty. Case insensitive,
@@ -145,6 +157,9 @@ class TfsDataFrame(pd.DataFrame):
             A new ``TfsDataFrame`` with the joined columns and merged headers.
         """
         LOGGER.debug("Joining data through 'pandas'")
+        if not hasattr(other, "headers"):
+            LOGGER.debug("Converting 'other' to TfsDataFrame for joining")
+            other = TfsDataFrame(other)  # so we accept pandas.DataFrame input here
         dframe = super().join(other, **kwargs)
 
         LOGGER.debug("Determining headers")
@@ -156,7 +171,11 @@ class TfsDataFrame(pd.DataFrame):
         return TfsDataFrame(data=dframe, headers=new_headers)
 
     def merge(
-        self, right: "TfsDataFrame", how_headers: str = None, new_headers: dict = None, **kwargs
+        self,
+        right: Union["TfsDataFrame", pd.DataFrame],
+        how_headers: str = None,
+        new_headers: dict = None,
+        **kwargs,
     ) -> "TfsDataFrame":
         """
         Merge ``TfsDataFrame`` objects with a database-style join. Data manipulation is done by the
@@ -164,7 +183,7 @@ class TfsDataFrame(pd.DataFrame):
         provided **how_headers** method or as given via **new_headers**.
 
         Args:
-            right (TfsDataFrame): The ``TfsDataFrame`` to merge with the caller.
+            right (Union[TfsDataFrame, pd.DataFrame]): The ``TfsDataFrame`` to merge with the caller.
             how_headers (str): Type of merge to be performed for the headers. Either **left** or **right**.
                 Refer to :func:`tfs.frame.merge_headers` for behavior. If ``None`` is provided and
                 **new_headers** is not provided, the final headers will be empty. Case insensitive,
@@ -182,6 +201,9 @@ class TfsDataFrame(pd.DataFrame):
             A new ``TfsDataFrame`` with the merged data and merged headers.
         """
         LOGGER.debug("Merging data through 'pandas'")
+        if not hasattr(right, "headers"):
+            LOGGER.debug("Converting 'right' to TfsDataFrame for merging")
+            right = TfsDataFrame(right)  # so we accept pandas.DataFrame input here
         dframe = super().merge(right, **kwargs)
 
         LOGGER.debug("Determining headers")
@@ -228,7 +250,7 @@ def merge_headers(headers_left: dict, headers_right: dict, how: str) -> OrderedD
 
 
 def concat(
-    objs: Sequence[TfsDataFrame],
+    objs: Sequence[Union[TfsDataFrame, pd.DataFrame]],
     how_headers: str = None,
     new_headers: dict = None,
     **kwargs,
@@ -245,7 +267,7 @@ def concat(
         **how_headers** and **new_headers** as ``None`` (their defaults) to end up with empty headers.
 
     Args:
-        objs (Sequence[TfsDataFrame]): the ``TfsDataFrame`` objects to be concatenated.
+        objs (Sequence[Union[TfsDataFrame, pd.DataFrame]]): the ``TfsDataFrame`` objects to be concatenated.
         how_headers (str): Type of merge to be performed for the headers. Either **left** or **right**.
             Refer to :func:`tfs.frame.merge_headers` for behavior. If ``None`` is provided and
             **new_headers** is not provided, the final headers will be empty. Case insensitive, defaults to
@@ -263,6 +285,7 @@ def concat(
         A new ``TfsDataFrame`` with the merged data and merged headers.
     """
     LOGGER.debug("Concatenating data through 'pandas'")
+    objs = [dframe if hasattr(dframe, "headers") else TfsDataFrame(dframe) for dframe in objs]
     dframe = pd.concat(objs, **kwargs)
 
     LOGGER.debug("Determining headers")

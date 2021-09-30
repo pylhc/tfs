@@ -110,6 +110,19 @@ class TestTfsDataFrameAppending:
         assert_dict_equal(result.headers, merge_headers(dframe_x.headers, dframe_y.headers, how=how_headers))
         assert_frame_equal(result, pd.DataFrame(dframe_x).append(pd.DataFrame(dframe_y)))
 
+    @pytest.mark.parametrize("how_headers", [None, "left", "right"])
+    def test_appending_accepts_pandas_dataframe(self, _tfs_file_x_pathlib, _tfs_file_y_pathlib, how_headers):
+        dframe_x = tfs.read(_tfs_file_x_pathlib)
+        dframe_y = pd.DataFrame(tfs.read(_tfs_file_y_pathlib))  # for test, loses headers here
+        result = dframe_x.append(dframe_y, how_headers=how_headers)
+
+        assert isinstance(result, TfsDataFrame)
+        assert isinstance(result.headers, OrderedDict)
+
+        # using empty OrderedDict here as it's what dframe_y is getting when converted in the call
+        assert_dict_equal(result.headers, merge_headers(dframe_x.headers, OrderedDict(), how=how_headers))
+        assert_frame_equal(result, pd.DataFrame(dframe_x).append(dframe_y))  # dframe_y already pandas
+
 
 class TestTfsDataFrameJoining:
     @pytest.mark.parametrize("how_headers", [None, "left", "right"])
@@ -123,6 +136,25 @@ class TestTfsDataFrameJoining:
         assert isinstance(result, TfsDataFrame)
         assert isinstance(result.headers, OrderedDict)
         assert_dict_equal(result.headers, merge_headers(dframe_x.headers, dframe_y.headers, how=how_headers))
+        assert_frame_equal(
+            result, pd.DataFrame(dframe_x).join(pd.DataFrame(dframe_y), lsuffix=lsuffix, rsuffix=rsuffix)
+        )
+
+    @pytest.mark.parametrize("how_headers", [None, "left", "right"])
+    @pytest.mark.parametrize("lsuffix", ["left", "_x"])
+    @pytest.mark.parametrize("rsuffix", ["right", "_y"])
+    def test_joining_accepts_pandas_dataframe(
+        self, _tfs_file_x_pathlib, _tfs_file_y_pathlib, how_headers, lsuffix, rsuffix
+    ):
+        dframe_x = tfs.read(_tfs_file_x_pathlib)
+        dframe_y = pd.DataFrame(tfs.read(_tfs_file_y_pathlib))  # for test, loses headers here
+        result = dframe_x.join(dframe_y, how_headers=how_headers, lsuffix=lsuffix, rsuffix=rsuffix)
+
+        assert isinstance(result, TfsDataFrame)
+        assert isinstance(result.headers, OrderedDict)
+
+        # using empty OrderedDict here as it's what dframe_y is getting when converted in the call
+        assert_dict_equal(result.headers, merge_headers(dframe_x.headers, OrderedDict(), how=how_headers))
         assert_frame_equal(
             result, pd.DataFrame(dframe_x).join(pd.DataFrame(dframe_y), lsuffix=lsuffix, rsuffix=rsuffix)
         )
@@ -142,6 +174,23 @@ class TestTfsDataFrameMerging:
         assert_dict_equal(result.headers, merge_headers(dframe_x.headers, dframe_y.headers, how=how_headers))
         assert_frame_equal(result, pd.DataFrame(dframe_x).merge(pd.DataFrame(dframe_y), how=how, on=on))
 
+    @pytest.mark.parametrize("how_headers", [None, "left", "right"])
+    @pytest.mark.parametrize("how", ["left", "right", "outer", "inner"])
+    @pytest.mark.parametrize("on", ["NAME", "S", "NUMBER", "CO", "CORMS", "BPM_RES"])
+    def test_merging_accepts_pandas_dataframe(
+        self, _tfs_file_x_pathlib, _tfs_file_y_pathlib, how_headers, how, on
+    ):
+        dframe_x = tfs.read(_tfs_file_x_pathlib)
+        dframe_y = pd.DataFrame(tfs.read(_tfs_file_y_pathlib))  # for test, loses headers here
+        result = dframe_x.merge(dframe_y, how_headers=how_headers, how=how, on=on)
+
+        assert isinstance(result, TfsDataFrame)
+        assert isinstance(result.headers, OrderedDict)
+
+        # using empty OrderedDict here as it's what dframe_y is getting when converted in the call
+        assert_dict_equal(result.headers, merge_headers(dframe_x.headers, OrderedDict(), how=how_headers))
+        assert_frame_equal(result, pd.DataFrame(dframe_x).merge(pd.DataFrame(dframe_y), how=how, on=on))
+
 
 class TestTfsDataFramesConcatenating:
     @pytest.mark.parametrize("how_headers", [None, "left", "right"])
@@ -157,6 +206,28 @@ class TestTfsDataFramesConcatenating:
         all_headers = (tfsdframe.headers for tfsdframe in objs)
         assert isinstance(result, TfsDataFrame)
         assert isinstance(result.headers, OrderedDict)
+        assert_dict_equal(result.headers, reduce(merger, all_headers))
+        assert_frame_equal(result, pd.concat(objs, axis=axis, join=join))
+
+    @pytest.mark.parametrize("how_headers", [None, "left", "right"])
+    @pytest.mark.parametrize("axis", [0, 1])
+    @pytest.mark.parametrize("join", ["inner", "outer"])
+    def test_concatenating_accepts_pandas_dataframes(
+        self, _tfs_file_x_pathlib, _tfs_file_y_pathlib, how_headers, axis, join
+    ):
+        dframe_x = tfs.read(_tfs_file_x_pathlib)
+        dframe_y = pd.DataFrame(tfs.read(_tfs_file_y_pathlib))  # for test, loses headers here
+        objs = [dframe_x] * 4 + [dframe_y] * 4  # now has a mix of TfsDataFrames and pandas.DataFrames
+        result = concat(objs, how_headers=how_headers, axis=axis, join=join)
+
+        merger = partial(merge_headers, how=how_headers)
+        # all_headers = (tfsdframe.headers for tfsdframe in objs)
+        assert isinstance(result, TfsDataFrame)
+        assert isinstance(result.headers, OrderedDict)
+
+        all_headers = [  # empty OrderedDicts here as it's what objects are getting when converted in the call
+            dframe.headers if isinstance(dframe, TfsDataFrame) else OrderedDict() for dframe in objs
+        ]
         assert_dict_equal(result.headers, reduce(merger, all_headers))
         assert_frame_equal(result, pd.concat(objs, axis=axis, join=join))
 
