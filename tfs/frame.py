@@ -158,7 +158,7 @@ class TfsDataFrame(pd.DataFrame):
         """
         LOGGER.debug("Joining data through 'pandas'")
         if not hasattr(other, "headers"):
-            LOGGER.debug("Converting 'other' to TfsDataFrame for appending")
+            LOGGER.debug("Converting 'other' to TfsDataFrame for joining")
             other = TfsDataFrame(other)  # so we accept pandas.DataFrame input here
         dframe = super().join(other, **kwargs)
 
@@ -202,7 +202,7 @@ class TfsDataFrame(pd.DataFrame):
         """
         LOGGER.debug("Merging data through 'pandas'")
         if not hasattr(right, "headers"):
-            LOGGER.debug("Converting 'right' to TfsDataFrame for appending")
+            LOGGER.debug("Converting 'right' to TfsDataFrame for merging")
             right = TfsDataFrame(right)  # so we accept pandas.DataFrame input here
         dframe = super().merge(right, **kwargs)
 
