@@ -131,13 +131,13 @@ html_theme_options = {
 html_logo = "_static/img/omc_logo.svg"
 html_static_path = ["_static"]
 html_context = {
-    "css_files": ["_static/css/custom.css"],
     "display_github": True,
     # the following are only needed if :github_url: is not set
     "github_user": author,
     "github_repo": project,
     "github_version": "master/doc/",
 }
+html_css_files = ["css/custom.css"]
 
 smartquotes_action = "qe"  # renders only quotes and ellipses (...) but not dashes (option: D)
 
