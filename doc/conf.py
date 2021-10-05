@@ -79,7 +79,7 @@ master_doc = "index"
 
 # General information about the project.
 project = ABOUT_TFS["__title__"]
-copyright_ = "2018-2021, pyLHC/OMC-TEAM"
+copyright_ = "2018, pyLHC/OMC-TEAM"
 author = ABOUT_TFS["__author__"]
 
 # Override link in 'Edit on Github'
