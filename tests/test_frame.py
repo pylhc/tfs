@@ -98,12 +98,9 @@ class TestPrinting:
         assert "..." in print_out
 
     def test_empty_headers_print(self):
-        headers = {}
-        tfs_df = TfsDataFrame(headers=headers)
-        df = pd.DataFrame()
-        print_tfs = str(tfs_df)
-        print_df = str(df)
-        assert print_tfs == print_df.replace("DataFrame", TfsDataFrame.__name__)
+        print_tfs = str(TfsDataFrame())
+        print_df = str(pd.DataFrame())
+        assert print_tfs == print_df.replace(pd.DataFrame.__name__, TfsDataFrame.__name__)
 
 
 class TestTfsDataFrameAppending:
