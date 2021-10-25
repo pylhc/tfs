@@ -75,7 +75,7 @@ class TfsDataFrame(pd.DataFrame):
             else:
                 s += f"{_str_items(self.headers.items())}\n"
             s += "\n"
-            return s
+        return s
 
     def __repr__(self) -> str:
         headers_string = self._headers_repr()

@@ -97,6 +97,11 @@ class TestPrinting:
         assert not all(str(val) in print_out for val in headers.values())
         assert "..." in print_out
 
+    def test_empty_headers_print(self):
+        print_tfs = str(TfsDataFrame())
+        print_df = str(pd.DataFrame())
+        assert print_tfs == print_df.replace(pd.DataFrame.__name__, TfsDataFrame.__name__)
+
 
 class TestTfsDataFrameAppending:
     @pytest.mark.parametrize("how_headers", [None, "left", "right"])

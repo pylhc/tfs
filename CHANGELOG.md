@@ -1,5 +1,36 @@
 # TFS-Pandas Changelog
 
+## Version 3.0.2
+
+- Fixed:
+    - String representation of empty headers is fixed (accidentally printed 'None' before).
+
+## Version 3.0.1
+
+- Fixed:
+    - Merging functionality from `TfsDataFrame.append`, `TfsDataFrame.join`, `TfsDataFrame.merge` and `tfs.concat` do not crash anymore when encountering a `pandas.DataFrame` (or more for `tfs.concat`) in their input. Signatures have been updated and tests were added for this behavior.
+
+## Version 3.0.0
+
+A long-standing issue where merging functionality used on `TfsDataFrame` (through `.merge` or `pandas.concat` for instance) would cause them to be cast back to `pandas.DataFrame` and lose their headers has been patched.
+
+- Breaking changes:
+    - The internal API has been reworked for clarity and consistency. Note that anyone previously using the high-level exports `tfs.read`, `tfs.write` and `tfs.TfsDataFrame` **will not be affected**.
+
+- Added:
+    - The `TfsDataFrame` class now has new `.append`, `.join` and `.merge` methods wrapping the inherited methods of the same name and fixing the aforementioned issue.
+    - A `tfs.frame.concat` function, exported as `tfs.concat`, has been added to wrap `pandas.concat` and fix the aforementioned issue.
+    - A `tfs.frame.merge_headers` function has been added.
+    - Top level exports are now: `tfs.TfsDataFrame`, `tfs.read`, `tfs.write` and `tfs.concat`.
+
+- Changes:
+    - The `tfs.frame.validate` function is now a public-facing documented API and may be used stably.
+    - The `write_tfs` function now appends an `EOL` (`\n`) at the end of the file when writing out for visual clarity and readability. This is a purely cosmetic and **does not** change functionality / compatibility of the files.
+    - Documentation and README have been updated and cleared up.
+
+Please do refer to the documentation for the use of the new merging functionality to be aware of caveats, especially when merging headers.
+
+
 ## Version 2.1.0
 
 - Changes:
