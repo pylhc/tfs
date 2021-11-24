@@ -15,9 +15,13 @@ Files are read into a `TfsDataFrame`, a class built on top of the famous `pandas
 ## Installing
 
 Installation is easily done via `pip`:
-
+```bash
+python -m pip install tfs-pandas
 ```
-pip install tfs-pandas
+
+One can also install in a `conda` environment via the `conda-forge` channel with:
+```bash
+conda install -c conda-forge tfs-pandas
 ```
 
 ## Example Usage
