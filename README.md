@@ -12,6 +12,8 @@
 This package provides reading and writing functionality for [**table format system (tfs)** files](http://mad.web.cern.ch/mad/madx.old/Introduction/tfs.html). 
 Files are read into a `TfsDataFrame`, a class built on top of the famous `pandas.DataFrame`, which in addition to the normal behaviour attaches an `OrderedDict` of headers to the `DataFrame`.
 
+See the [API documentation](https://pylhc.github.io/tfs/) for details.
+
 ## Installing
 
 Installation is easily done via `pip`:
@@ -48,7 +50,6 @@ tfs.write("path_to_output.tfs", data_frame, save_index="index_column")
 ```
 
 It also provides some tools to validate and manipulate `TfsDataFrames` and their headers; or lazily manage a collection of TFS files.
-See the [API documentation](https://pylhc.github.io/tfs/) for details.
 
 ## License
 
