@@ -3,19 +3,27 @@
 [![Cron Testing](https://github.com/pylhc/tfs/workflows/Cron%20Testing/badge.svg)](https://github.com/pylhc/tfs/actions?query=workflow%3A%22Cron+Testing%22)
 [![Code Climate coverage](https://img.shields.io/codeclimate/coverage/pylhc/tfs.svg?style=popout)](https://codeclimate.com/github/pylhc/tfs)
 [![Code Climate maintainability (percentage)](https://img.shields.io/codeclimate/maintainability-percentage/pylhc/tfs.svg?style=popout)](https://codeclimate.com/github/pylhc/tfs)
-[![GitHub last commit](https://img.shields.io/github/last-commit/pylhc/tfs.svg?style=popout)](https://github.com/pylhc/tfs/)
-[![GitHub release](https://img.shields.io/github/release/pylhc/tfs.svg?style=popout)](https://github.com/pylhc/tfs/)
+<!-- [![GitHub last commit](https://img.shields.io/github/last-commit/pylhc/tfs.svg?style=popout)](https://github.com/pylhc/tfs/) -->
+[![PyPI Version](https://img.shields.io/pypi/v/tfs-pandas?label=PyPI&logo=pypi)](https://pypi.org/project/tfs-pandas/)
+[![GitHub release](https://img.shields.io/github/v/release/pylhc/tfs?logo=github)](https://github.com/pylhc/tfs/)
+[![Conda-forge Version](https://img.shields.io/conda/vn/conda-forge/tfs-pandas?color=orange&logo=anaconda)](https://anaconda.org/conda-forge/tfs-pandas)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.5070986.svg)](https://doi.org/10.5281/zenodo.5070986)
 
 This package provides reading and writing functionality for [**table format system (tfs)** files](http://mad.web.cern.ch/mad/madx.old/Introduction/tfs.html). 
 Files are read into a `TfsDataFrame`, a class built on top of the famous `pandas.DataFrame`, which in addition to the normal behaviour attaches an `OrderedDict` of headers to the `DataFrame`.
 
+See the [API documentation](https://pylhc.github.io/tfs/) for details.
+
 ## Installing
 
 Installation is easily done via `pip`:
-
+```bash
+python -m pip install tfs-pandas
 ```
-pip install tfs-pandas
+
+One can also install in a `conda` environment via the `conda-forge` channel with:
+```bash
+conda install -c conda-forge tfs-pandas
 ```
 
 ## Example Usage
@@ -42,7 +50,6 @@ tfs.write("path_to_output.tfs", data_frame, save_index="index_column")
 ```
 
 It also provides some tools to validate and manipulate `TfsDataFrames` and their headers; or lazily manage a collection of TFS files.
-See the [API documentation](https://pylhc.github.io/tfs/) for details.
 
 ## License
 
