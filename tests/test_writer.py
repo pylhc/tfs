@@ -169,6 +169,7 @@ class TestFailures:
         assert "Non-unique indices found" in caplog.text  # first checked and raised
 
     def test_fail_on_wrong_column_type(self, caplog):
+        caplog.set_level(logging.DEBUG)
         df = TfsDataFrame(columns=range(5))
         with pytest.raises(TfsFormatError):
             write_tfs("", df)
@@ -178,6 +179,7 @@ class TestFailures:
         assert "not of string-type" in caplog.text
 
     def test_fail_on_spaces_columns(self, caplog):
+        caplog.set_level(logging.DEBUG)
         df = TfsDataFrame(columns=["allowed", "not allowed"])
         with pytest.raises(TfsFormatError):
             write_tfs("", df)
@@ -187,6 +189,7 @@ class TestFailures:
         assert "Space(s) found in TFS columns" in caplog.text
 
     def test_fail_on_spaces_headers(self, caplog):
+        caplog.set_level(logging.DEBUG)
         df = TfsDataFrame(headers={"allowed": 1, "not allowed": 2})
         with pytest.raises(TfsFormatError):
             write_tfs("", df)
