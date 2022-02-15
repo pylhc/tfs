@@ -174,7 +174,7 @@ class TestFailures:
             write_tfs("", df)
 
         for record in caplog.records:
-            assert record.levelname == "ERROR"
+            assert record.levelname == "DEBUG"
         assert "not of string-type" in caplog.text
 
     def test_fail_on_spaces_columns(self, caplog):
@@ -183,7 +183,7 @@ class TestFailures:
             write_tfs("", df)
 
         for record in caplog.records:
-            assert record.levelname == "ERROR"
+            assert record.levelname == "DEBUG"
         assert "Space(s) found in TFS columns" in caplog.text
 
     def test_fail_on_spaces_headers(self, caplog):
@@ -192,7 +192,7 @@ class TestFailures:
             write_tfs("", df)
 
         for record in caplog.records:
-            assert record.levelname == "ERROR"
+            assert record.levelname == "DEBUG"
         assert "Space(s) found in TFS header names" in caplog.text
 
     def test_messed_up_dataframe_fails_writes(self, _messed_up_dataframe: TfsDataFrame):
