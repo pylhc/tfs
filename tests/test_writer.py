@@ -319,7 +319,7 @@ def _messed_up_dataframe() -> TfsDataFrame:
     """Returns a TfsDataFrame with mixed types in each column, some elements being lists."""
     int_row = numpy.array([random.randint(-1e5, 1e5) for _ in range(4)], dtype=numpy.float64)
     float_row = numpy.array([round(random.uniform(-1e5, 1e5), 7) for _ in range(4)], dtype=numpy.float64)
-    string_row = numpy.array([_rand_string() for _ in range(4)], dtype=numpy.str)
+    string_row = numpy.array([_rand_string() for _ in range(4)], dtype=str)
     list_floats_row = [[1.0, 14.777], [2.0, 1243.9], [3.0], [123414.0, 9909.12795]]
     return TfsDataFrame(
         index=range(4),
