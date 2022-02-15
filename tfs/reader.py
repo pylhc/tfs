@@ -72,10 +72,10 @@ def read_tfs(
                 break  # Break to not go over all lines, saves a lot of time on big files
 
     if column_names is None:
-        LOGGER.error(f"No column names in file {tfs_file_path.absolute()}, aborting")
+        LOGGER.debug(f"No column names in file {tfs_file_path.absolute()}, aborting")
         raise TfsFormatError("Column names have not been set.")
     if column_types is None:
-        LOGGER.error(f"No column types in file {tfs_file_path.absolute()}, aborting")
+        LOGGER.debug(f"No column types in file {tfs_file_path.absolute()}, aborting")
         raise TfsFormatError("Column types have not been set.")
 
     LOGGER.debug("Parsing data part of the file")
