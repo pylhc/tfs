@@ -343,15 +343,15 @@ def validate(
 
     # The following are deal-breakers for the TFS format and would not, for instance, be accepted by MAD-X
     if any(not isinstance(c, str) for c in data_frame.columns):
-        LOGGER.error(f"Some column-names are not of string-type, dataframe {info_str} is invalid.")
+        LOGGER.debug(f"Some column-names are not of string-type, dataframe {info_str} is invalid.")
         raise TfsFormatError("TFS-Columns need to be strings.")
 
     if any(" " in c for c in data_frame.columns):
-        LOGGER.error(f"Space(s) found in TFS columns, dataframe {info_str} is invalid")
+        LOGGER.debug(f"Space(s) found in TFS columns, dataframe {info_str} is invalid")
         raise TfsFormatError("TFS-Columns can not contain spaces.")
 
     if hasattr(data_frame, "headers") and any(" " in h for h in data_frame.headers.keys()):
-        LOGGER.error(f"Space(s) found in TFS header names, dataframe {info_str} is invalid")
+        LOGGER.debug(f"Space(s) found in TFS header names, dataframe {info_str} is invalid")
         raise TfsFormatError("TFS-Header names can not contain spaces.")
 
     LOGGER.debug(f"DataFrame {info_str} validated")
