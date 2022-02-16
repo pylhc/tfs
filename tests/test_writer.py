@@ -1,3 +1,4 @@
+import logging
 import pathlib
 import random
 import string
@@ -169,30 +170,33 @@ class TestFailures:
         assert "Non-unique indices found" in caplog.text  # first checked and raised
 
     def test_fail_on_wrong_column_type(self, caplog):
+        caplog.set_level(logging.DEBUG)
         df = TfsDataFrame(columns=range(5))
         with pytest.raises(TfsFormatError):
             write_tfs("", df)
 
         for record in caplog.records:
-            assert record.levelname == "ERROR"
+            assert record.levelname == "DEBUG"
         assert "not of string-type" in caplog.text
 
     def test_fail_on_spaces_columns(self, caplog):
+        caplog.set_level(logging.DEBUG)
         df = TfsDataFrame(columns=["allowed", "not allowed"])
         with pytest.raises(TfsFormatError):
             write_tfs("", df)
 
         for record in caplog.records:
-            assert record.levelname == "ERROR"
+            assert record.levelname == "DEBUG"
         assert "Space(s) found in TFS columns" in caplog.text
 
     def test_fail_on_spaces_headers(self, caplog):
+        caplog.set_level(logging.DEBUG)
         df = TfsDataFrame(headers={"allowed": 1, "not allowed": 2})
         with pytest.raises(TfsFormatError):
             write_tfs("", df)
 
         for record in caplog.records:
-            assert record.levelname == "ERROR"
+            assert record.levelname == "DEBUG"
         assert "Space(s) found in TFS header names" in caplog.text
 
     def test_messed_up_dataframe_fails_writes(self, _messed_up_dataframe: TfsDataFrame):
@@ -315,7 +319,7 @@ def _messed_up_dataframe() -> TfsDataFrame:
     """Returns a TfsDataFrame with mixed types in each column, some elements being lists."""
     int_row = numpy.array([random.randint(-1e5, 1e5) for _ in range(4)], dtype=numpy.float64)
     float_row = numpy.array([round(random.uniform(-1e5, 1e5), 7) for _ in range(4)], dtype=numpy.float64)
-    string_row = numpy.array([_rand_string() for _ in range(4)], dtype=numpy.str)
+    string_row = numpy.array([_rand_string() for _ in range(4)], dtype=str)
     list_floats_row = [[1.0, 14.777], [2.0, 1243.9], [3.0], [123414.0, 9909.12795]]
     return TfsDataFrame(
         index=range(4),
