@@ -1,5 +1,15 @@
 # TFS-Pandas Changelog
 
+## Version 3.1.0
+
+- Fixed:
+    - Removed dependency on depricated `numpy.str` 
+
+- Changed:
+    - No logging of error messages internally for reading files and checking dataframes. 
+      Instead logging is either moved to `debug`-level or all info is now in the error message itself
+      to be handled externally by the user.
+
 ## Version 3.0.2
 
 - Fixed:
