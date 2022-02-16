@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>tfs.frame &mdash; tfs-pandas 3.0.2 documentation</title>
+  <title>tfs.frame &mdash; tfs-pandas 3.1.0 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/custom.css" type="text/css" />
@@ -29,7 +29,7 @@
             <img src="../../_static/omc_logo.svg" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                3.0
+                3.1
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -422,15 +422,15 @@
 
     <span class="c1"># The following are deal-breakers for the TFS format and would not, for instance, be accepted by MAD-X</span>
     <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">data_frame</span><span class="o">.</span><span class="n">columns</span><span class="p">):</span>
-        <span class="n">LOGGER</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Some column-names are not of string-type, dataframe </span><span class="si">{</span><span class="n">info_str</span><span class="si">}</span><span class="s2"> is invalid.&quot;</span><span class="p">)</span>
+        <span class="n">LOGGER</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Some column-names are not of string-type, dataframe </span><span class="si">{</span><span class="n">info_str</span><span class="si">}</span><span class="s2"> is invalid.&quot;</span><span class="p">)</span>
         <span class="k">raise</span> <span class="n">TfsFormatError</span><span class="p">(</span><span class="s2">&quot;TFS-Columns need to be strings.&quot;</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="s2">&quot; &quot;</span> <span class="ow">in</span> <span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">data_frame</span><span class="o">.</span><span class="n">columns</span><span class="p">):</span>
-        <span class="n">LOGGER</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Space(s) found in TFS columns, dataframe </span><span class="si">{</span><span class="n">info_str</span><span class="si">}</span><span class="s2"> is invalid&quot;</span><span class="p">)</span>
+        <span class="n">LOGGER</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Space(s) found in TFS columns, dataframe </span><span class="si">{</span><span class="n">info_str</span><span class="si">}</span><span class="s2"> is invalid&quot;</span><span class="p">)</span>
         <span class="k">raise</span> <span class="n">TfsFormatError</span><span class="p">(</span><span class="s2">&quot;TFS-Columns can not contain spaces.&quot;</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">data_frame</span><span class="p">,</span> <span class="s2">&quot;headers&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">any</span><span class="p">(</span><span class="s2">&quot; &quot;</span> <span class="ow">in</span> <span class="n">h</span> <span class="k">for</span> <span class="n">h</span> <span class="ow">in</span> <span class="n">data_frame</span><span class="o">.</span><span class="n">headers</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
-        <span class="n">LOGGER</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Space(s) found in TFS header names, dataframe </span><span class="si">{</span><span class="n">info_str</span><span class="si">}</span><span class="s2"> is invalid&quot;</span><span class="p">)</span>
+        <span class="n">LOGGER</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Space(s) found in TFS header names, dataframe </span><span class="si">{</span><span class="n">info_str</span><span class="si">}</span><span class="s2"> is invalid&quot;</span><span class="p">)</span>
         <span class="k">raise</span> <span class="n">TfsFormatError</span><span class="p">(</span><span class="s2">&quot;TFS-Header names can not contain spaces.&quot;</span><span class="p">)</span>
 
     <span class="n">LOGGER</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;DataFrame </span><span class="si">{</span><span class="n">info_str</span><span class="si">}</span><span class="s2"> validated&quot;</span><span class="p">)</span></div>

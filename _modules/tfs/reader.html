@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>tfs.reader &mdash; tfs-pandas 3.0.2 documentation</title>
+  <title>tfs.reader &mdash; tfs-pandas 3.1.0 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/custom.css" type="text/css" />
@@ -29,7 +29,7 @@
             <img src="../../_static/omc_logo.svg" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                3.0
+                3.1
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -151,11 +151,9 @@
                 <span class="k">break</span>  <span class="c1"># Break to not go over all lines, saves a lot of time on big files</span>
 
     <span class="k">if</span> <span class="n">column_names</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">LOGGER</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;No column names in file </span><span class="si">{</span><span class="n">tfs_file_path</span><span class="o">.</span><span class="n">absolute</span><span class="p">()</span><span class="si">}</span><span class="s2">, aborting&quot;</span><span class="p">)</span>
-        <span class="k">raise</span> <span class="n">TfsFormatError</span><span class="p">(</span><span class="s2">&quot;Column names have not been set.&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="n">TfsFormatError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;No column names in file </span><span class="si">{</span><span class="n">tfs_file_path</span><span class="o">.</span><span class="n">absolute</span><span class="p">()</span><span class="si">}</span><span class="s2">. File not read.&quot;</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">column_types</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">LOGGER</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;No column types in file </span><span class="si">{</span><span class="n">tfs_file_path</span><span class="o">.</span><span class="n">absolute</span><span class="p">()</span><span class="si">}</span><span class="s2">, aborting&quot;</span><span class="p">)</span>
-        <span class="k">raise</span> <span class="n">TfsFormatError</span><span class="p">(</span><span class="s2">&quot;Column types have not been set.&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="n">TfsFormatError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;No column types in file </span><span class="si">{</span><span class="n">tfs_file_path</span><span class="o">.</span><span class="n">absolute</span><span class="p">()</span><span class="si">}</span><span class="s2">. File not read.&quot;</span><span class="p">)</span>
 
     <span class="n">LOGGER</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Parsing data part of the file&quot;</span><span class="p">)</span>
     <span class="c1"># DO NOT use comment=COMMENTS in here, if you do and the symbol is in an element for some</span>
