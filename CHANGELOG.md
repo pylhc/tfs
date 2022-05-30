@@ -3,7 +3,10 @@
 ## Version 3.2.0
 
 - Added: 
-    - HDF5 read/write. 
+    - HDF5 read/write.
+  
+- Changed:
+  - The minimum required Python version is now `3.7`.
 
 ## Version 3.1.0
 

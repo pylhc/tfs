@@ -1,8 +1,8 @@
 """
-HDF5 Tools
-----------
+HDF5 I/O
+--------
 
-Additional tools for reading and writing TfsDataFrames into hdf5 files.
+Additional tools for reading and writing ``TfsDataFrames`` into ``hdf5`` files.
 """
 import pandas as pd
 from pathlib import Path
