@@ -88,7 +88,7 @@ class TestHDF:
         assert "mode" in caplog.text
         assert out_file.is_file()
 
-        with pytest.raises(AttributeError):
+        with pytest.raises(AttributeError) as e:
             write_hdf(out_file, df_example, mode='a')  # tries to append to file
         assert 'mode' in str(e)
 
