@@ -40,6 +40,7 @@ EXTRA_DEPENDENCIES = {
     "doc": ["sphinx", "sphinx_rtd_theme"],
 }
 EXTRA_DEPENDENCIES.update({"all": [elem for list_ in EXTRA_DEPENDENCIES.values() for elem in list_]})
+EXTRA_DEPENDENCIES["test"] += EXTRA_DEPENDENCIES["hdf5"]
 
 setuptools.setup(
     name=ABOUT_TFS["__title__"],
