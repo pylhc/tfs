@@ -1,5 +1,10 @@
 # TFS-Pandas Changelog
 
+## Version 3.2.0
+
+- Added: 
+    - HDF5 read/write. 
+
 ## Version 3.1.0
 
 - Fixed:

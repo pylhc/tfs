@@ -50,6 +50,7 @@ tfs.write("path_to_output.tfs", data_frame, save_index="index_column")
 ```
 
 It also provides some tools to validate and manipulate `TfsDataFrames` and their headers; or lazily manage a collection of TFS files.
+Whith `tfs.read_hdf()` and `tfs.write_hdf()` the `TfsDataFames` can also be saved as `hdf5` files, if the `hdf5` extra-requirements are fullfilled.
 
 ## License
 
