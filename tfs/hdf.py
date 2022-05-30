@@ -35,7 +35,9 @@ def write_hdf(path: Union[Path, str], df: TfsDataFrame, **kwargs):
         df (TfsDataFrame): TfsDataFrame to write.
         kwargs: kwargs to be passed to pandas ``DataFrame.to_hdf()``.
                 ``key`` is not allowed and ``mode`` needs to be ``w`` if the
-                output file already exists.
+                output file already exists (``w`` will be used in any case,
+                even if the file does not exist, but only a warning is logged
+                in that case).
     """
     _check_imports()
     # Check for `key` kwarg (forbidden) ---
@@ -87,7 +89,7 @@ def _check_imports():
         names = ", ".join(f"`{name}`" for name in not_imported)
         raise ImportError(f"Package(s) {names} could not be imported. "
                           "Please make sure that this package is installed to use hdf-functionality, "
-                          "e.g. install `tfs-pandas` with the `hdf5` extra-dependencies: `tfs-pandas['hdf5']`")
+                          "e.g. install `tfs-pandas` with the `hdf5` extra-dependencies: `tfs-pandas[hdf5]`")
 
 
 

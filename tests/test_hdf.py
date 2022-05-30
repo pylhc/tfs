@@ -1,3 +1,5 @@
+import sys
+
 import numpy as np
 import pytest
 from pathlib import Path
@@ -80,7 +82,7 @@ class TestHDF:
         out_file = tmp_path / "data_frame.h5"
         with pytest.raises(AttributeError) as e:
             write_hdf(out_file, df_example, key="something")
-            assert 'key' in str(e)
+        assert 'key' in str(e)
 
         write_hdf(out_file, df_example, mode='a')  # creates file
         assert "mode" in caplog.text
@@ -88,7 +90,45 @@ class TestHDF:
 
         with pytest.raises(AttributeError):
             write_hdf(out_file, df_example, mode='a')  # tries to append to file
-            assert 'mode' in str(e)
+        assert 'mode' in str(e)
+
+
+class TestImports:
+    def test_tables_import_fail(self, tmp_path: Path, df_example: TfsDataFrame, monkeypatch):
+        out_file = tmp_path / "data_frame.h5"
+        monkeypatch.setattr('tfs.hdf.tables', None)
+        with pytest.raises(ImportError) as e:
+            write_hdf(out_file, df_example)
+        assert 'tables' in str(e)
+
+        with pytest.raises(ImportError) as e:
+            read_hdf(out_file)
+        assert 'tables' in str(e)
+
+    def test_h5py_import_fail(self, tmp_path: Path, df_example: TfsDataFrame,  monkeypatch):
+        out_file = tmp_path / "data_frame.h5"
+        monkeypatch.setattr('tfs.hdf.h5py', None)
+        with pytest.raises(ImportError) as e:
+            write_hdf(out_file, df_example)
+        assert 'h5py' in str(e)
+
+        with pytest.raises(ImportError) as e:
+            read_hdf(out_file)
+        assert 'h5py' in str(e)
+
+    def test_full_import_fail(self, tmp_path: Path, df_example: TfsDataFrame,  monkeypatch):
+        out_file = tmp_path / "data_frame.h5"
+        monkeypatch.setattr('tfs.hdf.h5py', None)
+        monkeypatch.setattr('tfs.hdf.tables', None)
+        with pytest.raises(ImportError) as e:
+            write_hdf(out_file, df_example)
+        assert 'h5py' in str(e)
+        assert 'tables' in str(e)
+
+        with pytest.raises(ImportError) as e:
+            read_hdf(out_file)
+        assert 'h5py' in str(e)
+        assert 'tables' in str(e)
 
 
 # Helper -----------------------------------------------------------------------
