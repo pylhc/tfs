@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Welcome to tfs-pandas’ documentation! &mdash; tfs-pandas 3.1.0 documentation</title>
+  <title>Welcome to tfs-pandas’ documentation! &mdash; tfs-pandas 3.2.0 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/custom.css" type="text/css" />
@@ -15,6 +15,7 @@
         <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="_static/doctools.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
@@ -31,7 +32,7 @@
             <img src="_static/omc_logo.svg" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                3.1
+                3.2
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -47,6 +48,7 @@
 <li class="toctree-l2"><a class="reference internal" href="modules/index.html#constants">Constants</a></li>
 <li class="toctree-l2"><a class="reference internal" href="modules/index.html#errors">Errors</a></li>
 <li class="toctree-l2"><a class="reference internal" href="modules/index.html#frame">Frame</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/index.html#hdf5-i-o">HDF5 I/O</a></li>
 <li class="toctree-l2"><a class="reference internal" href="modules/index.html#reader">Reader</a></li>
 <li class="toctree-l2"><a class="reference internal" href="modules/index.html#tools">Tools</a></li>
 <li class="toctree-l2"><a class="reference internal" href="modules/index.html#writer">Writer</a></li>
@@ -80,13 +82,13 @@
            <div itemprop="articleBody">
              
   <section id="welcome-to-tfs-pandas-documentation">
-<h1>Welcome to tfs-pandas’ documentation!<a class="headerlink" href="#welcome-to-tfs-pandas-documentation" title="Permalink to this headline"></a></h1>
+<h1>Welcome to tfs-pandas’ documentation!<a class="headerlink" href="#welcome-to-tfs-pandas-documentation" title="Permalink to this heading"></a></h1>
 <p><code class="docutils literal notranslate"><span class="pre">tfs-pandas</span></code> is a library for reading and writing capabilities for <a class="reference external" href="http://mad.web.cern.ch/mad/madx.old/Introduction/tfs.html">TFS files</a> used at <a class="reference external" href="https://home.cern/">CERN</a>.</p>
 <p>It provides functionality through a <code class="docutils literal notranslate"><span class="pre">TfsDataFrame</span></code> object, an extension of the popular <strong>pandas</strong> <code class="docutils literal notranslate"><span class="pre">DataFrame</span></code>, which in addition to the normal behaviour attaches a dictionary of headers to the <code class="docutils literal notranslate"><span class="pre">DataFrame</span></code>.
 Functions are also exported that handle reading and writing of <strong>TFS</strong> files to and from <code class="docutils literal notranslate"><span class="pre">TfsDataFrames</span></code> as well as merging and validating for <code class="docutils literal notranslate"><span class="pre">TfsDataFrames</span></code>.</p>
 </section>
 <section id="package-reference">
-<h1>Package Reference<a class="headerlink" href="#package-reference" title="Permalink to this headline"></a></h1>
+<h1>Package Reference<a class="headerlink" href="#package-reference" title="Permalink to this heading"></a></h1>
 <div class="toctree-wrapper compound">
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="modules/index.html">TFS-Pandas Modules</a><ul>
@@ -94,6 +96,7 @@ Functions are also exported that handle reading and writing of <strong>TFS</stro
 <li class="toctree-l2"><a class="reference internal" href="modules/index.html#constants">Constants</a></li>
 <li class="toctree-l2"><a class="reference internal" href="modules/index.html#errors">Errors</a></li>
 <li class="toctree-l2"><a class="reference internal" href="modules/index.html#frame">Frame</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/index.html#hdf5-i-o">HDF5 I/O</a></li>
 <li class="toctree-l2"><a class="reference internal" href="modules/index.html#reader">Reader</a></li>
 <li class="toctree-l2"><a class="reference internal" href="modules/index.html#tools">Tools</a></li>
 <li class="toctree-l2"><a class="reference internal" href="modules/index.html#writer">Writer</a></li>
@@ -103,7 +106,7 @@ Functions are also exported that handle reading and writing of <strong>TFS</stro
 </div>
 </section>
 <section id="indices-and-tables">
-<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline"></a></h1>
+<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this heading"></a></h1>
 <ul class="simple">
 <li><p><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></p></li>
 <li><p><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></p></li>

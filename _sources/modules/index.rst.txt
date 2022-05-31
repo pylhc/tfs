@@ -17,6 +17,10 @@ TFS-Pandas Modules
     :members:
 
 
+.. automodule:: tfs.hdf
+    :members:
+
+
 .. automodule:: tfs.reader
     :members:
 
