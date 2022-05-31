@@ -36,9 +36,11 @@ DEPENDENCIES = [
 # Extra dependencies
 EXTRA_DEPENDENCIES = {
     "test": ["pytest>=5.2", "pytest-cov>=2.9", "cpymad>=1.8.1"],
+    "hdf5": ["h5py>=2.9.0", "tables>=3.6.0"],
     "doc": ["sphinx", "sphinx_rtd_theme"],
 }
 EXTRA_DEPENDENCIES.update({"all": [elem for list_ in EXTRA_DEPENDENCIES.values() for elem in list_]})
+EXTRA_DEPENDENCIES["test"] += EXTRA_DEPENDENCIES["hdf5"]
 
 setuptools.setup(
     name=ABOUT_TFS["__title__"],
@@ -51,7 +53,7 @@ setuptools.setup(
     url=ABOUT_TFS["__url__"],
     packages=setuptools.find_packages(include=(MODULE_NAME,)),
     include_package_data=True,
-    python_requires=">=3.6",
+    python_requires=">=3.7",
     license=ABOUT_TFS["__license__"],
     classifiers=[
         "Development Status :: 5 - Production/Stable",
