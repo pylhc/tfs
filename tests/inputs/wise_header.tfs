@@ -1,0 +1,27 @@
+@ NAME             %06s "EFIELD"
+@ TYPE             %06s "EFIELD"
+@ TITLE            %21s "WISE error simulation"
+@ Date  %08s    04/03/22
+@ Time  %08s    14:07:46
+@ Optics                   %18s "2021.opticsfile.32"
+@ Error sources            %20s "MAGNETIC_FIELD,POWER"
+@ Magnet types             %102s "MB,MBRB,MBRC,MBRS,MBW,MBX,MBXW,MQ,MQM,MQMC,MQML,MQS,MQSX,MQT,MQTLH,MQTLI,MQWA,MQWB,MQXA,MQXB,MQY,OTHER"
+@ Multipoles               %69s "a1,a2,a3,a4,a5,a6,a7,a8,a9,a10,a11,b1,b2,b3,b4,b5,b6,b7,b8,b9,b10,b11"
+@ s (m)                    %3s "ALL"
+@ Sectors                  %3s "ALL"
+@ Options                  %32s "FIDEL-DYNAMIC-MODEL,B2-CLOCKWISE"
+@ Conventions              %178s "Multipoles for both beams expressed in local measurement ref frame, s-axis: CS->NCS, x-axis: horisontal, right-hand axis when looking in CS->NCS direction, y-axis: up in sky (-g)"
+@ Cycle state              %8s "FLAT-TOP"
+@ Cycle state time (s)     %le 0.00
+@ Previous cycle           %9s "PRE-CYCLE"
+@ Energy (TeV)             %le 6.800
+@ Charge (e)               %le 1
+@ FiDeL model parameters updated  %08s    15/12/21
+@ LHC slot allocation updated  %08s    15/12/21
+* NAME                  b1         a1         b2         a2         b3         a3         b4         a4         b5         a5         b6         a6         b7         a7         b8         a8         b9         a9        b10        a10        b11        a11        b12        a12        b13        a13
+$ %s                   %le        %le        %le        %le        %le        %le        %le        %le        %le        %le        %le        %le        %le        %le        %le        %le        %le        %le        %le        %le        %le        %le        %le        %le        %le        %le
+"not_found"          0.000      0.000      0.000      0.000      0.000      0.000      0.000      0.000      0.000      0.000      0.000      0.000      0.000      0.000      0.000      0.000      0.000      0.000      0.000      0.000      0.000      0.000      0.000      0.000      0.000      0.000
+"MQXA.1R1"           0.000      0.000      0.025      0.000     -0.401      0.288      1.021     -0.155      0.007      0.017      0.303     -0.045     -0.016      0.012     -0.102      0.003      0.004      0.006     -0.102     -0.005     -0.002     -0.002      0.000      0.000      0.000      0.000
+"MCBXH.1R1"         -5.153      0.000      0.000      0.000      0.000      0.000      0.000      0.000      0.000      0.000      0.000      0.000      0.000      0.000      0.000      0.000      0.000      0.000      0.000      0.000      0.000      0.000      0.000      0.000      0.000      0.000
+"MCBXV.1R1"          0.000    -48.603      0.000      0.000      0.000      0.000      0.000      0.000      0.000      0.000      0.000      0.000      0.000      0.000      0.000      0.000      0.000      0.000      0.000      0.000      0.000      0.000      0.000      0.000      0.000      0.000
+"MQXB.A2R1"          0.000      0.000      0.052      0.000     -0.079     -2.649      0.152     -0.605      0.071     -0.451      0.361     -0.028      0.045     -0.022     -0.034     -0.053     -0.029     -0.010     -0.010      0.021      0.008     -0.001      0.000      0.000      0.000      0.000

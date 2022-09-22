@@ -1,5 +1,10 @@
 # TFS-Pandas Changelog
 
+## Version 3.2.1
+
+- Changed:
+    - Allow spaces in header names.
+
 ## Version 3.2.0
 
 - Added: 
