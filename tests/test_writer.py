@@ -189,16 +189,6 @@ class TestFailures:
             assert record.levelname == "DEBUG"
         assert "Space(s) found in TFS columns" in caplog.text
 
-    def test_fail_on_spaces_headers(self, caplog):
-        caplog.set_level(logging.DEBUG)
-        df = TfsDataFrame(headers={"allowed": 1, "not allowed": 2})
-        with pytest.raises(TfsFormatError):
-            write_tfs("", df)
-
-        for record in caplog.records:
-            assert record.levelname == "DEBUG"
-        assert "Space(s) found in TFS header names" in caplog.text
-
     def test_messed_up_dataframe_fails_writes(self, _messed_up_dataframe: TfsDataFrame):
         messed_tfs = _messed_up_dataframe
         with pytest.raises(ValueError):

@@ -7,6 +7,7 @@ from pandas.testing import assert_frame_equal
 import tfs
 from tfs import read_tfs, write_tfs
 from tfs.errors import TfsFormatError
+from tfs.constants import HEADER
 
 CURRENT_DIR = pathlib.Path(__file__).parent
 
@@ -54,6 +55,25 @@ class TestRead:
         assert_frame_equal(original, new)
         assert_dict_equal(original.headers, new.headers, compare_keys=True)
 
+    def test_read_write_wise_header(self, _tfs_file_wise, tmp_path):
+        original_text = _tfs_file_wise.read_text()
+        original_header_lines = [line for line in original_text.splitlines() if line.strip().startswith(HEADER)]
+        df = read_tfs(_tfs_file_wise)
+
+        assert len(df.headers) == len(original_header_lines)
+
+        out_path = tmp_path / "wise_test.tfs"
+        write_tfs(out_path, df)
+
+        new_text = out_path.read_text()
+        new_header_lines = [line for line in new_text.splitlines() if line.strip().startswith(HEADER)]
+
+        assert len(new_header_lines) == len(original_header_lines)
+
+        for header, value in df.headers.items():
+            assert header in new_text
+            assert str(value) in new_text  # all
+
 
 class TestFailures:
     def test_absent_attributes_and_keys(self, _tfs_file_str: str):
@@ -83,7 +103,6 @@ class TestFailures:
         typoed_str_id = "%%s"
         with pytest.raises(TfsFormatError):
             _ = tfs.reader._id_to_type(typoed_str_id)
-
 
 class TestWarnings:
     def test_warn_unphysical_values(self, caplog):
@@ -115,3 +134,8 @@ def _no_coltypes_tfs_path() -> pathlib.Path:
 @pytest.fixture()
 def _no_colnames_tfs_path() -> pathlib.Path:
     return pathlib.Path(__file__).parent / "inputs" / "no_colnames.tfs"
+
+
+@pytest.fixture()
+def _tfs_file_wise() -> pathlib.Path:
+    return CURRENT_DIR / "inputs" / "wise_header.tfs"
