@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>TFS-Pandas Modules &mdash; tfs-pandas 3.2.0 documentation</title>
+  <title>TFS-Pandas Modules &mdash; tfs-pandas 3.2.1 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/custom.css" type="text/css" />
@@ -17,6 +17,7 @@
         <script src="../_static/underscore.js"></script>
         <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -45,13 +46,27 @@
               <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">TFS-Pandas Modules</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#collection">Collection</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#tfs.collection.Tfs"><code class="docutils literal notranslate"><span class="pre">Tfs</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#tfs.collection.TfsCollection"><code class="docutils literal notranslate"><span class="pre">TfsCollection</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#constants">Constants</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#errors">Errors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#tfs.errors.TfsFormatError"><code class="docutils literal notranslate"><span class="pre">TfsFormatError</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#frame">Frame</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#tfs.frame.TfsDataFrame"><code class="docutils literal notranslate"><span class="pre">TfsDataFrame</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#tfs.frame.concat"><code class="docutils literal notranslate"><span class="pre">concat()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#tfs.frame.merge_headers"><code class="docutils literal notranslate"><span class="pre">merge_headers()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#tfs.frame.validate"><code class="docutils literal notranslate"><span class="pre">validate()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#hdf5-i-o">HDF5 I/O</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#tfs.hdf.read_hdf"><code class="docutils literal notranslate"><span class="pre">read_hdf()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#tfs.hdf.write_hdf"><code class="docutils literal notranslate"><span class="pre">write_hdf()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#reader">Reader</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#tfs.reader.read_tfs"><code class="docutils literal notranslate"><span class="pre">read_tfs()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#tools">Tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#tfs.tools.remove_header_comments_from_files"><code class="docutils literal notranslate"><span class="pre">remove_header_comments_from_files()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#tfs.tools.remove_nan_from_files"><code class="docutils literal notranslate"><span class="pre">remove_nan_from_files()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#tfs.tools.significant_digits"><code class="docutils literal notranslate"><span class="pre">significant_digits()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#writer">Writer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#tfs.writer.write_tfs"><code class="docutils literal notranslate"><span class="pre">write_tfs()</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -86,6 +101,7 @@
 <section id="collection">
 <h2>Collection<a class="headerlink" href="#collection" title="Permalink to this heading"></a></h2>
 <p>Advanced <strong>TFS</strong> files reading and writing functionality.</p>
+</section>
 <dl class="py class">
 <dt class="sig sig-object py" id="tfs.collection.Tfs">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tfs.collection.</span></span><span class="sig-name descname"><span class="pre">Tfs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tfs/collection.html#Tfs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tfs.collection.Tfs" title="Permalink to this definition"></a></dt>
@@ -185,7 +201,6 @@ parameter. It must return a tuple (filename, tfs_data_frame).</p>
 
 </dd></dl>
 
-</section>
 <span class="target" id="module-tfs.constants"></span><section id="constants">
 <h2>Constants<a class="headerlink" href="#constants" title="Permalink to this heading"></a></h2>
 <p>General constants used throughout <code class="docutils literal notranslate"><span class="pre">tfs-pandas</span></code>, relating to the standard of <strong>TFS</strong> files.</p>
@@ -193,17 +208,18 @@ parameter. It must return a tuple (filename, tfs_data_frame).</p>
 <span class="target" id="module-tfs.errors"></span><section id="errors">
 <h2>Errors<a class="headerlink" href="#errors" title="Permalink to this heading"></a></h2>
 <p>Errors that can be raised during the handling of <strong>TFS</strong> files.</p>
+</section>
 <dl class="py exception">
 <dt class="sig sig-object py" id="tfs.errors.TfsFormatError">
 <em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tfs.errors.</span></span><span class="sig-name descname"><span class="pre">TfsFormatError</span></span><a class="reference internal" href="../_modules/tfs/errors.html#TfsFormatError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tfs.errors.TfsFormatError" title="Permalink to this definition"></a></dt>
 <dd><p>Raised when a wrong format is detected in the <strong>TFS</strong> file.</p>
 </dd></dl>
 
-</section>
 <span class="target" id="module-tfs.frame"></span><section id="frame">
 <h2>Frame<a class="headerlink" href="#frame" title="Permalink to this heading"></a></h2>
 <p>Contains the class definition of a <code class="docutils literal notranslate"><span class="pre">TfsDataFrame</span></code>, inherited from the <code class="docutils literal notranslate"><span class="pre">pandas</span></code> <code class="docutils literal notranslate"><span class="pre">DataFrame</span></code>, as well
 as a utility function to validate the correctness of a <code class="docutils literal notranslate"><span class="pre">TfsDataFrame</span></code>.</p>
+</section>
 <dl class="py class">
 <dt class="sig sig-object py" id="tfs.frame.TfsDataFrame">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tfs.frame.</span></span><span class="sig-name descname"><span class="pre">TfsDataFrame</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tfs/frame.html#TfsDataFrame"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tfs.frame.TfsDataFrame" title="Permalink to this definition"></a></dt>
@@ -390,10 +406,10 @@ to respectively issue a warning or raise an error if non-unique elements are fou
 </dl>
 </dd></dl>
 
-</section>
 <span class="target" id="module-tfs.hdf"></span><section id="hdf5-i-o">
 <h2>HDF5 I/O<a class="headerlink" href="#hdf5-i-o" title="Permalink to this heading"></a></h2>
 <p>Additional tools for reading and writing <code class="docutils literal notranslate"><span class="pre">TfsDataFrames</span></code> into <code class="docutils literal notranslate"><span class="pre">hdf5</span></code> files.</p>
+</section>
 <dl class="py function">
 <dt class="sig sig-object py" id="tfs.hdf.read_hdf">
 <span class="sig-prename descclassname"><span class="pre">tfs.hdf.</span></span><span class="sig-name descname"><span class="pre">read_hdf</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">Path</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#tfs.frame.TfsDataFrame" title="tfs.frame.TfsDataFrame"><span class="pre">TfsDataFrame</span></a></span></span><a class="reference internal" href="../_modules/tfs/hdf.html#read_hdf"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tfs.hdf.read_hdf" title="Permalink to this definition"></a></dt>
@@ -427,10 +443,10 @@ in that case).</p></li>
 </dl>
 </dd></dl>
 
-</section>
 <span class="target" id="module-tfs.reader"></span><section id="reader">
 <h2>Reader<a class="headerlink" href="#reader" title="Permalink to this heading"></a></h2>
 <p>Reading functionalty for <strong>TFS</strong> files.</p>
+</section>
 <dl class="py function">
 <dt class="sig sig-object py" id="tfs.reader.read_tfs">
 <span class="sig-prename descclassname"><span class="pre">tfs.reader.</span></span><span class="sig-name descname"><span class="pre">read_tfs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tfs_file_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">Path</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">non_unique_behavior</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'warn'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#tfs.frame.TfsDataFrame" title="tfs.frame.TfsDataFrame"><span class="pre">TfsDataFrame</span></a></span></span><a class="reference internal" href="../_modules/tfs/reader.html#read_tfs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tfs.reader.read_tfs" title="Permalink to this definition"></a></dt>
@@ -459,10 +475,10 @@ to respectively issue a warning or raise an error if non-unique elements are fou
 </dl>
 </dd></dl>
 
-</section>
 <span class="target" id="module-tfs.tools"></span><section id="tools">
 <h2>Tools<a class="headerlink" href="#tools" title="Permalink to this heading"></a></h2>
 <p>Additional functions to modify <strong>TFS</strong> files.</p>
+</section>
 <dl class="py function">
 <dt class="sig sig-object py" id="tfs.tools.remove_header_comments_from_files">
 <span class="sig-prename descclassname"><span class="pre">tfs.tools.</span></span><span class="sig-name descname"><span class="pre">remove_header_comments_from_files</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">list_of_files</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Path</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/tfs/tools.html#remove_header_comments_from_files"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tfs.tools.remove_header_comments_from_files" title="Permalink to this definition"></a></dt>
@@ -512,10 +528,10 @@ strings. Defaults to <code class="docutils literal notranslate"><span class="pre
 </dl>
 </dd></dl>
 
-</section>
 <span class="target" id="module-tfs.writer"></span><section id="writer">
 <h2>Writer<a class="headerlink" href="#writer" title="Permalink to this heading"></a></h2>
 <p>Writing functionalty for <strong>TFS</strong> files.</p>
+</section>
 <dl class="py function">
 <dt class="sig sig-object py" id="tfs.writer.write_tfs">
 <span class="sig-prename descclassname"><span class="pre">tfs.writer.</span></span><span class="sig-name descname"><span class="pre">write_tfs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tfs_file_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">Path</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_frame</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#tfs.frame.TfsDataFrame" title="tfs.frame.TfsDataFrame"><span class="pre">TfsDataFrame</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">DataFrame</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">headers_dict</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">bool</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">colwidth</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">20</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">headerswidth</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">20</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">non_unique_behavior</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'warn'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/tfs/writer.html#write_tfs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tfs.writer.write_tfs" title="Permalink to this definition"></a></dt>
@@ -543,7 +559,6 @@ to respectively issue a warning or raise an error if non-unique elements are fou
 </dl>
 </dd></dl>
 
-</section>
 </section>
 
 
