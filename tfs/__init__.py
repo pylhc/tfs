@@ -3,14 +3,14 @@ Exposes TfsDataFrame, read and write directly in tfs namespace, as well as the p
 """
 from tfs.errors import TfsFormatError
 from tfs.frame import TfsDataFrame, concat
+from tfs.hdf import read_hdf, write_hdf
 from tfs.reader import read_tfs
 from tfs.writer import write_tfs
-from tfs.hdf import read_hdf, write_hdf
 
 __title__ = "tfs-pandas"
 __description__ = "Read and write tfs files."
 __url__ = "https://github.com/pylhc/tfs"
-__version__ = "3.2.1"
+__version__ = "3.3.0"
 __author__ = "pylhc"
 __author_email__ = "pylhc@github.com"
 __license__ = "MIT"
