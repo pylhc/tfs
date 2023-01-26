@@ -9,7 +9,7 @@ import logging
 from collections import OrderedDict
 from contextlib import suppress
 from functools import partial, reduce
-from typing import Sequence, Union
+from typing import Sequence, Set, Union
 
 import numpy as np
 import pandas as pd
@@ -260,7 +260,7 @@ def concat(
     axes. Data manipulation is done by the ``pandas.concat`` function. Resulting headers are either
     merged according to the provided **how_headers** method or as given via **new_headers**.
 
-    ..warning::
+    .. warning::
         Please note that when using this function on many ``TfsDataFrames``, leaving the contents of the
         final headers dictionary to the automatic merger can become unpredictable. In this case it is
         recommended to provide the **new_headers** argument to ensure the final result, or leave both
