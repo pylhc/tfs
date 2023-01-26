@@ -27,10 +27,16 @@ def write_tfs(
     colwidth: int = DEFAULT_COLUMN_WIDTH,
     headerswidth: int = DEFAULT_COLUMN_WIDTH,
     non_unique_behavior: str = "warn",
+    validate_before_writing: bool = True,
 ) -> None:
     """
     Writes the provided ``DataFrame`` to disk at **tfs_file_path**, eventually with the `headers_dict` as
     headers dictionary.
+
+    .. warning::
+        Through the *validate_before_writing* argument, one can skip dataframe validation before writing
+        it to file. While this is **not recommended**, the option is left for the user as validation can
+        be lengthy for large `TfsDataFrames` (such as for instance a sliced FCC lattice).
 
     Args:
         tfs_file_path (Union[pathlib.Path, str]): Path object to the output **TFS** file. Can be
@@ -47,10 +53,14 @@ def write_tfs(
         non_unique_behavior (str): behavior to adopt if non-unique indices or columns are found in the
             dataframe. Accepts `warn` and `raise` as values, case-insensitively, which dictates
             to respectively issue a warning or raise an error if non-unique elements are found.
+        validate_before_writing (bool): Whether to validate the dataframe before writing it to file.
+            Defaults to ``True``.
     """
     left_align_first_column = False
     tfs_file_path = pathlib.Path(tfs_file_path)
-    validate(data_frame, f"to be written in {tfs_file_path.absolute()}", non_unique_behavior)
+    
+    if validate_before_writing:
+        validate(data_frame, f"to be written in {tfs_file_path.absolute()}", non_unique_behavior)
 
     if headers_dict is None:  # tries to get headers from TfsDataFrame
         try:

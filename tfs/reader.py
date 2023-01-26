@@ -21,7 +21,10 @@ LOGGER = logging.getLogger(__name__)
 
 
 def read_tfs(
-    tfs_file_path: Union[pathlib.Path, str], index: str = None, non_unique_behavior: str = "warn"
+    tfs_file_path: Union[pathlib.Path, str],
+    index: str = None,
+    non_unique_behavior: str = "warn",
+    validate_after_reading: bool = True,
 ) -> TfsDataFrame:
     """
     Parses the **TFS** table present in **tfs_file_path** and returns a ``TfsDataFrame``.
@@ -33,6 +36,11 @@ def read_tfs(
     conversion to ``TfsDataDrame`` is made, proper types are applied to columns, the index is set and
     the frame is validated before being returned.
 
+    .. warning::
+        Through the *validate_after_reading* argument, one can skip dataframe validation after loading
+        it from a file. While this is **not recommended**, the option is left for the user as validation
+        can be lengthy for large `TfsDataFrames` (such as for instance a sliced FCC lattice).
+
     Args:
         tfs_file_path (Union[pathlib.Path, str]): Path object to the **TFS** file to read. Can be
             a string, in which case it will be cast to a Path object.
@@ -41,6 +49,8 @@ def read_tfs(
         non_unique_behavior (str): behavior to adopt if non-unique indices or columns are found in the
             dataframe. Accepts `warn` and `raise` as values, case-insensitively, which dictates
             to respectively issue a warning or raise an error if non-unique elements are found.
+        validate_after_reading (bool): Whether to validate the dataframe after reading it.
+            Defaults to ``True``.
 
     Returns:
         A ``TfsDataFrame`` object with the loaded data from the file.
@@ -100,7 +110,9 @@ def read_tfs(
         LOGGER.debug("Attempting to find index identifier in columns")
         tfs_data_frame = _find_and_set_index(tfs_data_frame)
 
-    validate(tfs_data_frame, f"from file {tfs_file_path.absolute()}", non_unique_behavior)
+    if validate_after_reading:
+        validate(tfs_data_frame, f"from file {tfs_file_path.absolute()}", non_unique_behavior)
+    
     return tfs_data_frame
 
 
