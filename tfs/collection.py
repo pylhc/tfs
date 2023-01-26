@@ -48,47 +48,51 @@ class TfsCollection(metaclass=_MetaTfsCollection):
 
     Classes inheriting from this abstract class will be able to define **TFS** files
     as readable or writable, and read or write them just as attribute access or
-    assignments. All attributes will be read and written as ``TfsDataFrame`` objects.
+    assignments. All attributes will be read and written as `~tfs.TfsDataFrame` objects.
 
     Example:
         If **./example** is a directory that contains two **TFS** files **beta_phase_x.tfs**
         and **beta_phase_y.tfs** with `BETX` and `BETY` columns respectively:
 
-    .. sourcecode:: python
+    .. code-block:: python
 
-         class ExampleCollection(TfsCollection)
-            # All TFS attributes must be marked with the Tfs(...) class, and generated attribute
-            # names will be appended with _x / _y depending on files found in "./example"
+        >>> # All TFS attributes must be marked with the Tfs(...) class,
+        ... # and generated attribute names will be appended with _x / _y 
+        ... # depending on files found in "./example"
+        ... class ExampleCollection(TfsCollection): 
+        ...     beta = Tfs("beta_phase_{}.tfs")  # A TFS attribute
+        ...     other_value = 7  # A traditional attribute.
 
-            beta = Tfs("beta_phase_{}.tfs")  # A TFS attribute
-            other_value = 7  # A traditional attribute.
+        ...     def get_filename(template: str, plane: str) -> str:
+        ...         return template.format(plane)
 
-            def get_filename(template: str, plane: str) -> str:
-               return template.format(plane)
+        >>> example = ExampleCollection("./example")
 
-         example = ExampleCollection("./example")
+        >>> # Get the BETX / BETY column from "beta_phase_x.tfs":
+        >>> beta_x_column = example.beta_x.BETX  # / example.beta_x.BETY
 
-         # Get the BETX / BETY column from "beta_phase_x.tfs":
-         beta_x_column = example.beta_x.BETX  # / example.beta_x.BETY
+        >>> # Get the BETY column from "beta_phase_y.tfs":
+        >>> beta_y_column = example.beta_y.BETY
 
-         # Get the BETY column from "beta_phase_y.tfs":
-         beta_y_column = example.beta_y.BETY
+        >>> # The planes can also be accessed as items (both examples below work):
+        >>> beta_y_column = example.beta["y"].BETY
+        >>> beta_y_column = example.beta["Y"].BETY
 
-         # The planes can also be accessed as items (both examples below work):
-         beta_y_column = example.beta["y"].BETY
-         beta_y_column = example.beta["Y"].BETY
-
-         # This will write an empty DataFrame to "beta_phase_y.tfs":
-         example.allow_write = True
-         example.beta["y"] = DataFrame()
+        >>> # This will write an empty DataFrame to "beta_phase_y.tfs":
+        >>> example.allow_write = True
+        >>> example.beta["y"] = DataFrame()
 
 
-    If the file to be loaded is not defined for two planes then the attribute can be declared as:
-    ``coupling = Tfs("getcouple.tfs", two_planes=False)`` and then accessed as
-    ``f1001w_column = example.coupling.F1001W``.
+    If the file to be loaded is not defined for two planes then the attribute can be declared 
+    and accessed as:
+    
+    .. code-block:: python
+
+        >>> coupling = Tfs("getcouple.tfs", two_planes=False)  # declaration
+        >>> f1001w_column = example.coupling.F1001W  # access
 
     No file will be loaded until the corresponding attribute is accessed and the loaded
-    ``TfsDataFrame`` will be buffered, thus the user should expect an ``IOError`` if the requested
+    `~tfs.TfsDataFrame` will be buffered, thus the user should expect an ``IOError`` if the requested
     file is not in the provided directory (only the first time, but is better to always take it
     into account!).
 
