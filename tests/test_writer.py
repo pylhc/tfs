@@ -9,7 +9,8 @@ import pandas
 import pytest
 from cpymad.madx import Madx
 from pandas._testing import assert_dict_equal
-from pandas.testing import assert_frame_equal, assert_index_equal, assert_series_equal
+from pandas.testing import (assert_frame_equal, assert_index_equal,
+                            assert_series_equal)
 
 import tfs
 from tfs import TfsDataFrame, read_tfs, write_tfs
@@ -100,6 +101,15 @@ class TestWrites:
         assert_frame_equal(_tfs_dataframe, new, check_exact=False)  # float precision can be an issue
         assert_dict_equal(_tfs_dataframe.headers, new.headers, compare_keys=True)
 
+    def test_tfs_write_read_no_validate(self, _tfs_dataframe, tmp_path):
+        write_location = tmp_path / "test.tfs"
+        write_tfs(write_location, _tfs_dataframe, validate_before_writing=False)
+        assert write_location.is_file()
+
+        new = read_tfs(write_location, validate_after_reading=False)
+        assert_frame_equal(_tfs_dataframe, new, check_exact=False)  # float precision can be an issue
+        assert_dict_equal(_tfs_dataframe.headers, new.headers, compare_keys=True)
+
     def test_tfs_write_read_no_headers(self, _dataframe_empty_headers: TfsDataFrame, tmp_path):
         write_location = tmp_path / "test.tfs"
         write_tfs(write_location, _dataframe_empty_headers)
@@ -140,6 +150,10 @@ class TestWrites:
         assert_index_equal(df.index, df_read.index, check_exact=False)
         assert_dict_equal(_tfs_dataframe.headers, df_read.headers, compare_keys=True)
 
+    def test_no_warning_on_non_unique_columns_if_no_validate(self, tmp_path, caplog):
+        df = TfsDataFrame(columns=["A", "B", "A"])
+        write_tfs(tmp_path / "temporary.tfs", df, validate_before_writing=False)
+        assert "Non-unique column names found" not in caplog.text
 
 class TestFailures:
     def test_raising_on_non_unique_columns(self, caplog):
