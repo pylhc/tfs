@@ -11,12 +11,8 @@
 #
 # All configuration values have a default; values that are commented out
 # serve to show the default.
-import os
 import pathlib
 import sys
-# ignore numpy warnings, see:
-# https://stackoverflow.com/questions/40845304/runtimewarning-numpy-dtype-size-changed-may-indicate-binary-incompatibility
-import warnings
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
@@ -54,15 +50,35 @@ ABOUT_TFS = about_package(ABOUT_FILE)
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = [
-    "sphinx.ext.autodoc",
-    "sphinx.ext.doctest",
-    "sphinx.ext.todo",
-    "sphinx.ext.coverage",
-    "sphinx.ext.mathjax",
-    "sphinx.ext.viewcode",
-    "sphinx.ext.githubpages",
-    "sphinx.ext.napoleon",
+    "sphinx.ext.autodoc",  # Include documentation from docstrings
+    "sphinx.ext.coverage",  # Collect doc coverage stats
+    "sphinx.ext.doctest",  # Test snippets in the documentation
+    "sphinx.ext.githubpages",  # Publish HTML docs in GitHub Pages
+    "sphinx.ext.intersphinx",  # Link to other projects’ documentation
+    "sphinx.ext.mathjax",  # Render math via JavaScript
+    "sphinx.ext.napoleon",  # Support for NumPy and Google style docstrings
+    "sphinx.ext.todo",  # Support for todo items
+    "sphinx.ext.viewcode",  # Add links to highlighted source code
+    "sphinx_copybutton",  # Add a "copy" button to code blocks
+    "sphinx-prompt",  # prompt symbols will not be copy-pastable
+    "sphinx_codeautolink",  # Automatically link example code to documentation source
 ]
+
+# Config for autosectionlabel extension
+autosectionlabel_prefix_document = True
+autosectionlabel_maxdepth = 2
+
+# Config for the napoleon extension
+napoleon_numpy_docstring = False
+napoleon_include_init_with_doc = True
+napoleon_use_admonition_for_examples = True
+napoleon_use_admonition_for_notes = True
+napoleon_use_admonition_for_references = True
+napoleon_preprocess_types = True
+napoleon_attr_annotations = True
+
+# Configuration for sphinx.ext.todo
+todo_include_todos = True
 
 # Add any paths that contain templates here, relative to this directory.
 # templates_path = ['_templates']
@@ -110,8 +126,9 @@ exclude_patterns = []
 # The name of the Pygments (syntax highlighting) style to use.
 pygments_style = "sphinx"
 
-# If true, `todo` and `todoList` produce output, else they produce nothing.
-todo_include_todos = True
+# The reST default role (used for this markup: `text`) to use for all
+# documents.
+default_role = "obj"
 
 # -- Options for HTML output ----------------------------------------------
 
@@ -214,3 +231,17 @@ texinfo_documents = [
         "Miscellaneous",
     ),
 ]
+
+# -- Instersphinx Configuration ----------------------------------------------
+
+# Example configuration for intersphinx: refer to the Python standard library.
+# use in refs e.g:
+# :ref:`comparison manual <python:comparisons>`
+intersphinx_mapping = {
+    "python": ("https://docs.python.org/3/", None),
+    "numpy": ("https://numpy.org/doc/stable/", None),
+    "pandas": ("https://pandas.pydata.org/pandas-docs/stable/", None),
+    "matplotlib": ("https://matplotlib.org/stable/", None),
+    "scipy": ("https://docs.scipy.org/doc/scipy/", None),
+    "cpymad": ("https://hibtc.github.io/cpymad/", None),
+}

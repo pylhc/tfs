@@ -55,6 +55,28 @@ def write_tfs(
             to respectively issue a warning or raise an error if non-unique elements are found.
         validate_before_writing (bool): Whether to validate the dataframe before writing it to file.
             Defaults to ``True``.
+
+    Examples:
+        Writing to file is simple, as most arguments have sane default values.
+        The simplest usage goes as follows:
+
+        .. code-block:: python
+
+            >>> tfs.write("filename.tfs", dataframe)
+        
+        If one wants to, for instance, raise and error on non-unique indices or columns,
+        one can do so as:
+
+        .. code-block:: python
+
+            >>> tfs.write("filename.tfs", dataframe, non_unique_behavior="raise")
+        
+        One can choose to skip dataframe validation **at one's own risk** before writing
+        it to file. This is done as:
+
+        .. code-block:: python
+
+            >>> tfs.write("filename.tfs", dataframe, validate_before_writing=False)
     """
     left_align_first_column = False
     tfs_file_path = pathlib.Path(tfs_file_path)

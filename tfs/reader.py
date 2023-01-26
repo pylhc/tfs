@@ -54,6 +54,40 @@ def read_tfs(
 
     Returns:
         A ``TfsDataFrame`` object with the loaded data from the file.
+
+    Examples:
+        Reading from a file is simple, as most arguments have sane default values.
+        The simplest usage goes as follows:
+
+        .. code-block:: python
+
+            >>> tfs.read("filename.tfs")
+
+        One can also pass a `~pathlib.Path` object to the function:
+
+        .. code-block:: python
+
+            >>> tfs.read(pathlib.Path("filename.tfs"))
+
+        If one wants to set a specific column as index, this is done as:
+
+        .. code-block:: python
+
+            >>> tfs.read("filename.tfs", index="COLUMN_NAME")
+
+        If one wants to, for instance, raise and error on non-unique indices or columns,
+        one can do so as:
+
+        .. code-block:: python
+
+            >>> tfs.read("filename.tfs", non_unique_behavior="raise")
+        
+        One can choose to skip dataframe validation **at one's own risk** after reading
+        from file. This is done as:
+
+        .. code-block:: python
+
+            >>> tfs.read("filename.tfs", validate_before_writing=False)
     """
     tfs_file_path = pathlib.Path(tfs_file_path)
     headers = OrderedDict()
