@@ -6,8 +6,8 @@ from pandas.testing import assert_frame_equal
 
 import tfs
 from tfs import read_tfs, write_tfs
-from tfs.errors import TfsFormatError
 from tfs.constants import HEADER
+from tfs.errors import TfsFormatError
 
 CURRENT_DIR = pathlib.Path(__file__).parent
 
@@ -34,6 +34,19 @@ class TestRead:
         assert len(test_file.index) > 0
         assert len(str(test_file)) > 0
         assert isinstance(test_file.index[0], str)
+
+    def test_tfs_read_no_validation(self, _tfs_file_pathlib: pathlib.Path):
+        test_file = read_tfs(_tfs_file_pathlib, index="NAME", validate_after_reading=False)
+        assert len(test_file.headers) > 0
+        assert len(test_file.columns) > 0
+        assert len(test_file.index) > 0
+        assert len(str(test_file)) > 0
+        assert isinstance(test_file.index[0], str)
+
+    def test_tfs_read_no_validation_doesnt_warn(self, caplog):
+        nan_tfs_path = pathlib.Path(__file__).parent / "inputs" / "has_nans.tfs"
+        _ = read_tfs(nan_tfs_path, index="NAME", validate_after_reading=False)
+        assert "contains non-physical values at Index:" not in caplog.text
 
     def tfs_indx_pathlib_input(self, _tfs_file_pathlib: pathlib.Path):
         test_file = read_tfs(_tfs_file_pathlib)
