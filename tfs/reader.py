@@ -1,6 +1,6 @@
 """
 Reader
--------------------
+------
 
 Reading functionalty for **TFS** files.
 """

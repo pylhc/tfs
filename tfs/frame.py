@@ -1,6 +1,6 @@
 """
 Frame
--------------------
+-----
 
 Contains the class definition of a ``TfsDataFrame``, inherited from the ``pandas`` ``DataFrame``, as well
 as a utility function to validate the correctness of a ``TfsDataFrame``.

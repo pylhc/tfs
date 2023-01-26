@@ -1,6 +1,6 @@
 """
 Collection
-----------------------
+----------
 
 Advanced **TFS** files reading and writing functionality.
 """

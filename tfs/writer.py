@@ -1,6 +1,6 @@
 """
 Writer
--------------------
+------
 
 Writing functionalty for **TFS** files.
 """
