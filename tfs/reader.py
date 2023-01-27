@@ -29,17 +29,18 @@ def read_tfs(
     """
     Parses the **TFS** table present in **tfs_file_path** and returns a ``TfsDataFrame``.
 
-    Methodology: This function parses the first lines of the file until it gets to the `types` line.
-    While parsed, the appropriate information is gathered (headers content, column names & types,
-    number of lines parsed). After reaching the `types` line, the rest of the file is given to parse
-    to ``pandas.read_csv`` with the right options to make use of its C engine's speed. After this,
-    conversion to ``TfsDataDrame`` is made, proper types are applied to columns, the index is set and
-    the frame is validated before being returned.
-
     .. warning::
         Through the *validate_after_reading* argument, one can skip dataframe validation after loading
         it from a file. While this is **not recommended**, the option is left for the user as validation
         can be lengthy for large `TfsDataFrames` (such as for instance a sliced FCC lattice).
+    
+    .. hint::
+        **Methodology**: This function parses the first lines of the file until it gets to the `types` line.
+        While parsed, the appropriate information is gathered (headers content, column names & types,
+        number of lines parsed). After reaching the `types` line, the rest of the file is given to parse
+        to ``pandas.read_csv`` with the right options to make use of its C engine's speed. After this,
+        conversion to ``TfsDataDrame`` is made, proper types are applied to columns, the index is set and
+        the frame is validated before being returned.
 
     Args:
         tfs_file_path (Union[pathlib.Path, str]): Path object to the **TFS** file to read. Can be
