@@ -35,8 +35,9 @@ def write_tfs(
 
     .. warning::
         Through the *validate_before_writing* argument, one can skip dataframe validation before writing
-        it to file. While this is **not recommended**, the option is left for the user as validation can
-        be lengthy for large `TfsDataFrames` (such as for instance a sliced FCC lattice).
+        it to file. While this can speed-up the execution time of this function , it is **not recommended**.
+        The option, however, is left for the user to use at their own risk should they wish to avoid lengthy
+        validation of large `TfsDataFrames` (such as for instance a sliced FCC lattice).
 
     Args:
         tfs_file_path (Union[pathlib.Path, str]): Path object to the output **TFS** file. Can be
