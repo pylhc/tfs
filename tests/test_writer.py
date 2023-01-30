@@ -106,7 +106,7 @@ class TestWrites:
         write_tfs(write_location, _tfs_dataframe, validate_before_writing=False)
         assert write_location.is_file()
 
-        new = read_tfs(write_location, validate_after_reading=False)
+        new = read_tfs(write_location, validate=False)
         assert_frame_equal(_tfs_dataframe, new, check_exact=False)  # float precision can be an issue
         assert_dict_equal(_tfs_dataframe.headers, new.headers, compare_keys=True)
 

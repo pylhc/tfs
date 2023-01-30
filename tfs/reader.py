@@ -25,7 +25,7 @@ def read_tfs(
     tfs_file_path: Union[pathlib.Path, str],
     index: str = None,
     non_unique_behavior: str = "warn",
-    validate_after_reading: bool = False,
+    validate: bool = False,
 ) -> TfsDataFrame:
     """
     Parses the **TFS** table present in **tfs_file_path** and returns a ``TfsDataFrame``.
@@ -52,8 +52,7 @@ def read_tfs(
         non_unique_behavior (str): behavior to adopt if non-unique indices or columns are found in the
             dataframe. Accepts `warn` and `raise` as values, case-insensitively, which dictates
             to respectively issue a warning or raise an error if non-unique elements are found.
-        validate_after_reading (bool): Whether to validate the dataframe after reading it.
-            Defaults to ``False``.
+        validate (bool): Whether to validate the dataframe after reading it. Defaults to ``False``.
 
     Returns:
         A ``TfsDataFrame`` object with the loaded data from the file.
@@ -147,7 +146,7 @@ def read_tfs(
         LOGGER.debug("Attempting to find index identifier in columns")
         tfs_data_frame = _find_and_set_index(tfs_data_frame)
 
-    if validate_after_reading:
+    if validate:
         validate_frame(tfs_data_frame, f"from file {tfs_file_path.absolute()}", non_unique_behavior)
     
     return tfs_data_frame

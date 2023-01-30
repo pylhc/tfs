@@ -36,7 +36,7 @@ class TestRead:
         assert isinstance(test_file.index[0], str)
 
     def test_tfs_read_no_validation(self, _tfs_file_pathlib: pathlib.Path):
-        test_file = read_tfs(_tfs_file_pathlib, index="NAME", validate_after_reading=False)
+        test_file = read_tfs(_tfs_file_pathlib, index="NAME", validate=False)
         assert len(test_file.headers) > 0
         assert len(test_file.columns) > 0
         assert len(test_file.index) > 0
@@ -46,13 +46,13 @@ class TestRead:
     def test_tfs_read_wrong_file_no_validation(self, _space_in_colnames_tfs_path: pathlib.Path):
         # Read file has a space in a column name which should raise, we make sure that it 
         # goes through when explicitely skipping validation
-        df = read_tfs(_space_in_colnames_tfs_path, index="NAME", validate_after_reading=False)
+        df = read_tfs(_space_in_colnames_tfs_path, index="NAME", validate=False)
         assert "BPM RES" in df.columns
 
 
     def test_tfs_read_no_validation_doesnt_warn(self, caplog):
         nan_tfs_path = pathlib.Path(__file__).parent / "inputs" / "has_nans.tfs"
-        _ = read_tfs(nan_tfs_path, index="NAME", validate_after_reading=False)
+        _ = read_tfs(nan_tfs_path, index="NAME", validate=False)
         assert "contains non-physical values at Index:" not in caplog.text
 
     def tfs_indx_pathlib_input(self, _tfs_file_pathlib: pathlib.Path):
@@ -127,13 +127,13 @@ class TestFailures:
     def test_fail_space_in_colname(self, _space_in_colnames_tfs_path: pathlib.Path):
         # Read file has a space in a column name which should raise
         with pytest.raises(TfsFormatError):
-            read_tfs(_space_in_colnames_tfs_path, index="NAME", validate_after_reading=True)
+            read_tfs(_space_in_colnames_tfs_path, index="NAME", validate=True)
 
 
 class TestWarnings:
     def test_warn_unphysical_values(self, caplog):
         nan_tfs_path = pathlib.Path(__file__).parent / "inputs" / "has_nans.tfs"
-        _ = read_tfs(nan_tfs_path, index="NAME", validate_after_reading=True)
+        _ = read_tfs(nan_tfs_path, index="NAME", validate=True)
         for record in caplog.records:
             assert record.levelname == "WARNING"
         assert "contains non-physical values at Index:" in caplog.text
