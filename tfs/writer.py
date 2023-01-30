@@ -118,13 +118,11 @@ def _autoset_pandas_types(data_frame: Union[TfsDataFrame, pd.DataFrame]) -> Unio
     dataframe. Otherwise, raise the exception given by ``pandas``.
 
     NOTE: Starting with pandas 1.3.0, this behavior which was a bug has been fixed. This means no
-    ``ValueError`` is raised by calling ``.convert_dtypes()`` on an empty ``DataFrame``, and from this
-    function a warning is logged. Testing of this behavior is disabled for Python 3.7+ workers, but the
-    function is kept as to not force a new min version requirement on ``pandas`` or Python for users.
+    ``ValueError`` is raised by calling ``.convert_dtypes()`` on an empty ``DataFrame``, and from
+    this function a warning is logged. The function is kept as to not force a new min version
+    requirement on ``pandas`` or Python for users. When one day we make ``pandas >= 1.3.0`` the
+    minimum requirement, we can remove the checks altogether and just call ``.convert_dtypes()``.
     See my comment at https://github.com/pylhc/tfs/pull/83#issuecomment-874208869
-
-    TODO: remove the aforementioned check when we make Python 3.7 the minimum version for tfs-pandas,
-        aka when Python 3.6 reaches EOL (end of 2021).
 
     Args:
         data_frame (Union[TfsDataFrame, pd.DataFrame]): ``TfsDataFrame`` or ``pandas.DataFrame`` to
