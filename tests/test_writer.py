@@ -103,7 +103,7 @@ class TestWrites:
 
     def test_tfs_write_read_no_validate(self, _tfs_dataframe, tmp_path):
         write_location = tmp_path / "test.tfs"
-        write_tfs(write_location, _tfs_dataframe, validate_before_writing=False)
+        write_tfs(write_location, _tfs_dataframe, validate=False)
         assert write_location.is_file()
 
         new = read_tfs(write_location, validate=False)
@@ -152,13 +152,13 @@ class TestWrites:
 
     def test_no_warning_on_non_unique_columns_if_no_validate(self, tmp_path, caplog):
         df = TfsDataFrame(columns=["A", "B", "A"])
-        write_tfs(tmp_path / "temporary.tfs", df, validate_before_writing=False)
+        write_tfs(tmp_path / "temporary.tfs", df, validate=False)
         assert "Non-unique column names found" not in caplog.text
 
     def test_no_validation_non_unique_columns(self, tmp_path, caplog):
         # Making sure this goes through if we skip validation
         df = TfsDataFrame(columns=["A", "B", "A"])
-        write_tfs(tmp_path / "temporary.tfs", df, validate_before_writing=False)
+        write_tfs(tmp_path / "temporary.tfs", df, validate=False)
         assert (tmp_path / "temporary.tfs").is_file()
 
 class TestFailures:

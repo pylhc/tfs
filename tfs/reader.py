@@ -89,7 +89,7 @@ def read_tfs(
 
         .. code-block:: python
 
-            >>> tfs.read("filename.tfs", validate_before_writing=False)
+            >>> tfs.read("filename.tfs", validate=False)
     """
     tfs_file_path = pathlib.Path(tfs_file_path)
     headers = OrderedDict()
