@@ -1,5 +1,10 @@
 # TFS-Pandas Changelog
 
+## Version 3.3.1
+
+- Changed:
+    - Column types are now assigned at read time instead of later on, which should improve performance for large data frames.
+
 ## Version 3.3.0
 
 - Added:
