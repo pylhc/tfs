@@ -43,6 +43,13 @@ class TestRead:
         assert len(str(test_file)) > 0
         assert isinstance(test_file.index[0], str)
 
+    def test_tfs_read_wrong_file_no_validation(self, _space_in_colnames_tfs_path: pathlib.Path):
+        # Read file has a space in a column name which should raise, we make sure that it 
+        # goes through when explicitely skipping validation
+        df = read_tfs(_space_in_colnames_tfs_path, index="NAME", validate_after_reading=False)
+        assert "BPM RES" in df.columns
+
+
     def test_tfs_read_no_validation_doesnt_warn(self, caplog):
         nan_tfs_path = pathlib.Path(__file__).parent / "inputs" / "has_nans.tfs"
         _ = read_tfs(nan_tfs_path, index="NAME", validate_after_reading=False)
@@ -117,6 +124,12 @@ class TestFailures:
         with pytest.raises(TfsFormatError):
             _ = tfs.reader._id_to_type(typoed_str_id)
 
+    def test_fail_space_in_colname(self, _space_in_colnames_tfs_path: pathlib.Path):
+        # Read file has a space in a column name which should raise
+        with pytest.raises(TfsFormatError):
+            read_tfs(_space_in_colnames_tfs_path, index="NAME")
+
+
 class TestWarnings:
     def test_warn_unphysical_values(self, caplog):
         nan_tfs_path = pathlib.Path(__file__).parent / "inputs" / "has_nans.tfs"
@@ -147,6 +160,11 @@ def _no_coltypes_tfs_path() -> pathlib.Path:
 @pytest.fixture()
 def _no_colnames_tfs_path() -> pathlib.Path:
     return pathlib.Path(__file__).parent / "inputs" / "no_colnames.tfs"
+
+
+@pytest.fixture()
+def _space_in_colnames_tfs_path() -> pathlib.Path:
+    return pathlib.Path(__file__).parent / "inputs" / "space_in_colname.tfs"
 
 
 @pytest.fixture()
