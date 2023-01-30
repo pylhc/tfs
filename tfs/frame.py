@@ -304,6 +304,18 @@ def validate(
     Check if a data frame contains finite values only, strings as column names and no empty headers
     or column names.
 
+    .. admonition:: **Methodology**
+
+        This function performs several different checks on the provided dataframe:
+         1. Checking no single element is a `list` or `tuple`, which is done with a 
+            custom vectorized function applied column-by-column on the dataframe.
+         2. Checking for non-physical values in the dataframe, which is done by
+            applying the ``isna`` function with the right option context.
+         3. Checking for duplicates in either indices or columns.
+         4. Checking for column names that are not strings.
+         5. Checking for column names including spaces.
+
+
     Args:
         data_frame (Union[TfsDataFrame, pd.DataFrame]): the dataframe to check on.
         info_str (str): additional information to include in logging statements.
