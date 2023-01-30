@@ -328,7 +328,7 @@ def validate(
 
     # ----- Check that no element is a list / tuple in the dataframe ----- #
     def _element_is_list(element):
-        return isinstance(element, list) or isinstance(element, tuple)
+        return isinstance(element, (list, tuple))
     _element_is_list = np.vectorize(_element_is_list)
 
     lists_bool_df = data_frame.apply(_element_is_list)
