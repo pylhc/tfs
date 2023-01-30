@@ -37,10 +37,11 @@
           "TFS-Pandas Modules",
           "Example",
           "Methodology",
+          "Methodology",
           "Examples"
         ]
       },
-      "doc_lineno": 38
+      "doc_lineno": 40
     },
     {
       "source": ">>> tfs.read(pathlib.Path(\"filename.tfs\"))",
@@ -52,10 +53,11 @@
           "TFS-Pandas Modules",
           "Example",
           "Methodology",
+          "Methodology",
           "Examples"
         ]
       },
-      "doc_lineno": 44
+      "doc_lineno": 46
     },
     {
       "source": ">>> tfs.read(\"filename.tfs\", index=\"COLUMN_NAME\")",
@@ -67,10 +69,11 @@
           "TFS-Pandas Modules",
           "Example",
           "Methodology",
+          "Methodology",
           "Examples"
         ]
       },
-      "doc_lineno": 50
+      "doc_lineno": 52
     },
     {
       "source": ">>> tfs.read(\"filename.tfs\", non_unique_behavior=\"raise\")",
@@ -82,10 +85,11 @@
           "TFS-Pandas Modules",
           "Example",
           "Methodology",
+          "Methodology",
           "Examples"
         ]
       },
-      "doc_lineno": 57
+      "doc_lineno": 59
     },
     {
       "source": ">>> tfs.read(\"filename.tfs\", validate=False)",
@@ -97,10 +101,11 @@
           "TFS-Pandas Modules",
           "Example",
           "Methodology",
+          "Methodology",
           "Examples"
         ]
       },
-      "doc_lineno": 64
+      "doc_lineno": 66
     },
     {
       "source": ">>> tfs.write(\"filename.tfs\", dataframe)",
@@ -111,6 +116,7 @@
         "headings": [
           "TFS-Pandas Modules",
           "Example",
+          "Methodology",
           "Methodology",
           "Examples",
           "Examples"
@@ -128,6 +134,7 @@
           "TFS-Pandas Modules",
           "Example",
           "Methodology",
+          "Methodology",
           "Examples",
           "Examples"
         ]
@@ -143,6 +150,7 @@
         "headings": [
           "TFS-Pandas Modules",
           "Example",
+          "Methodology",
           "Methodology",
           "Examples",
           "Examples"

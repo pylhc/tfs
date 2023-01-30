@@ -125,16 +125,18 @@
     <span class="n">tfs_file_path</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span>
     <span class="n">index</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">non_unique_behavior</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;warn&quot;</span><span class="p">,</span>
-    <span class="n">validate</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">validate</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TfsDataFrame</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Parses the **TFS** table present in **tfs_file_path** and returns a ``TfsDataFrame``.</span>
 
 <span class="sd">    .. warning::</span>
 <span class="sd">        Through the *validate* argument, one can skip dataframe validation after</span>
-<span class="sd">        loading it from a file. This is the default behavior of this function.</span>
-<span class="sd">        The option, however, is left for the user to perform validation should</span>
-<span class="sd">        they not trust the file they are reading.</span>
+<span class="sd">        loading it from a file. While this can speed-up the execution time of this</span>
+<span class="sd">        function, it is **not recommended** and is not the default behavior of this</span>
+<span class="sd">        function. The option, however, is left for the user to use at their own risk</span>
+<span class="sd">        should they wish to avoid lengthy validation of large `TfsDataFrames` (such</span>
+<span class="sd">        as for instance a sliced FCC lattice).</span>
 
 <span class="sd">    .. admonition:: **Methodology**</span>
 
