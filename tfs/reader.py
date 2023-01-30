@@ -36,8 +36,9 @@ def read_tfs(
         The option, however, is left for the user to perform validation should
         they not trust the file they are reading.
 
-    .. hint::
-        **Methodology**: This function parses the first lines of the file until it gets to the `types` line.
+    .. admonition:: **Methodology**
+
+        This function parses the first lines of the file until it gets to the `types` line.
         While parsed, the appropriate information is gathered (headers content, column names & types,
         number of lines parsed). After reaching the `types` line, the rest of the file is given to parse
         to ``pandas.read_csv`` with the right options to make use of its C engine's speed. After this,
