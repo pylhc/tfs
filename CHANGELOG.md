@@ -3,9 +3,10 @@
 ## Version 3.3.0
 
 - Added:
-    - The option is now given to the user to skip DataFrame validation after reading from file / before writing to file. Validation is left "on" by default, but can be turned off with a boolean argument.
+    - The option is now given to the user to skip data frame validation after reading from file / before writing to file. Validation is left "on" by default, but can be turned off with a boolean argument.
 
 - Changes:
+    - The `tfs.frame.validate` function has seen its internal logic reworked to be more efficient and users performing validation on large data frames should notice a significant performance improvement.
     - The documentation has been expanded and improved, with notably the addition of example code snippets.
 
 ## Version 3.2.1
