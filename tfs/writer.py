@@ -1,6 +1,6 @@
 """
 Writer
--------------------
+------
 
 Writing functionalty for **TFS** files.
 """
@@ -14,7 +14,8 @@ import pandas as pd
 from pandas.api import types as pdtypes
 
 from tfs.constants import DEFAULT_COLUMN_WIDTH, INDEX_ID, MIN_COLUMN_WIDTH
-from tfs.frame import TfsDataFrame, validate
+from tfs.frame import TfsDataFrame
+from tfs.frame import validate as validate_frame
 
 LOGGER = logging.getLogger(__name__)
 
@@ -27,10 +28,18 @@ def write_tfs(
     colwidth: int = DEFAULT_COLUMN_WIDTH,
     headerswidth: int = DEFAULT_COLUMN_WIDTH,
     non_unique_behavior: str = "warn",
+    validate: bool = True,
 ) -> None:
     """
     Writes the provided ``DataFrame`` to disk at **tfs_file_path**, eventually with the `headers_dict` as
     headers dictionary.
+
+    .. warning::
+        Through the *validate* argument, one can skip dataframe validation before writing it to file.
+        While this can speed-up the execution time of this function , it is **not recommended** and
+        is not the default behavior of this function. The option, however, is left for the user to
+        use at their own risk should they wish to avoid lengthy validation of large `TfsDataFrames`
+        (such as for instance a sliced FCC lattice).
 
     Args:
         tfs_file_path (Union[pathlib.Path, str]): Path object to the output **TFS** file. Can be
@@ -47,10 +56,35 @@ def write_tfs(
         non_unique_behavior (str): behavior to adopt if non-unique indices or columns are found in the
             dataframe. Accepts `warn` and `raise` as values, case-insensitively, which dictates
             to respectively issue a warning or raise an error if non-unique elements are found.
+        validate (bool): Whether to validate the dataframe before writing it to file. Defaults to ``True``.
+
+    Examples:
+        Writing to file is simple, as most arguments have sane default values.
+        The simplest usage goes as follows:
+
+        .. code-block:: python
+
+            >>> tfs.write("filename.tfs", dataframe)
+        
+        If one wants to, for instance, raise and error on non-unique indices or columns,
+        one can do so as:
+
+        .. code-block:: python
+
+            >>> tfs.write("filename.tfs", dataframe, non_unique_behavior="raise")
+        
+        One can choose to skip dataframe validation **at one's own risk** before writing
+        it to file. This is done as:
+
+        .. code-block:: python
+
+            >>> tfs.write("filename.tfs", dataframe, validate=False)
     """
     left_align_first_column = False
     tfs_file_path = pathlib.Path(tfs_file_path)
-    validate(data_frame, f"to be written in {tfs_file_path.absolute()}", non_unique_behavior)
+    
+    if validate:
+        validate_frame(data_frame, f"to be written in {tfs_file_path.absolute()}", non_unique_behavior)
 
     if headers_dict is None:  # tries to get headers from TfsDataFrame
         try:
@@ -85,13 +119,11 @@ def _autoset_pandas_types(data_frame: Union[TfsDataFrame, pd.DataFrame]) -> Unio
     dataframe. Otherwise, raise the exception given by ``pandas``.
 
     NOTE: Starting with pandas 1.3.0, this behavior which was a bug has been fixed. This means no
-    ``ValueError`` is raised by calling ``.convert_dtypes()`` on an empty ``DataFrame``, and from this
-    function a warning is logged. Testing of this behavior is disabled for Python 3.7+ workers, but the
-    function is kept as to not force a new min version requirement on ``pandas`` or Python for users.
+    ``ValueError`` is raised by calling ``.convert_dtypes()`` on an empty ``DataFrame``, and from
+    this function a warning is logged. The function is kept as to not force a new min version
+    requirement on ``pandas`` or Python for users. When one day we make ``pandas >= 1.3.0`` the
+    minimum requirement, we can remove the checks altogether and just call ``.convert_dtypes()``.
     See my comment at https://github.com/pylhc/tfs/pull/83#issuecomment-874208869
-
-    TODO: remove the aforementioned check when we make Python 3.7 the minimum version for tfs-pandas,
-        aka when Python 3.6 reaches EOL (end of 2021).
 
     Args:
         data_frame (Union[TfsDataFrame, pd.DataFrame]): ``TfsDataFrame`` or ``pandas.DataFrame`` to

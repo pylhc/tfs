@@ -4,10 +4,11 @@ HDF5 I/O
 
 Additional tools for reading and writing ``TfsDataFrames`` into ``hdf5`` files.
 """
-import pandas as pd
 from pathlib import Path
-
 from typing import Union
+
+import pandas as pd
+
 from tfs import TfsDataFrame
 
 try:
@@ -25,10 +26,10 @@ import logging
 LOGGER = logging.getLogger(__name__)
 
 
-def write_hdf(path: Union[Path, str], df: TfsDataFrame, **kwargs):
+def write_hdf(path: Union[Path, str], df: TfsDataFrame, **kwargs) -> None:
     """Write TfsDataFrame to hdf5 file. The dataframe will be written into
     the group ``data``, the headers into the group ``headers``.
-    Only one frame per file is allowed.
+    Only one dataframe per file is allowed.
 
     Args:
         path (Path, str): Path of the output file.
@@ -68,6 +69,9 @@ def read_hdf(path: Union[Path, str]) -> TfsDataFrame:
 
     Args:
         path (Path, str): Path of the file to read.
+    
+    Returns:
+        A ``TfsDataFrame`` object with the loaded data from the file.
     """
     _check_imports()
     df = pd.read_hdf(path, key="data")
@@ -84,6 +88,7 @@ def read_hdf(path: Union[Path, str]) -> TfsDataFrame:
 
 
 def _check_imports():
+    """Checks if required packages for HDF5 functionality are installed. Raises ImportError if not."""
     not_imported = [name for name, package in (('tables', tables), ('h5py', h5py)) if package is None]
     if len(not_imported):
         names = ", ".join(f"`{name}`" for name in not_imported)

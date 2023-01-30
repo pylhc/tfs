@@ -1,6 +1,6 @@
 """
 Errors
--------------------
+------
 
 Errors that can be raised during the handling of **TFS** files.
 """

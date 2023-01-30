@@ -1,6 +1,6 @@
 """
 Reader
--------------------
+------
 
 Reading functionalty for **TFS** files.
 """
@@ -15,23 +15,35 @@ import pandas as pd
 
 from tfs.constants import COMMENTS, HEADER, ID_TO_TYPE, INDEX_ID, NAMES, TYPES
 from tfs.errors import TfsFormatError
-from tfs.frame import TfsDataFrame, validate
+from tfs.frame import TfsDataFrame
+from tfs.frame import validate as validate_frame
 
 LOGGER = logging.getLogger(__name__)
 
 
 def read_tfs(
-    tfs_file_path: Union[pathlib.Path, str], index: str = None, non_unique_behavior: str = "warn"
+    tfs_file_path: Union[pathlib.Path, str],
+    index: str = None,
+    non_unique_behavior: str = "warn",
+    validate: bool = False,
 ) -> TfsDataFrame:
     """
     Parses the **TFS** table present in **tfs_file_path** and returns a ``TfsDataFrame``.
 
-    Methodology: This function parses the first lines of the file until it gets to the `types` line.
-    While parsed, the appropriate information is gathered (headers content, column names & types,
-    number of lines parsed). After reaching the `types` line, the rest of the file is given to parse
-    to ``pandas.read_csv`` with the right options to make use of its C engine's speed. After this,
-    conversion to ``TfsDataDrame`` is made, proper types are applied to columns, the index is set and
-    the frame is validated before being returned.
+    .. warning::
+        Through the *validate* argument, one can skip dataframe validation after
+        loading it from a file. This is the default behavior of this function.
+        The option, however, is left for the user to perform validation should
+        they not trust the file they are reading.
+
+    .. admonition:: **Methodology**
+
+        This function parses the first lines of the file until it gets to the `types` line.
+        While parsed, the appropriate information is gathered (headers content, column names & types,
+        number of lines parsed). After reaching the `types` line, the rest of the file is given to parse
+        to ``pandas.read_csv`` with the right options to make use of its C engine's speed. After this,
+        conversion to ``TfsDataDrame`` is made, proper types are applied to columns, the index is set and
+        the frame is validated before being returned.
 
     Args:
         tfs_file_path (Union[pathlib.Path, str]): Path object to the **TFS** file to read. Can be
@@ -41,9 +53,44 @@ def read_tfs(
         non_unique_behavior (str): behavior to adopt if non-unique indices or columns are found in the
             dataframe. Accepts `warn` and `raise` as values, case-insensitively, which dictates
             to respectively issue a warning or raise an error if non-unique elements are found.
+        validate (bool): Whether to validate the dataframe after reading it. Defaults to ``False``.
 
     Returns:
         A ``TfsDataFrame`` object with the loaded data from the file.
+
+    Examples:
+        Reading from a file is simple, as most arguments have sane default values.
+        The simplest usage goes as follows:
+
+        .. code-block:: python
+
+            >>> tfs.read("filename.tfs")
+
+        One can also pass a `~pathlib.Path` object to the function:
+
+        .. code-block:: python
+
+            >>> tfs.read(pathlib.Path("filename.tfs"))
+
+        If one wants to set a specific column as index, this is done as:
+
+        .. code-block:: python
+
+            >>> tfs.read("filename.tfs", index="COLUMN_NAME")
+
+        If one wants to, for instance, raise and error on non-unique indices or columns,
+        one can do so as:
+
+        .. code-block:: python
+
+            >>> tfs.read("filename.tfs", non_unique_behavior="raise")
+        
+        One can choose to skip dataframe validation **at one's own risk** after reading
+        from file. This is done as:
+
+        .. code-block:: python
+
+            >>> tfs.read("filename.tfs", validate=False)
     """
     tfs_file_path = pathlib.Path(tfs_file_path)
     headers = OrderedDict()
@@ -100,7 +147,9 @@ def read_tfs(
         LOGGER.debug("Attempting to find index identifier in columns")
         tfs_data_frame = _find_and_set_index(tfs_data_frame)
 
-    validate(tfs_data_frame, f"from file {tfs_file_path.absolute()}", non_unique_behavior)
+    if validate:
+        validate_frame(tfs_data_frame, f"from file {tfs_file_path.absolute()}", non_unique_behavior)
+    
     return tfs_data_frame
 
 

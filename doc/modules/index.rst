@@ -1,5 +1,5 @@
 TFS-Pandas Modules
-**************************
+==================
 
 .. automodule:: tfs.collection
     :members:
@@ -31,4 +31,3 @@ TFS-Pandas Modules
 
 .. automodule:: tfs.writer
     :members:
-

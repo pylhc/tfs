@@ -37,7 +37,7 @@ DEPENDENCIES = [
 EXTRA_DEPENDENCIES = {
     "test": ["pytest>=5.2", "pytest-cov>=2.9", "cpymad>=1.8.1"],
     "hdf5": ["h5py>=2.9.0", "tables>=3.6.0"],
-    "doc": ["sphinx", "sphinx_rtd_theme"],
+    "doc": ["sphinx", "sphinx_rtd_theme", "sphinx_copybutton", "sphinx-prompt", "sphinx_codeautolink"],
 }
 EXTRA_DEPENDENCIES.update({"all": [elem for list_ in EXTRA_DEPENDENCIES.values() for elem in list_]})
 EXTRA_DEPENDENCIES["test"] += EXTRA_DEPENDENCIES["hdf5"]
@@ -66,6 +66,7 @@ setuptools.setup(
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
+        "Programming Language :: Python :: 3.11",
         "Topic :: Scientific/Engineering",
         "Topic :: Software Development :: Libraries :: Python Modules",
         "Typing :: Typed",

@@ -1,6 +1,6 @@
 """
 Constants
--------------------
+---------
 
 General constants used throughout ``tfs-pandas``, relating to the standard of **TFS** files.
 """

@@ -1,5 +1,13 @@
 # TFS-Pandas Changelog
 
+## Version 3.3.0
+
+- Added:
+    - The option is now given to the user to skip DataFrame validation after reading from file / before writing to file. Validation is left "on" by default, but can be turned off with a boolean argument.
+
+- Changes:
+    - The documentation has been expanded and improved, with notably the addition of example code snippets.
+
 ## Version 3.2.1
 
 - Changed:
