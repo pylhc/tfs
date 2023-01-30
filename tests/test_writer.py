@@ -211,7 +211,7 @@ class TestFailures:
 
     def test_messed_up_dataframe_fails_writes(self, _messed_up_dataframe: TfsDataFrame):
         messed_tfs = _messed_up_dataframe
-        with pytest.raises(ValueError):
+        with pytest.raises(TfsFormatError):  # raises in validate because of list elements
             write_tfs("", messed_tfs)
 
     def test_dict_column_dataframe_fails_writes(self, _dict_column_in_dataframe: TfsDataFrame, tmp_path):
@@ -227,7 +227,7 @@ class TestFailures:
     def test_list_column_dataframe_fails_writes(self, _list_column_in_dataframe: TfsDataFrame, tmp_path, caplog):
         list_col_tfs = _list_column_in_dataframe
         write_location = tmp_path / "test.tfs"
-        with pytest.raises(ValueError):  # we look for these and raise in validate
+        with pytest.raises(TfsFormatError):  # we look for these and raise in validate
             write_tfs(write_location, list_col_tfs)
 
         for record in caplog.records:
