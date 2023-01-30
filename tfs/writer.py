@@ -35,10 +35,11 @@ def write_tfs(
     headers dictionary.
 
     .. warning::
-        Through the *validate* argument, one can skip dataframe validation before writing
-        it to file. While this can speed-up the execution time of this function , it is **not recommended**.
-        The option, however, is left for the user to use at their own risk should they wish to avoid lengthy
-        validation of large `TfsDataFrames` (such as for instance a sliced FCC lattice).
+        Through the *validate* argument, one can skip dataframe validation before writing it to file.
+        While this can speed-up the execution time of this function , it is **not recommended** and
+        is not the default behavior of this function. The option, however, is left for the user to
+        use at their own risk should they wish to avoid lengthy validation of large `TfsDataFrames`
+        (such as for instance a sliced FCC lattice).
 
     Args:
         tfs_file_path (Union[pathlib.Path, str]): Path object to the output **TFS** file. Can be
@@ -55,8 +56,7 @@ def write_tfs(
         non_unique_behavior (str): behavior to adopt if non-unique indices or columns are found in the
             dataframe. Accepts `warn` and `raise` as values, case-insensitively, which dictates
             to respectively issue a warning or raise an error if non-unique elements are found.
-        validate (bool): Whether to validate the dataframe before writing it to file.
-            Defaults to ``True``.
+        validate (bool): Whether to validate the dataframe before writing it to file. Defaults to ``True``.
 
     Examples:
         Writing to file is simple, as most arguments have sane default values.
