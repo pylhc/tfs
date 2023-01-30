@@ -224,13 +224,17 @@ class TestFailures:
         write_tfs(write_location, dict_col_tfs)
         assert write_location.is_file()
 
-    def test_list_column_dataframe_fails_writes(self, _list_column_in_dataframe: TfsDataFrame, tmp_path):
+    def test_list_column_dataframe_fails_writes(self, _list_column_in_dataframe: TfsDataFrame, tmp_path, caplog):
         list_col_tfs = _list_column_in_dataframe
-        with pytest.raises(ValueError):  # truth value of nested can't be assesed in _validate
-            write_tfs("", list_col_tfs)
+        write_location = tmp_path / "test.tfs"
+        with pytest.raises(TypeError):  # truth value of nested can't be assesed in _validate
+            write_tfs(write_location, list_col_tfs)
+
+        for record in caplog.records:
+            assert record.levelname == "WARNING"
+        assert "contains list/tuple values" in caplog.text
 
         del list_col_tfs["d"]  # should work without the column of lists
-        write_location = tmp_path / "test.tfs"
         write_tfs(write_location, list_col_tfs)
         assert write_location.is_file()
 
