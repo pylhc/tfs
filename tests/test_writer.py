@@ -245,20 +245,6 @@ class TestFailures:
 
 
 class TestWarnings:
-    # @pytest.mark.skipif(
-    #     sys.version_info >= (3, 7),
-    #     reason="Our workers on 3.7+ install pandas >= 1.3.0  which has fixed the .convert_dtypes() bug "
-    #     "we try...except in _autoset_pandas_types and test here",
-    # )
-    # def test_empty_df_warns_on_types_inference(self, caplog):
-    #     empty_df = pandas.DataFrame()
-    #     converted_df = tfs.writer._autoset_pandas_types(empty_df)
-    #     assert_frame_equal(converted_df, empty_df)
-
-    #     for record in caplog.records:
-    #         assert record.levelname == "WARNING"
-    #     assert "An empty dataframe was provided, no types were inferred" in caplog.text
-
     def test_warning_on_non_unique_columns(self, tmp_path, caplog):
         df = TfsDataFrame(columns=["A", "B", "A"])
         write_tfs(tmp_path / "temporary.tfs", df)
