@@ -331,22 +331,22 @@ def validate(
         return isinstance(element, (list, tuple))
     _element_is_list = np.vectorize(_element_is_list)
 
-    lists_bool_df = data_frame.apply(_element_is_list)
-    if lists_bool_df.to_numpy().any():
+    list_or_tuple_bool_df = data_frame.apply(_element_is_list)
+    if list_or_tuple_bool_df.to_numpy().any():
         LOGGER.error(
             f"DataFrame {info_str} contains list/tuple values at Index: "
-            f"{lists_bool_df.index[lists_bool_df.any(axis='columns')].tolist()}"
+            f"{list_or_tuple_bool_df.index[list_or_tuple_bool_df.any(axis='columns')].tolist()}"
         )
         raise ValueError("Lists or tuple elements are not accepted in a TfsDataFrame")
 
     # -----  Check that no element is non-physical value in the dataframe ----- #
     with pd.option_context('mode.use_inf_as_na', True):
-        boolean_df = data_frame.isna()
+        inf_or_nan_bool_df = data_frame.isna()
 
-    if boolean_df.to_numpy().any():
+    if inf_or_nan_bool_df.to_numpy().any():
         LOGGER.warning(
             f"DataFrame {info_str} contains non-physical values at Index: "
-            f"{boolean_df.index[boolean_df.any(axis='columns')].tolist()}"
+            f"{inf_or_nan_bool_df.index[inf_or_nan_bool_df.any(axis='columns')].tolist()}"
         )
 
     # Other sanity checks
