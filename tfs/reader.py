@@ -25,16 +25,18 @@ def read_tfs(
     tfs_file_path: Union[pathlib.Path, str],
     index: str = None,
     non_unique_behavior: str = "warn",
-    validate: bool = False,
+    validate: bool = True,
 ) -> TfsDataFrame:
     """
     Parses the **TFS** table present in **tfs_file_path** and returns a ``TfsDataFrame``.
 
     .. warning::
         Through the *validate* argument, one can skip dataframe validation after
-        loading it from a file. This is the default behavior of this function.
-        The option, however, is left for the user to perform validation should
-        they not trust the file they are reading.
+        loading it from a file. While this can speed-up the execution time of this
+        function, it is **not recommended** and is not the default behavior of this
+        function. The option, however, is left for the user to use at their own risk
+        should they wish to avoid lengthy validation of large `TfsDataFrames` (such
+        as for instance a sliced FCC lattice).
 
     .. admonition:: **Methodology**
 

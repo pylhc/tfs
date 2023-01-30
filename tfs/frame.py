@@ -304,6 +304,18 @@ def validate(
     Check if a data frame contains finite values only, strings as column names and no empty headers
     or column names.
 
+    .. admonition:: **Methodology**
+
+        This function performs several different checks on the provided dataframe:
+         1. Checking no single element is a `list` or `tuple`, which is done with a 
+            custom vectorized function applied column-by-column on the dataframe.
+         2. Checking for non-physical values in the dataframe, which is done by
+            applying the ``isna`` function with the right option context.
+         3. Checking for duplicates in either indices or columns.
+         4. Checking for column names that are not strings.
+         5. Checking for column names including spaces.
+
+
     Args:
         data_frame (Union[TfsDataFrame, pd.DataFrame]): the dataframe to check on.
         info_str (str): additional information to include in logging statements.
@@ -314,23 +326,30 @@ def validate(
     if non_unique_behavior.lower() not in ("warn", "raise"):
         raise KeyError("Invalid value for parameter 'non_unique_behavior'")
 
-    def is_not_finite(x):
-        try:
-            return ~np.isfinite(x)
-        except TypeError:  # most likely string
-            try:
-                return np.zeros(x.shape, dtype=bool)
-            except AttributeError:  # single entry
-                return np.zeros(1, dtype=bool)
+    # ----- Check that no element is a list / tuple in the dataframe ----- #
+    def _element_is_list(element):
+        return isinstance(element, (list, tuple))
+    _element_is_list = np.vectorize(_element_is_list)
 
-    boolean_df = data_frame.applymap(is_not_finite)
+    list_or_tuple_bool_df = data_frame.apply(_element_is_list)
+    if list_or_tuple_bool_df.to_numpy().any():
+        LOGGER.error(
+            f"DataFrame {info_str} contains list/tuple values at Index: "
+            f"{list_or_tuple_bool_df.index[list_or_tuple_bool_df.any(axis='columns')].tolist()}"
+        )
+        raise TfsFormatError("Lists or tuple elements are not accepted in a TfsDataFrame")
 
-    if boolean_df.to_numpy().any():
+    # -----  Check that no element is non-physical value in the dataframe ----- #
+    with pd.option_context('mode.use_inf_as_na', True):
+        inf_or_nan_bool_df = data_frame.isna()
+
+    if inf_or_nan_bool_df.to_numpy().any():
         LOGGER.warning(
             f"DataFrame {info_str} contains non-physical values at Index: "
-            f"{boolean_df.index[boolean_df.any(axis='columns')].tolist()}"
+            f"{inf_or_nan_bool_df.index[inf_or_nan_bool_df.any(axis='columns')].tolist()}"
         )
 
+    # Other sanity checks
     if data_frame.index.has_duplicates:
         LOGGER.warning("Non-unique indices found.")
         if non_unique_behavior.lower() == "raise":
