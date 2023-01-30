@@ -314,16 +314,21 @@ def validate(
     if non_unique_behavior.lower() not in ("warn", "raise"):
         raise KeyError("Invalid value for parameter 'non_unique_behavior'")
 
-    def is_not_finite(x):
-        try:
-            return ~np.isfinite(x)
-        except TypeError:  # most likely string
-            try:
-                return np.zeros(x.shape, dtype=bool)
-            except AttributeError:  # single entry
-                return np.zeros(1, dtype=bool)
+    # ----- Check that no element is a list / tuple in the dataframe ----- #
+    def _element_is_list(element):
+        return isinstance(element, list) or isinstance(element, tuple)
+    _element_is_list = np.vectorize(_element_is_list)
 
-    boolean_df = data_frame.applymap(is_not_finite)
+    lists_bool_df = data_frame.apply(_element_is_list)
+    if lists_bool_df.to_numpy().any():
+        LOGGER.warning(
+            f"DataFrame {info_str} contains list/tuple values at Index: "
+            f"{lists_bool_df.index[lists_bool_df.any(axis='columns')].tolist()}"
+        )
+
+    # -----  Check that no element is non-physical value in the dataframe ----- #
+    with pd.option_context('mode.use_inf_as_na', True):
+        boolean_df = data_frame.isna()
 
     if boolean_df.to_numpy().any():
         LOGGER.warning(
@@ -331,6 +336,7 @@ def validate(
             f"{boolean_df.index[boolean_df.any(axis='columns')].tolist()}"
         )
 
+    # Other sanity checks
     if data_frame.index.has_duplicates:
         LOGGER.warning("Non-unique indices found.")
         if non_unique_behavior.lower() == "raise":
