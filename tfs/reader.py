@@ -15,7 +15,8 @@ import pandas as pd
 
 from tfs.constants import COMMENTS, HEADER, ID_TO_TYPE, INDEX_ID, NAMES, TYPES
 from tfs.errors import TfsFormatError
-from tfs.frame import TfsDataFrame, validate
+from tfs.frame import TfsDataFrame
+from tfs.frame import validate as validate_frame
 
 LOGGER = logging.getLogger(__name__)
 
@@ -148,7 +149,7 @@ def read_tfs(
         tfs_data_frame = _find_and_set_index(tfs_data_frame)
 
     if validate_after_reading:
-        validate(tfs_data_frame, f"from file {tfs_file_path.absolute()}", non_unique_behavior)
+        validate_frame(tfs_data_frame, f"from file {tfs_file_path.absolute()}", non_unique_behavior)
     
     return tfs_data_frame
 

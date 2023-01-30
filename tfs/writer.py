@@ -14,7 +14,8 @@ import pandas as pd
 from pandas.api import types as pdtypes
 
 from tfs.constants import DEFAULT_COLUMN_WIDTH, INDEX_ID, MIN_COLUMN_WIDTH
-from tfs.frame import TfsDataFrame, validate
+from tfs.frame import TfsDataFrame
+from tfs.frame import validate as validate_frame
 
 LOGGER = logging.getLogger(__name__)
 
@@ -83,7 +84,7 @@ def write_tfs(
     tfs_file_path = pathlib.Path(tfs_file_path)
     
     if validate_before_writing:
-        validate(data_frame, f"to be written in {tfs_file_path.absolute()}", non_unique_behavior)
+        validate_frame(data_frame, f"to be written in {tfs_file_path.absolute()}", non_unique_behavior)
 
     if headers_dict is None:  # tries to get headers from TfsDataFrame
         try:
