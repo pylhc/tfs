@@ -31,11 +31,10 @@ def read_tfs(
     Parses the **TFS** table present in **tfs_file_path** and returns a ``TfsDataFrame``.
 
     .. warning::
-        Through the *validate_after_reading* argument, one can skip dataframe validation after loading
-        it from a file. While this can drastically reduce the execution time of this function, it is
-        **not recommended**. The option, however, is left for the user to use at their own risk should
-        they wish to avoid lengthy validation of large `TfsDataFrames` (such as for instance a sliced
-        FCC lattice).
+        Through the *validate* argument, one can skip dataframe validation after
+        loading it from a file. This is the default behavior of this function.
+        The option, however, is left for the user to perform validation should
+        they not trust the file they are reading.
 
     .. hint::
         **Methodology**: This function parses the first lines of the file until it gets to the `types` line.
