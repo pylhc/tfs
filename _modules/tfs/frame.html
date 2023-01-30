@@ -3,9 +3,11 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>tfs.frame &mdash; tfs-pandas 3.2.1 documentation</title>
+  <title>tfs.frame &mdash; tfs-pandas 3.3.0 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/sphinx-codeautolink.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/custom.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../../_static/js/html5shiv.min.js"></script>
@@ -17,6 +19,8 @@
         <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../_static/doctools.js"></script>
         <script src="../../_static/sphinx_highlight.js"></script>
+        <script src="../../_static/clipboard.min.js"></script>
+        <script src="../../_static/copybutton.js"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" /> 
@@ -31,7 +35,7 @@
             <img src="../../_static/omc_logo.svg" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                3.2
+                3.3
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -82,9 +86,9 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="../index.html">Module code</a> &raquo;</li>
-      <li>tfs.frame</li>
+      <li><a href="../../index.html" class="icon icon-home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">tfs.frame</li>
       <li class="wy-breadcrumbs-aside">
       </li>
   </ul>
@@ -96,7 +100,7 @@
   <h1>Source code for tfs.frame</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">Frame</span>
-<span class="sd">-------------------</span>
+<span class="sd">-----</span>
 
 <span class="sd">Contains the class definition of a ``TfsDataFrame``, inherited from the ``pandas`` ``DataFrame``, as well</span>
 <span class="sd">as a utility function to validate the correctness of a ``TfsDataFrame``.</span>
@@ -105,7 +109,7 @@
 <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
 <span class="kn">from</span> <span class="nn">contextlib</span> <span class="kn">import</span> <span class="n">suppress</span>
 <span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">partial</span><span class="p">,</span> <span class="n">reduce</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">Set</span><span class="p">,</span> <span class="n">Union</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
@@ -116,7 +120,7 @@
 
 
 <div class="viewcode-block" id="TfsDataFrame"><a class="viewcode-back" href="../../modules/index.html#tfs.frame.TfsDataFrame">[docs]</a><span class="k">class</span> <span class="nc">TfsDataFrame</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Class to hold the information of the built an extended ``pandas`` ``DataFrame``, together with a way</span>
 <span class="sd">    of getting the headers of the **TFS** file. The file headers are stored in a dictionary upon read.</span>
 <span class="sd">    To get a header value use ``data_frame.headers[&quot;header_name&quot;]``, or ``data_frame[&quot;header_name&quot;]`` if</span>
@@ -184,7 +188,7 @@
         <span class="n">new_headers</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;TfsDataFrame&quot;</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Append rows of the other ``TfsDataFrame`` to the end of caller, returning a new object. Data</span>
 <span class="sd">        manipulation is done by the ``pandas.Dataframe`` method of the same name. Resulting headers are</span>
 <span class="sd">        either merged according to the provided **how_headers** method or as given via **new_headers**.</span>
@@ -229,7 +233,7 @@
         <span class="n">new_headers</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;TfsDataFrame&quot;</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Join columns of another ``TfsDataFrame``. Data manipulation is done by the ``pandas.Dataframe``</span>
 <span class="sd">        method of the same name. Resulting headers are either merged according to the provided</span>
 <span class="sd">        **how_headers** method or as given via **new_headers**.</span>
@@ -273,7 +277,7 @@
         <span class="n">new_headers</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;TfsDataFrame&quot;</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Merge ``TfsDataFrame`` objects with a database-style join. Data manipulation is done by the</span>
 <span class="sd">        ``pandas.Dataframe`` method of the same name. Resulting headers are either merged according to the</span>
 <span class="sd">        provided **how_headers** method or as given via **new_headers**.</span>
@@ -312,7 +316,7 @@
 
 
 <div class="viewcode-block" id="merge_headers"><a class="viewcode-back" href="../../modules/index.html#tfs.frame.merge_headers">[docs]</a><span class="k">def</span> <span class="nf">merge_headers</span><span class="p">(</span><span class="n">headers_left</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">headers_right</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">how</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">OrderedDict</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Merge headers of two ``TfsDataFrames`` together.</span>
 
 <span class="sd">    Args:</span>
@@ -351,12 +355,12 @@
     <span class="n">new_headers</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TfsDataFrame</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Concatenate ``TfsDataFrame`` objects along a particular axis with optional set logic along the other</span>
 <span class="sd">    axes. Data manipulation is done by the ``pandas.concat`` function. Resulting headers are either</span>
 <span class="sd">    merged according to the provided **how_headers** method or as given via **new_headers**.</span>
 
-<span class="sd">    ..warning::</span>
+<span class="sd">    .. warning::</span>
 <span class="sd">        Please note that when using this function on many ``TfsDataFrames``, leaving the contents of the</span>
 <span class="sd">        final headers dictionary to the automatic merger can become unpredictable. In this case it is</span>
 <span class="sd">        recommended to provide the **new_headers** argument to ensure the final result, or leave both</span>
@@ -396,7 +400,7 @@
     <span class="n">info_str</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
     <span class="n">non_unique_behavior</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;warn&quot;</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Check if a data frame contains finite values only, strings as column names and no empty headers</span>
 <span class="sd">    or column names.</span>
 

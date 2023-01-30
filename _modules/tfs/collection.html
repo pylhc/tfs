@@ -3,9 +3,11 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>tfs.collection &mdash; tfs-pandas 3.2.1 documentation</title>
+  <title>tfs.collection &mdash; tfs-pandas 3.3.0 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/sphinx-codeautolink.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/custom.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../../_static/js/html5shiv.min.js"></script>
@@ -17,6 +19,8 @@
         <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../_static/doctools.js"></script>
         <script src="../../_static/sphinx_highlight.js"></script>
+        <script src="../../_static/clipboard.min.js"></script>
+        <script src="../../_static/copybutton.js"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" /> 
@@ -31,7 +35,7 @@
             <img src="../../_static/omc_logo.svg" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                3.2
+                3.3
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -82,9 +86,9 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="../index.html">Module code</a> &raquo;</li>
-      <li>tfs.collection</li>
+      <li><a href="../../index.html" class="icon icon-home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">tfs.collection</li>
       <li class="wy-breadcrumbs-aside">
       </li>
   </ul>
@@ -96,7 +100,7 @@
   <h1>Source code for tfs.collection</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">Collection</span>
-<span class="sd">----------------------</span>
+<span class="sd">----------</span>
 
 <span class="sd">Advanced **TFS** files reading and writing functionality.</span>
 <span class="sd">&quot;&quot;&quot;</span>
@@ -110,7 +114,7 @@
 
 
 <span class="k">class</span> <span class="nc">_MetaTfsCollection</span><span class="p">(</span><span class="nb">type</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Metaclass for TfsCollection. It takes the class attributes declared as</span>
 <span class="sd">    `Tfs(...)` and replaces it for a property getter and setter. Check</span>
 <span class="sd">    TfsCollection docs.</span>
@@ -139,52 +143,56 @@
 
 
 <div class="viewcode-block" id="TfsCollection"><a class="viewcode-back" href="../../modules/index.html#tfs.collection.TfsCollection">[docs]</a><span class="k">class</span> <span class="nc">TfsCollection</span><span class="p">(</span><span class="n">metaclass</span><span class="o">=</span><span class="n">_MetaTfsCollection</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Abstract class to lazily load and write **TFS** files.</span>
 
 <span class="sd">    Classes inheriting from this abstract class will be able to define **TFS** files</span>
 <span class="sd">    as readable or writable, and read or write them just as attribute access or</span>
-<span class="sd">    assignments. All attributes will be read and written as ``TfsDataFrame`` objects.</span>
+<span class="sd">    assignments. All attributes will be read and written as `~tfs.TfsDataFrame` objects.</span>
 
 <span class="sd">    Example:</span>
 <span class="sd">        If **./example** is a directory that contains two **TFS** files **beta_phase_x.tfs**</span>
 <span class="sd">        and **beta_phase_y.tfs** with `BETX` and `BETY` columns respectively:</span>
 
-<span class="sd">    .. sourcecode:: python</span>
+<span class="sd">    .. code-block:: python</span>
 
-<span class="sd">         class ExampleCollection(TfsCollection)</span>
-<span class="sd">            # All TFS attributes must be marked with the Tfs(...) class, and generated attribute</span>
-<span class="sd">            # names will be appended with _x / _y depending on files found in &quot;./example&quot;</span>
+<span class="sd">        &gt;&gt;&gt; # All TFS attributes must be marked with the Tfs(...) class,</span>
+<span class="sd">        ... # and generated attribute names will be appended with _x / _y </span>
+<span class="sd">        ... # depending on files found in &quot;./example&quot;</span>
+<span class="sd">        ... class ExampleCollection(TfsCollection): </span>
+<span class="sd">        ...     beta = Tfs(&quot;beta_phase_{}.tfs&quot;)  # A TFS attribute</span>
+<span class="sd">        ...     other_value = 7  # A traditional attribute.</span>
 
-<span class="sd">            beta = Tfs(&quot;beta_phase_{}.tfs&quot;)  # A TFS attribute</span>
-<span class="sd">            other_value = 7  # A traditional attribute.</span>
+<span class="sd">        ...     def get_filename(template: str, plane: str) -&gt; str:</span>
+<span class="sd">        ...         return template.format(plane)</span>
 
-<span class="sd">            def get_filename(template: str, plane: str) -&gt; str:</span>
-<span class="sd">               return template.format(plane)</span>
+<span class="sd">        &gt;&gt;&gt; example = ExampleCollection(&quot;./example&quot;)</span>
 
-<span class="sd">         example = ExampleCollection(&quot;./example&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; # Get the BETX / BETY column from &quot;beta_phase_x.tfs&quot;:</span>
+<span class="sd">        &gt;&gt;&gt; beta_x_column = example.beta_x.BETX  # / example.beta_x.BETY</span>
 
-<span class="sd">         # Get the BETX / BETY column from &quot;beta_phase_x.tfs&quot;:</span>
-<span class="sd">         beta_x_column = example.beta_x.BETX  # / example.beta_x.BETY</span>
+<span class="sd">        &gt;&gt;&gt; # Get the BETY column from &quot;beta_phase_y.tfs&quot;:</span>
+<span class="sd">        &gt;&gt;&gt; beta_y_column = example.beta_y.BETY</span>
 
-<span class="sd">         # Get the BETY column from &quot;beta_phase_y.tfs&quot;:</span>
-<span class="sd">         beta_y_column = example.beta_y.BETY</span>
+<span class="sd">        &gt;&gt;&gt; # The planes can also be accessed as items (both examples below work):</span>
+<span class="sd">        &gt;&gt;&gt; beta_y_column = example.beta[&quot;y&quot;].BETY</span>
+<span class="sd">        &gt;&gt;&gt; beta_y_column = example.beta[&quot;Y&quot;].BETY</span>
 
-<span class="sd">         # The planes can also be accessed as items (both examples below work):</span>
-<span class="sd">         beta_y_column = example.beta[&quot;y&quot;].BETY</span>
-<span class="sd">         beta_y_column = example.beta[&quot;Y&quot;].BETY</span>
-
-<span class="sd">         # This will write an empty DataFrame to &quot;beta_phase_y.tfs&quot;:</span>
-<span class="sd">         example.allow_write = True</span>
-<span class="sd">         example.beta[&quot;y&quot;] = DataFrame()</span>
+<span class="sd">        &gt;&gt;&gt; # This will write an empty DataFrame to &quot;beta_phase_y.tfs&quot;:</span>
+<span class="sd">        &gt;&gt;&gt; example.allow_write = True</span>
+<span class="sd">        &gt;&gt;&gt; example.beta[&quot;y&quot;] = DataFrame()</span>
 
 
-<span class="sd">    If the file to be loaded is not defined for two planes then the attribute can be declared as:</span>
-<span class="sd">    ``coupling = Tfs(&quot;getcouple.tfs&quot;, two_planes=False)`` and then accessed as</span>
-<span class="sd">    ``f1001w_column = example.coupling.F1001W``.</span>
+<span class="sd">    If the file to be loaded is not defined for two planes then the attribute can be declared </span>
+<span class="sd">    and accessed as:</span>
+<span class="sd">    </span>
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        &gt;&gt;&gt; coupling = Tfs(&quot;getcouple.tfs&quot;, two_planes=False)  # declaration</span>
+<span class="sd">        &gt;&gt;&gt; f1001w_column = example.coupling.F1001W  # access</span>
 
 <span class="sd">    No file will be loaded until the corresponding attribute is accessed and the loaded</span>
-<span class="sd">    ``TfsDataFrame`` will be buffered, thus the user should expect an ``IOError`` if the requested</span>
+<span class="sd">    `~tfs.TfsDataFrame` will be buffered, thus the user should expect an ``IOError`` if the requested</span>
 <span class="sd">    file is not in the provided directory (only the first time, but is better to always take it</span>
 <span class="sd">    into account!).</span>
 
@@ -200,7 +208,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_buffer</span> <span class="o">=</span> <span class="p">{}</span>
 
 <div class="viewcode-block" id="TfsCollection.get_filename"><a class="viewcode-back" href="../../modules/index.html#tfs.collection.TfsCollection.get_filename">[docs]</a>    <span class="k">def</span> <span class="nf">get_filename</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return the filename to be loaded or written.</span>
 
 <span class="sd">        This function will get as parameters any parameter given to the Tfs(...) attributes. It must</span>
@@ -211,7 +219,7 @@
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;This is an abstract method, it should be implemented in subclasses.&quot;</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="TfsCollection.write_to"><a class="viewcode-back" href="../../modules/index.html#tfs.collection.TfsCollection.write_to">[docs]</a>    <span class="k">def</span> <span class="nf">write_to</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns the filename and `TfsDataFrame` to be written on assignments.</span>
 
 <span class="sd">        If this function is overwritten, it will replace ``get_filename(...)`` in file writes to</span>
@@ -221,7 +229,7 @@
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;This is an abstract method, it should be implemented in subclasses.&quot;</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="TfsCollection.clear"><a class="viewcode-back" href="../../modules/index.html#tfs.collection.TfsCollection.clear">[docs]</a>    <span class="k">def</span> <span class="nf">clear</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Clear the file buffer.</span>
 
 <span class="sd">        Any subsequent attribute access will try to load the corresponding file again.</span>
@@ -229,7 +237,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_buffer</span> <span class="o">=</span> <span class="p">{}</span></div>
 
 <div class="viewcode-block" id="TfsCollection.read_tfs"><a class="viewcode-back" href="../../modules/index.html#tfs.collection.TfsCollection.read_tfs">[docs]</a>    <span class="k">def</span> <span class="nf">read_tfs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TfsDataFrame</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Reads the **TFS** file from ``self.directory`` with the given filename.</span>
 
 <span class="sd">        This function can be overwritten to use something instead of ``tfs-pandas`` to load the</span>
@@ -279,7 +287,7 @@
 
 
 <div class="viewcode-block" id="Tfs"><a class="viewcode-back" href="../../modules/index.html#tfs.collection.Tfs">[docs]</a><span class="k">class</span> <span class="nc">Tfs</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Class to mark attributes as **TFS** attributes.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Class to mark attributes as **TFS** attributes.</span>
 
 <span class="sd">    Any parameter given to this class will be passed to the ``get_filename()`` and ``write_to()``</span>
 <span class="sd">    methods, together with the plane if ``two_planes=False`` is not present.</span>
@@ -349,7 +357,7 @@
 
 
 <span class="k">class</span> <span class="nc">_MaybeCall</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Handles the maybe_call feature of the TfsCollection.</span>
 
 <span class="sd">    This class defines the `maybe_call` attribute in the instances of `TfsCollection`. To avoid</span>

@@ -3,9 +3,11 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>tfs.writer &mdash; tfs-pandas 3.2.1 documentation</title>
+  <title>tfs.writer &mdash; tfs-pandas 3.3.0 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/sphinx-codeautolink.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/custom.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../../_static/js/html5shiv.min.js"></script>
@@ -17,6 +19,8 @@
         <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../_static/doctools.js"></script>
         <script src="../../_static/sphinx_highlight.js"></script>
+        <script src="../../_static/clipboard.min.js"></script>
+        <script src="../../_static/copybutton.js"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" /> 
@@ -31,7 +35,7 @@
             <img src="../../_static/omc_logo.svg" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                3.2
+                3.3
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -82,9 +86,9 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="../index.html">Module code</a> &raquo;</li>
-      <li>tfs.writer</li>
+      <li><a href="../../index.html" class="icon icon-home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">tfs.writer</li>
       <li class="wy-breadcrumbs-aside">
       </li>
   </ul>
@@ -96,7 +100,7 @@
   <h1>Source code for tfs.writer</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">Writer</span>
-<span class="sd">-------------------</span>
+<span class="sd">------</span>
 
 <span class="sd">Writing functionalty for **TFS** files.</span>
 <span class="sd">&quot;&quot;&quot;</span>
@@ -110,7 +114,8 @@
 <span class="kn">from</span> <span class="nn">pandas.api</span> <span class="kn">import</span> <span class="n">types</span> <span class="k">as</span> <span class="n">pdtypes</span>
 
 <span class="kn">from</span> <span class="nn">tfs.constants</span> <span class="kn">import</span> <span class="n">DEFAULT_COLUMN_WIDTH</span><span class="p">,</span> <span class="n">INDEX_ID</span><span class="p">,</span> <span class="n">MIN_COLUMN_WIDTH</span>
-<span class="kn">from</span> <span class="nn">tfs.frame</span> <span class="kn">import</span> <span class="n">TfsDataFrame</span><span class="p">,</span> <span class="n">validate</span>
+<span class="kn">from</span> <span class="nn">tfs.frame</span> <span class="kn">import</span> <span class="n">TfsDataFrame</span>
+<span class="kn">from</span> <span class="nn">tfs.frame</span> <span class="kn">import</span> <span class="n">validate</span> <span class="k">as</span> <span class="n">validate_frame</span>
 
 <span class="n">LOGGER</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
@@ -123,10 +128,18 @@
     <span class="n">colwidth</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">DEFAULT_COLUMN_WIDTH</span><span class="p">,</span>
     <span class="n">headerswidth</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">DEFAULT_COLUMN_WIDTH</span><span class="p">,</span>
     <span class="n">non_unique_behavior</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;warn&quot;</span><span class="p">,</span>
+    <span class="n">validate</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Writes the provided ``DataFrame`` to disk at **tfs_file_path**, eventually with the `headers_dict` as</span>
 <span class="sd">    headers dictionary.</span>
+
+<span class="sd">    .. warning::</span>
+<span class="sd">        Through the *validate* argument, one can skip dataframe validation before writing it to file.</span>
+<span class="sd">        While this can speed-up the execution time of this function , it is **not recommended** and</span>
+<span class="sd">        is not the default behavior of this function. The option, however, is left for the user to</span>
+<span class="sd">        use at their own risk should they wish to avoid lengthy validation of large `TfsDataFrames`</span>
+<span class="sd">        (such as for instance a sliced FCC lattice).</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        tfs_file_path (Union[pathlib.Path, str]): Path object to the output **TFS** file. Can be</span>
@@ -143,10 +156,35 @@
 <span class="sd">        non_unique_behavior (str): behavior to adopt if non-unique indices or columns are found in the</span>
 <span class="sd">            dataframe. Accepts `warn` and `raise` as values, case-insensitively, which dictates</span>
 <span class="sd">            to respectively issue a warning or raise an error if non-unique elements are found.</span>
+<span class="sd">        validate (bool): Whether to validate the dataframe before writing it to file. Defaults to ``True``.</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        Writing to file is simple, as most arguments have sane default values.</span>
+<span class="sd">        The simplest usage goes as follows:</span>
+
+<span class="sd">        .. code-block:: python</span>
+
+<span class="sd">            &gt;&gt;&gt; tfs.write(&quot;filename.tfs&quot;, dataframe)</span>
+<span class="sd">        </span>
+<span class="sd">        If one wants to, for instance, raise and error on non-unique indices or columns,</span>
+<span class="sd">        one can do so as:</span>
+
+<span class="sd">        .. code-block:: python</span>
+
+<span class="sd">            &gt;&gt;&gt; tfs.write(&quot;filename.tfs&quot;, dataframe, non_unique_behavior=&quot;raise&quot;)</span>
+<span class="sd">        </span>
+<span class="sd">        One can choose to skip dataframe validation **at one&#39;s own risk** before writing</span>
+<span class="sd">        it to file. This is done as:</span>
+
+<span class="sd">        .. code-block:: python</span>
+
+<span class="sd">            &gt;&gt;&gt; tfs.write(&quot;filename.tfs&quot;, dataframe, validate=False)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">left_align_first_column</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="n">tfs_file_path</span> <span class="o">=</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="n">tfs_file_path</span><span class="p">)</span>
-    <span class="n">validate</span><span class="p">(</span><span class="n">data_frame</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;to be written in </span><span class="si">{</span><span class="n">tfs_file_path</span><span class="o">.</span><span class="n">absolute</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">non_unique_behavior</span><span class="p">)</span>
+    
+    <span class="k">if</span> <span class="n">validate</span><span class="p">:</span>
+        <span class="n">validate_frame</span><span class="p">(</span><span class="n">data_frame</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;to be written in </span><span class="si">{</span><span class="n">tfs_file_path</span><span class="o">.</span><span class="n">absolute</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">non_unique_behavior</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">headers_dict</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># tries to get headers from TfsDataFrame</span>
         <span class="k">try</span><span class="p">:</span>
@@ -174,20 +212,18 @@
 
 
 <span class="k">def</span> <span class="nf">_autoset_pandas_types</span><span class="p">(</span><span class="n">data_frame</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">TfsDataFrame</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">TfsDataFrame</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Tries to apply the ``.convert_dtypes()`` method of pandas on a copy on the provided dataframe.</span>
 <span class="sd">    If the operation is not possible, checks if the provided dataframe is empty (which prevents</span>
 <span class="sd">    ``convert_dtypes()`` to internally use ``pd.concat``) and then return only a copy of the original</span>
 <span class="sd">    dataframe. Otherwise, raise the exception given by ``pandas``.</span>
 
 <span class="sd">    NOTE: Starting with pandas 1.3.0, this behavior which was a bug has been fixed. This means no</span>
-<span class="sd">    ``ValueError`` is raised by calling ``.convert_dtypes()`` on an empty ``DataFrame``, and from this</span>
-<span class="sd">    function a warning is logged. Testing of this behavior is disabled for Python 3.7+ workers, but the</span>
-<span class="sd">    function is kept as to not force a new min version requirement on ``pandas`` or Python for users.</span>
+<span class="sd">    ``ValueError`` is raised by calling ``.convert_dtypes()`` on an empty ``DataFrame``, and from</span>
+<span class="sd">    this function a warning is logged. The function is kept as to not force a new min version</span>
+<span class="sd">    requirement on ``pandas`` or Python for users. When one day we make ``pandas &gt;= 1.3.0`` the</span>
+<span class="sd">    minimum requirement, we can remove the checks altogether and just call ``.convert_dtypes()``.</span>
 <span class="sd">    See my comment at https://github.com/pylhc/tfs/pull/83#issuecomment-874208869</span>
-
-<span class="sd">    TODO: remove the aforementioned check when we make Python 3.7 the minimum version for tfs-pandas,</span>
-<span class="sd">        aka when Python 3.6 reaches EOL (end of 2021).</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        data_frame (Union[TfsDataFrame, pd.DataFrame]): ``TfsDataFrame`` or ``pandas.DataFrame`` to</span>
@@ -219,7 +255,7 @@
 
 
 <span class="k">def</span> <span class="nf">_get_headers_string</span><span class="p">(</span><span class="n">headers_dict</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">width</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Returns the string to write a ``TfsDataFrame`` headers to file. Will return an empty string if</span>
 <span class="sd">    called for an empty headers dictionary, in order not write an line to file.</span>
 
@@ -271,8 +307,8 @@
 <span class="k">def</span> <span class="nf">_get_row_format_string</span><span class="p">(</span><span class="n">dtypes</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">type</span><span class="p">],</span> <span class="n">colwidth</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">left_align_first_column</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
     <span class="k">return</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
         <span class="sa">f</span><span class="s2">&quot;</span><span class="se">{{</span><span class="si">{</span><span class="n">indx</span><span class="si">:</span><span class="s2">d</span><span class="si">}</span><span class="s2">:&quot;</span>
-        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="s1">&#39;&lt;&#39;</span> <span class="k">if</span> <span class="p">(</span><span class="ow">not</span> <span class="n">indx</span><span class="p">)</span> <span class="ow">and</span> <span class="n">left_align_first_column</span> <span class="k">else</span> <span class="s1">&#39;&gt;&#39;</span><span class="si">}</span><span class="s2">&quot;</span>
-        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">_dtype_to_formatter</span><span class="p">(</span><span class="n">type_</span><span class="p">,</span> <span class="n">colwidth</span><span class="p">)</span><span class="si">}</span><span class="se">}}</span><span class="s2">&quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="s1">&#39;&lt;&#39;</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="ow">not</span><span class="w"> </span><span class="n">indx</span><span class="p">)</span><span class="w"> </span><span class="ow">and</span><span class="w"> </span><span class="n">left_align_first_column</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="s1">&#39;&gt;&#39;</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">_dtype_to_formatter</span><span class="p">(</span><span class="n">type_</span><span class="p">,</span><span class="w"> </span><span class="n">colwidth</span><span class="p">)</span><span class="si">}</span><span class="se">}}</span><span class="s2">&quot;</span>
         <span class="k">for</span> <span class="n">indx</span><span class="p">,</span> <span class="n">type_</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">dtypes</span><span class="p">)</span>
     <span class="p">)</span>
 
@@ -294,7 +330,7 @@
 
 
 <span class="k">def</span> <span class="nf">_dtype_to_id_string</span><span class="p">(</span><span class="n">type_</span><span class="p">:</span> <span class="nb">type</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Return the proper **TFS** identifier for the provided dtype.</span>
 
 <span class="sd">    Args:</span>
@@ -316,7 +352,7 @@
 
 
 <span class="k">def</span> <span class="nf">_dtype_to_formatter</span><span class="p">(</span><span class="n">type_</span><span class="p">:</span> <span class="nb">type</span><span class="p">,</span> <span class="n">colsize</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Return the proper string formatter for the provided dtype.</span>
 
 <span class="sd">    Args:</span>
@@ -332,7 +368,7 @@
     <span class="k">if</span> <span class="n">pdtypes</span><span class="o">.</span><span class="n">is_integer_dtype</span><span class="p">(</span><span class="n">type_</span><span class="p">)</span> <span class="ow">or</span> <span class="n">pdtypes</span><span class="o">.</span><span class="n">is_bool_dtype</span><span class="p">(</span><span class="n">type_</span><span class="p">):</span>
         <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">colsize</span><span class="si">}</span><span class="s2">d&quot;</span>
     <span class="k">elif</span> <span class="n">pdtypes</span><span class="o">.</span><span class="n">is_float_dtype</span><span class="p">(</span><span class="n">type_</span><span class="p">):</span>
-        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">colsize</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">colsize</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="s1">&#39;-0.e-000&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">g&quot;</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">colsize</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">colsize</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="nb">len</span><span class="p">(</span><span class="s1">&#39;-0.e-000&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">g&quot;</span>
     <span class="k">elif</span> <span class="n">pdtypes</span><span class="o">.</span><span class="n">is_string_dtype</span><span class="p">(</span><span class="n">type_</span><span class="p">):</span>
         <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">colsize</span><span class="si">}</span><span class="s2">s&quot;</span>
     <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>

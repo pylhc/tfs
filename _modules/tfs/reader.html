@@ -3,9 +3,11 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>tfs.reader &mdash; tfs-pandas 3.2.1 documentation</title>
+  <title>tfs.reader &mdash; tfs-pandas 3.3.0 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/sphinx-codeautolink.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/custom.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../../_static/js/html5shiv.min.js"></script>
@@ -17,6 +19,8 @@
         <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../_static/doctools.js"></script>
         <script src="../../_static/sphinx_highlight.js"></script>
+        <script src="../../_static/clipboard.min.js"></script>
+        <script src="../../_static/copybutton.js"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" /> 
@@ -31,7 +35,7 @@
             <img src="../../_static/omc_logo.svg" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                3.2
+                3.3
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -82,9 +86,9 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="../index.html">Module code</a> &raquo;</li>
-      <li>tfs.reader</li>
+      <li><a href="../../index.html" class="icon icon-home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">tfs.reader</li>
       <li class="wy-breadcrumbs-aside">
       </li>
   </ul>
@@ -96,7 +100,7 @@
   <h1>Source code for tfs.reader</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">Reader</span>
-<span class="sd">-------------------</span>
+<span class="sd">------</span>
 
 <span class="sd">Reading functionalty for **TFS** files.</span>
 <span class="sd">&quot;&quot;&quot;</span>
@@ -111,23 +115,35 @@
 
 <span class="kn">from</span> <span class="nn">tfs.constants</span> <span class="kn">import</span> <span class="n">COMMENTS</span><span class="p">,</span> <span class="n">HEADER</span><span class="p">,</span> <span class="n">ID_TO_TYPE</span><span class="p">,</span> <span class="n">INDEX_ID</span><span class="p">,</span> <span class="n">NAMES</span><span class="p">,</span> <span class="n">TYPES</span>
 <span class="kn">from</span> <span class="nn">tfs.errors</span> <span class="kn">import</span> <span class="n">TfsFormatError</span>
-<span class="kn">from</span> <span class="nn">tfs.frame</span> <span class="kn">import</span> <span class="n">TfsDataFrame</span><span class="p">,</span> <span class="n">validate</span>
+<span class="kn">from</span> <span class="nn">tfs.frame</span> <span class="kn">import</span> <span class="n">TfsDataFrame</span>
+<span class="kn">from</span> <span class="nn">tfs.frame</span> <span class="kn">import</span> <span class="n">validate</span> <span class="k">as</span> <span class="n">validate_frame</span>
 
 <span class="n">LOGGER</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="read_tfs"><a class="viewcode-back" href="../../modules/index.html#tfs.reader.read_tfs">[docs]</a><span class="k">def</span> <span class="nf">read_tfs</span><span class="p">(</span>
-    <span class="n">tfs_file_path</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span> <span class="n">index</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">non_unique_behavior</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;warn&quot;</span>
+    <span class="n">tfs_file_path</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span>
+    <span class="n">index</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">non_unique_behavior</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;warn&quot;</span><span class="p">,</span>
+    <span class="n">validate</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TfsDataFrame</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Parses the **TFS** table present in **tfs_file_path** and returns a ``TfsDataFrame``.</span>
 
-<span class="sd">    Methodology: This function parses the first lines of the file until it gets to the `types` line.</span>
-<span class="sd">    While parsed, the appropriate information is gathered (headers content, column names &amp; types,</span>
-<span class="sd">    number of lines parsed). After reaching the `types` line, the rest of the file is given to parse</span>
-<span class="sd">    to ``pandas.read_csv`` with the right options to make use of its C engine&#39;s speed. After this,</span>
-<span class="sd">    conversion to ``TfsDataDrame`` is made, proper types are applied to columns, the index is set and</span>
-<span class="sd">    the frame is validated before being returned.</span>
+<span class="sd">    .. warning::</span>
+<span class="sd">        Through the *validate* argument, one can skip dataframe validation after</span>
+<span class="sd">        loading it from a file. This is the default behavior of this function.</span>
+<span class="sd">        The option, however, is left for the user to perform validation should</span>
+<span class="sd">        they not trust the file they are reading.</span>
+
+<span class="sd">    .. admonition:: **Methodology**</span>
+
+<span class="sd">        This function parses the first lines of the file until it gets to the `types` line.</span>
+<span class="sd">        While parsed, the appropriate information is gathered (headers content, column names &amp; types,</span>
+<span class="sd">        number of lines parsed). After reaching the `types` line, the rest of the file is given to parse</span>
+<span class="sd">        to ``pandas.read_csv`` with the right options to make use of its C engine&#39;s speed. After this,</span>
+<span class="sd">        conversion to ``TfsDataDrame`` is made, proper types are applied to columns, the index is set and</span>
+<span class="sd">        the frame is validated before being returned.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        tfs_file_path (Union[pathlib.Path, str]): Path object to the **TFS** file to read. Can be</span>
@@ -137,9 +153,44 @@
 <span class="sd">        non_unique_behavior (str): behavior to adopt if non-unique indices or columns are found in the</span>
 <span class="sd">            dataframe. Accepts `warn` and `raise` as values, case-insensitively, which dictates</span>
 <span class="sd">            to respectively issue a warning or raise an error if non-unique elements are found.</span>
+<span class="sd">        validate (bool): Whether to validate the dataframe after reading it. Defaults to ``False``.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        A ``TfsDataFrame`` object with the loaded data from the file.</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        Reading from a file is simple, as most arguments have sane default values.</span>
+<span class="sd">        The simplest usage goes as follows:</span>
+
+<span class="sd">        .. code-block:: python</span>
+
+<span class="sd">            &gt;&gt;&gt; tfs.read(&quot;filename.tfs&quot;)</span>
+
+<span class="sd">        One can also pass a `~pathlib.Path` object to the function:</span>
+
+<span class="sd">        .. code-block:: python</span>
+
+<span class="sd">            &gt;&gt;&gt; tfs.read(pathlib.Path(&quot;filename.tfs&quot;))</span>
+
+<span class="sd">        If one wants to set a specific column as index, this is done as:</span>
+
+<span class="sd">        .. code-block:: python</span>
+
+<span class="sd">            &gt;&gt;&gt; tfs.read(&quot;filename.tfs&quot;, index=&quot;COLUMN_NAME&quot;)</span>
+
+<span class="sd">        If one wants to, for instance, raise and error on non-unique indices or columns,</span>
+<span class="sd">        one can do so as:</span>
+
+<span class="sd">        .. code-block:: python</span>
+
+<span class="sd">            &gt;&gt;&gt; tfs.read(&quot;filename.tfs&quot;, non_unique_behavior=&quot;raise&quot;)</span>
+<span class="sd">        </span>
+<span class="sd">        One can choose to skip dataframe validation **at one&#39;s own risk** after reading</span>
+<span class="sd">        from file. This is done as:</span>
+
+<span class="sd">        .. code-block:: python</span>
+
+<span class="sd">            &gt;&gt;&gt; tfs.read(&quot;filename.tfs&quot;, validate=False)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">tfs_file_path</span> <span class="o">=</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="n">tfs_file_path</span><span class="p">)</span>
     <span class="n">headers</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
@@ -196,7 +247,9 @@
         <span class="n">LOGGER</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Attempting to find index identifier in columns&quot;</span><span class="p">)</span>
         <span class="n">tfs_data_frame</span> <span class="o">=</span> <span class="n">_find_and_set_index</span><span class="p">(</span><span class="n">tfs_data_frame</span><span class="p">)</span>
 
-    <span class="n">validate</span><span class="p">(</span><span class="n">tfs_data_frame</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;from file </span><span class="si">{</span><span class="n">tfs_file_path</span><span class="o">.</span><span class="n">absolute</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">non_unique_behavior</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">validate</span><span class="p">:</span>
+        <span class="n">validate_frame</span><span class="p">(</span><span class="n">tfs_data_frame</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;from file </span><span class="si">{</span><span class="n">tfs_file_path</span><span class="o">.</span><span class="n">absolute</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">non_unique_behavior</span><span class="p">)</span>
+    
     <span class="k">return</span> <span class="n">tfs_data_frame</span></div>
 
 
@@ -211,7 +264,7 @@
 
 
 <span class="k">def</span> <span class="nf">_find_and_set_index</span><span class="p">(</span><span class="n">data_frame</span><span class="p">:</span> <span class="n">TfsDataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TfsDataFrame</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Looks for a column with a name starting with the index identifier, and sets it as index if found.</span>
 <span class="sd">    The index identifier will be stripped from the column name first.</span>
 
@@ -251,7 +304,7 @@
 
 
 <span class="k">def</span> <span class="nf">_is_madx_string_col_identifier</span><span class="p">(</span><span class="n">type_str</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    ``MAD-X`` likes to return the string columns by also indicating their width, so trying to parse</span>
 <span class="sd">    `%s` identifiers only we might miss those looking like `%20s` specifying (here) a 20-character</span>
 <span class="sd">     wide column for strings.</span>
