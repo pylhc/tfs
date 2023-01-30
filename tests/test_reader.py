@@ -127,13 +127,13 @@ class TestFailures:
     def test_fail_space_in_colname(self, _space_in_colnames_tfs_path: pathlib.Path):
         # Read file has a space in a column name which should raise
         with pytest.raises(TfsFormatError):
-            read_tfs(_space_in_colnames_tfs_path, index="NAME")
+            read_tfs(_space_in_colnames_tfs_path, index="NAME", validate_after_reading=True)
 
 
 class TestWarnings:
     def test_warn_unphysical_values(self, caplog):
         nan_tfs_path = pathlib.Path(__file__).parent / "inputs" / "has_nans.tfs"
-        _ = read_tfs(nan_tfs_path, index="NAME")
+        _ = read_tfs(nan_tfs_path, index="NAME", validate_after_reading=True)
         for record in caplog.records:
             assert record.levelname == "WARNING"
         assert "contains non-physical values at Index:" in caplog.text

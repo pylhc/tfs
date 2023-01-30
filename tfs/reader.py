@@ -24,7 +24,7 @@ def read_tfs(
     tfs_file_path: Union[pathlib.Path, str],
     index: str = None,
     non_unique_behavior: str = "warn",
-    validate_after_reading: bool = True,
+    validate_after_reading: bool = False,
 ) -> TfsDataFrame:
     """
     Parses the **TFS** table present in **tfs_file_path** and returns a ``TfsDataFrame``.
@@ -35,7 +35,7 @@ def read_tfs(
         **not recommended**. The option, however, is left for the user to use at their own risk should
         they wish to avoid lengthy validation of large `TfsDataFrames` (such as for instance a sliced
         FCC lattice).
-    
+
     .. hint::
         **Methodology**: This function parses the first lines of the file until it gets to the `types` line.
         While parsed, the appropriate information is gathered (headers content, column names & types,
@@ -53,7 +53,7 @@ def read_tfs(
             dataframe. Accepts `warn` and `raise` as values, case-insensitively, which dictates
             to respectively issue a warning or raise an error if non-unique elements are found.
         validate_after_reading (bool): Whether to validate the dataframe after reading it.
-            Defaults to ``True``.
+            Defaults to ``False``.
 
     Returns:
         A ``TfsDataFrame`` object with the loaded data from the file.
