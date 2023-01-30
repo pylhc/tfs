@@ -136,11 +136,11 @@ def read_tfs(
         skipinitialspace=True,  # understands ' ' and '     ' are both valid delimiters
         quotechar='"',  # elements surrounded by " are one entry -> correct parsing of strings with spaces
         names=column_names,  # column names we have determined, avoids using first read row for columns
+        dtype=dict(zip(column_names, column_types)),  # assign types at read-time to avoid re-assigning later
     )
 
     LOGGER.debug("Converting to TfsDataFrame")
     tfs_data_frame = TfsDataFrame(data_frame, headers=headers)
-    _assign_column_types(tfs_data_frame, column_names, column_types)  # ensure proper types
 
     if index:
         LOGGER.debug(f"Setting '{index}' column as index")
@@ -184,12 +184,6 @@ def _find_and_set_index(data_frame: TfsDataFrame) -> TfsDataFrame:
             index_name = None  # to remove it completely (Pandas makes a difference)
         data_frame = data_frame.rename_axis(index=index_name)
     return data_frame
-
-
-def _assign_column_types(data_frame: TfsDataFrame, column_names: List[str], column_types: List[type]) -> None:
-    names_to_types = dict(zip(column_names, column_types))
-    for name in names_to_types:
-        data_frame[name] = data_frame[name].astype(names_to_types[name])
 
 
 def _compute_types(str_list: List[str]) -> List[type]:
