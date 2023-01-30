@@ -234,6 +234,9 @@ class TestFailures:
             assert record.levelname == "ERROR"
         assert "contains list/tuple values at Index:" in caplog.text
 
+        with pytest.raises(TypeError):  # this time crashes on writing
+            write_tfs(write_location, list_col_tfs, validate=False)
+
         del list_col_tfs["d"]  # should work now without the column of lists
         write_tfs(write_location, list_col_tfs)
         assert write_location.is_file()
