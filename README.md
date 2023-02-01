@@ -15,9 +15,10 @@ Files are read into a `TfsDataFrame`, a class built on top of the famous `pandas
 See the [API documentation](https://pylhc.github.io/tfs/) for details.
 
 <details>
-  <summary>**Note:** Package Scope</summary>
-        The `tfs-pandas` package is made to handle IO of TFS files and some related utilities.
-        It is not meant to implement calculations on `TfsDataFrames`, which is functionality implemented in other packages of the `PyLHC` ecosystem.
+  <summary>Note: Package Scope</summary>
+
+This package is made to handle I/O of `TFS` files to `TfsDataFrames` only: it is not meant to implement calculations on `TfsDataFrames`. Various calculations are implemented in other packages of the ecosystem.
+
 </details>
 
 ## Installing
