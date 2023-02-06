@@ -14,13 +14,6 @@ Files are read into a `TfsDataFrame`, a class built on top of the famous `pandas
 
 See the [API documentation](https://pylhc.github.io/tfs/) for details.
 
-<details>
-  <summary>Note: Package Scope</summary>
-
-This package is made to handle I/O of `TFS` files to `TfsDataFrames` only: it is not meant to implement calculations on `TfsDataFrames`. Various calculations are implemented in other packages of the ecosystem.
-
-</details>
-
 ## Installing
 
 Installation is easily done via `pip`:
@@ -56,8 +49,13 @@ tfs.frame.validate(data_frame, non_unique_behavior="raise")  # or choose "warn"
 tfs.write("path_to_output.tfs", data_frame, save_index="index_column")
 ```
 
-It also provides some tools to validate and manipulate `TfsDataFrames` and their headers; or lazily manage a collection of TFS files.
-With `tfs.read_hdf()` and `tfs.write_hdf()` the `TfsDataFames` can also be saved as `hdf5` files, if the `hdf5` extra-requirements are fulfilled.
+### Package Scope
+
+The package also provides some tools to validate and manipulate `TfsDataFrames` and their headers; or lazily manage a collection of TFS files.
+For instance with `tfs.read_hdf()` and `tfs.write_hdf()` the `TfsDataFames` can also be saved as `hdf5` files, if the `hdf5` extra-requirements are fulfilled.
+
+The package, however, is made to handle I/O of `TFS` files to `TfsDataFrames` only: it is not meant to implement various calculations on `TfsDataFrames`.
+Some calculations are implemented in other packages of the ecosystem.
 
 ## License
 
