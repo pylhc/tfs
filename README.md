@@ -9,8 +9,8 @@
 [![Conda-forge Version](https://img.shields.io/conda/vn/conda-forge/tfs-pandas?color=orange&logo=anaconda)](https://anaconda.org/conda-forge/tfs-pandas)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.5070986.svg)](https://doi.org/10.5281/zenodo.5070986)
 
-This package provides reading and writing functionality for [**table format system (tfs)** files](http://mad.web.cern.ch/mad/madx.old/Introduction/tfs.html). 
-Files are read into a `TfsDataFrame`, a class built on top of the famous `pandas.DataFrame`, which in addition to the normal behaviour attaches an `OrderedDict` of headers to the `DataFrame`.
+This package provides reading and writing functionality for [**Table Format System (TFS)** files](http://mad.web.cern.ch/mad/madx.old/Introduction/tfs.html). 
+Files are read into a `TfsDataFrame`, a class built on top of the famous `pandas.DataFrame`, which in addition to the normal behavior attaches an `OrderedDict` of headers to the `DataFrame`.
 
 See the [API documentation](https://pylhc.github.io/tfs/) for details.
 
@@ -21,7 +21,7 @@ Installation is easily done via `pip`:
 python -m pip install tfs-pandas
 ```
 
-One can also install in a `conda` environment via the `conda-forge` channel with:
+One can also install in a `conda`/`mamba` environment via the `conda-forge` channel with:
 ```bash
 conda install -c conda-forge tfs-pandas
 ```
@@ -49,8 +49,13 @@ tfs.frame.validate(data_frame, non_unique_behavior="raise")  # or choose "warn"
 tfs.write("path_to_output.tfs", data_frame, save_index="index_column")
 ```
 
-It also provides some tools to validate and manipulate `TfsDataFrames` and their headers; or lazily manage a collection of TFS files.
-With `tfs.read_hdf()` and `tfs.write_hdf()` the `TfsDataFames` can also be saved as `hdf5` files, if the `hdf5` extra-requirements are fullfilled.
+### Package Scope
+
+The package also provides some tools to validate and manipulate `TfsDataFrames` and their headers; or lazily manage a collection of TFS files.
+For instance with `tfs.read_hdf()` and `tfs.write_hdf()` the `TfsDataFames` can also be saved as `hdf5` files, if the `hdf5` extra-requirements are fulfilled.
+
+The package, however, is made to handle I/O of `TFS` files to `TfsDataFrames` only: it is not meant to implement various calculations on `TfsDataFrames`.
+Some calculations are implemented in other packages of the ecosystem.
 
 ## License
 
