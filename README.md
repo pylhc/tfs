@@ -9,7 +9,7 @@
 [![Conda-forge Version](https://img.shields.io/conda/vn/conda-forge/tfs-pandas?color=orange&logo=anaconda)](https://anaconda.org/conda-forge/tfs-pandas)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.5070986.svg)](https://doi.org/10.5281/zenodo.5070986)
 
-This package provides reading and writing functionality for [**table format system (tfs)** files](http://mad.web.cern.ch/mad/madx.old/Introduction/tfs.html). 
+This package provides reading and writing functionality for [**Table Format System (TFS)** files](http://mad.web.cern.ch/mad/madx.old/Introduction/tfs.html). 
 Files are read into a `TfsDataFrame`, a class built on top of the famous `pandas.DataFrame`, which in addition to the normal behavior attaches an `OrderedDict` of headers to the `DataFrame`.
 
 See the [API documentation](https://pylhc.github.io/tfs/) for details.
