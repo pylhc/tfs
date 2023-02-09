@@ -12,6 +12,7 @@ from typing import List, Union
 import numpy as np
 import pandas as pd
 from pandas.api import types as pdtypes
+from pandas.io.common import get_handle
 
 from tfs.constants import DEFAULT_COLUMN_WIDTH, INDEX_ID, MIN_COLUMN_WIDTH
 from tfs.frame import TfsDataFrame
@@ -33,6 +34,12 @@ def write_tfs(
     """
     Writes the provided ``DataFrame`` to disk at **tfs_file_path**, eventually with the `headers_dict` as
     headers dictionary.
+
+    .. note::
+        Compression of the output file is possible, by simply providing a valid compression extension
+        as the **tfs_file_path** suffix. Any compression format supported by ``pandas`` is accepted,
+        which includes: ``.gz``, ``.bz2``, ``.zip``, ``.xz``, ``.zst``, ``.tar``, ``.tar.gz``, 
+        ``.tar.xz`` or ``.tar.bz2``. See below for examples.
 
     .. warning::
         Through the *validate* argument, one can skip dataframe validation before writing it to file.
@@ -79,6 +86,14 @@ def write_tfs(
         .. code-block:: python
 
             >>> tfs.write("filename.tfs", dataframe, validate=False)
+        
+        It is possible to directly have the output file be compressed, by specifying a
+        valid compression extension as the **tfs_file_path** suffix. The detection
+        and compression is handled automatically. For instance:
+
+        .. code-block:: python
+
+            >>> tfs.write("filename.tfs.gz", dataframe)
     """
     left_align_first_column = False
     tfs_file_path = pathlib.Path(tfs_file_path)
@@ -105,8 +120,9 @@ def write_tfs(
     data_str = _get_data_string(data_frame, colwidth, left_align_first_column)
 
     LOGGER.debug(f"Attempting to write file: {tfs_file_path.name} in {tfs_file_path.parent}")
-    with tfs_file_path.open("w") as tfs_data:
-        tfs_data.write(  # the last "\n" is to have an EOL at EOF, which is UNIX standard
+    with get_handle(tfs_file_path, mode="w", compression="infer") as output_path:
+        tfs_handle = output_path.handle
+        tfs_handle.write(  # the last "\n" is to have an EOL at EOF, which is UNIX standard
             "\n".join((line for line in (headers_str, colnames_str, coltypes_str, data_str) if line)) + "\n"
         )
 
