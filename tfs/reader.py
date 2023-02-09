@@ -113,11 +113,17 @@ def read_tfs(
     headers = OrderedDict()
     non_data_lines: int = 0
     column_names = column_types = None
-
     LOGGER.debug(f"Reading path: {tfs_file_path.absolute()}")
-    with pd.read_csv(tfs_file_path, header=None, chunksize=1, dtype=object) as tfs_data:
+
+    # First step: reading the headers
+    # Very important, the value of 'sep' here should not be a value that can be found in headers (key or value)
+    with pd.read_csv(tfs_file_path, header=None, chunksize=1, sep="youwillnotfindthisanditisimportantitdoesnotuseacommahere", dtype=str) as tfs_data:
         for line_record in tfs_data:
+            print(type(line_record))
+            print("record", line_record)
+            print("with loc", line_record.loc[:, 0])
             line = line_record.loc[:, 0].values[0]
+            print(line)
             non_data_lines += 1
             line_components = shlex.split(line)
             if not line_components:
