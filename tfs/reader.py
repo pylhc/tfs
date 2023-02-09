@@ -115,15 +115,11 @@ def read_tfs(
     column_names = column_types = None
     LOGGER.debug(f"Reading path: {tfs_file_path.absolute()}")
 
-    # First step: reading the headers
+    # First step: reading the headers, chunk by chunk (line by line) with pandas.read_csv as a context manager
     # Very important, the value of 'sep' here should not be a value that can be found in headers (key or value)
-    with pd.read_csv(tfs_file_path, header=None, chunksize=1, sep="youwillnotfindthisanditisimportantitdoesnotuseacommahere", dtype=str) as tfs_data:
-        for line_record in tfs_data:
-            print(type(line_record))
-            print("record", line_record)
-            print("with loc", line_record.loc[:, 0])
-            line = line_record.loc[:, 0].values[0]
-            print(line)
+    with pd.read_csv(tfs_file_path, header=None, chunksize=1, sep="JIEFQRWEHGUEAFE", dtype=str) as tfs_data:
+        for line_record in tfs_data:  # each read chunk / line is made into a DataFrame, colname 0 and value of the read line
+            line = line_record.loc[:, 0].values[0]  # this is the value of the line
             non_data_lines += 1
             line_components = shlex.split(line)
             if not line_components:
