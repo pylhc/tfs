@@ -1,7 +1,7 @@
-# Continous Integration Workflows
+# Continuous Integration Workflows
 
 This package implements different workflows for CI.
-They are organised as follows.
+They are organized as follows.
 
 ### Documentation
 
@@ -11,7 +11,7 @@ It runs on `ubuntu-latest` and our lowest supported Python version, `Python 3.7`
 ### Testing Suite
 
 Tests are ensured in the `tests` workflow, which triggers on all pushes.
-It runs on a matrix of all supported operating systems (ubuntu-18.04, ubuntu-20.04, windows-latest and macos-latest) for all supported Python versions (currently `3.7`, `3.8`, `3.9` and `3.10`).
+It runs on a matrix of all supported operating systems (ubuntu-18.04, ubuntu-20.04, windows-latest and macos-latest) for all supported Python versions (currently `3.7`, `3.8`, `3.9`, `3.10` and `3.11`).
 
 ### Test Coverage
 
@@ -26,5 +26,5 @@ It also runs on `Python 3.x` so that newly released Python versions that would b
 
 ### Publishing
 
-Publishing to `PyPI` is done through the `publish` workflow, which triggers anytime a `release` is made of the Github repository.
+Publishing to `PyPI` is done through the `publish` workflow, which triggers anytime a `release` is made of the GitHub repository.
 It builds a `wheel`, checks it, and pushes to `PyPI` if checks are successful.
