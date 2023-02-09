@@ -36,7 +36,7 @@ def test_write_read_compressed(_tfs_filey, tmp_path, extension):
     write_tfs(compressed_path, ref_df, save_index="NAME")
     assert compressed_path.exists()
     assert compressed_path.stat().st_size > 0
-    assert compressed_path.stat().st_size != _tfs_filey.stat().st_size  # should compress, heh
+    assert compressed_path.stat().st_size != _tfs_filey.stat().st_size
     assert str(compressed_path).endswith(f".{extension}")
 
     # Now we read it back and compare to initial data
