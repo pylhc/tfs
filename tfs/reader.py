@@ -122,14 +122,15 @@ def read_tfs(
         header=None,  # don't look for a line with column names
         chunksize=1,  # read one chunk at a time (each is a line)
         sep="JIEFQRWEHGUEAFE",  # a string not expected to be found in the headers, we should be safer on this
+        engine="python",  # only engine that supports this sep argument
         dtype=str,  # we are reading the headers so we only expect and want strings, they are parsed afterwards
-    ) as tfs_data:
-        for line_record in tfs_data:  # each read chunk / line is made into a DataFrame, colname 0 and value is the read line
+    ) as file_reader:
+        for line_record in file_reader:  # each read chunk / line is made into a DataFrame, colname 0 and value is the read line
+            non_data_lines += 1  # important to count the line here
             try:
-                line = line_record.loc[:, 0].values[0]  # this is the value of the line
-            except IndexError:  # if empty line we get an IndexError when trying to access, this is a case in our tests for instance
+                line = line_record.loc[:, 0].values[0]  # this is the value of the line as a string
+            except IndexError:  # in case of empty line, this is a case in our tests for instance
                 continue
-            non_data_lines += 1
             line_components = shlex.split(line)
             if line_components[0] == HEADER:
                 name, value = _parse_header(line_components[1:])
