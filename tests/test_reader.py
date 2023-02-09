@@ -49,7 +49,6 @@ class TestRead:
         df = read_tfs(_space_in_colnames_tfs_path, index="NAME", validate=False)
         assert "BPM RES" in df.columns
 
-
     def test_tfs_read_no_validation_doesnt_warn(self, caplog):
         nan_tfs_path = pathlib.Path(__file__).parent / "inputs" / "has_nans.tfs"
         _ = read_tfs(nan_tfs_path, index="NAME", validate=False)
