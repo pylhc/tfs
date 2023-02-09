@@ -30,6 +30,11 @@ def read_tfs(
     """
     Parses the **TFS** table present in **tfs_file_path** and returns a ``TfsDataFrame``.
 
+    .. note::
+        Loading and reading compressed files is possible. Any compression format supported
+        by ``pandas`` is accepted, which includes: ``.gz``, ``.bz2``, ``.zip``, ``.xz``, 
+        ``.zst``, ``.tar``, ``.tar.gz``, ``.tar.xz`` or ``.tar.bz2``. See below for examples.
+
     .. warning::
         Through the *validate* argument, one can skip dataframe validation after
         loading it from a file. While this can speed-up the execution time of this
@@ -93,6 +98,16 @@ def read_tfs(
         .. code-block:: python
 
             >>> tfs.read("filename.tfs", validate=False)
+        
+        It is possible load compressed files, if the compression format is supported by pandas.
+        The compression format detection is handled automatically from the extension of the 
+        provided **tfs_file_path** suffix. For instance:
+
+        .. code-block:: python
+
+            >>> tfs.read("filename.tfs.gz")
+            >>> tfs.read("filename.tfs.bz2")
+            >>> tfs.read("filename.tfs.zip")
     """
     tfs_file_path = pathlib.Path(tfs_file_path)
     headers = OrderedDict()
@@ -100,8 +115,9 @@ def read_tfs(
     column_names = column_types = None
 
     LOGGER.debug(f"Reading path: {tfs_file_path.absolute()}")
-    with tfs_file_path.open("r") as tfs_data:
-        for line in tfs_data:
+    with pd.read_csv(tfs_file_path, header=None, chunksize=1, dtype=object) as tfs_data:
+        for line_record in tfs_data:
+            line = line_record.loc[:, 0].values[0]
             non_data_lines += 1
             line_components = shlex.split(line)
             if not line_components:
