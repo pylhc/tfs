@@ -1,5 +1,10 @@
 # TFS-Pandas Changelog
 
+## Version 3.4.0
+
+- Added:
+  - The `read_tfs` and `write_tfs` functions can now handle reading / writing compressed files, see documentation for details. 
+
 ## Version 3.3.1
 
 - Changed:
