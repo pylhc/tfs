@@ -35,7 +35,7 @@ DEPENDENCIES = [
 
 # Extra dependencies
 EXTRA_DEPENDENCIES = {
-    "test": ["pytest>=5.2", "pytest-cov>=2.9", "cpymad>=1.8.1"],
+    "test": ["pytest>=5.2", "pytest-cov>=2.9", "cpymad>=1.8.1", "zstandard>=0.15.2"],
     "hdf5": ["h5py>=2.9.0", "tables>=3.6.0"],
     "doc": ["sphinx", "sphinx_rtd_theme", "sphinx_copybutton", "sphinx-prompt", "sphinx_codeautolink"],
 }
