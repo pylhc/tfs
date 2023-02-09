@@ -127,12 +127,10 @@ def read_tfs(
         for line_record in tfs_data:  # each read chunk / line is made into a DataFrame, colname 0 and value is the read line
             try:
                 line = line_record.loc[:, 0].values[0]  # this is the value of the line
-            except IndexError:  # if the line is empty, we get an IndexError when trying to access, this is a case in our tests for instance
+            except IndexError:  # if empty line we get an IndexError when trying to access, this is a case in our tests for instance
                 continue
             non_data_lines += 1
             line_components = shlex.split(line)
-            if not line_components:
-                continue
             if line_components[0] == HEADER:
                 name, value = _parse_header(line_components[1:])
                 headers[name] = value
