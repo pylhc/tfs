@@ -53,7 +53,7 @@ Reading and writing compressed files is also supported, and done automatically b
 ```python
 import tfs
 
-# Reading a compressed file is simple
+# Reading a compressed file is simple, compression format is inferred
 df = tfs.read("path_to_input.tfs.gz")
 
 # When writing choose the compression format by providing the appropriate file extension
