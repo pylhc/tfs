@@ -2,6 +2,7 @@
 Here we only test that reading and writing with compression keeps the data intact.
 """
 import pathlib
+import sys
 
 import pytest
 from pandas._testing import assert_dict_equal
@@ -12,6 +13,8 @@ from tfs import read_tfs, write_tfs
 CURRENT_DIR = pathlib.Path(__file__).parent
 
 
+# TODO: remove the skipif once Python 3.7 is EoL and we drop support for it
+@pytest.mark.skipif(sys.version_info < (3, 8), "Not run on Python 3.7 for format protocol incompatibility reasons")
 @pytest.mark.parametrize("extension", ["gz", "bz2", "zip", "xz", "zst", "tar", "tar.gz"])
 def test_read_compressed_is_same_data(_tfs_filex, _tfs_compressed_filex_no_suffix, extension):
     """Compare the data from a compressed file with the original one."""
@@ -26,6 +29,8 @@ def test_read_compressed_is_same_data(_tfs_filex, _tfs_compressed_filex_no_suffi
     assert_frame_equal(ref_df, test_df)
 
 
+# TODO: remove the skipif once Python 3.7 is EoL and we drop support for it
+@pytest.mark.skipif(sys.version_info < (3, 8), "Not run on Python 3.7 for format protocol incompatibility reasons")
 @pytest.mark.parametrize("extension", ["gz", "bz2", "zip", "xz", "zst", "tar", "tar.gz"])
 def test_write_read_compressed(_tfs_filey, tmp_path, extension):
     """Ensure that writing in compressed format preserves data."""
