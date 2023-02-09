@@ -28,7 +28,7 @@ conda install -c conda-forge tfs-pandas
 
 ## Example Usage
 
- The package is imported as `tfs`, and exports top-level functions for reading and writing:
+The package is imported as `tfs`, and exports top-level functions for reading and writing:
 ```python
 import tfs
 
@@ -49,10 +49,22 @@ tfs.frame.validate(data_frame, non_unique_behavior="raise")  # or choose "warn"
 tfs.write("path_to_output.tfs", data_frame, save_index="index_column")
 ```
 
+Reading and writing compressed files is also supported, and done automatically based on the provided file extension:
+```python
+import tfs
+
+# Reading a compressed file is simple
+df = tfs.read("path_to_input.tfs.gz")
+
+# When writing choose the compression format by providing the appropriate file extension
+tfs.write("path_to_output.tfs.bz2", df)
+tfs.write("path_to_output.tfs.zip", df)
+```
+
 ### Package Scope
 
 The package also provides some tools to validate and manipulate `TfsDataFrames` and their headers; or lazily manage a collection of TFS files.
-For instance with `tfs.read_hdf()` and `tfs.write_hdf()` the `TfsDataFames` can also be saved as `hdf5` files, if the `hdf5` extra-requirements are fulfilled.
+For instance with `tfs.read_hdf()` and `tfs.write_hdf()` the `TfsDataFames` can also be saved as `hdf5` files, if the `hdf5` extra requirements are fulfilled.
 
 The package, however, is made to handle I/O of `TFS` files to `TfsDataFrames` only: it is not meant to implement various calculations on `TfsDataFrames`.
 Some calculations are implemented in other packages of the ecosystem.
