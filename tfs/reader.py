@@ -99,9 +99,9 @@ def read_tfs(
 
             >>> tfs.read("filename.tfs", validate=False)
         
-        It is possible load compressed files, if the compression format is supported by pandas.
-        The compression format detection is handled automatically from the extension of the 
-        provided **tfs_file_path** suffix. For instance:
+        It is possible to load compressed files if the compression format is supported by pandas.
+        (see above). The compression format detection is handled automatically from the extension
+        of the provided **tfs_file_path** suffix. For instance:
 
         .. code-block:: python
 
