@@ -118,7 +118,7 @@ def read_tfs(
     # First step: reading the headers, chunk by chunk (line by line) with pandas.read_csv as a context manager
     # Very important, the value of 'sep' here should not be a value that can be found in headers (key or value)
     with pd.read_csv(
-        tfs_file_path,  # the file to read, uses the 
+        tfs_file_path,
         header=None,  # don't look for a line with column names
         chunksize=1,  # read one chunk at a time (each is a line)
         sep="JIEFQRWEHGUEAFE",  # a string not expected to be found in the headers, we should be safer on this
