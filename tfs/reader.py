@@ -20,6 +20,9 @@ from tfs.frame import validate as validate_frame
 
 LOGGER = logging.getLogger(__name__)
 
+# A string not expected to be found in the headers
+# I generated this randomly with: "".join(random.choice(string.ascii_letters) for _ in range(100))
+_UNEXPECTED_SEP: str = "baBfHIhwOdMnuBVHDDZcysbmwRgWaBnukQPIWNHpFVqjrIcOryhvyJwIRRHfqOQLGKhtZPLJhziZKomfVhXsoqfoGkvyFKuNhhst"
 
 def read_tfs(
     tfs_file_path: Union[pathlib.Path, str],
@@ -121,7 +124,7 @@ def read_tfs(
         tfs_file_path,
         header=None,  # don't look for a line with column names
         chunksize=1,  # read one chunk at a time (each is a line)
-        sep="JIEFQRWEHGUEAFE",  # a string not expected to be found in the headers, we should be safer on this
+        sep=_UNEXPECTED_SEP,  # a string not expected to be found in the headers
         engine="python",  # only engine that supports this sep argument
         dtype=str,  # we are reading the headers so we only expect and want strings, they are parsed afterwards
     ) as file_reader:
