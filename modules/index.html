@@ -2,9 +2,9 @@
 
 <html class="writer-html5" lang="en">
 <head>
-<meta charset="utf-8"/><meta content="Docutils 0.17.1: http://docutils.sourceforge.net/" name="generator"/>
+<meta charset="utf-8"/><meta content="Docutils 0.18.1: http://docutils.sourceforge.net/" name="generator"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>TFS-Pandas Modules — tfs-pandas 3.3.1 documentation</title>
+<title>TFS-Pandas Modules — tfs-pandas 3.4.0 documentation</title>
 <link href="../_static/pygments.css" rel="stylesheet" type="text/css"/>
 <link href="../_static/css/theme.css" rel="stylesheet" type="text/css"/>
 <link href="../_static/copybutton.css" rel="stylesheet" type="text/css"/>
@@ -35,11 +35,11 @@
 <img alt="Logo" class="logo" src="../_static/omc_logo.svg"/>
 </a>
 <div class="version">
-                3.3
+                3.4
               </div>
 <div role="search">
 <form action="../search.html" class="wy-form" id="rtd-search-form" method="get">
-<input name="q" placeholder="Search docs" type="text"/>
+<input aria-label="Search docs" name="q" placeholder="Search docs" type="text"/>
 <input name="check_keywords" type="hidden" value="yes"/>
 <input name="area" type="hidden" value="default"/>
 </form>
@@ -83,7 +83,7 @@
 <div class="rst-content">
 <div aria-label="Page navigation" role="navigation">
 <ul class="wy-breadcrumbs">
-<li><a class="icon icon-home" href="../index.html"></a></li>
+<li><a aria-label="Home" class="icon icon-home" href="../index.html"></a></li>
 <li class="breadcrumb-item active">TFS-Pandas Modules</li>
 <li class="wy-breadcrumbs-aside">
 <!-- User defined GitHub URL -->
@@ -181,10 +181,10 @@ not present in the Tfs(…) definition, it will also be given the keyword argume
 <p>This function can be overwritten to use something instead of <code class="docutils literal notranslate"><span class="pre">tfs-pandas</span></code> to load the
 files.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>filename</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) -- The name of the file to load.</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>A <code class="docutils literal notranslate"><span class="pre">TfsDataFrame</span></code> built from reading the requested file.</p>
 </dd>
 </dl>
@@ -230,7 +230,7 @@ it does not conflict with a column name in the dataframe.</p>
 manipulation is done by the <code class="docutils literal notranslate"><span class="pre">pandas.Dataframe</span></code> method of the same name. Resulting headers are
 either merged according to the provided <strong>how_headers</strong> method or as given via <strong>new_headers</strong>.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>other</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Union[TfsDataFrame,</span> <span class="pre">pd.DataFrame]</span></code>) -- The <code class="docutils literal notranslate"><span class="pre">TfsDataFrame</span></code> to append to the caller.</p></li>
 <li><p><strong>how_headers</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) -- Type of merge to be performed for the headers. Either <strong>left</strong> or <strong>right</strong>.
@@ -242,14 +242,14 @@ Otherwise these are determined by merging the headers from the caller and the ot
 <code class="docutils literal notranslate"><span class="pre">TfsDataFrame</span></code> according to the method defined by the <strong>how_headers</strong> argument.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Keyword Arguments</dt>
+<dt class="field-even">Keyword Arguments<span class="colon">:</span></dt>
 <dd class="field-even"><ul class="simple">
 <li><p><strong>these</strong> (<em>Any keyword argument is given to pandas.DataFrame.append</em><em>(</em><em>)</em><em>. The default values for all</em>) -- </p></li>
 <li><p><strong>pandas</strong> (<em>parameters are left as set in the pandas codebase. To see these</em><em>, </em><em>refer to the</em>) -- </p></li>
 <li><p><strong>documentation</strong><strong>]</strong><strong>(</strong><strong>https</strong> (<em>[</em><em>DataFrame.append</em>) -- //pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.append.html).</p></li>
 </ul>
 </dd>
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>A new <code class="docutils literal notranslate"><span class="pre">TfsDataFrame</span></code> with the appended data and merged headers.</p>
 </dd>
 </dl>
@@ -261,7 +261,7 @@ Otherwise these are determined by merging the headers from the caller and the ot
 method of the same name. Resulting headers are either merged according to the provided
 <strong>how_headers</strong> method or as given via <strong>new_headers</strong>.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>other</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Union[TfsDataFrame,</span> <span class="pre">pd.DataFrame]</span></code>) -- The <code class="docutils literal notranslate"><span class="pre">TfsDataFrame</span></code> to join into the caller.</p></li>
 <li><p><strong>how_headers</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) -- Type of merge to be performed for the headers. Either <strong>left</strong> or <strong>right</strong>.
@@ -273,14 +273,14 @@ Otherwise these are determined by merging the headers from the caller and the ot
 <code class="docutils literal notranslate"><span class="pre">TfsDataFrame</span></code> according to the method defined by the <strong>how_headers</strong> argument.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Keyword Arguments</dt>
+<dt class="field-even">Keyword Arguments<span class="colon">:</span></dt>
 <dd class="field-even"><ul class="simple">
 <li><p><strong>these</strong> (<em>Any keyword argument is given to pandas.DataFrame.join</em><em>(</em><em>)</em><em>. The default values for all</em>) -- </p></li>
 <li><p><strong>pandas</strong> (<em>parameters are left as set in the pandas codebase. To see these</em><em>, </em><em>refer to the</em>) -- </p></li>
 <li><p><strong>documentation</strong><strong>]</strong><strong>(</strong><strong>https</strong> (<em>[</em><em>DataFrame.join</em>) -- //pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.join.html).</p></li>
 </ul>
 </dd>
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>A new <code class="docutils literal notranslate"><span class="pre">TfsDataFrame</span></code> with the joined columns and merged headers.</p>
 </dd>
 </dl>
@@ -292,7 +292,7 @@ Otherwise these are determined by merging the headers from the caller and the ot
 <code class="docutils literal notranslate"><span class="pre">pandas.Dataframe</span></code> method of the same name. Resulting headers are either merged according to the
 provided <strong>how_headers</strong> method or as given via <strong>new_headers</strong>.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>right</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Union[TfsDataFrame,</span> <span class="pre">pd.DataFrame]</span></code>) -- The <code class="docutils literal notranslate"><span class="pre">TfsDataFrame</span></code> to merge with the caller.</p></li>
 <li><p><strong>how_headers</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) -- Type of merge to be performed for the headers. Either <strong>left</strong> or <strong>right</strong>.
@@ -304,14 +304,14 @@ Otherwise these are determined by merging the headers from the caller and the ot
 <code class="docutils literal notranslate"><span class="pre">TfsDataFrame</span></code> according to the method defined by the <strong>how_headers</strong> argument.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Keyword Arguments</dt>
+<dt class="field-even">Keyword Arguments<span class="colon">:</span></dt>
 <dd class="field-even"><ul class="simple">
 <li><p><strong>these</strong> (<em>Any keyword argument is given to pandas.DataFrame.merge</em><em>(</em><em>)</em><em>. The default values for all</em>) -- </p></li>
 <li><p><strong>pandas</strong> (<em>parameters are left as set in the pandas codebase. To see these</em><em>, </em><em>refer to the</em>) -- </p></li>
 <li><p><strong>documentation</strong><strong>]</strong><strong>(</strong><strong>https</strong> (<em>[</em><em>DataFrame.merge</em>) -- //pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.merge.html).</p></li>
 </ul>
 </dd>
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>A new <code class="docutils literal notranslate"><span class="pre">TfsDataFrame</span></code> with the merged data and merged headers.</p>
 </dd>
 </dl>
@@ -331,7 +331,7 @@ recommended to provide the <strong>new_headers</strong> argument to ensure the f
 <strong>how_headers</strong> and <strong>new_headers</strong> as <code class="docutils literal notranslate"><span class="pre">None</span></code> (their defaults) to end up with empty headers.</p>
 </div>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>objs</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Sequence[Union[TfsDataFrame,</span> <span class="pre">pd.DataFrame]]</span></code>) -- the <code class="docutils literal notranslate"><span class="pre">TfsDataFrame</span></code> objects to be concatenated.</p></li>
 <li><p><strong>how_headers</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) -- Type of merge to be performed for the headers. Either <strong>left</strong> or <strong>right</strong>.
@@ -343,14 +343,14 @@ Otherwise these are determined by successively merging the headers from all conc
 <code class="docutils literal notranslate"><span class="pre">TfsDataFrames</span></code> according to the method defined by the <strong>how_headers</strong> argument.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Keyword Arguments</dt>
+<dt class="field-even">Keyword Arguments<span class="colon">:</span></dt>
 <dd class="field-even"><ul class="simple">
 <li><p><strong>parameters</strong> (<em>Any keyword argument is given to pandas.concat</em><em>(</em><em>)</em><em>. The default values for all these</em>) -- </p></li>
 <li><p><strong>[</strong><strong>pandas.concat</strong> (<em>are left as set in the pandas codebase. To see these</em><em>, </em><em>refer to the</em>) -- </p></li>
 <li><p><strong>documentation</strong><strong>]</strong><strong>(</strong><strong>https</strong> -- //pandas.pydata.org/pandas-docs/stable/reference/api/pandas.concat.html).</p></li>
 </ul>
 </dd>
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>A new <code class="docutils literal notranslate"><span class="pre">TfsDataFrame</span></code> with the merged data and merged headers.</p>
 </dd>
 </dl>
@@ -360,7 +360,7 @@ Otherwise these are determined by successively merging the headers from all conc
 <span class="sig-prename descclassname"><span class="pre">tfs.frame.</span></span><span class="sig-name descname"><span class="pre">merge_headers</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">headers_left</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.11)"><span class="pre">dict</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">headers_right</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.11)"><span class="pre">dict</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">how</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/collections.html#collections.OrderedDict" title="(in Python v3.11)"><span class="pre">OrderedDict</span></a></span></span><a class="reference internal" href="../_modules/tfs/frame.html#merge_headers"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tfs.frame.merge_headers" title="Permalink to this definition"></a></dt>
 <dd><p>Merge headers of two <code class="docutils literal notranslate"><span class="pre">TfsDataFrames</span></code> together.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>headers_left</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a>) -- Headers of caller (left) <code class="docutils literal notranslate"><span class="pre">TfsDataFrame</span></code> when calling <code class="docutils literal notranslate"><span class="pre">.append</span></code>, <code class="docutils literal notranslate"><span class="pre">.join</span></code> or
 <code class="docutils literal notranslate"><span class="pre">.merge</span></code>. Headers of the left (preceeding) <code class="docutils literal notranslate"><span class="pre">TfsDataFrame</span></code> when calling <code class="docutils literal notranslate"><span class="pre">tfs.frame.concat</span></code>.</p></li>
@@ -373,7 +373,7 @@ from **headers_left</strong> in case of duplicate keys. If <strong>right</strong
 an empty dictionary will be returned.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>A new <code class="docutils literal notranslate"><span class="pre">OrderedDict</span></code> as the merge of the two provided dictionaries.</p>
 </dd>
 </dl>
@@ -399,7 +399,7 @@ applying the <code class="docutils literal notranslate"><span class="pre">isna</
 </dl>
 </div>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>data_frame</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Union[TfsDataFrame,</span> <span class="pre">pd.DataFrame]</span></code>) -- the dataframe to check on.</p></li>
 <li><p><strong>info_str</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) -- additional information to include in logging statements.</p></li>
@@ -420,10 +420,10 @@ to respectively issue a warning or raise an error if non-unique elements are fou
 <dd><p>Read TfsDataFrame from hdf5 file. The DataFrame needs to be stored
 in a group named <code class="docutils literal notranslate"><span class="pre">data</span></code>, while the headers are stored in <code class="docutils literal notranslate"><span class="pre">headers</span></code>.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>path</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Path,</span> <span class="pre">str</span></code>) -- Path of the file to read.</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>A <code class="docutils literal notranslate"><span class="pre">TfsDataFrame</span></code> object with the loaded data from the file.</p>
 </dd>
 </dl>
@@ -435,7 +435,7 @@ in a group named <code class="docutils literal notranslate"><span class="pre">da
 the group <code class="docutils literal notranslate"><span class="pre">data</span></code>, the headers into the group <code class="docutils literal notranslate"><span class="pre">headers</span></code>.
 Only one dataframe per file is allowed.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>path</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Path,</span> <span class="pre">str</span></code>) -- Path of the output file.</p></li>
 <li><p><strong>df</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">TfsDataFrame</span></code>) -- TfsDataFrame to write.</p></li>
@@ -456,6 +456,12 @@ in that case).</p></li>
 <dt class="sig sig-object py" id="tfs.reader.read_tfs">
 <span class="sig-prename descclassname"><span class="pre">tfs.reader.</span></span><span class="sig-name descname"><span class="pre">read_tfs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tfs_file_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union" title="(in Python v3.11)"><span class="pre">Union</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.11)"><span class="pre">Path</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.11)"><span class="pre">Optional</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">non_unique_behavior</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'warn'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">validate</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><a class="reference internal" href="#tfs.frame.TfsDataFrame" title="tfs.frame.TfsDataFrame"><span class="pre">TfsDataFrame</span></a></span></span><a class="reference internal" href="../_modules/tfs/reader.html#read_tfs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tfs.reader.read_tfs" title="Permalink to this definition"></a></dt>
 <dd><p>Parses the <strong>TFS</strong> table present in <strong>tfs_file_path</strong> and returns a <code class="docutils literal notranslate"><span class="pre">TfsDataFrame</span></code>.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Loading and reading compressed files is possible. Any compression format supported
+by <code class="docutils literal notranslate"><span class="pre">pandas</span></code> is accepted, which includes: <code class="docutils literal notranslate"><span class="pre">.gz</span></code>, <code class="docutils literal notranslate"><span class="pre">.bz2</span></code>, <code class="docutils literal notranslate"><span class="pre">.zip</span></code>, <code class="docutils literal notranslate"><span class="pre">.xz</span></code>,
+<code class="docutils literal notranslate"><span class="pre">.zst</span></code>, <code class="docutils literal notranslate"><span class="pre">.tar</span></code>, <code class="docutils literal notranslate"><span class="pre">.tar.gz</span></code>, <code class="docutils literal notranslate"><span class="pre">.tar.xz</span></code> or <code class="docutils literal notranslate"><span class="pre">.tar.bz2</span></code>. See below for examples.</p>
+</div>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
 <p>Through the <em>validate</em> argument, one can skip dataframe validation after
@@ -475,7 +481,7 @@ conversion to <code class="docutils literal notranslate"><span class="pre">TfsDa
 the frame is validated before being returned.</p>
 </div>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>tfs_file_path</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Union[pathlib.Path,</span> <span class="pre">str]</span></code>) -- Path object to the <strong>TFS</strong> file to read. Can be
 a string, in which case it will be cast to a Path object.</p></li>
@@ -487,7 +493,7 @@ to respectively issue a warning or raise an error if non-unique elements are fou
 <li><p><strong>validate</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) -- Whether to validate the dataframe after reading it. Defaults to <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>A <code class="docutils literal notranslate"><span class="pre">TfsDataFrame</span></code> object with the loaded data from the file.</p>
 </dd>
 </dl>
@@ -516,6 +522,14 @@ from file. This is done as:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">tfs</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s2">"filename.tfs"</span><span class="p">,</span> <span class="n">validate</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 </pre></div>
 </div>
+<p>It is possible to load compressed files if the compression format is supported by pandas.
+(see above). The compression format detection is handled automatically from the extension
+of the provided <strong>tfs_file_path</strong> suffix. For instance:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">tfs</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s2">"filename.tfs.gz"</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">tfs</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s2">"filename.tfs.bz2"</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">tfs</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s2">"filename.tfs.zip"</span><span class="p">)</span>
+</pre></div>
+</div>
 </div>
 </dd></dl>
 <span class="target" id="module-tfs.tools"></span><section id="tools">
@@ -528,7 +542,7 @@ from file. This is done as:</p>
 <dd><p>Check the files in the provided list for invalid headers (no type defined) and removes those
 inplace when found.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>list_of_files</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">List[Union[str,</span> <span class="pre">Path]]</span></code>) -- list of Paths to <strong>TFS</strong> files meant to be checked.
 The entries of the list can be strings or Path objects.</p>
 </dd>
@@ -539,7 +553,7 @@ The entries of the list can be strings or Path objects.</p>
 <span class="sig-prename descclassname"><span class="pre">tfs.tools.</span></span><span class="sig-name descname"><span class="pre">remove_nan_from_files</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">list_of_files</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.11)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union" title="(in Python v3.11)"><span class="pre">Union</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.11)"><span class="pre">Path</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">replace</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../_modules/tfs/tools.html#remove_nan_from_files"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tfs.tools.remove_nan_from_files" title="Permalink to this definition"></a></dt>
 <dd><p>Remove <code class="docutils literal notranslate"><span class="pre">NaN</span></code> entries from files in <code class="xref py py-obj docutils literal notranslate"><span class="pre">list_of_files</span></code>.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>list_of_files</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">List[Union[str,</span> <span class="pre">Path]]</span></code>) -- list of Paths to <strong>TFS</strong> files meant to be sanitized.
 The elements of the list can be strings or Path objects.</p></li>
@@ -555,7 +569,7 @@ with <code class="xref py py-obj docutils literal notranslate"><span class="pre"
 <span class="sig-prename descclassname"><span class="pre">tfs.tools.</span></span><span class="sig-name descname"><span class="pre">significant_digits</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.11)"><span class="pre">float</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">error</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.11)"><span class="pre">float</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_floats</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union" title="(in Python v3.11)"><span class="pre">Union</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.11)"><span class="pre">Tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.11)"><span class="pre">Tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.11)"><span class="pre">float</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.11)"><span class="pre">float</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/tfs/tools.html#significant_digits"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tfs.tools.significant_digits" title="Permalink to this definition"></a></dt>
 <dd><p>Computes <code class="xref py py-obj docutils literal notranslate"><span class="pre">value</span></code> and its error properly rounded with respect to the size of <code class="xref py py-obj docutils literal notranslate"><span class="pre">error</span></code>.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>value</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>) -- a number.</p></li>
 <li><p><strong>error</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>) -- the error on the number.</p></li>
@@ -563,7 +577,7 @@ with <code class="xref py py-obj docutils literal notranslate"><span class="pre"
 strings. Defaults to <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>A tuple of the rounded value and error with regards to the size of the error.</p>
 </dd>
 </dl>
@@ -577,6 +591,13 @@ strings. Defaults to <code class="docutils literal notranslate"><span class="pre
 <span class="sig-prename descclassname"><span class="pre">tfs.writer.</span></span><span class="sig-name descname"><span class="pre">write_tfs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tfs_file_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union" title="(in Python v3.11)"><span class="pre">Union</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.11)"><span class="pre">Path</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_frame</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union" title="(in Python v3.11)"><span class="pre">Union</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#tfs.frame.TfsDataFrame" title="tfs.frame.TfsDataFrame"><span class="pre">TfsDataFrame</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v1.5.3)"><span class="pre">DataFrame</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">headers_dict</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.11)"><span class="pre">Optional</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.11)"><span class="pre">dict</span></a><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union" title="(in Python v3.11)"><span class="pre">Union</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><span class="pre">bool</span></a><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">colwidth</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">20</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">headerswidth</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">20</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">non_unique_behavior</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'warn'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">validate</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.11)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../_modules/tfs/writer.html#write_tfs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tfs.writer.write_tfs" title="Permalink to this definition"></a></dt>
 <dd><p>Writes the provided <code class="docutils literal notranslate"><span class="pre">DataFrame</span></code> to disk at <strong>tfs_file_path</strong>, eventually with the <code class="xref py py-obj docutils literal notranslate"><span class="pre">headers_dict</span></code> as
 headers dictionary.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Compression of the output file is possible, by simply providing a valid compression extension
+as the <strong>tfs_file_path</strong> suffix. Any compression format supported by <code class="docutils literal notranslate"><span class="pre">pandas</span></code> is accepted,
+which includes: <code class="docutils literal notranslate"><span class="pre">.gz</span></code>, <code class="docutils literal notranslate"><span class="pre">.bz2</span></code>, <code class="docutils literal notranslate"><span class="pre">.zip</span></code>, <code class="docutils literal notranslate"><span class="pre">.xz</span></code>, <code class="docutils literal notranslate"><span class="pre">.zst</span></code>, <code class="docutils literal notranslate"><span class="pre">.tar</span></code>, <code class="docutils literal notranslate"><span class="pre">.tar.gz</span></code>,
+<code class="docutils literal notranslate"><span class="pre">.tar.xz</span></code> or <code class="docutils literal notranslate"><span class="pre">.tar.bz2</span></code>. See below for examples.</p>
+</div>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
 <p>Through the <em>validate</em> argument, one can skip dataframe validation before writing it to file.
@@ -586,7 +607,7 @@ use at their own risk should they wish to avoid lengthy validation of large <cod
 (such as for instance a sliced FCC lattice).</p>
 </div>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>tfs_file_path</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Union[pathlib.Path,</span> <span class="pre">str]</span></code>) -- Path object to the output <strong>TFS</strong> file. Can be
 a string, in which case it will be cast to a Path object.</p></li>
@@ -621,6 +642,12 @@ one can do so as:</p>
 <p>One can choose to skip dataframe validation <strong>at one’s own risk</strong> before writing
 it to file. This is done as:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">tfs</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">"filename.tfs"</span><span class="p">,</span> <span class="n">dataframe</span><span class="p">,</span> <span class="n">validate</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>It is possible to directly have the output file be compressed, by specifying a
+valid compression extension as the <strong>tfs_file_path</strong> suffix. The detection
+and compression is handled automatically. For instance:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">tfs</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">"filename.tfs.gz"</span><span class="p">,</span> <span class="n">dataframe</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>

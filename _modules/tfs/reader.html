@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>tfs.reader &mdash; tfs-pandas 3.3.1 documentation</title>
+  <title>tfs.reader &mdash; tfs-pandas 3.4.0 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
@@ -31,15 +31,19 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../../index.html">
-            <img src="../../_static/omc_logo.svg" class="logo" alt="Logo"/>
+
+          
+          
+          <a href="../../index.html">
+            
+              <img src="../../_static/omc_logo.svg" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                3.3
+                3.4
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -86,7 +90,7 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../index.html" class="icon icon-home"></a></li>
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
       <li class="breadcrumb-item active">tfs.reader</li>
       <li class="wy-breadcrumbs-aside">
@@ -120,6 +124,9 @@
 
 <span class="n">LOGGER</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
+<span class="c1"># A string not expected to be found in the headers</span>
+<span class="c1"># I generated this randomly with: &quot;&quot;.join(random.choice(string.ascii_letters) for _ in range(100))</span>
+<span class="n">_UNEXPECTED_SEP</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;baBfHIhwOdMnuBVHDDZcysbmwRgWaBnukQPIWNHpFVqjrIcOryhvyJwIRRHfqOQLGKhtZPLJhziZKomfVhXsoqfoGkvyFKuNhhst&quot;</span>
 
 <div class="viewcode-block" id="read_tfs"><a class="viewcode-back" href="../../modules/index.html#tfs.reader.read_tfs">[docs]</a><span class="k">def</span> <span class="nf">read_tfs</span><span class="p">(</span>
     <span class="n">tfs_file_path</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span>
@@ -129,6 +136,11 @@
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TfsDataFrame</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Parses the **TFS** table present in **tfs_file_path** and returns a ``TfsDataFrame``.</span>
+
+<span class="sd">    .. note::</span>
+<span class="sd">        Loading and reading compressed files is possible. Any compression format supported</span>
+<span class="sd">        by ``pandas`` is accepted, which includes: ``.gz``, ``.bz2``, ``.zip``, ``.xz``, </span>
+<span class="sd">        ``.zst``, ``.tar``, ``.tar.gz``, ``.tar.xz`` or ``.tar.bz2``. See below for examples.</span>
 
 <span class="sd">    .. warning::</span>
 <span class="sd">        Through the *validate* argument, one can skip dataframe validation after</span>
@@ -193,19 +205,40 @@
 <span class="sd">        .. code-block:: python</span>
 
 <span class="sd">            &gt;&gt;&gt; tfs.read(&quot;filename.tfs&quot;, validate=False)</span>
+<span class="sd">        </span>
+<span class="sd">        It is possible to load compressed files if the compression format is supported by pandas.</span>
+<span class="sd">        (see above). The compression format detection is handled automatically from the extension</span>
+<span class="sd">        of the provided **tfs_file_path** suffix. For instance:</span>
+
+<span class="sd">        .. code-block:: python</span>
+
+<span class="sd">            &gt;&gt;&gt; tfs.read(&quot;filename.tfs.gz&quot;)</span>
+<span class="sd">            &gt;&gt;&gt; tfs.read(&quot;filename.tfs.bz2&quot;)</span>
+<span class="sd">            &gt;&gt;&gt; tfs.read(&quot;filename.tfs.zip&quot;)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">tfs_file_path</span> <span class="o">=</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="n">tfs_file_path</span><span class="p">)</span>
     <span class="n">headers</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
     <span class="n">non_data_lines</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="n">column_names</span> <span class="o">=</span> <span class="n">column_types</span> <span class="o">=</span> <span class="kc">None</span>
-
     <span class="n">LOGGER</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Reading path: </span><span class="si">{</span><span class="n">tfs_file_path</span><span class="o">.</span><span class="n">absolute</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-    <span class="k">with</span> <span class="n">tfs_file_path</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">tfs_data</span><span class="p">:</span>
-        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">tfs_data</span><span class="p">:</span>
-            <span class="n">non_data_lines</span> <span class="o">+=</span> <span class="mi">1</span>
-            <span class="n">line_components</span> <span class="o">=</span> <span class="n">shlex</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="n">line_components</span><span class="p">:</span>
+
+    <span class="c1"># First step: reading the headers, chunk by chunk (line by line) with pandas.read_csv as a context manager</span>
+    <span class="c1"># Very important, the value of &#39;sep&#39; here should not be a value that can be found in headers (key or value)</span>
+    <span class="k">with</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span>
+        <span class="n">tfs_file_path</span><span class="p">,</span>
+        <span class="n">header</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>  <span class="c1"># don&#39;t look for a line with column names</span>
+        <span class="n">chunksize</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>  <span class="c1"># read one chunk at a time (each is a line)</span>
+        <span class="n">sep</span><span class="o">=</span><span class="n">_UNEXPECTED_SEP</span><span class="p">,</span>  <span class="c1"># a string not expected to be found in the headers</span>
+        <span class="n">engine</span><span class="o">=</span><span class="s2">&quot;python&quot;</span><span class="p">,</span>  <span class="c1"># only engine that supports this sep argument</span>
+        <span class="n">dtype</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>  <span class="c1"># we are reading the headers so we only expect and want strings, they are parsed afterwards</span>
+    <span class="p">)</span> <span class="k">as</span> <span class="n">file_reader</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">line_record</span> <span class="ow">in</span> <span class="n">file_reader</span><span class="p">:</span>  <span class="c1"># each read chunk / line is made into a DataFrame, colname 0 and value is the read line</span>
+            <span class="n">non_data_lines</span> <span class="o">+=</span> <span class="mi">1</span>  <span class="c1"># important to count the line here</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">line</span> <span class="o">=</span> <span class="n">line_record</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>  <span class="c1"># this is the value of the line as a string</span>
+            <span class="k">except</span> <span class="ne">IndexError</span><span class="p">:</span>  <span class="c1"># in case of empty line, this is a case in our tests for instance</span>
                 <span class="k">continue</span>
+            <span class="n">line_components</span> <span class="o">=</span> <span class="n">shlex</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">line_components</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">HEADER</span><span class="p">:</span>
                 <span class="n">name</span><span class="p">,</span> <span class="n">value</span> <span class="o">=</span> <span class="n">_parse_header</span><span class="p">(</span><span class="n">line_components</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span>
                 <span class="n">headers</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>

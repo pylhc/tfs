@@ -41,7 +41,7 @@
           "Examples"
         ]
       },
-      "doc_lineno": 40
+      "doc_lineno": 45
     },
     {
       "source": ">>> tfs.read(pathlib.Path(\"filename.tfs\"))",
@@ -57,7 +57,7 @@
           "Examples"
         ]
       },
-      "doc_lineno": 46
+      "doc_lineno": 51
     },
     {
       "source": ">>> tfs.read(\"filename.tfs\", index=\"COLUMN_NAME\")",
@@ -73,7 +73,7 @@
           "Examples"
         ]
       },
-      "doc_lineno": 52
+      "doc_lineno": 57
     },
     {
       "source": ">>> tfs.read(\"filename.tfs\", non_unique_behavior=\"raise\")",
@@ -89,7 +89,7 @@
           "Examples"
         ]
       },
-      "doc_lineno": 59
+      "doc_lineno": 64
     },
     {
       "source": ">>> tfs.read(\"filename.tfs\", validate=False)",
@@ -105,7 +105,23 @@
           "Examples"
         ]
       },
-      "doc_lineno": 66
+      "doc_lineno": 71
+    },
+    {
+      "source": ">>> tfs.read(\"filename.tfs.gz\")\n>>> tfs.read(\"filename.tfs.bz2\")\n>>> tfs.read(\"filename.tfs.zip\")",
+      "names": [],
+      "example": {
+        "document": "modules/index",
+        "ref_id": "reader",
+        "headings": [
+          "TFS-Pandas Modules",
+          "Example",
+          "Methodology",
+          "Methodology",
+          "Examples"
+        ]
+      },
+      "doc_lineno": 79
     },
     {
       "source": ">>> tfs.write(\"filename.tfs\", dataframe)",
@@ -122,7 +138,7 @@
           "Examples"
         ]
       },
-      "doc_lineno": 40
+      "doc_lineno": 46
     },
     {
       "source": ">>> tfs.write(\"filename.tfs\", dataframe, non_unique_behavior=\"raise\")",
@@ -139,7 +155,7 @@
           "Examples"
         ]
       },
-      "doc_lineno": 47
+      "doc_lineno": 53
     },
     {
       "source": ">>> tfs.write(\"filename.tfs\", dataframe, validate=False)",
@@ -156,7 +172,24 @@
           "Examples"
         ]
       },
-      "doc_lineno": 54
+      "doc_lineno": 60
+    },
+    {
+      "source": ">>> tfs.write(\"filename.tfs.gz\", dataframe)",
+      "names": [],
+      "example": {
+        "document": "modules/index",
+        "ref_id": "writer",
+        "headings": [
+          "TFS-Pandas Modules",
+          "Example",
+          "Methodology",
+          "Methodology",
+          "Examples",
+          "Examples"
+        ]
+      },
+      "doc_lineno": 68
     }
   ]
 }

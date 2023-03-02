@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>tfs.writer &mdash; tfs-pandas 3.3.1 documentation</title>
+  <title>tfs.writer &mdash; tfs-pandas 3.4.0 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
@@ -31,15 +31,19 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../../index.html">
-            <img src="../../_static/omc_logo.svg" class="logo" alt="Logo"/>
+
+          
+          
+          <a href="../../index.html">
+            
+              <img src="../../_static/omc_logo.svg" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                3.3
+                3.4
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -86,7 +90,7 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../index.html" class="icon icon-home"></a></li>
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
       <li class="breadcrumb-item active">tfs.writer</li>
       <li class="wy-breadcrumbs-aside">
@@ -112,6 +116,7 @@
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">from</span> <span class="nn">pandas.api</span> <span class="kn">import</span> <span class="n">types</span> <span class="k">as</span> <span class="n">pdtypes</span>
+<span class="kn">from</span> <span class="nn">pandas.io.common</span> <span class="kn">import</span> <span class="n">get_handle</span>
 
 <span class="kn">from</span> <span class="nn">tfs.constants</span> <span class="kn">import</span> <span class="n">DEFAULT_COLUMN_WIDTH</span><span class="p">,</span> <span class="n">INDEX_ID</span><span class="p">,</span> <span class="n">MIN_COLUMN_WIDTH</span>
 <span class="kn">from</span> <span class="nn">tfs.frame</span> <span class="kn">import</span> <span class="n">TfsDataFrame</span>
@@ -133,6 +138,12 @@
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Writes the provided ``DataFrame`` to disk at **tfs_file_path**, eventually with the `headers_dict` as</span>
 <span class="sd">    headers dictionary.</span>
+
+<span class="sd">    .. note::</span>
+<span class="sd">        Compression of the output file is possible, by simply providing a valid compression extension</span>
+<span class="sd">        as the **tfs_file_path** suffix. Any compression format supported by ``pandas`` is accepted,</span>
+<span class="sd">        which includes: ``.gz``, ``.bz2``, ``.zip``, ``.xz``, ``.zst``, ``.tar``, ``.tar.gz``, </span>
+<span class="sd">        ``.tar.xz`` or ``.tar.bz2``. See below for examples.</span>
 
 <span class="sd">    .. warning::</span>
 <span class="sd">        Through the *validate* argument, one can skip dataframe validation before writing it to file.</span>
@@ -179,6 +190,14 @@
 <span class="sd">        .. code-block:: python</span>
 
 <span class="sd">            &gt;&gt;&gt; tfs.write(&quot;filename.tfs&quot;, dataframe, validate=False)</span>
+<span class="sd">        </span>
+<span class="sd">        It is possible to directly have the output file be compressed, by specifying a</span>
+<span class="sd">        valid compression extension as the **tfs_file_path** suffix. The detection</span>
+<span class="sd">        and compression is handled automatically. For instance:</span>
+
+<span class="sd">        .. code-block:: python</span>
+
+<span class="sd">            &gt;&gt;&gt; tfs.write(&quot;filename.tfs.gz&quot;, dataframe)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">left_align_first_column</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="n">tfs_file_path</span> <span class="o">=</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="n">tfs_file_path</span><span class="p">)</span>
@@ -205,8 +224,9 @@
     <span class="n">data_str</span> <span class="o">=</span> <span class="n">_get_data_string</span><span class="p">(</span><span class="n">data_frame</span><span class="p">,</span> <span class="n">colwidth</span><span class="p">,</span> <span class="n">left_align_first_column</span><span class="p">)</span>
 
     <span class="n">LOGGER</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Attempting to write file: </span><span class="si">{</span><span class="n">tfs_file_path</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> in </span><span class="si">{</span><span class="n">tfs_file_path</span><span class="o">.</span><span class="n">parent</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-    <span class="k">with</span> <span class="n">tfs_file_path</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">tfs_data</span><span class="p">:</span>
-        <span class="n">tfs_data</span><span class="o">.</span><span class="n">write</span><span class="p">(</span>  <span class="c1"># the last &quot;\n&quot; is to have an EOL at EOF, which is UNIX standard</span>
+    <span class="k">with</span> <span class="n">get_handle</span><span class="p">(</span><span class="n">tfs_file_path</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;w&quot;</span><span class="p">,</span> <span class="n">compression</span><span class="o">=</span><span class="s2">&quot;infer&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">output_path</span><span class="p">:</span>
+        <span class="n">tfs_handle</span> <span class="o">=</span> <span class="n">output_path</span><span class="o">.</span><span class="n">handle</span>
+        <span class="n">tfs_handle</span><span class="o">.</span><span class="n">write</span><span class="p">(</span>  <span class="c1"># the last &quot;\n&quot; is to have an EOL at EOF, which is UNIX standard</span>
             <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">((</span><span class="n">line</span> <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="p">(</span><span class="n">headers_str</span><span class="p">,</span> <span class="n">colnames_str</span><span class="p">,</span> <span class="n">coltypes_str</span><span class="p">,</span> <span class="n">data_str</span><span class="p">)</span> <span class="k">if</span> <span class="n">line</span><span class="p">))</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
         <span class="p">)</span></div>
 
