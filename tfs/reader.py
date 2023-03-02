@@ -20,6 +20,9 @@ from tfs.frame import validate as validate_frame
 
 LOGGER = logging.getLogger(__name__)
 
+# A string not expected to be found in the headers
+# I generated this randomly with: "".join(random.choice(string.ascii_letters) for _ in range(100))
+_UNEXPECTED_SEP: str = "baBfHIhwOdMnuBVHDDZcysbmwRgWaBnukQPIWNHpFVqjrIcOryhvyJwIRRHfqOQLGKhtZPLJhziZKomfVhXsoqfoGkvyFKuNhhst"
 
 def read_tfs(
     tfs_file_path: Union[pathlib.Path, str],
@@ -29,6 +32,11 @@ def read_tfs(
 ) -> TfsDataFrame:
     """
     Parses the **TFS** table present in **tfs_file_path** and returns a ``TfsDataFrame``.
+
+    .. note::
+        Loading and reading compressed files is possible. Any compression format supported
+        by ``pandas`` is accepted, which includes: ``.gz``, ``.bz2``, ``.zip``, ``.xz``, 
+        ``.zst``, ``.tar``, ``.tar.gz``, ``.tar.xz`` or ``.tar.bz2``. See below for examples.
 
     .. warning::
         Through the *validate* argument, one can skip dataframe validation after
@@ -93,19 +101,40 @@ def read_tfs(
         .. code-block:: python
 
             >>> tfs.read("filename.tfs", validate=False)
+        
+        It is possible to load compressed files if the compression format is supported by pandas.
+        (see above). The compression format detection is handled automatically from the extension
+        of the provided **tfs_file_path** suffix. For instance:
+
+        .. code-block:: python
+
+            >>> tfs.read("filename.tfs.gz")
+            >>> tfs.read("filename.tfs.bz2")
+            >>> tfs.read("filename.tfs.zip")
     """
     tfs_file_path = pathlib.Path(tfs_file_path)
     headers = OrderedDict()
     non_data_lines: int = 0
     column_names = column_types = None
-
     LOGGER.debug(f"Reading path: {tfs_file_path.absolute()}")
-    with tfs_file_path.open("r") as tfs_data:
-        for line in tfs_data:
-            non_data_lines += 1
-            line_components = shlex.split(line)
-            if not line_components:
+
+    # First step: reading the headers, chunk by chunk (line by line) with pandas.read_csv as a context manager
+    # Very important, the value of 'sep' here should not be a value that can be found in headers (key or value)
+    with pd.read_csv(
+        tfs_file_path,
+        header=None,  # don't look for a line with column names
+        chunksize=1,  # read one chunk at a time (each is a line)
+        sep=_UNEXPECTED_SEP,  # a string not expected to be found in the headers
+        engine="python",  # only engine that supports this sep argument
+        dtype=str,  # we are reading the headers so we only expect and want strings, they are parsed afterwards
+    ) as file_reader:
+        for line_record in file_reader:  # each read chunk / line is made into a DataFrame, colname 0 and value is the read line
+            non_data_lines += 1  # important to count the line here
+            try:
+                line = line_record.loc[:, 0].values[0]  # this is the value of the line as a string
+            except IndexError:  # in case of empty line, this is a case in our tests for instance
                 continue
+            line_components = shlex.split(line)
             if line_components[0] == HEADER:
                 name, value = _parse_header(line_components[1:])
                 headers[name] = value

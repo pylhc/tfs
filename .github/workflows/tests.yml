@@ -17,6 +17,7 @@ jobs:
         os: [ubuntu-18.04, ubuntu-20.04, ubuntu-22.04, macos-latest, windows-latest]
         # Make sure to escape 3.10 with quotes so it doesn't get interpreted as float 3.1 by GA's parser
         python-version: [3.7, 3.8, 3.9, "3.10", "3.11"]
+      fail-fast: false
 
     steps:
       - uses: actions/checkout@v3
@@ -28,15 +29,11 @@ jobs:
           cache: 'pip'
           cache-dependency-path: '**/setup.py'
 
-      - name: Get full Python version
-        id: full-python-version
-        run: echo ::set-output name=version::$(python -c "import sys; print('-'.join(str(v) for v in sys.version_info))")
-
       - name: Upgrade pip, setuptools and wheel
         run: python -m pip install --upgrade pip setuptools wheel
 
       - name: Install package
-        run: python -m pip install '.[test]'
+        run: python -m pip install '.[test,hdf5]'
 
-      - name: Run basic tests
+      - name: Run tests
         run: python -m pytest
