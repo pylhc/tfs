@@ -177,7 +177,8 @@ def read_tfs(
     LOGGER.debug("Converting to TfsDataFrame")
     tfs_data_frame = TfsDataFrame(data_frame, headers=headers)
 
-    LOGGER.debug("Ensuring empty strings have not been read as NaN")
+    # In pandas.read_csv an empty string ("") will be read a NaN, but we want to preserve them 
+    LOGGER.debug("Ensuring preservation of empty strings")
     for column in tfs_data_frame.select_dtypes(include=["string","object"]):
         tfs_data_frame[column] = tfs_data_frame[column].fillna("")
 
