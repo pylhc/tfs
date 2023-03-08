@@ -177,6 +177,10 @@ def read_tfs(
     LOGGER.debug("Converting to TfsDataFrame")
     tfs_data_frame = TfsDataFrame(data_frame, headers=headers)
 
+    LOGGER.debug("Ensuring empty strings have not been read as NaN")
+    for column in tfs_data_frame.select_dtypes(include=["string","object"]):
+        tfs_data_frame[column] = tfs_data_frame[column].fillna("")
+
     if index:
         LOGGER.debug(f"Setting '{index}' column as index")
         tfs_data_frame = tfs_data_frame.set_index(index)
