@@ -94,8 +94,8 @@ class TestRead:
             assert header in new_text
             assert str(value) in new_text  # all
 
-    def test_read_only_headers(self, _tfs_file_pathlib):
-        df = read_tfs(_tfs_file_pathlib, only_headers=True)
+    def test_read_headers_only(self, _tfs_file_pathlib):
+        df = read_tfs(_tfs_file_pathlib, headers_only=True)
         assert len(df.headers) > 0
         assert len(df.columns) == 0
         assert len(df.index) == 0

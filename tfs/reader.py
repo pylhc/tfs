@@ -29,7 +29,7 @@ def read_tfs(
     index: str = None,
     non_unique_behavior: str = "warn",
     validate: bool = True,
-    only_headers: bool = False,
+    headers_only: bool = False,
 ) -> TfsDataFrame:
     """
     Parses the **TFS** table present in **tfs_file_path** and returns a ``TfsDataFrame``.
@@ -65,7 +65,7 @@ def read_tfs(
             dataframe. Accepts `warn` and `raise` as values, case-insensitively, which dictates
             to respectively issue a warning or raise an error if non-unique elements are found.
         validate (bool): Whether to validate the dataframe after reading it. Defaults to ``False``.
-        only_headers (bool): Whether to only read the headers of the file and not the data. If set
+        headers_only (bool): Whether to only read the headers of the file and not the data. If set
             to ``True``, then an empty dataframe is returned but with the headers loaded. Defaults
             to ``False``.
 
@@ -153,7 +153,7 @@ def read_tfs(
             else:  # After all previous cases should only be data lines. If not, file is fucked.
                 break  # Break to not go over all lines, saves a lot of time on big files
 
-    if only_headers:
+    if headers_only:
         return TfsDataFrame(headers=headers)
 
     if column_names is None:
