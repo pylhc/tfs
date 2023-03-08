@@ -152,6 +152,7 @@ def read_tfs(
                 continue
             else:  # After all previous cases should only be data lines. If not, file is fucked.
                 break  # Break to not go over all lines, saves a lot of time on big files
+
     if only_headers:
         return TfsDataFrame(headers=headers)
 
