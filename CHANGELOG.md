@@ -1,5 +1,13 @@
 # TFS-Pandas Changelog
 
+## Version 3.4.1
+
+- Fixed:
+  - Any empty strings ("") in a file's columns will now properly be read as such and not converted to `NaN`. 
+
+- Added:
+  - It is now possible to only read the headers of a file by passing `headers_only=True` to `read_tfs`. The function will still return a `TfsDataFrame` but with no data part, and the headers loaded. It is a faster option than reading the whole file for large files.
+
 ## Version 3.4.0
 
 - Added:
