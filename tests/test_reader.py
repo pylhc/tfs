@@ -2,12 +2,14 @@ import pathlib
 
 import pytest
 from pandas._testing import assert_dict_equal
+from pandas.core.arrays.string_ import StringDtype
 from pandas.testing import assert_frame_equal
 
 import tfs
-from tfs import read_tfs, write_tfs
 from tfs.constants import HEADER
 from tfs.errors import TfsFormatError
+from tfs.reader import read_headers, read_tfs
+from tfs.writer import write_tfs
 
 CURRENT_DIR = pathlib.Path(__file__).parent
 
@@ -93,6 +95,23 @@ class TestRead:
             assert header in new_text
             assert str(value) in new_text  # all
 
+    def test_read_headers(self, _tfs_file_pathlib):
+        headers = read_headers(_tfs_file_pathlib)
+        assert isinstance(headers, dict)
+        assert len(headers) > 0
+        assert len(str(headers)) > 0
+        assert all(key in headers.keys() for key in ["TITLE", "DPP", "Q1", "Q1RMS", "NATQ1", "NATQ1RMS", "BPMCOUNT"])
+
+    def test_read_empty_strings_ok(self, _empty_strings_tfs_path):
+        df = read_tfs(_empty_strings_tfs_path)
+        
+        # Make sure the NAME column is properly inferred to string dtype
+        assert isinstance(df.convert_dtypes().NAME.dtype, StringDtype)
+        # Make sure there are no nans in the NAME column
+        assert not any(df.NAME.isna())
+        # Make sure we have exactly 5 empty strings in the NAME column
+        assert sum(df.NAME == "") == 5
+        
 
 class TestFailures:
     def test_absent_attributes_and_keys(self, _tfs_file_str: str):
@@ -169,3 +188,8 @@ def _space_in_colnames_tfs_path() -> pathlib.Path:
 @pytest.fixture()
 def _tfs_file_wise() -> pathlib.Path:
     return CURRENT_DIR / "inputs" / "wise_header.tfs"
+
+
+@pytest.fixture()
+def _empty_strings_tfs_path() -> pathlib.Path:
+    return pathlib.Path(__file__).parent / "inputs" / "empty_strings.tfs"
