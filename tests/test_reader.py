@@ -6,9 +6,10 @@ from pandas.core.arrays.string_ import StringDtype
 from pandas.testing import assert_frame_equal
 
 import tfs
-from tfs import read_tfs, write_tfs
 from tfs.constants import HEADER
 from tfs.errors import TfsFormatError
+from tfs.reader import read_headers, read_tfs
+from tfs.writer import write_tfs
 
 CURRENT_DIR = pathlib.Path(__file__).parent
 
@@ -94,12 +95,12 @@ class TestRead:
             assert header in new_text
             assert str(value) in new_text  # all
 
-    def test_read_headers_only(self, _tfs_file_pathlib):
-        df = read_tfs(_tfs_file_pathlib, headers_only=True)
-        assert len(df.headers) > 0
-        assert len(df.columns) == 0
-        assert len(df.index) == 0
-        assert len(str(df)) > 0
+    def test_read_headers(self, _tfs_file_pathlib):
+        headers = read_headers(_tfs_file_pathlib)
+        assert isinstance(headers, dict)
+        assert len(headers) > 0
+        assert len(str(headers)) > 0
+        assert all(key in headers.keys() for key in ["TITLE", "DPP", "Q1", "Q1RMS", "NATQ1", "NATQ1RMS", "BPMCOUNT"])
 
     def test_read_empty_strings_ok(self, _empty_strings_tfs_path):
         df = read_tfs(_empty_strings_tfs_path)
