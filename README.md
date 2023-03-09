@@ -61,14 +61,6 @@ tfs.write("path_to_output.tfs.bz2", df)
 tfs.write("path_to_output.tfs.zip", df)
 ```
 
-### Package Scope
-
-The package also provides some tools to validate and manipulate `TfsDataFrames` and their headers; or lazily manage a collection of TFS files.
-For instance with `tfs.read_hdf()` and `tfs.write_hdf()` the `TfsDataFames` can also be saved as `hdf5` files, if the `hdf5` extra requirements are fulfilled.
-
-The package, however, is made to handle I/O of `TFS` files to `TfsDataFrames` only: it is not meant to implement various calculations on `TfsDataFrames`.
-Some calculations are implemented in other packages of the ecosystem.
-
 ## License
 
 This project is licensed under the `MIT License` - see the [LICENSE](LICENSE) file for details.
