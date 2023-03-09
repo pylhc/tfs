@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>tfs.reader &mdash; tfs-pandas 3.4.0 documentation</title>
+  <title>tfs.reader &mdash; tfs-pandas 3.5.0 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
@@ -39,7 +39,7 @@
               <img src="../../_static/omc_logo.svg" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                3.4
+                3.5
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -66,6 +66,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#tfs.hdf.read_hdf"><code class="docutils literal notranslate"><span class="pre">read_hdf()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#tfs.hdf.write_hdf"><code class="docutils literal notranslate"><span class="pre">write_hdf()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#reader">Reader</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#tfs.reader.read_headers"><code class="docutils literal notranslate"><span class="pre">read_headers()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#tfs.reader.read_tfs"><code class="docutils literal notranslate"><span class="pre">read_tfs()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#tools">Tools</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#tfs.tools.remove_header_comments_from_files"><code class="docutils literal notranslate"><span class="pre">remove_header_comments_from_files()</span></code></a></li>
@@ -112,6 +113,7 @@
 <span class="kn">import</span> <span class="nn">pathlib</span>
 <span class="kn">import</span> <span class="nn">shlex</span>
 <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
+<span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Union</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
@@ -126,7 +128,10 @@
 
 <span class="c1"># A string not expected to be found in the headers</span>
 <span class="c1"># I generated this randomly with: &quot;&quot;.join(random.choice(string.ascii_letters) for _ in range(100))</span>
-<span class="n">_UNEXPECTED_SEP</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;baBfHIhwOdMnuBVHDDZcysbmwRgWaBnukQPIWNHpFVqjrIcOryhvyJwIRRHfqOQLGKhtZPLJhziZKomfVhXsoqfoGkvyFKuNhhst&quot;</span>
+<span class="n">_UNEXPECTED_SEP</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="s2">&quot;baBfHIhwOdMnuBVHDDZcysbmwRgWaBnukQPIWNHpFVqjrIcOryhvyJwIRRHfqOQLGKhtZPLJhziZKomfVhXsoqfoGkvyFKuNhhst&quot;</span>
+<span class="p">)</span>
+
 
 <div class="viewcode-block" id="read_tfs"><a class="viewcode-back" href="../../modules/index.html#tfs.reader.read_tfs">[docs]</a><span class="k">def</span> <span class="nf">read_tfs</span><span class="p">(</span>
     <span class="n">tfs_file_path</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span>
@@ -139,7 +144,7 @@
 
 <span class="sd">    .. note::</span>
 <span class="sd">        Loading and reading compressed files is possible. Any compression format supported</span>
-<span class="sd">        by ``pandas`` is accepted, which includes: ``.gz``, ``.bz2``, ``.zip``, ``.xz``, </span>
+<span class="sd">        by ``pandas`` is accepted, which includes: ``.gz``, ``.bz2``, ``.zip``, ``.xz``,</span>
 <span class="sd">        ``.zst``, ``.tar``, ``.tar.gz``, ``.tar.xz`` or ``.tar.bz2``. See below for examples.</span>
 
 <span class="sd">    .. warning::</span>
@@ -152,12 +157,13 @@
 
 <span class="sd">    .. admonition:: **Methodology**</span>
 
-<span class="sd">        This function parses the first lines of the file until it gets to the `types` line.</span>
-<span class="sd">        While parsed, the appropriate information is gathered (headers content, column names &amp; types,</span>
-<span class="sd">        number of lines parsed). After reaching the `types` line, the rest of the file is given to parse</span>
-<span class="sd">        to ``pandas.read_csv`` with the right options to make use of its C engine&#39;s speed. After this,</span>
-<span class="sd">        conversion to ``TfsDataDrame`` is made, proper types are applied to columns, the index is set and</span>
-<span class="sd">        the frame is validated before being returned.</span>
+<span class="sd">        This function first calls a helper which parses and returns all metadata</span>
+<span class="sd">        from the file (headers content, column names &amp; types, number of lines</span>
+<span class="sd">        parsed). The rest of the file (dataframe part) is given to parse to</span>
+<span class="sd">        ``pandas.read_csv`` with the right options to make use of its C engine&#39;s</span>
+<span class="sd">        speed. After this, conversion to ``TfsDataDrame`` is made, proper types</span>
+<span class="sd">        are applied to columns, the index is set and the frame is eventually</span>
+<span class="sd">        validated before being returned.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        tfs_file_path (Union[pathlib.Path, str]): Path object to the **TFS** file to read. Can be</span>
@@ -198,14 +204,14 @@
 <span class="sd">        .. code-block:: python</span>
 
 <span class="sd">            &gt;&gt;&gt; tfs.read(&quot;filename.tfs&quot;, non_unique_behavior=&quot;raise&quot;)</span>
-<span class="sd">        </span>
+
 <span class="sd">        One can choose to skip dataframe validation **at one&#39;s own risk** after reading</span>
 <span class="sd">        from file. This is done as:</span>
 
 <span class="sd">        .. code-block:: python</span>
 
 <span class="sd">            &gt;&gt;&gt; tfs.read(&quot;filename.tfs&quot;, validate=False)</span>
-<span class="sd">        </span>
+
 <span class="sd">        It is possible to load compressed files if the compression format is supported by pandas.</span>
 <span class="sd">        (see above). The compression format detection is handled automatically from the extension</span>
 <span class="sd">        of the provided **tfs_file_path** suffix. For instance:</span>
@@ -217,13 +223,126 @@
 <span class="sd">            &gt;&gt;&gt; tfs.read(&quot;filename.tfs.zip&quot;)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">tfs_file_path</span> <span class="o">=</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="n">tfs_file_path</span><span class="p">)</span>
+    <span class="n">LOGGER</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Reading path: </span><span class="si">{</span><span class="n">tfs_file_path</span><span class="o">.</span><span class="n">absolute</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="c1"># First step: get the metadata from the file ()</span>
+    <span class="n">metadata</span><span class="p">:</span> <span class="n">_TfsMetaData</span> <span class="o">=</span> <span class="n">_read_metadata</span><span class="p">(</span><span class="n">tfs_file_path</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">metadata</span><span class="o">.</span><span class="n">column_names</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">TfsFormatError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;No column names in file </span><span class="si">{</span><span class="n">tfs_file_path</span><span class="o">.</span><span class="n">absolute</span><span class="p">()</span><span class="si">}</span><span class="s2">. File not read.&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">metadata</span><span class="o">.</span><span class="n">column_types</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">TfsFormatError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;No column types in file </span><span class="si">{</span><span class="n">tfs_file_path</span><span class="o">.</span><span class="n">absolute</span><span class="p">()</span><span class="si">}</span><span class="s2">. File not read.&quot;</span><span class="p">)</span>
+
+    <span class="n">LOGGER</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Parsing data part of the file&quot;</span><span class="p">)</span>
+    <span class="c1"># DO NOT use comment=COMMENTS in here, if you do and the symbol is in an element for some</span>
+    <span class="c1"># reason then the entire parsing will crash</span>
+    <span class="n">data_frame</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span>
+        <span class="n">tfs_file_path</span><span class="p">,</span>
+        <span class="n">engine</span><span class="o">=</span><span class="s2">&quot;c&quot;</span><span class="p">,</span>  <span class="c1"># faster, and we do not need the features of the python engine</span>
+        <span class="n">skiprows</span><span class="o">=</span><span class="n">metadata</span><span class="o">.</span><span class="n">non_data_lines</span><span class="p">,</span>  <span class="c1"># no need to read these lines again</span>
+        <span class="n">delim_whitespace</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>  <span class="c1"># understands &#39; &#39; is our delimiter</span>
+        <span class="n">skipinitialspace</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>  <span class="c1"># understands &#39; &#39; and &#39;     &#39; are both valid delimiters</span>
+        <span class="n">quotechar</span><span class="o">=</span><span class="s1">&#39;&quot;&#39;</span><span class="p">,</span>  <span class="c1"># elements surrounded by &quot; are one entry -&gt; correct parsing of strings with spaces</span>
+        <span class="n">names</span><span class="o">=</span><span class="n">metadata</span><span class="o">.</span><span class="n">column_names</span><span class="p">,</span>  <span class="c1"># column names we have determined, avoids using first read row for columns</span>
+        <span class="n">dtype</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span>
+            <span class="nb">zip</span><span class="p">(</span><span class="n">metadata</span><span class="o">.</span><span class="n">column_names</span><span class="p">,</span> <span class="n">metadata</span><span class="o">.</span><span class="n">column_types</span><span class="p">)</span>
+        <span class="p">),</span>  <span class="c1"># assign types at read-time to avoid re-assigning later</span>
+    <span class="p">)</span>
+
+    <span class="n">LOGGER</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Converting to TfsDataFrame&quot;</span><span class="p">)</span>
+    <span class="n">tfs_data_frame</span> <span class="o">=</span> <span class="n">TfsDataFrame</span><span class="p">(</span><span class="n">data_frame</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">metadata</span><span class="o">.</span><span class="n">headers</span><span class="p">)</span>
+
+    <span class="c1"># In pandas.read_csv an empty string (&quot;&quot;) will be read a NaN, but we want to preserve them</span>
+    <span class="n">LOGGER</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Ensuring preservation of empty strings&quot;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">column</span> <span class="ow">in</span> <span class="n">tfs_data_frame</span><span class="o">.</span><span class="n">select_dtypes</span><span class="p">(</span><span class="n">include</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;string&quot;</span><span class="p">,</span> <span class="s2">&quot;object&quot;</span><span class="p">]):</span>
+        <span class="n">tfs_data_frame</span><span class="p">[</span><span class="n">column</span><span class="p">]</span> <span class="o">=</span> <span class="n">tfs_data_frame</span><span class="p">[</span><span class="n">column</span><span class="p">]</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">index</span><span class="p">:</span>
+        <span class="n">LOGGER</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Setting &#39;</span><span class="si">{</span><span class="n">index</span><span class="si">}</span><span class="s2">&#39; column as index&quot;</span><span class="p">)</span>
+        <span class="n">tfs_data_frame</span> <span class="o">=</span> <span class="n">tfs_data_frame</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">LOGGER</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Attempting to find index identifier in columns&quot;</span><span class="p">)</span>
+        <span class="n">tfs_data_frame</span> <span class="o">=</span> <span class="n">_find_and_set_index</span><span class="p">(</span><span class="n">tfs_data_frame</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">validate</span><span class="p">:</span>
+        <span class="n">validate_frame</span><span class="p">(</span><span class="n">tfs_data_frame</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;from file </span><span class="si">{</span><span class="n">tfs_file_path</span><span class="o">.</span><span class="n">absolute</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">non_unique_behavior</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">tfs_data_frame</span></div>
+
+
+<div class="viewcode-block" id="read_headers"><a class="viewcode-back" href="../../modules/index.html#tfs.reader.read_headers">[docs]</a><span class="k">def</span> <span class="nf">read_headers</span><span class="p">(</span><span class="n">tfs_file_path</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">OrderedDict</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Parses the top of the **tfs_file_path** and returns the headers.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        tfs_file_path (Union[pathlib.Path, str]): Path object to the **TFS**</span>
+<span class="sd">            file to read. Can be a string, in which case it will be cast to</span>
+<span class="sd">            a Path object.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        An ``OrderedDict`` with the headers read from the file.</span>
+
+
+<span class="sd">    Examples:</span>
+
+<span class="sd">        .. code-block:: python</span>
+
+<span class="sd">            &gt;&gt;&gt; headers = read_headers(&quot;filename.tfs&quot;)</span>
+
+<span class="sd">        Just as with the `read_tfs` function, it is possible to load from compressed</span>
+<span class="sd">        files if the compression format is supported by `pandas`. The compression</span>
+<span class="sd">        format detection is handled automatically from the extension of the provided</span>
+<span class="sd">        **tfs_file_path** suffix. For instance:</span>
+
+<span class="sd">        .. code-block:: python</span>
+
+<span class="sd">            &gt;&gt;&gt; headers = read_headers(&quot;filename.tfs.gz&quot;)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">metadata</span><span class="p">:</span> <span class="n">_TfsMetaData</span> <span class="o">=</span> <span class="n">_read_metadata</span><span class="p">(</span><span class="n">tfs_file_path</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">metadata</span><span class="o">.</span><span class="n">headers</span></div>
+
+
+<span class="c1"># ----- Helpers ----- #</span>
+
+
+<span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">_TfsMetaData</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A dataclass to encapsulate the metadata read from a TFS file.&quot;&quot;&quot;</span>
+
+    <span class="n">headers</span><span class="p">:</span> <span class="n">OrderedDict</span>
+    <span class="n">non_data_lines</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">column_names</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
+    <span class="n">column_types</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
+
+
+<span class="k">def</span> <span class="nf">_read_metadata</span><span class="p">(</span><span class="n">tfs_file_path</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">_TfsMetaData</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Parses the beginning of the **tfs_file_path** to extract metadata (all non dataframe lines).</span>
+
+<span class="sd">    .. admonition:: **Methodology**</span>
+
+<span class="sd">        This function parses the first lines of the file until it gets to the `types` line.</span>
+<span class="sd">        While parsed, the appropriate information is gathered (headers content, column names &amp; types,</span>
+<span class="sd">        number of lines parsed). After reaching the `types` line, the loop is broken to avoid reading</span>
+<span class="sd">        the whole file. The gathered metadata is assembled in a single ``_TfsMetaData`` object and</span>
+<span class="sd">        returned.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        tfs_file_path (Union[pathlib.Path, str]): Path object to the **TFS** file to read. Can be</span>
+<span class="sd">            a string, in which case it will be cast to a Path object.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        A ``_TfsMetaData`` object with the metadata read from the file.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">LOGGER</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Reading headers and metadata from file&quot;</span><span class="p">)</span>
+    <span class="n">tfs_file_path</span> <span class="o">=</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="n">tfs_file_path</span><span class="p">)</span>
     <span class="n">headers</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
     <span class="n">non_data_lines</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="n">column_names</span> <span class="o">=</span> <span class="n">column_types</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="n">LOGGER</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Reading path: </span><span class="si">{</span><span class="n">tfs_file_path</span><span class="o">.</span><span class="n">absolute</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
-    <span class="c1"># First step: reading the headers, chunk by chunk (line by line) with pandas.read_csv as a context manager</span>
-    <span class="c1"># Very important, the value of &#39;sep&#39; here should not be a value that can be found in headers (key or value)</span>
+    <span class="c1"># Read the headers, chunk by chunk (line by line) with pandas.read_csv as a</span>
+    <span class="c1"># context manager. Very important: the value of &#39;sep&#39; here should not be a</span>
+    <span class="c1"># value that can be found in headers (key or value)</span>
     <span class="k">with</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span>
         <span class="n">tfs_file_path</span><span class="p">,</span>
         <span class="n">header</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>  <span class="c1"># don&#39;t look for a line with column names</span>
@@ -232,7 +351,9 @@
         <span class="n">engine</span><span class="o">=</span><span class="s2">&quot;python&quot;</span><span class="p">,</span>  <span class="c1"># only engine that supports this sep argument</span>
         <span class="n">dtype</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>  <span class="c1"># we are reading the headers so we only expect and want strings, they are parsed afterwards</span>
     <span class="p">)</span> <span class="k">as</span> <span class="n">file_reader</span><span class="p">:</span>
-        <span class="k">for</span> <span class="n">line_record</span> <span class="ow">in</span> <span class="n">file_reader</span><span class="p">:</span>  <span class="c1"># each read chunk / line is made into a DataFrame, colname 0 and value is the read line</span>
+        <span class="k">for</span> <span class="p">(</span>
+            <span class="n">line_record</span>
+        <span class="p">)</span> <span class="ow">in</span> <span class="n">file_reader</span><span class="p">:</span>  <span class="c1"># each read chunk / line is made into a DataFrame, colname 0 and value is the read line</span>
             <span class="n">non_data_lines</span> <span class="o">+=</span> <span class="mi">1</span>  <span class="c1"># important to count the line here</span>
             <span class="k">try</span><span class="p">:</span>
                 <span class="n">line</span> <span class="o">=</span> <span class="n">line_record</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>  <span class="c1"># this is the value of the line as a string</span>
@@ -253,39 +374,12 @@
             <span class="k">else</span><span class="p">:</span>  <span class="c1"># After all previous cases should only be data lines. If not, file is fucked.</span>
                 <span class="k">break</span>  <span class="c1"># Break to not go over all lines, saves a lot of time on big files</span>
 
-    <span class="k">if</span> <span class="n">column_names</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="n">TfsFormatError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;No column names in file </span><span class="si">{</span><span class="n">tfs_file_path</span><span class="o">.</span><span class="n">absolute</span><span class="p">()</span><span class="si">}</span><span class="s2">. File not read.&quot;</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">column_types</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="n">TfsFormatError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;No column types in file </span><span class="si">{</span><span class="n">tfs_file_path</span><span class="o">.</span><span class="n">absolute</span><span class="p">()</span><span class="si">}</span><span class="s2">. File not read.&quot;</span><span class="p">)</span>
-
-    <span class="n">LOGGER</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Parsing data part of the file&quot;</span><span class="p">)</span>
-    <span class="c1"># DO NOT use comment=COMMENTS in here, if you do and the symbol is in an element for some</span>
-    <span class="c1"># reason then the entire parsing will crash</span>
-    <span class="n">data_frame</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span>
-        <span class="n">tfs_file_path</span><span class="p">,</span>
-        <span class="n">engine</span><span class="o">=</span><span class="s2">&quot;c&quot;</span><span class="p">,</span>  <span class="c1"># faster, and we do not need the features of the python engine</span>
-        <span class="n">skiprows</span><span class="o">=</span><span class="n">non_data_lines</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span>  <span class="c1"># because we incremented for the first data line in loop above</span>
-        <span class="n">delim_whitespace</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>  <span class="c1"># understands &#39; &#39; is our delimiter</span>
-        <span class="n">skipinitialspace</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>  <span class="c1"># understands &#39; &#39; and &#39;     &#39; are both valid delimiters</span>
-        <span class="n">quotechar</span><span class="o">=</span><span class="s1">&#39;&quot;&#39;</span><span class="p">,</span>  <span class="c1"># elements surrounded by &quot; are one entry -&gt; correct parsing of strings with spaces</span>
-        <span class="n">names</span><span class="o">=</span><span class="n">column_names</span><span class="p">,</span>  <span class="c1"># column names we have determined, avoids using first read row for columns</span>
-        <span class="n">dtype</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">column_names</span><span class="p">,</span> <span class="n">column_types</span><span class="p">)),</span>  <span class="c1"># assign types at read-time to avoid re-assigning later</span>
+    <span class="k">return</span> <span class="n">_TfsMetaData</span><span class="p">(</span>
+        <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">,</span>
+        <span class="n">non_data_lines</span><span class="o">=</span><span class="n">non_data_lines</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span>  <span class="c1"># -1 because we incremented for the first data line</span>
+        <span class="n">column_names</span><span class="o">=</span><span class="n">column_names</span><span class="p">,</span>
+        <span class="n">column_types</span><span class="o">=</span><span class="n">column_types</span><span class="p">,</span>
     <span class="p">)</span>
-
-    <span class="n">LOGGER</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Converting to TfsDataFrame&quot;</span><span class="p">)</span>
-    <span class="n">tfs_data_frame</span> <span class="o">=</span> <span class="n">TfsDataFrame</span><span class="p">(</span><span class="n">data_frame</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">)</span>
-
-    <span class="k">if</span> <span class="n">index</span><span class="p">:</span>
-        <span class="n">LOGGER</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Setting &#39;</span><span class="si">{</span><span class="n">index</span><span class="si">}</span><span class="s2">&#39; column as index&quot;</span><span class="p">)</span>
-        <span class="n">tfs_data_frame</span> <span class="o">=</span> <span class="n">tfs_data_frame</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">LOGGER</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Attempting to find index identifier in columns&quot;</span><span class="p">)</span>
-        <span class="n">tfs_data_frame</span> <span class="o">=</span> <span class="n">_find_and_set_index</span><span class="p">(</span><span class="n">tfs_data_frame</span><span class="p">)</span>
-
-    <span class="k">if</span> <span class="n">validate</span><span class="p">:</span>
-        <span class="n">validate_frame</span><span class="p">(</span><span class="n">tfs_data_frame</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;from file </span><span class="si">{</span><span class="n">tfs_file_path</span><span class="o">.</span><span class="n">absolute</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">non_unique_behavior</span><span class="p">)</span>
-    
-    <span class="k">return</span> <span class="n">tfs_data_frame</span></div>
 
 
 <span class="k">def</span> <span class="nf">_parse_header</span><span class="p">(</span><span class="n">str_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">:</span>

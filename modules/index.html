@@ -4,7 +4,7 @@
 <head>
 <meta charset="utf-8"/><meta content="Docutils 0.18.1: http://docutils.sourceforge.net/" name="generator"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>TFS-Pandas Modules — tfs-pandas 3.4.0 documentation</title>
+<title>TFS-Pandas Modules — tfs-pandas 3.5.0 documentation</title>
 <link href="../_static/pygments.css" rel="stylesheet" type="text/css"/>
 <link href="../_static/css/theme.css" rel="stylesheet" type="text/css"/>
 <link href="../_static/copybutton.css" rel="stylesheet" type="text/css"/>
@@ -35,7 +35,7 @@
 <img alt="Logo" class="logo" src="../_static/omc_logo.svg"/>
 </a>
 <div class="version">
-                3.4
+                3.5
               </div>
 <div role="search">
 <form action="../search.html" class="wy-form" id="rtd-search-form" method="get">
@@ -62,6 +62,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#tfs.hdf.read_hdf"><code class="docutils literal notranslate"><span class="pre">read_hdf()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#tfs.hdf.write_hdf"><code class="docutils literal notranslate"><span class="pre">write_hdf()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#reader">Reader</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#tfs.reader.read_headers"><code class="docutils literal notranslate"><span class="pre">read_headers()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#tfs.reader.read_tfs"><code class="docutils literal notranslate"><span class="pre">read_tfs()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#tools">Tools</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#tfs.tools.remove_header_comments_from_files"><code class="docutils literal notranslate"><span class="pre">remove_header_comments_from_files()</span></code></a></li>
@@ -453,6 +454,34 @@ in that case).</p></li>
 <p>Reading functionalty for <strong>TFS</strong> files.</p>
 </section>
 <dl class="py function">
+<dt class="sig sig-object py" id="tfs.reader.read_headers">
+<span class="sig-prename descclassname"><span class="pre">tfs.reader.</span></span><span class="sig-name descname"><span class="pre">read_headers</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tfs_file_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union" title="(in Python v3.11)"><span class="pre">Union</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.11)"><span class="pre">Path</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/collections.html#collections.OrderedDict" title="(in Python v3.11)"><span class="pre">OrderedDict</span></a></span></span><a class="reference internal" href="../_modules/tfs/reader.html#read_headers"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tfs.reader.read_headers" title="Permalink to this definition"></a></dt>
+<dd><p>Parses the top of the <strong>tfs_file_path</strong> and returns the headers.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>tfs_file_path</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Union[pathlib.Path,</span> <span class="pre">str]</span></code>) -- Path object to the <strong>TFS</strong>
+file to read. Can be a string, in which case it will be cast to
+a Path object.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>An <code class="docutils literal notranslate"><span class="pre">OrderedDict</span></code> with the headers read from the file.</p>
+</dd>
+</dl>
+<div class="admonition-examples admonition">
+<p class="admonition-title">Examples</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">headers</span> <span class="o">=</span> <span class="n">read_headers</span><span class="p">(</span><span class="s2">"filename.tfs"</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Just as with the <a class="reference internal" href="#tfs.reader.read_tfs" title="tfs.reader.read_tfs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">read_tfs</span></code></a> function, it is possible to load from compressed
+files if the compression format is supported by <a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/index.html#module-pandas" title="(in pandas v1.5.3)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pandas</span></code></a>. The compression
+format detection is handled automatically from the extension of the provided
+<strong>tfs_file_path</strong> suffix. For instance:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">headers</span> <span class="o">=</span> <span class="n">read_headers</span><span class="p">(</span><span class="s2">"filename.tfs.gz"</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</dd></dl>
+<dl class="py function">
 <dt class="sig sig-object py" id="tfs.reader.read_tfs">
 <span class="sig-prename descclassname"><span class="pre">tfs.reader.</span></span><span class="sig-name descname"><span class="pre">read_tfs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tfs_file_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union" title="(in Python v3.11)"><span class="pre">Union</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.11)"><span class="pre">Path</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.11)"><span class="pre">Optional</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">non_unique_behavior</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'warn'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">validate</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><a class="reference internal" href="#tfs.frame.TfsDataFrame" title="tfs.frame.TfsDataFrame"><span class="pre">TfsDataFrame</span></a></span></span><a class="reference internal" href="../_modules/tfs/reader.html#read_tfs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tfs.reader.read_tfs" title="Permalink to this definition"></a></dt>
 <dd><p>Parses the <strong>TFS</strong> table present in <strong>tfs_file_path</strong> and returns a <code class="docutils literal notranslate"><span class="pre">TfsDataFrame</span></code>.</p>
@@ -473,12 +502,13 @@ as for instance a sliced FCC lattice).</p>
 </div>
 <div class="admonition-methodology admonition">
 <p class="admonition-title"><strong>Methodology</strong></p>
-<p>This function parses the first lines of the file until it gets to the <a class="reference external" href="https://docs.python.org/3/library/types.html#module-types" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">types</span></code></a> line.
-While parsed, the appropriate information is gathered (headers content, column names &amp; types,
-number of lines parsed). After reaching the <a class="reference external" href="https://docs.python.org/3/library/types.html#module-types" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">types</span></code></a> line, the rest of the file is given to parse
-to <code class="docutils literal notranslate"><span class="pre">pandas.read_csv</span></code> with the right options to make use of its C engine’s speed. After this,
-conversion to <code class="docutils literal notranslate"><span class="pre">TfsDataDrame</span></code> is made, proper types are applied to columns, the index is set and
-the frame is validated before being returned.</p>
+<p>This function first calls a helper which parses and returns all metadata
+from the file (headers content, column names &amp; types, number of lines
+parsed). The rest of the file (dataframe part) is given to parse to
+<code class="docutils literal notranslate"><span class="pre">pandas.read_csv</span></code> with the right options to make use of its C engine’s
+speed. After this, conversion to <code class="docutils literal notranslate"><span class="pre">TfsDataDrame</span></code> is made, proper types
+are applied to columns, the index is set and the frame is eventually
+validated before being returned.</p>
 </div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>

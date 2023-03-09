@@ -28,6 +28,36 @@
       "doc_lineno": 44
     },
     {
+      "source": ">>> headers = read_headers(\"filename.tfs\")",
+      "names": [],
+      "example": {
+        "document": "modules/index",
+        "ref_id": "reader",
+        "headings": [
+          "TFS-Pandas Modules",
+          "Example",
+          "Methodology",
+          "Examples"
+        ]
+      },
+      "doc_lineno": 12
+    },
+    {
+      "source": ">>> headers = read_headers(\"filename.tfs.gz\")",
+      "names": [],
+      "example": {
+        "document": "modules/index",
+        "ref_id": "reader",
+        "headings": [
+          "TFS-Pandas Modules",
+          "Example",
+          "Methodology",
+          "Examples"
+        ]
+      },
+      "doc_lineno": 21
+    },
+    {
       "source": ">>> tfs.read(\"filename.tfs\")",
       "names": [],
       "example": {
@@ -37,11 +67,12 @@
           "TFS-Pandas Modules",
           "Example",
           "Methodology",
+          "Examples",
           "Methodology",
           "Examples"
         ]
       },
-      "doc_lineno": 45
+      "doc_lineno": 46
     },
     {
       "source": ">>> tfs.read(pathlib.Path(\"filename.tfs\"))",
@@ -53,11 +84,12 @@
           "TFS-Pandas Modules",
           "Example",
           "Methodology",
+          "Examples",
           "Methodology",
           "Examples"
         ]
       },
-      "doc_lineno": 51
+      "doc_lineno": 52
     },
     {
       "source": ">>> tfs.read(\"filename.tfs\", index=\"COLUMN_NAME\")",
@@ -69,11 +101,12 @@
           "TFS-Pandas Modules",
           "Example",
           "Methodology",
+          "Examples",
           "Methodology",
           "Examples"
         ]
       },
-      "doc_lineno": 57
+      "doc_lineno": 58
     },
     {
       "source": ">>> tfs.read(\"filename.tfs\", non_unique_behavior=\"raise\")",
@@ -85,11 +118,12 @@
           "TFS-Pandas Modules",
           "Example",
           "Methodology",
+          "Examples",
           "Methodology",
           "Examples"
         ]
       },
-      "doc_lineno": 64
+      "doc_lineno": 65
     },
     {
       "source": ">>> tfs.read(\"filename.tfs\", validate=False)",
@@ -101,11 +135,12 @@
           "TFS-Pandas Modules",
           "Example",
           "Methodology",
+          "Examples",
           "Methodology",
           "Examples"
         ]
       },
-      "doc_lineno": 71
+      "doc_lineno": 72
     },
     {
       "source": ">>> tfs.read(\"filename.tfs.gz\")\n>>> tfs.read(\"filename.tfs.bz2\")\n>>> tfs.read(\"filename.tfs.zip\")",
@@ -117,11 +152,12 @@
           "TFS-Pandas Modules",
           "Example",
           "Methodology",
+          "Examples",
           "Methodology",
           "Examples"
         ]
       },
-      "doc_lineno": 79
+      "doc_lineno": 80
     },
     {
       "source": ">>> tfs.write(\"filename.tfs\", dataframe)",
@@ -133,6 +169,7 @@
           "TFS-Pandas Modules",
           "Example",
           "Methodology",
+          "Examples",
           "Methodology",
           "Examples",
           "Examples"
@@ -150,6 +187,7 @@
           "TFS-Pandas Modules",
           "Example",
           "Methodology",
+          "Examples",
           "Methodology",
           "Examples",
           "Examples"
@@ -167,6 +205,7 @@
           "TFS-Pandas Modules",
           "Example",
           "Methodology",
+          "Examples",
           "Methodology",
           "Examples",
           "Examples"
@@ -184,6 +223,7 @@
           "TFS-Pandas Modules",
           "Example",
           "Methodology",
+          "Examples",
           "Methodology",
           "Examples",
           "Examples"
