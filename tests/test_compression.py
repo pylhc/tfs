@@ -8,7 +8,8 @@ import pytest
 from pandas._testing import assert_dict_equal
 from pandas.testing import assert_frame_equal
 
-from tfs import read_tfs, write_tfs
+from tfs.reader import read_headers, read_tfs
+from tfs.writer import write_tfs
 
 CURRENT_DIR = pathlib.Path(__file__).parent
 
@@ -54,6 +55,24 @@ def test_write_read_compressed(_tfs_filey, tmp_path, extension):
     test_df = read_tfs(compressed_path, index="NAME")
     assert_dict_equal(ref_df.headers, test_df.headers)
     assert_frame_equal(ref_df, test_df)
+
+
+# TODO: remove the skipif once Python 3.7 is EoL and we drop support for it
+@pytest.mark.skipif(
+    sys.version_info < (3, 8),
+    reason="Not run on Python 3.7 for format protocol incompatibility reasons",
+)
+@pytest.mark.parametrize("extension", ["gz", "bz2", "zip", "xz", "zst", "tar", "tar.gz"])
+def test_read_headers_compressed(_tfs_compressed_filex_no_suffix, extension):
+    compressed_file = _path_with_added_extension(_tfs_compressed_filex_no_suffix, extension)
+    headers = read_headers(compressed_file)
+    assert isinstance(headers, dict)
+    assert len(headers) > 0
+    assert len(str(headers)) > 0
+    assert all(
+        key in headers.keys()
+        for key in ["TITLE", "DPP", "Q1", "Q1RMS", "NATQ1", "NATQ1RMS", "BPMCOUNT"]
+    )
 
 
 # ----- Helpers ------ #
