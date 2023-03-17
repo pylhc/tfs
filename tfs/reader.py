@@ -232,7 +232,6 @@ def _read_metadata(tfs_file_path: Union[str, pathlib.Path]) -> _TfsMetaData:
     LOGGER.debug("Reading headers and metadata from file")
     tfs_file_path = pathlib.Path(tfs_file_path)
     headers = OrderedDict()
-    non_data_lines: int = 0
     column_names = column_types = None
 
     # Read the headers, chunk by chunk (line by line) with pandas.read_csv as a
@@ -251,7 +250,6 @@ def _read_metadata(tfs_file_path: Union[str, pathlib.Path]) -> _TfsMetaData:
         for (
             line_record
         ) in file_reader:  # each read chunk / line is made into a DataFrame, colname 0 and value is the read line
-            non_data_lines += 1  # important to count the line here
             line = line_record.loc[:, 0].values[0]  # this is the value of the line as a string
             if not line:
                 continue   # empty line
