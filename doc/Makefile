@@ -48,9 +48,9 @@ html:
 	@echo "Build finished. The HTML pages are in $(BUILDDIR)/html."
 
 josch:
-	$(SPHINXBUILD) -b html $(ALLSPHINXOPTS) /media/jdilly/Storage/Repositories/tfs-doc
+	$(SPHINXBUILD) -b html $(ALLSPHINXOPTS) ~/Software/Documentation/tfs-doc
 	@echo
-	@echo "Build finished. The HTML pages are in /media/jdilly/Storage/Repositories/tfs-doc."
+	@echo "Build finished. The HTML pages are in ~/Software/Documentation/tfs-doc."
 
 dirhtml:
 	$(SPHINXBUILD) -b dirhtml $(ALLSPHINXOPTS) $(BUILDDIR)/dirhtml
