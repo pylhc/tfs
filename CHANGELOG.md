@@ -1,5 +1,10 @@
 # TFS-Pandas Changelog
 
+## Version 3.5.1
+
+- Fixed:
+    - Allow reading of empty lines in headers again.
+
 ## Version 3.5.0
 
 - Fixed:

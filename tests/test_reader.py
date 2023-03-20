@@ -11,7 +11,7 @@ from tfs.errors import TfsFormatError
 from tfs.reader import read_headers, read_tfs
 from tfs.writer import write_tfs
 
-CURRENT_DIR = pathlib.Path(__file__).parent
+INPUTS_DIR = pathlib.Path(__file__).parent / "inputs"
 
 
 class TestRead:
@@ -111,7 +111,40 @@ class TestRead:
         assert not any(df.NAME.isna())
         # Make sure we have exactly 5 empty strings in the NAME column
         assert sum(df.NAME == "") == 5
-        
+
+    def test_read_file_with_empty_lines_in_header(self, _tfs_file_empty_lines, _tfs_file_pathlib):
+        df = read_tfs(_tfs_file_empty_lines)
+        assert df.headers
+        df_for_compare = read_tfs(_tfs_file_pathlib)
+        assert_frame_equal(df, df_for_compare)
+        assert_dict_equal(df.headers, df_for_compare.headers)
+
+    def test_read_file_single_header_empty_line_in_header(self, _tfs_file_single_header_empty_line, _tfs_file_pathlib):
+        """ Very special, but this was a case that failed in the past."""
+        df = read_tfs(_tfs_file_single_header_empty_line)
+        assert len(df.headers) == 1
+        df_for_compare = read_tfs(_tfs_file_pathlib)
+        assert_frame_equal(df, df_for_compare)
+
+    def test_read_file_without_header_empty_line(self, _tfs_file_without_header_but_empty_line, _tfs_file_pathlib):
+        df = read_tfs(_tfs_file_without_header_but_empty_line)
+        assert not df.headers
+        df_for_compare = read_tfs(_tfs_file_pathlib)
+        assert_frame_equal(df, df_for_compare)
+
+    def test_read_file_with_whitespaces_in_header(self, _tfs_file_with_whitespaces, _tfs_file_pathlib):
+        df = read_tfs(_tfs_file_with_whitespaces)
+        assert df.headers
+        df_for_compare = read_tfs(_tfs_file_pathlib)
+        assert_frame_equal(df, df_for_compare)
+        assert_dict_equal(df.headers, df_for_compare.headers)
+
+    def test_read_file_without_header(self, _tfs_file_without_header, _tfs_file_pathlib):
+        df = read_tfs(_tfs_file_without_header)
+        assert not df.headers
+        df_for_compare = read_tfs(_tfs_file_pathlib)
+        assert_frame_equal(df, df_for_compare)
+
 
 class TestFailures:
     def test_absent_attributes_and_keys(self, _tfs_file_str: str):
@@ -162,34 +195,59 @@ class TestWarnings:
 
 @pytest.fixture()
 def _tfs_file_pathlib() -> pathlib.Path:
-    return CURRENT_DIR / "inputs" / "file_x.tfs"
+    return INPUTS_DIR / "file_x.tfs"
 
 
 @pytest.fixture()
 def _tfs_file_str() -> str:
-    return str((CURRENT_DIR / "inputs" / "file_x.tfs").absolute())
+    return str((INPUTS_DIR / "file_x.tfs").absolute())
 
 
 @pytest.fixture()
 def _no_coltypes_tfs_path() -> pathlib.Path:
-    return pathlib.Path(__file__).parent / "inputs" / "no_coltypes.tfs"
+    return INPUTS_DIR / "no_coltypes.tfs"
 
 
 @pytest.fixture()
 def _no_colnames_tfs_path() -> pathlib.Path:
-    return pathlib.Path(__file__).parent / "inputs" / "no_colnames.tfs"
+    return INPUTS_DIR / "no_colnames.tfs"
 
 
 @pytest.fixture()
 def _space_in_colnames_tfs_path() -> pathlib.Path:
-    return pathlib.Path(__file__).parent / "inputs" / "space_in_colname.tfs"
+    return INPUTS_DIR / "space_in_colname.tfs"
 
 
 @pytest.fixture()
 def _tfs_file_wise() -> pathlib.Path:
-    return CURRENT_DIR / "inputs" / "wise_header.tfs"
+    return INPUTS_DIR / "wise_header.tfs"
+
+
+@pytest.fixture()
+def _tfs_file_empty_lines() -> pathlib.Path:
+    return INPUTS_DIR / "empty_lines_in_header.tfs"
+
+
+@pytest.fixture()
+def _tfs_file_single_header_empty_line() -> pathlib.Path:
+    return INPUTS_DIR / "single_header_line_and_empty_line.tfs"
+
+
+@pytest.fixture()
+def _tfs_file_with_whitespaces() -> pathlib.Path:
+    return INPUTS_DIR / "line_with_whitespaces_in_header.tfs"
+
+
+@pytest.fixture()
+def _tfs_file_without_header() -> pathlib.Path:
+    return INPUTS_DIR / "no_header.tfs"
+
+
+@pytest.fixture()
+def _tfs_file_without_header_but_empty_line() -> pathlib.Path:
+    return INPUTS_DIR / "no_header_just_an_empty_line.tfs"
 
 
 @pytest.fixture()
 def _empty_strings_tfs_path() -> pathlib.Path:
-    return pathlib.Path(__file__).parent / "inputs" / "empty_strings.tfs"
+    return INPUTS_DIR / "empty_strings.tfs"

@@ -232,7 +232,6 @@ def _read_metadata(tfs_file_path: Union[str, pathlib.Path]) -> _TfsMetaData:
     LOGGER.debug("Reading headers and metadata from file")
     tfs_file_path = pathlib.Path(tfs_file_path)
     headers = OrderedDict()
-    non_data_lines: int = 0
     column_names = column_types = None
 
     # Read the headers, chunk by chunk (line by line) with pandas.read_csv as a
@@ -242,6 +241,8 @@ def _read_metadata(tfs_file_path: Union[str, pathlib.Path]) -> _TfsMetaData:
         tfs_file_path,
         header=None,  # don't look for a line with column names
         chunksize=1,  # read one chunk at a time (each is a line)
+        skip_blank_lines=False,  # do not skip blank lines, so they count as header lines
+        na_filter=False,  # Do not convert empty lines to NA
         sep=_UNEXPECTED_SEP,  # a string not expected to be found in the headers
         engine="python",  # only engine that supports this sep argument
         dtype=str,  # we are reading the headers so we only expect and want strings, they are parsed afterwards
@@ -249,11 +250,9 @@ def _read_metadata(tfs_file_path: Union[str, pathlib.Path]) -> _TfsMetaData:
         for (
             line_record
         ) in file_reader:  # each read chunk / line is made into a DataFrame, colname 0 and value is the read line
-            non_data_lines += 1  # important to count the line here
-            try:
-                line = line_record.loc[:, 0].values[0]  # this is the value of the line as a string
-            except IndexError:  # in case of empty line, this is a case in our tests for instance
-                continue
+            line = line_record.loc[:, 0].values[0]  # this is the value of the line as a string
+            if not line:
+                continue   # empty line
             line_components = shlex.split(line)
             if line_components[0] == HEADER:
                 name, value = _parse_header(line_components[1:])
@@ -271,7 +270,7 @@ def _read_metadata(tfs_file_path: Union[str, pathlib.Path]) -> _TfsMetaData:
 
     return _TfsMetaData(
         headers=headers,
-        non_data_lines=non_data_lines - 1,  # -1 because we incremented for the first data line
+        non_data_lines=line_record.index[0],  # skip these lines
         column_names=column_names,
         column_types=column_types,
     )
