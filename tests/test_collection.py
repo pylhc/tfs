@@ -22,7 +22,7 @@ class CollectionTest(TfsCollection):
     filex = Tfs("file_x.tfs", two_planes=False)
     value = 10
 
-    def get_filename(self, template, plane=""):
+    def _get_filename(self, template, plane=""):
         return template.format(plane)
 
 

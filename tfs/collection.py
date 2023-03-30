@@ -265,21 +265,21 @@ class Tfs:
         properties = [None, None]
         for idx, plane in enumerate(self.PLANES):
             planed = self.get_planed_copy(plane)
-            properties[idx] = Tfs._get_property_single_plane(planed)
+            properties[idx] = planed._get_property_single_plane()
         return tuple(properties)
 
     def _get_property_single_plane(self) -> property:
-        def getter_funct(self):
-            filename = self._get_filename(*self.args, **self.kwargs)
-            return self._load_tfs(filename)
+        def getter_funct(other: TfsCollection):
+            filename = other._get_filename(*self.args, **self.kwargs)
+            return other._load_tfs(filename)
 
-        def setter_funct(self, value):
+        def setter_funct(other: TfsCollection, value):
             try:
-                filename, data_frame = self._write_to(value, *self.args, **self.kwargs)
-                self._write_tfs(filename, data_frame)
+                filename, data_frame = other._write_to(value, *self.args, **self.kwargs)
+                other._write_tfs(filename, data_frame)
             except NotImplementedError:
-                filename = self._get_filename(*self.args, **self.kwargs)
-                self._write_tfs(filename, value)
+                filename = other._get_filename(*self.args, **self.kwargs)
+                other._write_tfs(filename, value)
 
         return property(fget=getter_funct, fset=setter_funct)
 
