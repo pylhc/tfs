@@ -4,7 +4,7 @@ Collection
 
 Advanced **TFS** files reading and writing functionality.
 """
-from typing import Tuple, List
+from typing import Tuple, List, Dict
 
 import pathlib
 
@@ -225,17 +225,18 @@ class TfsCollection(metaclass=_MetaTfsCollection):
         def __init__(self, parent):
             self.parent = parent
 
-        def __getattr__(self, attr):
-            return self.parent.get_filename(attr)
-
-        def __getitem__(self, item):
+        def __getitem__(self, item) -> str:
             return self.parent.get_filename(item)
 
-        def __call__(self, exist: bool = False):
-            all_filenames = [self.parent.get_filename(name) for name in self.parent._stored_definitions.keys()]
+        def __getattr__(self, attr) -> str:
+            return self[attr]
+
+        def __call__(self, exist: bool = False) -> Dict[str, str]:
+            all_filenames = {name: self.parent.get_filename(name) for name in self.parent._stored_definitions.keys()}
             if not exist:
                 return all_filenames
-            return [name for name in all_filenames if (self.parent.directory / name).exists()]
+            return {name: filename for name, filename in all_filenames.items()
+                    if (self.parent.directory / filename).exists()}
 
 
 class Tfs:

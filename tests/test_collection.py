@@ -13,7 +13,7 @@ CURRENT_DIR = pathlib.Path(__file__).parent
 
 def test_tfscollection_getfilename_not_implemented():
     with pytest.raises(NotImplementedError):
-        TfsCollection.get_filename("doesnt matter")
+        TfsCollection._get_filename("doesnt matter")
 
 
 class CollectionTest(TfsCollection):
