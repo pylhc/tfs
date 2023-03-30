@@ -4,6 +4,7 @@ import pathlib
 import pytest
 from pandas.testing import assert_frame_equal
 
+import tfs
 from tfs import read_tfs
 from tfs.collection import Tfs, TfsCollection
 from tfs.frame import TfsDataFrame
@@ -55,13 +56,17 @@ def test_write(_tfs_x: TfsDataFrame, _tfs_y: TfsDataFrame, tmp_path):
     file_x_path = tmp_path / "nofile_x.tfs"
     assert not file_x_path.is_file()
 
-    c.nofile_x = _tfs_x  # will not throw error, but does nothing
+    c.nofile_x = _tfs_y  # only assigns dataframe without writing (use _tfs_y so that we can set _tfs_x below)
     assert not file_x_path.is_file()
+    assert_frame_equal(_tfs_y, c.nofile_x)
 
     c.allow_write = True
-    c.nofile_x = _tfs_x
+    c.nofile_x = _tfs_x  # should overwrite _tfs_y in buffer
     assert file_x_path.is_file()
     assert_frame_equal(_tfs_x, c.nofile_x)
+
+    tfs_x_loaded = _read_tfs(file_x_path)
+    assert_frame_equal(_tfs_x, tfs_x_loaded)
 
     c.nofile["y"] = _tfs_y
     file_y_path = tmp_path / "nofile_y.tfs"
@@ -96,14 +101,19 @@ def test_tfs_collection_no_attribute(_dummy_collection):
         _ = _dummy_collection.absent_attribute
 
 
+def _read_tfs(path):
+    """ Reads tfs like in _load_tfs() of the collection (here we know we have NAME in tfs). """
+    return read_tfs(path).set_index("NAME", drop=False)
+
+
 @pytest.fixture()
 def _tfs_x() -> TfsDataFrame:
-    return read_tfs(CURRENT_DIR / "inputs" / "file_x.tfs").set_index("NAME", drop=False)
+    return _read_tfs(CURRENT_DIR / "inputs" / "file_x.tfs")
 
 
 @pytest.fixture()
 def _tfs_y() -> TfsDataFrame:
-    return read_tfs(CURRENT_DIR / "inputs" / "file_y.tfs").set_index("NAME", drop=False)
+    return _read_tfs(CURRENT_DIR / "inputs" / "file_y.tfs")
 
 
 @pytest.fixture()
