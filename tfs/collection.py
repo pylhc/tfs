@@ -210,6 +210,12 @@ class TfsCollection(metaclass=_MetaTfsCollection):
             return TfsCollection._TwoPlanes(self, attr)
         raise AttributeError(f"{self.__class__.__name__} object has no attribute {attr}")
 
+    def __getitem__(self, item):
+        return getattr(self, item)
+
+    def __setitem__(self, key, value):
+        return setattr(self, key, value)
+
     def _load_tfs(self, filename: str):
         try:
             return self._buffer[filename]
