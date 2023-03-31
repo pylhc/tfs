@@ -257,7 +257,7 @@ class TfsCollection(metaclass=_MetaTfsCollection):
 class Tfs:
     """Class to mark attributes as **TFS** attributes.
 
-    Any parameter given to this class will be passed to the ``get_filename()`` method,
+    Any parameter given to this class will be passed to the ``_get_filename()`` method,
     together with the plane if ``two_planes=False`` is not present.
     """
     PLANES = "x", "y"
@@ -322,11 +322,11 @@ class _MaybeCall:
             self.attr = attr
 
         def __getitem__(self, item):
-            return _MaybeCall.MaybeCallAttr(self.parent, self.attr + "_" + item)
+            return _MaybeCall.MaybeCallAttr(self.parent, f"{self.attr}_{item}")
 
         def __call__(self, function_call, *args, **kwargs):
             try:
                 tfs_file = getattr(self.parent, self.attr)
             except IOError:
-                return lambda funct: None  # Empty function
+                return None
             return function_call(tfs_file, *args, **kwargs)

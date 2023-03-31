@@ -75,18 +75,17 @@ def test_write(_tfs_x: TfsDataFrame, _tfs_y: TfsDataFrame, tmp_path):
     assert_frame_equal(_tfs_y, c.nofile["Y"])
 
 
-def test_maybe_pathlib_input(_input_dir_pathlib: pathlib.Path):
+def test_maybe(_input_dir_pathlib: pathlib.Path):
+    def _test_fun(df, a, b):
+        return df.BPMCOUNT, a + b
+
     c = CollectionTest(_input_dir_pathlib)
-    c.maybe_call.nofile_x
-    with pytest.raises(IOError):
-        c.nofile_x
+    res_no = c.maybe_call.nofile_x(_test_fun, 10, 20)
+    assert res_no is None
 
-
-def test_maybe_str_input(_input_dir_str: str):
-    c = CollectionTest(_input_dir_str)
-    c.maybe_call.nofile_x
-    with pytest.raises(IOError):
-        c.nofile_x
+    res_file = c.maybe_call.file_x(_test_fun, 10, 20)
+    assert res_file[0] == 9
+    assert res_file[1] == 30
 
 
 def test_collection_buffer_clear(_dummy_collection):
