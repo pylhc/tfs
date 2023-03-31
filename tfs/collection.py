@@ -169,15 +169,15 @@ class TfsCollection(metaclass=_MetaTfsCollection):
             raise IOError("Cannot flush TfsCollection, as `allow_write` is set to `False`.")
 
         for name, data_frame in self._buffer.items():
-            filename = self.get_filename(name)
-            write_tfs(self.directory / filename, data_frame)
+            write_tfs(self.directory / self.get_filename(name), data_frame)
 
     def read_tfs(self, filename: str) -> TfsDataFrame:
         """
         Reads the **TFS** file from ``self.directory`` with the given filename.
 
-        This function can be overwritten to use something instead of ``tfs-pandas`` to load the
-        files.
+        This function can be overwritten to use something instead of ``tfs-pandas``
+        to load the files. It does not set the TfsDataframe into the buffer
+        (that is the job of `_load_tfs`)!
 
         Arguments:
             filename (str): The name of the file to load.
@@ -189,6 +189,21 @@ class TfsCollection(metaclass=_MetaTfsCollection):
         if self.NAME and self.NAME in tfs_data_df:
             tfs_data_df = tfs_data_df.set_index(self.NAME, drop=False)
         return tfs_data_df
+
+    def write_tfs(self, filename: str, data_frame: DataFrame):
+        """
+        Write the **TFS** file to ``self.directory`` with the given filename.
+
+        This function can be overwritten to use something instead of ``tfs-pandas``
+        to write out the files. It does not  check for `allow_write` and
+        does not set the Dataframe into the buffer (that is the job of `_write_tfs`)!
+
+        Arguments:
+            filename (str): The name of the file to load.
+            data_frame (TfsDataFrame): TfsDataframe to write
+
+        """
+        write_tfs(self.directory / filename, data_frame)
 
     def __getattr__(self, attr: str) -> object:
         if attr in self._two_plane_names:
@@ -207,7 +222,7 @@ class TfsCollection(metaclass=_MetaTfsCollection):
 
     def _write_tfs(self, filename: str, data_frame: DataFrame):
         if self.allow_write:
-            write_tfs(self.directory / filename, data_frame)
+            self.write_tfs(filename, data_frame)
         self._buffer[filename] = data_frame
 
     class _TwoPlanes(object):
