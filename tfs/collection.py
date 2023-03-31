@@ -131,6 +131,18 @@ class TfsCollection(metaclass=_MetaTfsCollection):
             raise AttributeError(f"TfsCollection does not have any property named {name}.")
         return self._get_filename(*definition.args, **definition.kwargs)
 
+    def get_path(self, name: str) -> pathlib.Path:
+        """ Return the actual file path of the property `name` (convenience function).
+
+        Arguments:
+            name (str): Property name of the file.
+
+        Returns:
+            A `pathlib.Path` of the actual name of the file in `directory`.
+            The path to the file is then `self.directory / filename`.
+        """
+        return self.directory / self.get_filename(name)
+
     def _get_filename(self, *args, **kwargs):
         """
         Return the filename to be loaded or written.
@@ -243,7 +255,7 @@ class TfsCollection(metaclass=_MetaTfsCollection):
             setattr(self.parent, f"{self.attr}_{plane.lower()}", value)
 
     class _FilenameGetter:
-        def __init__(self, parent):
+        def __init__(self, parent: 'TfsCollection'):
             self.parent = parent
 
         def __getitem__(self, item) -> str:
@@ -253,7 +265,8 @@ class TfsCollection(metaclass=_MetaTfsCollection):
             return self[attr]
 
         def __call__(self, exist: bool = False) -> Dict[str, str]:
-            all_filenames = {name: self.parent.get_filename(name) for name in self.parent._stored_definitions.keys()}
+            all_filenames = {name: self.parent.get_filename(name)
+                             for name in self.parent.defined_properties}
             if not exist:
                 return all_filenames
             return {name: filename for name, filename in all_filenames.items()
