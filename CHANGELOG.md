@@ -1,5 +1,10 @@
 # TFS-Pandas Changelog
 
+## Version 3.5.2
+
+- Changed:
+  - The dependency on `pandas` has been pinned to `<2.0` to guarantee the proper functionning of the compability `append`, `join` and `merge` methods in `TfsDataFrames`. These will be removed with the next release of `tfs-pandas` and users should use the `tfs.frame.concat` compatibility function instead.
+
 ## Version 3.5.1
 
 - Fixed:
