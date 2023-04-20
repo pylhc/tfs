@@ -92,6 +92,16 @@ class TestHeadersMerging:
         result = merge_headers(headers_left, headers_right, how=how)
         assert result == OrderedDict()  # giving None returns empty headers
 
+    def test_providing_new_headers_overrides_merging(self, _tfs_file_x_pathlib, _tfs_file_y_pathlib):
+        dframe_x = tfs.read(_tfs_file_x_pathlib)
+        dframe_y = tfs.read(_tfs_file_y_pathlib)
+
+        assert dframe_x.merge(right=dframe_y, new_headers={}).headers == OrderedDict()
+        assert dframe_y.merge(right=dframe_x, new_headers={}).headers == OrderedDict()
+
+        assert tfs.concat([dframe_x, dframe_y], new_headers={}).headers == OrderedDict()
+        assert tfs.concat([dframe_y, dframe_x], new_headers={}).headers == OrderedDict()
+
 
 class TestPrinting:
     def test_header_print(self):
