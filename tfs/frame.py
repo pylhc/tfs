@@ -194,11 +194,6 @@ class TfsDataFrame(pd.DataFrame):
         ``pandas.Dataframe`` method of the same name. Resulting headers are either merged according to the
         provided **how_headers** method or as given via **new_headers**.
 
-        ..warning::
-            This method uses ``pandas.DataFrame.merge`` internally, which has been deprecated for a
-            while and removed with pandas 2.0. It will be removed from ``tfs-pandas`` as well in the
-            next release.
-
         Args:
             right (Union[TfsDataFrame, pd.DataFrame]): The ``TfsDataFrame`` to merge with the caller.
             how_headers (str): Type of merge to be performed for the headers. Either **left** or **right**.
@@ -217,7 +212,6 @@ class TfsDataFrame(pd.DataFrame):
         Returns:
             A new ``TfsDataFrame`` with the merged data and merged headers.
         """
-        LOGGER.warn("This method has been removed in pandas 2.0 and will be removed from TfsDataFrames too. Please use 'tfs.frame.concat' instead.")
         LOGGER.debug("Merging data through 'pandas'")
         if not hasattr(right, "headers"):
             LOGGER.debug("Converting 'right' to TfsDataFrame for merging")
