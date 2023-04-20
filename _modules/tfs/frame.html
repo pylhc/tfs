@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>tfs.frame &mdash; tfs-pandas 3.5.3 documentation</title>
+  <title>tfs.frame &mdash; tfs-pandas 3.6.0 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
@@ -39,7 +39,7 @@
               <img src="../../_static/omc_logo.svg" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                3.5
+                3.6
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -185,107 +185,6 @@
     <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="n">headers_string</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_headers_repr</span><span class="p">()</span>
         <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">headers_string</span><span class="si">}{</span><span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span>
-
-<div class="viewcode-block" id="TfsDataFrame.append"><a class="viewcode-back" href="../../modules/index.html#tfs.frame.TfsDataFrame.append">[docs]</a>    <span class="k">def</span> <span class="nf">append</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span>
-        <span class="n">other</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="s2">&quot;TfsDataFrame&quot;</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">],</span>
-        <span class="n">how_headers</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">new_headers</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;TfsDataFrame&quot;</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Append rows of the other ``TfsDataFrame`` to the end of caller, returning a new object. Data</span>
-<span class="sd">        manipulation is done by the ``pandas.Dataframe`` method of the same name. Resulting headers are</span>
-<span class="sd">        either merged according to the provided **how_headers** method or as given via **new_headers**.</span>
-
-<span class="sd">        ..warning::</span>
-<span class="sd">            This method uses ``pandas.DataFrame.append`` internally, which has been deprecated for a</span>
-<span class="sd">            while and removed with pandas 2.0. It will be removed from ``tfs-pandas`` as well in the</span>
-<span class="sd">            next release.</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            other (Union[TfsDataFrame, pd.DataFrame]): The ``TfsDataFrame`` to append to the caller.</span>
-<span class="sd">            how_headers (str): Type of merge to be performed for the headers. Either **left** or **right**.</span>
-<span class="sd">                Refer to :func:`tfs.frame.merge_headers` for behavior. If ``None`` is provided and</span>
-<span class="sd">                **new_headers** is not provided, the final headers will be empty. Case insensitive,</span>
-<span class="sd">                defaults to ``None``.</span>
-<span class="sd">            new_headers (dict): If provided, will be used as new_headers for the merged ``TfsDataFrame``.</span>
-<span class="sd">                Otherwise these are determined by merging the headers from the caller and the other</span>
-<span class="sd">                ``TfsDataFrame`` according to the method defined by the **how_headers** argument.</span>
-
-<span class="sd">        Keyword Args:</span>
-<span class="sd">            Any keyword argument is given to ``pandas.DataFrame.append()``. The default values for all these</span>
-<span class="sd">            parameters are left as set in the ``pandas`` codebase. To see these, refer to the pandas</span>
-<span class="sd">            [DataFrame.append documentation](https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.append.html).</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            A new ``TfsDataFrame`` with the appended data and merged headers.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">LOGGER</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;This method has been removed in pandas 2.0 and will be removed from TfsDataFrames too. Please use &#39;tfs.frame.concat&#39; instead.&quot;</span><span class="p">)</span>
-        <span class="n">LOGGER</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Appending data through &#39;pandas&#39;&quot;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="s2">&quot;headers&quot;</span><span class="p">):</span>
-            <span class="n">LOGGER</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Converting &#39;other&#39; to TfsDataFrame for appending&quot;</span><span class="p">)</span>
-            <span class="n">other</span> <span class="o">=</span> <span class="n">TfsDataFrame</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>  <span class="c1"># so we accept pandas.DataFrame input here</span>
-
-        <span class="n">dframe</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-
-        <span class="n">LOGGER</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Determining headers&quot;</span><span class="p">)</span>
-        <span class="n">new_headers</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="n">new_headers</span>
-            <span class="k">if</span> <span class="n">new_headers</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
-            <span class="k">else</span> <span class="n">merge_headers</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">headers</span><span class="p">,</span> <span class="n">other</span><span class="o">.</span><span class="n">headers</span><span class="p">,</span> <span class="n">how</span><span class="o">=</span><span class="n">how_headers</span><span class="p">)</span>
-        <span class="p">)</span>
-        <span class="k">return</span> <span class="n">TfsDataFrame</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">dframe</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">new_headers</span><span class="p">)</span></div>
-
-<div class="viewcode-block" id="TfsDataFrame.join"><a class="viewcode-back" href="../../modules/index.html#tfs.frame.TfsDataFrame.join">[docs]</a>    <span class="k">def</span> <span class="nf">join</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span>
-        <span class="n">other</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="s2">&quot;TfsDataFrame&quot;</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">],</span>
-        <span class="n">how_headers</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">new_headers</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;TfsDataFrame&quot;</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Join columns of another ``TfsDataFrame``. Data manipulation is done by the ``pandas.Dataframe``</span>
-<span class="sd">        method of the same name. Resulting headers are either merged according to the provided</span>
-<span class="sd">        **how_headers** method or as given via **new_headers**.</span>
-
-<span class="sd">        ..warning::</span>
-<span class="sd">            This method uses ``pandas.DataFrame.join`` internally, which has been deprecated for a</span>
-<span class="sd">            while and removed with pandas 2.0. It will be removed from ``tfs-pandas`` as well in the</span>
-<span class="sd">            next release.</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            other (Union[TfsDataFrame, pd.DataFrame]): The ``TfsDataFrame`` to join into the caller.</span>
-<span class="sd">            how_headers (str): Type of merge to be performed for the headers. Either **left** or **right**.</span>
-<span class="sd">                Refer to :func:`tfs.frame.merge_headers` for behavior. If ``None`` is provided and</span>
-<span class="sd">                **new_headers** is not provided, the final headers will be empty. Case insensitive,</span>
-<span class="sd">                defaults to ``None``.</span>
-<span class="sd">            new_headers (dict): If provided, will be used as new_headers for the merged ``TfsDataFrame``.</span>
-<span class="sd">                Otherwise these are determined by merging the headers from the caller and the other</span>
-<span class="sd">                ``TfsDataFrame`` according to the method defined by the **how_headers** argument.</span>
-
-<span class="sd">        Keyword Args:</span>
-<span class="sd">            Any keyword argument is given to ``pandas.DataFrame.join()``. The default values for all these</span>
-<span class="sd">            parameters are left as set in the ``pandas`` codebase. To see these, refer to the pandas</span>
-<span class="sd">            [DataFrame.join documentation](https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.join.html).</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            A new ``TfsDataFrame`` with the joined columns and merged headers.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">LOGGER</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;This method has been removed in pandas 2.0 and will be removed from TfsDataFrames too. Please use &#39;tfs.frame.concat&#39; instead.&quot;</span><span class="p">)</span>
-        <span class="n">LOGGER</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Joining data through &#39;pandas&#39;&quot;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="s2">&quot;headers&quot;</span><span class="p">):</span>
-            <span class="n">LOGGER</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Converting &#39;other&#39; to TfsDataFrame for joining&quot;</span><span class="p">)</span>
-            <span class="n">other</span> <span class="o">=</span> <span class="n">TfsDataFrame</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>  <span class="c1"># so we accept pandas.DataFrame input here</span>
-        <span class="n">dframe</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-
-        <span class="n">LOGGER</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Determining headers&quot;</span><span class="p">)</span>
-        <span class="n">new_headers</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="n">new_headers</span>
-            <span class="k">if</span> <span class="n">new_headers</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
-            <span class="k">else</span> <span class="n">merge_headers</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">headers</span><span class="p">,</span> <span class="n">other</span><span class="o">.</span><span class="n">headers</span><span class="p">,</span> <span class="n">how</span><span class="o">=</span><span class="n">how_headers</span><span class="p">)</span>
-        <span class="p">)</span>
-        <span class="k">return</span> <span class="n">TfsDataFrame</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">dframe</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">new_headers</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="TfsDataFrame.merge"><a class="viewcode-back" href="../../modules/index.html#tfs.frame.TfsDataFrame.merge">[docs]</a>    <span class="k">def</span> <span class="nf">merge</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
