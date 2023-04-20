@@ -68,7 +68,8 @@ class TestWrites:
         assert write_location.is_file()
 
         new = read_tfs(write_location)
-        assert_frame_equal(df, new)
+        # with pandas 2.0 the index of new is empty but of type integer, which is fine
+        assert_frame_equal(df, new, check_index_type=False)
         assert_dict_equal(df.headers, new.headers, compare_keys=True)
 
     def test_write_int_float_str_columns(self, tmp_path):
