@@ -1,5 +1,10 @@
 # TFS-Pandas Changelog
 
+## Version 3.5.3
+
+- Changed:
+  - Fixed a wrong deprecation of the `.merge` method of `TfsDataFrames`.
+
 ## Version 3.5.2
 
 - Changed:
