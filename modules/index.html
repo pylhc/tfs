@@ -4,7 +4,7 @@
 <head>
 <meta charset="utf-8"/><meta content="Docutils 0.18.1: http://docutils.sourceforge.net/" name="generator"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>TFS-Pandas Modules — tfs-pandas 3.5.2 documentation</title>
+<title>TFS-Pandas Modules — tfs-pandas 3.5.3 documentation</title>
 <link href="../_static/pygments.css" rel="stylesheet" type="text/css"/>
 <link href="../_static/css/theme.css" rel="stylesheet" type="text/css"/>
 <link href="../_static/copybutton.css" rel="stylesheet" type="text/css"/>
@@ -304,12 +304,6 @@ Otherwise these are determined by merging the headers from the caller and the ot
 <dd><p>Merge <code class="docutils literal notranslate"><span class="pre">TfsDataFrame</span></code> objects with a database-style join. Data manipulation is done by the
 <code class="docutils literal notranslate"><span class="pre">pandas.Dataframe</span></code> method of the same name. Resulting headers are either merged according to the
 provided <strong>how_headers</strong> method or as given via <strong>new_headers</strong>.</p>
-<dl class="simple">
-<dt>..warning::</dt><dd><p>This method uses <code class="docutils literal notranslate"><span class="pre">pandas.DataFrame.merge</span></code> internally, which has been deprecated for a
-while and removed with pandas 2.0. It will be removed from <code class="docutils literal notranslate"><span class="pre">tfs-pandas</span></code> as well in the
-next release.</p>
-</dd>
-</dl>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
