@@ -81,6 +81,50 @@ class TfsDataFrame(pd.DataFrame):
         headers_string = self._headers_repr()
         return f"{headers_string}{super().__repr__()}"
 
+    def merge(
+        self,
+        right: Union["TfsDataFrame", pd.DataFrame],
+        how_headers: str = None,
+        new_headers: dict = None,
+        **kwargs,
+    ) -> "TfsDataFrame":
+        """
+        Merge ``TfsDataFrame`` objects with a database-style join. Data manipulation is done by the
+        ``pandas.Dataframe`` method of the same name. Resulting headers are either merged according to the
+        provided **how_headers** method or as given via **new_headers**.
+
+        Args:
+            right (Union[TfsDataFrame, pd.DataFrame]): The ``TfsDataFrame`` to merge with the caller.
+            how_headers (str): Type of merge to be performed for the headers. Either **left** or **right**.
+                Refer to :func:`tfs.frame.merge_headers` for behavior. If ``None`` is provided and
+                **new_headers** is not provided, the final headers will be empty. Case insensitive,
+                defaults to ``None``.
+            new_headers (dict): If provided, will be used as headers for the merged ``TfsDataFrame``.
+                Otherwise these are determined by merging the headers from the caller and the other
+                ``TfsDataFrame`` according to the method defined by the **how_headers** argument.
+
+        Keyword Args:
+            Any keyword argument is given to ``pandas.DataFrame.merge()``. The default values for all these
+            parameters are left as set in the ``pandas`` codebase. To see these, refer to the pandas
+            [DataFrame.merge documentation](https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.merge.html).
+
+        Returns:
+            A new ``TfsDataFrame`` with the merged data and merged headers.
+        """
+        LOGGER.debug("Merging data through 'pandas'")
+        if not hasattr(right, "headers"):
+            LOGGER.debug("Converting 'right' to TfsDataFrame for merging")
+            right = TfsDataFrame(right)  # so we accept pandas.DataFrame input here
+        dframe = super().merge(right, **kwargs)
+
+        LOGGER.debug("Determining headers")
+        new_headers = (
+            new_headers
+            if new_headers is not None
+            else merge_headers(self.headers, right.headers, how=how_headers)
+        )
+        return TfsDataFrame(data=dframe, headers=new_headers)
+
 
 def merge_headers(headers_left: dict, headers_right: dict, how: str) -> OrderedDict:
     """
