@@ -106,7 +106,7 @@ class TfsCollection(metaclass=_MetaTfsCollection):
     ``self.allow_write`` attribute is set to ``True``, an assignment on one of the attributes will
     trigger the corresponding file write.
     """
-    NAME = "NAME"
+    INDEX = "NAME"
 
     def __init__(self, directory: pathlib.Path, allow_write: bool = None):
         self.directory = pathlib.Path(directory) if isinstance(directory, str) else directory
@@ -198,8 +198,8 @@ class TfsCollection(metaclass=_MetaTfsCollection):
             A ``TfsDataFrame`` built from reading the requested file.
         """
         tfs_data_df = read_tfs(self.directory / filename)
-        if self.NAME and self.NAME in tfs_data_df:
-            tfs_data_df = tfs_data_df.set_index(self.NAME, drop=False)
+        if self.INDEX and self.INDEX in tfs_data_df:
+            tfs_data_df = tfs_data_df.set_index(self.INDEX, drop=False)
         return tfs_data_df
 
     def write_tfs(self, filename: str, data_frame: DataFrame):
@@ -233,8 +233,8 @@ class TfsCollection(metaclass=_MetaTfsCollection):
             return self._buffer[filename]
         except KeyError:
             tfs_data = self.read_tfs(filename)
-            if self.NAME and self.NAME in tfs_data:
-                tfs_data = tfs_data.set_index(self.NAME, drop=False)
+            if self.INDEX and self.INDEX in tfs_data:
+                tfs_data = tfs_data.set_index(self.INDEX, drop=False)
             self._buffer[filename] = tfs_data
             return self._buffer[filename]
 

@@ -1,5 +1,30 @@
 # TFS-Pandas Changelog
 
+## Version 3.6.1
+
+Minor API changes to the `TFSCollections`:
+  - the old `write_to` and `get_filename` are renamed to `_write_to` and `_get_filename` as they
+    could only be accessed internally (due to the input parameters not available to the user).
+    This also means, that - in case they are overwritten by a user's implementation - they need to be renamed there!!
+
+  - The column which is set as index can now also be defined manually, by overwriting the attribute `INDEX`, which defaults to `"NAME"`.
+
+  - New Functions of `TFSCollection` Instances:
+    - `get_filename(name)`: Returns the associated filename to the property with name `name`.
+    - `get_path(name)`: Return the actual file path of the property `name`
+    - `flush()`: Write the current state of the TFSDataFrames into their respective files.
+    - `write_tfs(filename, data_frame)`: Write the `data_frame` to `self.directory` with the given `filename`.
+
+  - New Special Properties of `TFSCollection` Instances:
+    - `defined_properties`: Tuple of strings of the defined properties on this instance.
+    - `filenames` is a conveniece wrapper for `get_filename()`: 
+      - When called (`filenames(exist: bool)`) returns a dictionary of the defined properties and their associated filenames.
+        The `exist` boolean filters between existing files or filenames for all properties.
+      - Can also be used either `filenames.name` or `filenames[name]` to call `get_filename(name)` on the instance.
+
+  - Moved the define-properties functions directly into the `Tfs`-attribute marker class.
+  - Return of `None` for the `MaybeCall` class in case of attribute not found (instead of empty function, which didn't make sense).
+
 ## Version 3.6.0
 
 - Removed:
