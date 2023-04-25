@@ -270,7 +270,7 @@ class TfsCollection(metaclass=_MetaTfsCollection):
             if not exist:
                 return all_filenames
             return {name: filename for name, filename in all_filenames.items()
-                    if (self.parent.directory / filename).exists()}
+                    if (self.parent.directory / filename).is_file()}
 
 
 class Tfs:
