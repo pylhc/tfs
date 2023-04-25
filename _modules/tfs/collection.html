@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>tfs.collection &mdash; tfs-pandas 3.6.0 documentation</title>
+  <title>tfs.collection &mdash; tfs-pandas 3.7.0 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
@@ -39,7 +39,7 @@
               <img src="../../_static/omc_logo.svg" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                3.6
+                3.7
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -109,6 +109,8 @@
 
 <span class="sd">Advanced **TFS** files reading and writing functionality.</span>
 <span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Dict</span>
+
 <span class="kn">import</span> <span class="nn">pathlib</span>
 
 <span class="kn">from</span> <span class="nn">pandas</span> <span class="kn">import</span> <span class="n">DataFrame</span>
@@ -127,23 +129,27 @@
 
     <span class="k">def</span> <span class="fm">__new__</span><span class="p">(</span><span class="n">mcs</span><span class="p">,</span> <span class="n">cls_name</span><span class="p">,</span> <span class="n">bases</span><span class="p">,</span> <span class="n">dct</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
         <span class="n">new_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">dct</span><span class="p">)</span>
+        <span class="n">new_dict</span><span class="p">[</span><span class="s2">&quot;_stored_definitions&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="n">new_dict</span><span class="p">[</span><span class="s2">&quot;_two_plane_names&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="c1"># for name in dct:</span>
         <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">dct</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="k">try</span><span class="p">:</span>
-                <span class="n">args</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">args</span>
-                <span class="n">kwargs</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">kwargs</span>
+                <span class="n">new_props</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">get_property</span><span class="p">()</span>
             <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
                 <span class="k">continue</span>
-            <span class="n">new_props</span> <span class="o">=</span> <span class="n">_define_property</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">)</span>
+
             <span class="k">try</span><span class="p">:</span>
                 <span class="n">prop_x</span><span class="p">,</span> <span class="n">prop_y</span> <span class="o">=</span> <span class="n">new_props</span>
-                <span class="n">new_dict</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
-                <span class="n">new_dict</span><span class="p">[</span><span class="s2">&quot;_two_plane_names&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
-                <span class="n">new_dict</span><span class="p">[</span><span class="n">key</span> <span class="o">+</span> <span class="s2">&quot;_x&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">prop_x</span>
-                <span class="n">new_dict</span><span class="p">[</span><span class="n">key</span> <span class="o">+</span> <span class="s2">&quot;_y&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">prop_y</span>
             <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
                 <span class="n">new_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">new_props</span>
+                <span class="n">new_dict</span><span class="p">[</span><span class="s2">&quot;_stored_definitions&quot;</span><span class="p">][</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">new_dict</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+                <span class="n">new_dict</span><span class="p">[</span><span class="s2">&quot;_two_plane_names&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">plane</span><span class="p">,</span> <span class="n">prop</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="s2">&quot;xy&quot;</span><span class="p">,</span> <span class="p">(</span><span class="n">prop_x</span><span class="p">,</span> <span class="n">prop_y</span><span class="p">)):</span>
+                    <span class="n">new_key</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">plane</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="n">new_dict</span><span class="p">[</span><span class="n">new_key</span><span class="p">]</span> <span class="o">=</span> <span class="n">prop</span>
+                    <span class="n">new_dict</span><span class="p">[</span><span class="s2">&quot;_stored_definitions&quot;</span><span class="p">][</span><span class="n">new_key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">get_planed_copy</span><span class="p">(</span><span class="n">plane</span><span class="p">)</span>
         <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__new__</span><span class="p">(</span><span class="n">mcs</span><span class="p">,</span> <span class="n">cls_name</span><span class="p">,</span> <span class="n">bases</span><span class="p">,</span> <span class="n">new_dict</span><span class="p">)</span>
 
 
@@ -205,14 +211,44 @@
 <span class="sd">    ``self.allow_write`` attribute is set to ``True``, an assignment on one of the attributes will</span>
 <span class="sd">    trigger the corresponding file write.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">INDEX</span> <span class="o">=</span> <span class="s2">&quot;NAME&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">directory</span><span class="p">:</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">,</span> <span class="n">allow_write</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">directory</span> <span class="o">=</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="n">directory</span><span class="p">)</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">directory</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="k">else</span> <span class="n">directory</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">allow_write</span> <span class="o">=</span> <span class="kc">False</span> <span class="k">if</span> <span class="n">allow_write</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">allow_write</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">maybe_call</span> <span class="o">=</span> <span class="n">_MaybeCall</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">filenames</span> <span class="o">=</span> <span class="n">TfsCollection</span><span class="o">.</span><span class="n">_FilenameGetter</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">defined_properties</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_stored_definitions</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_buffer</span> <span class="o">=</span> <span class="p">{}</span>
 
-<div class="viewcode-block" id="TfsCollection.get_filename"><a class="viewcode-back" href="../../modules/index.html#tfs.collection.TfsCollection.get_filename">[docs]</a>    <span class="k">def</span> <span class="nf">get_filename</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="TfsCollection.get_filename"><a class="viewcode-back" href="../../modules/index.html#tfs.collection.TfsCollection.get_filename">[docs]</a>    <span class="k">def</span> <span class="nf">get_filename</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Return the actual filename of the property `name`.</span>
+
+<span class="sd">        Arguments:</span>
+<span class="sd">            name (str): Property name of the file.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            A `str` of the actual name of the file in `directory`.</span>
+<span class="sd">            The path to the file is then `self.directory / filename`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">definition</span><span class="p">:</span> <span class="n">Tfs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stored_definitions</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">definition</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;TfsCollection does not have any property named </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_filename</span><span class="p">(</span><span class="o">*</span><span class="n">definition</span><span class="o">.</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">definition</span><span class="o">.</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TfsCollection.get_path"><a class="viewcode-back" href="../../modules/index.html#tfs.collection.TfsCollection.get_path">[docs]</a>    <span class="k">def</span> <span class="nf">get_path</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Return the actual file path of the property `name` (convenience function).</span>
+
+<span class="sd">        Arguments:</span>
+<span class="sd">            name (str): Property name of the file.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            A `pathlib.Path` of the actual name of the file in `directory`.</span>
+<span class="sd">            The path to the file is then `self.directory / filename`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">directory</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_filename</span><span class="p">(</span><span class="n">name</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">_get_filename</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return the filename to be loaded or written.</span>
 
@@ -221,17 +257,18 @@
 <span class="sd">        not present in the Tfs(...) definition, it will also be given the keyword argument</span>
 <span class="sd">        ``plane=&quot;x&quot;`` or ``plane=&quot;y&quot;``.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;This is an abstract method, it should be implemented in subclasses.&quot;</span><span class="p">)</span></div>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;This is an abstract method, it should be implemented in subclasses.&quot;</span><span class="p">)</span>
 
-<div class="viewcode-block" id="TfsCollection.write_to"><a class="viewcode-back" href="../../modules/index.html#tfs.collection.TfsCollection.write_to">[docs]</a>    <span class="k">def</span> <span class="nf">write_to</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_write_to</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns the filename and `TfsDataFrame` to be written on assignments.</span>
 
 <span class="sd">        If this function is overwritten, it will replace ``get_filename(...)`` in file writes to</span>
-<span class="sd">        find out the filename of the file to be written. It also gets the value assigned as first</span>
-<span class="sd">        parameter. It must return a tuple (filename, tfs_data_frame).</span>
+<span class="sd">        find out the filename of the file to be written.</span>
+<span class="sd">        Which means you can define different locations for reading and writing.</span>
+<span class="sd">        It also gets the value assigned as first parameter. It must return a tuple (filename, tfs_data_frame).</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;This is an abstract method, it should be implemented in subclasses.&quot;</span><span class="p">)</span></div>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;This is an abstract method, it should be implemented in subclasses.&quot;</span><span class="p">)</span>
 
 <div class="viewcode-block" id="TfsCollection.clear"><a class="viewcode-back" href="../../modules/index.html#tfs.collection.TfsCollection.clear">[docs]</a>    <span class="k">def</span> <span class="nf">clear</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -241,12 +278,23 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_buffer</span> <span class="o">=</span> <span class="p">{}</span></div>
 
+<div class="viewcode-block" id="TfsCollection.flush"><a class="viewcode-back" href="../../modules/index.html#tfs.collection.TfsCollection.flush">[docs]</a>    <span class="k">def</span> <span class="nf">flush</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Write the current state of the TFSDataFrames into their respective files.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">allow_write</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="s2">&quot;Cannot flush TfsCollection, as `allow_write` is set to `False`.&quot;</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">filename</span><span class="p">,</span> <span class="n">data_frame</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_buffer</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">write_tfs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">directory</span> <span class="o">/</span> <span class="n">filename</span><span class="p">,</span> <span class="n">data_frame</span><span class="p">)</span></div>
+
 <div class="viewcode-block" id="TfsCollection.read_tfs"><a class="viewcode-back" href="../../modules/index.html#tfs.collection.TfsCollection.read_tfs">[docs]</a>    <span class="k">def</span> <span class="nf">read_tfs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TfsDataFrame</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Reads the **TFS** file from ``self.directory`` with the given filename.</span>
 
-<span class="sd">        This function can be overwritten to use something instead of ``tfs-pandas`` to load the</span>
-<span class="sd">        files.</span>
+<span class="sd">        This function can be overwritten to use something instead of ``tfs-pandas``</span>
+<span class="sd">        to load the files. It does not set the TfsDataframe into the buffer</span>
+<span class="sd">        (that is the job of `_load_tfs`)!</span>
 
 <span class="sd">        Arguments:</span>
 <span class="sd">            filename (str): The name of the file to load.</span>
@@ -255,28 +303,49 @@
 <span class="sd">            A ``TfsDataFrame`` built from reading the requested file.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">tfs_data_df</span> <span class="o">=</span> <span class="n">read_tfs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">directory</span> <span class="o">/</span> <span class="n">filename</span><span class="p">)</span>
-        <span class="k">if</span> <span class="s2">&quot;NAME&quot;</span> <span class="ow">in</span> <span class="n">tfs_data_df</span><span class="p">:</span>
-            <span class="n">tfs_data_df</span> <span class="o">=</span> <span class="n">tfs_data_df</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s2">&quot;NAME&quot;</span><span class="p">,</span> <span class="n">drop</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">INDEX</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">INDEX</span> <span class="ow">in</span> <span class="n">tfs_data_df</span><span class="p">:</span>
+            <span class="n">tfs_data_df</span> <span class="o">=</span> <span class="n">tfs_data_df</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">INDEX</span><span class="p">,</span> <span class="n">drop</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">tfs_data_df</span></div>
+
+<div class="viewcode-block" id="TfsCollection.write_tfs"><a class="viewcode-back" href="../../modules/index.html#tfs.collection.TfsCollection.write_tfs">[docs]</a>    <span class="k">def</span> <span class="nf">write_tfs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">data_frame</span><span class="p">:</span> <span class="n">DataFrame</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Write the **TFS** file to ``self.directory`` with the given filename.</span>
+
+<span class="sd">        This function can be overwritten to use something instead of ``tfs-pandas``</span>
+<span class="sd">        to write out the files. It does not  check for `allow_write` and</span>
+<span class="sd">        does not set the Dataframe into the buffer (that is the job of `_write_tfs`)!</span>
+
+<span class="sd">        Arguments:</span>
+<span class="sd">            filename (str): The name of the file to load.</span>
+<span class="sd">            data_frame (TfsDataFrame): TfsDataframe to write</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">write_tfs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">directory</span> <span class="o">/</span> <span class="n">filename</span><span class="p">,</span> <span class="n">data_frame</span><span class="p">)</span></div>
 
     <span class="k">def</span> <span class="fm">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">object</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">attr</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_two_plane_names</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">TfsCollection</span><span class="o">.</span><span class="n">_TwoPlanes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="p">)</span>
         <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> object has no attribute </span><span class="si">{</span><span class="n">attr</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
+    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+
     <span class="k">def</span> <span class="nf">_load_tfs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_buffer</span><span class="p">[</span><span class="n">filename</span><span class="p">]</span>
         <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
             <span class="n">tfs_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">read_tfs</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
-            <span class="k">if</span> <span class="s2">&quot;NAME&quot;</span> <span class="ow">in</span> <span class="n">tfs_data</span><span class="p">:</span>
-                <span class="n">tfs_data</span> <span class="o">=</span> <span class="n">tfs_data</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s2">&quot;NAME&quot;</span><span class="p">,</span> <span class="n">drop</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">INDEX</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">INDEX</span> <span class="ow">in</span> <span class="n">tfs_data</span><span class="p">:</span>
+                <span class="n">tfs_data</span> <span class="o">=</span> <span class="n">tfs_data</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">INDEX</span><span class="p">,</span> <span class="n">drop</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_buffer</span><span class="p">[</span><span class="n">filename</span><span class="p">]</span> <span class="o">=</span> <span class="n">tfs_data</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_buffer</span><span class="p">[</span><span class="n">filename</span><span class="p">]</span>
 
     <span class="k">def</span> <span class="nf">_write_tfs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">data_frame</span><span class="p">:</span> <span class="n">DataFrame</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">allow_write</span><span class="p">:</span>
-            <span class="n">write_tfs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">directory</span> <span class="o">/</span> <span class="n">filename</span><span class="p">,</span> <span class="n">data_frame</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">write_tfs</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">data_frame</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_buffer</span><span class="p">[</span><span class="n">filename</span><span class="p">]</span> <span class="o">=</span> <span class="n">data_frame</span>
 
     <span class="k">class</span> <span class="nc">_TwoPlanes</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
@@ -285,80 +354,73 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">attr</span> <span class="o">=</span> <span class="n">attr</span>
 
         <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">plane</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-            <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">attr</span> <span class="o">+</span> <span class="s2">&quot;_&quot;</span> <span class="o">+</span> <span class="n">plane</span><span class="o">.</span><span class="n">lower</span><span class="p">())</span>
+            <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">attr</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">plane</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
         <span class="k">def</span> <span class="fm">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">plane</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
-            <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">attr</span> <span class="o">+</span> <span class="s2">&quot;_&quot;</span> <span class="o">+</span> <span class="n">plane</span><span class="o">.</span><span class="n">lower</span><span class="p">(),</span> <span class="n">value</span><span class="p">)</span></div>
+            <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">attr</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">plane</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+
+    <span class="k">class</span> <span class="nc">_FilenameGetter</span><span class="p">:</span>
+        <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">:</span> <span class="s1">&#39;TfsCollection&#39;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">parent</span> <span class="o">=</span> <span class="n">parent</span>
+
+        <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">get_filename</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+
+        <span class="k">def</span> <span class="fm">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="p">[</span><span class="n">attr</span><span class="p">]</span>
+
+        <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exist</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
+            <span class="n">all_filenames</span> <span class="o">=</span> <span class="p">{</span><span class="n">name</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">get_filename</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+                             <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">defined_properties</span><span class="p">}</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">exist</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">all_filenames</span>
+            <span class="k">return</span> <span class="p">{</span><span class="n">name</span><span class="p">:</span> <span class="n">filename</span> <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">filename</span> <span class="ow">in</span> <span class="n">all_filenames</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">directory</span> <span class="o">/</span> <span class="n">filename</span><span class="p">)</span><span class="o">.</span><span class="n">is_file</span><span class="p">()}</span></div>
 
 
 <div class="viewcode-block" id="Tfs"><a class="viewcode-back" href="../../modules/index.html#tfs.collection.Tfs">[docs]</a><span class="k">class</span> <span class="nc">Tfs</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Class to mark attributes as **TFS** attributes.</span>
 
-<span class="sd">    Any parameter given to this class will be passed to the ``get_filename()`` and ``write_to()``</span>
-<span class="sd">    methods, together with the plane if ``two_planes=False`` is not present.</span>
+<span class="sd">    Any parameter given to this class will be passed to the ``_get_filename()`` method,</span>
+<span class="sd">    together with the plane if ``two_planes=False`` is not present.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">PLANES</span> <span class="o">=</span> <span class="s2">&quot;x&quot;</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_two_planes</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;two_planes&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">args</span> <span class="o">=</span> <span class="n">args</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span> <span class="o">=</span> <span class="n">kwargs</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span> <span class="o">=</span> <span class="n">kwargs</span>
 
+    <span class="k">def</span> <span class="nf">get_planed_copy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">plane</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">(</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="p">,</span> <span class="n">plane</span><span class="o">=</span><span class="n">plane</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span><span class="p">)</span>
 
-<span class="c1"># Private methods to define the properties ##################################</span>
+    <span class="k">def</span> <span class="nf">get_property</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_two_planes</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_property_two_planes</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_property_single_plane</span><span class="p">()</span>
 
+    <span class="k">def</span> <span class="nf">_get_property_two_planes</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">property</span><span class="p">,</span> <span class="nb">property</span><span class="p">]:</span>
+        <span class="n">properties</span> <span class="o">=</span> <span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">plane</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">PLANES</span><span class="p">):</span>
+            <span class="n">planed</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_planed_copy</span><span class="p">(</span><span class="n">plane</span><span class="p">)</span>
+            <span class="n">properties</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">planed</span><span class="o">.</span><span class="n">_get_property_single_plane</span><span class="p">()</span>
+        <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">properties</span><span class="p">)</span>
 
-<span class="k">def</span> <span class="nf">_define_property</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">):</span>
-    <span class="k">if</span> <span class="s2">&quot;two_planes&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">_define_property_two_planes</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">)</span>
-    <span class="k">elif</span> <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;two_planes&quot;</span><span class="p">]:</span>
-        <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;two_planes&quot;</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">_define_property_two_planes</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">)</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;two_planes&quot;</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">_get_property_single_plane</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">property</span><span class="p">:</span>
+        <span class="k">def</span> <span class="nf">getter_funct</span><span class="p">(</span><span class="n">other</span><span class="p">:</span> <span class="n">TfsCollection</span><span class="p">):</span>
+            <span class="n">filename</span> <span class="o">=</span> <span class="n">other</span><span class="o">.</span><span class="n">_get_filename</span><span class="p">(</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">other</span><span class="o">.</span><span class="n">_load_tfs</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
 
-        <span class="k">def</span> <span class="nf">getter_funct</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-            <span class="k">return</span> <span class="n">_getter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">def</span> <span class="nf">setter_funct</span><span class="p">(</span><span class="n">other</span><span class="p">:</span> <span class="n">TfsCollection</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">filename</span><span class="p">,</span> <span class="n">data_frame</span> <span class="o">=</span> <span class="n">other</span><span class="o">.</span><span class="n">_write_to</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span><span class="p">)</span>
+                <span class="n">other</span><span class="o">.</span><span class="n">_write_tfs</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">data_frame</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">NotImplementedError</span><span class="p">:</span>
+                <span class="n">filename</span> <span class="o">=</span> <span class="n">other</span><span class="o">.</span><span class="n">_get_filename</span><span class="p">(</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span><span class="p">)</span>
+                <span class="n">other</span><span class="o">.</span><span class="n">_write_tfs</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
 
-        <span class="k">def</span> <span class="nf">setter_funct</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tfs_data</span><span class="p">):</span>
-            <span class="k">return</span> <span class="n">_setter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tfs_data</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-
-        <span class="k">return</span> <span class="nb">property</span><span class="p">(</span><span class="n">fget</span><span class="o">=</span><span class="n">getter_funct</span><span class="p">,</span> <span class="n">fset</span><span class="o">=</span><span class="n">setter_funct</span><span class="p">)</span>
-
-
-<span class="k">def</span> <span class="nf">_define_property_two_planes</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">:</span>
-    <span class="n">x_kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span>
-    <span class="n">y_kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span>
-    <span class="n">x_kwargs</span><span class="p">[</span><span class="s2">&quot;plane&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;x&quot;</span>
-    <span class="n">y_kwargs</span><span class="p">[</span><span class="s2">&quot;plane&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;y&quot;</span>
-
-    <span class="k">def</span> <span class="nf">x_getter_funct</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">_getter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">x_kwargs</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">x_setter_funct</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tfs_data</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">_setter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tfs_data</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">x_kwargs</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">y_getter_funct</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">_getter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">y_kwargs</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">y_setter_funct</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tfs_data</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">_setter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tfs_data</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">y_kwargs</span><span class="p">)</span>
-
-    <span class="n">property_x</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="n">fget</span><span class="o">=</span><span class="n">x_getter_funct</span><span class="p">,</span> <span class="n">fset</span><span class="o">=</span><span class="n">x_setter_funct</span><span class="p">)</span>
-    <span class="n">property_y</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="n">fget</span><span class="o">=</span><span class="n">y_getter_funct</span><span class="p">,</span> <span class="n">fset</span><span class="o">=</span><span class="n">y_setter_funct</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">property_x</span><span class="p">,</span> <span class="n">property_y</span>
-
-
-<span class="k">def</span> <span class="nf">_getter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-    <span class="n">filename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_filename</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_load_tfs</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
-
-
-<span class="k">def</span> <span class="nf">_setter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-    <span class="k">try</span><span class="p">:</span>
-        <span class="n">filename</span><span class="p">,</span> <span class="n">data_frame</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">write_to</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_write_tfs</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">data_frame</span><span class="p">)</span>
-    <span class="k">except</span> <span class="ne">NotImplementedError</span><span class="p">:</span>
-        <span class="n">filename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_filename</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_write_tfs</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">property</span><span class="p">(</span><span class="n">fget</span><span class="o">=</span><span class="n">getter_funct</span><span class="p">,</span> <span class="n">fset</span><span class="o">=</span><span class="n">setter_funct</span><span class="p">)</span></div>
 
 
 <span class="k">class</span> <span class="nc">_MaybeCall</span><span class="p">:</span>
@@ -384,13 +446,13 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">attr</span> <span class="o">=</span> <span class="n">attr</span>
 
         <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
-            <span class="k">return</span> <span class="n">_MaybeCall</span><span class="o">.</span><span class="n">MaybeCallAttr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">attr</span> <span class="o">+</span> <span class="s2">&quot;_&quot;</span> <span class="o">+</span> <span class="n">item</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">_MaybeCall</span><span class="o">.</span><span class="n">MaybeCallAttr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">attr</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">item</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
         <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">function_call</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
             <span class="k">try</span><span class="p">:</span>
                 <span class="n">tfs_file</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">attr</span><span class="p">)</span>
             <span class="k">except</span> <span class="ne">IOError</span><span class="p">:</span>
-                <span class="k">return</span> <span class="k">lambda</span> <span class="n">funct</span><span class="p">:</span> <span class="kc">None</span>  <span class="c1"># Empty function</span>
+                <span class="k">return</span> <span class="kc">None</span>
             <span class="k">return</span> <span class="n">function_call</span><span class="p">(</span><span class="n">tfs_file</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 </pre></div>
 
