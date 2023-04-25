@@ -180,8 +180,8 @@ class TfsCollection(metaclass=_MetaTfsCollection):
         if not self.allow_write:
             raise IOError("Cannot flush TfsCollection, as `allow_write` is set to `False`.")
 
-        for name, data_frame in self._buffer.items():
-            write_tfs(self.directory / self.get_filename(name), data_frame)
+        for filename, data_frame in self._buffer.items():
+            write_tfs(self.directory / filename, data_frame)
 
     def read_tfs(self, filename: str) -> TfsDataFrame:
         """
