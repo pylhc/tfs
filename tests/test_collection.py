@@ -159,13 +159,18 @@ class TestFilenames:
             TfsCollection._get_filename("doesnt matter")
 
     def test_get_filename(self, _input_dir_pathlib: pathlib.Path):
-        c = CollectionTest(_input_dir_pathlib)
+        c = CollectionTest(_input_dir_pathlib, allow_write=False)
         assert c.get_filename("file_y") == "file_y.tfs"
         assert c.get_filename("filex") == "file_x.tfs"
         assert c.get_filename("nofile_x") == "nofile_x.tfs"
 
+    def test_get_filename_not_there(self, _input_dir_pathlib: pathlib.Path):
+        c = CollectionTest(_input_dir_pathlib, allow_write=False)
+        with pytest.raises(AttributeError):
+            c.get_filename("doesn't matter either")
+
     def test_filenames(self, _input_dir_pathlib: pathlib.Path):
-        c = CollectionTest(_input_dir_pathlib)
+        c = CollectionTest(_input_dir_pathlib, allow_write=False)
         assert c.filenames.file_y == "file_y.tfs"
         assert c.filenames.filex == "file_x.tfs"
         assert c.filenames.nofile_x == "nofile_x.tfs"
@@ -192,7 +197,7 @@ class TestFilenames:
         assert all(f not in c.filenames(exist=True).values() for f in not_exist_files)
 
     def test_get_path(self, _input_dir_pathlib: pathlib.Path):
-        c = CollectionTest(_input_dir_pathlib)
+        c = CollectionTest(_input_dir_pathlib, allow_write=False)
         assert c.get_path("file_y") == _input_dir_pathlib / "file_y.tfs"
         assert c.get_path("filex") == _input_dir_pathlib / "file_x.tfs"
         assert c.get_path("nofile_x") == _input_dir_pathlib / "nofile_x.tfs"

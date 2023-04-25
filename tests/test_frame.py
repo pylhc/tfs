@@ -27,6 +27,17 @@ class TestFailures:
         with pytest.raises(ValueError):
             merge_headers(headers_left, headers_right, how=how)
 
+    def test_access_errors(self):
+        df = TfsDataFrame(index=["A", "B", "A"], columns=["A", "B", "A"], headers={"HEADER": 10})
+        with pytest.raises(AttributeError):
+            df.does_not_exist
+
+        with pytest.raises(KeyError):
+            df["does also not exist"]
+
+        with pytest.raises(KeyError):
+            df[None]
+
 
 class TestTfsDataFrameMerging:
     @pytest.mark.parametrize("how_headers", [None, "left", "right"])

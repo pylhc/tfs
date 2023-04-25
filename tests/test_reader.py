@@ -56,14 +56,6 @@ class TestRead:
         _ = read_tfs(nan_tfs_path, index="NAME", validate=False)
         assert "contains non-physical values at Index:" not in caplog.text
 
-    def tfs_indx_pathlib_input(self, _tfs_file_pathlib: pathlib.Path):
-        test_file = read_tfs(_tfs_file_pathlib)
-        assert test_file.indx["BPMYB.5L2.B1"] == test_file.set_index("NAME")["BPMYB.5L2.B1"]
-
-    def tfs_indx_str_input(self, _tfs_file_str: str):
-        test_file = read_tfs(_tfs_file_str)
-        assert test_file.indx["BPMYB.5L2.B1"] == test_file.set_index("NAME")["BPMYB.5L2.B1"]
-
     def test_id_to_type_handles_madx_string_identifier(self):
         madx_str_id = "%20s"
         assert tfs.reader._id_to_type(madx_str_id) is str
