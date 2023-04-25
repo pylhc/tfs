@@ -1,6 +1,6 @@
 # TFS-Pandas Changelog
 
-## Version 3.6.1
+## Version 3.7.0
 
 Minor API changes to the `TFSCollections`:
   - the old `write_to` and `get_filename` are renamed to `_write_to` and `_get_filename` as they
