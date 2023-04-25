@@ -35,8 +35,11 @@ class TestFailures:
         with pytest.raises(KeyError):
             df["does also not exist"]
 
-        with pytest.raises(KeyError):
-            df[None]
+        with pytest.raises(TypeError):  # from pandas
+            df[{}]
+
+        with pytest.raises(KeyError):  # raises KeyError in pandas, TypeError in dict
+            df[[1, 2, 3]]
 
 
 class TestTfsDataFrameMerging:
