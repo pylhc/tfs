@@ -17,7 +17,7 @@ Minor API changes to the `TFSCollections`:
 
   - New Special Properties of `TFSCollection` Instances:
     - `defined_properties`: Tuple of strings of the defined properties on this instance.
-    - `filenames` is a conveniece wrapper for `get_filename()`: 
+    - `filenames` is a convenience wrapper for `get_filename()`: 
       - When called (`filenames(exist: bool)`) returns a dictionary of the defined properties and their associated filenames.
         The `exist` boolean filters between existing files or filenames for all properties.
       - Can also be used either `filenames.name` or `filenames[name]` to call `get_filename(name)` on the instance.
