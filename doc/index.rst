@@ -30,7 +30,7 @@ One can also install in a `conda`/`mamba` environment via the `conda-forge` chan
    conda install -c conda-forge tfs-pandas
 
 You can now start using the package.
-You can find a :doc:`quickstart guide  <quickstart>`.
+You can find here a :doc:`quickstart guide  <quickstart>` to walk you through functionalities and their usage.
 
 
 Contents
