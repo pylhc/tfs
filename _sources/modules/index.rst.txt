@@ -1,5 +1,5 @@
-TFS-Pandas Modules
-==================
+API Reference
+=============
 
 .. automodule:: tfs.collection
     :members:

@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+
+<html class="writer-html5" lang="en">
+<head>
+<meta charset="utf-8"/><meta content="Docutils 0.18.1: http://docutils.sourceforge.net/" name="generator"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>2 Minutes to tfs-pandas — tfs-pandas 3.7.0 documentation</title>
+<link href="_static/pygments.css" rel="stylesheet" type="text/css"/>
+<link href="_static/css/theme.css" rel="stylesheet" type="text/css"/>
+<link href="_static/copybutton.css" rel="stylesheet" type="text/css"/>
+<link href="_static/sphinx-codeautolink.css" rel="stylesheet" type="text/css"/>
+<link href="_static/css/custom.css" rel="stylesheet" type="text/css"/>
+<!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+<script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+<script src="_static/jquery.js"></script>
+<script src="_static/underscore.js"></script>
+<script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+<script src="_static/doctools.js"></script>
+<script src="_static/sphinx_highlight.js"></script>
+<script src="_static/clipboard.min.js"></script>
+<script src="_static/copybutton.js"></script>
+<script src="_static/js/theme.js"></script>
+<link href="genindex.html" rel="index" title="Index"/>
+<link href="search.html" rel="search" title="Search"/>
+<link href="modules/index.html" rel="next" title="API Reference"/>
+<link href="index.html" rel="prev" title="Welcome to tfs-pandas’ documentation!"/>
+</head>
+<body class="wy-body-for-nav">
+<div class="wy-grid-for-nav">
+<nav class="wy-nav-side" data-toggle="wy-nav-shift">
+<div class="wy-side-scroll">
+<div class="wy-side-nav-search">
+<a href="index.html">
+<img alt="Logo" class="logo" src="_static/omc_logo.svg"/>
+</a>
+<div class="version">
+                3.7
+              </div>
+<div role="search">
+<form action="search.html" class="wy-form" id="rtd-search-form" method="get">
+<input aria-label="Search docs" name="q" placeholder="Search docs" type="text"/>
+<input name="check_keywords" type="hidden" value="yes"/>
+<input name="area" type="hidden" value="default"/>
+</form>
+</div>
+</div><div aria-label="Navigation menu" class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation">
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">2 Minutes to tfs-pandas</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#basic-usage">Basic Usage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#compression">Compression</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#compatibility">Compatibility</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="modules/index.html">API Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="modules/index.html#collection">Collection</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/index.html#constants">Constants</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/index.html#errors">Errors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/index.html#frame">Frame</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/index.html#hdf5-i-o">HDF5 I/O</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/index.html#reader">Reader</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/index.html#tools">Tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/index.html#writer">Writer</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+</nav>
+<section class="wy-nav-content-wrap" data-toggle="wy-nav-shift"><nav aria-label="Mobile navigation menu" class="wy-nav-top">
+<i class="fa fa-bars" data-toggle="wy-nav-top"></i>
+<a href="index.html">tfs-pandas</a>
+</nav>
+<div class="wy-nav-content">
+<div class="rst-content">
+<div aria-label="Page navigation" role="navigation">
+<ul class="wy-breadcrumbs">
+<li><a aria-label="Home" class="icon icon-home" href="index.html"></a></li>
+<li class="breadcrumb-item active">2 Minutes to tfs-pandas</li>
+<li class="wy-breadcrumbs-aside">
+<!-- User defined GitHub URL -->
+<a class="fa fa-github" href="https://github.com/pylhc/tfs"> Edit on GitHub</a>
+</li>
+</ul>
+<hr/>
+</div>
+<div class="document" itemscope="itemscope" itemtype="http://schema.org/Article" role="main">
+<div itemprop="articleBody">
+<section id="minutes-to-tfs-pandas">
+<h1>2 Minutes to tfs-pandas<a class="headerlink" href="#minutes-to-tfs-pandas" title="Permalink to this heading"></a></h1>
+<p>Yes, 2 minutes.
+That’s how little it takes!</p>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>You can click the function names in the code examples below to go directly to their documentation.</p>
+</div>
+<section id="basic-usage">
+<h2>Basic Usage<a class="headerlink" href="#basic-usage" title="Permalink to this heading"></a></h2>
+<p>The package is imported as <code class="xref py py-obj docutils literal notranslate"><span class="pre">tfs</span></code>, and exports top-level functions for reading and writing:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">tfs</span>
+
+<span class="c1"># Loading a TFS file is simple</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">tfs</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s2">"path_to_input.tfs"</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="s2">"index_column"</span><span class="p">)</span>
+
+<span class="c1"># Writing out to disk is simple too</span>
+<span class="n">tfs</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">"path_to_output.tfs"</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="n">save_index</span><span class="o">=</span><span class="s2">"index_column"</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Once loaded, you get your data in a <code class="xref py py-obj docutils literal notranslate"><span class="pre">TfsDataFrame</span></code>, which is a <a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.0.1)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code></a> with a <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a> of headers attached to it.
+You can access and manipulate all data as you would with a <code class="xref py py-obj docutils literal notranslate"><span class="pre">DataFrame</span></code>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Access and modify the headers with the .headers attribute</span>
+<span class="n">useful_variable</span> <span class="o">=</span> <span class="n">data_frame</span><span class="o">.</span><span class="n">headers</span><span class="p">[</span><span class="s2">"SOME_KEY"</span><span class="p">]</span>
+<span class="n">data_frame</span><span class="o">.</span><span class="n">headers</span><span class="p">[</span><span class="s2">"NEW_KEY"</span><span class="p">]</span> <span class="o">=</span> <span class="n">some_variable</span>
+
+<span class="c1"># Manipulate data as you do with pandas DataFrames</span>
+<span class="n">data_frame</span><span class="p">[</span><span class="s2">"NEWCOL"</span><span class="p">]</span> <span class="o">=</span> <span class="n">data_frame</span><span class="o">.</span><span class="n">COLUMN_A</span> <span class="o">*</span> <span class="n">data_frame</span><span class="o">.</span><span class="n">COLUMN_B</span>
+
+<span class="c1"># You can check the TfsDataFrame validity, and choose the behavior in case of errors</span>
+<span class="n">tfs</span><span class="o">.</span><span class="n">frame</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="n">data_frame</span><span class="p">,</span> <span class="n">non_unique_behavior</span><span class="o">=</span><span class="s2">"raise"</span><span class="p">)</span>  <span class="c1"># or choose "warn"</span>
+</pre></div>
+</div>
+</section>
+<section id="compression">
+<h2>Compression<a class="headerlink" href="#compression" title="Permalink to this heading"></a></h2>
+<p>A <strong>TFS</strong> file being text-based, it benefits heavily from compression.
+Thankfully, <code class="xref py py-obj docutils literal notranslate"><span class="pre">tfs-pandas</span></code> supports automatic reading and writing of various compression formats.
+Just use the API as you would normally, and the compression will be handled automatically:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Compression format is inferred from the file extension</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">tfs</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s2">"filename.tfs.gz"</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="s2">"index_column"</span><span class="p">)</span>
+
+<span class="c1"># Same thing when writing to disk</span>
+<span class="n">tfs</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">"path_to_output.tfs.zip"</span><span class="p">,</span> <span class="n">df</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>A special module is provided to interface to the <code class="docutils literal notranslate"><span class="pre">HDF5</span></code> format.
+First though, one needs to install the package with the <code class="xref py py-obj docutils literal notranslate"><span class="pre">hdf5</span></code> extra requirements:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>--upgrade<span class="w"> </span>tfs-pandas<span class="o">[</span>hdf5<span class="o">]</span>
+</pre></div>
+</div>
+<p>Then, access the functionality from <code class="xref py py-obj docutils literal notranslate"><span class="pre">tfs.hdf</span></code>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">tfs.hdf</span> <span class="kn">import</span> <span class="n">read_hdf</span><span class="p">,</span> <span class="n">write_hdf</span>
+
+<span class="c1"># Read a TfsDataFrame from an HDF5 file</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">tfs</span><span class="o">.</span><span class="n">hdf</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s2">"path_to_input.hdf5"</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="s2">"key_in_hdf5_file"</span><span class="p">)</span>
+
+<span class="c1"># Write a TfsDataFrame to an HDF5 file</span>
+<span class="n">tfs</span><span class="o">.</span><span class="n">hdf</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">"path_to_output.hdf5"</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="s2">"key_in_hdf5_file"</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="compatibility">
+<h2>Compatibility<a class="headerlink" href="#compatibility" title="Permalink to this heading"></a></h2>
+<p>Finally, some replacement functions are provided for some <a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/index.html#module-pandas" title="(in pandas v2.0.1)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pandas</span></code></a> operations which, if used, would return a <a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.0.1)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code></a> instead of a <code class="xref py py-obj docutils literal notranslate"><span class="pre">TfsDataFrame</span></code>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">df1</span> <span class="o">=</span> <span class="n">tfs</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s2">"file1.tfs"</span><span class="p">)</span>
+<span class="n">df2</span> <span class="o">=</span> <span class="n">tfs</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s2">"file2.tfs"</span><span class="p">)</span>
+
+<span class="c1"># This returns a pandas.DataFrame and makes you lose the headers</span>
+<span class="n">result</span> <span class="o">=</span> <a class="sphinx-codeautolink-a" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.concat.html#pandas.concat" title="pandas.concat"><span class="n">pd</span><span class="o">.</span><span class="n">concat</span></a><span class="p">([</span><span class="n">df1</span><span class="p">,</span> <span class="n">df2</span><span class="p">])</span>
+
+<span class="c1"># Instead, use our own</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">tfs</span><span class="o">.</span><span class="n">frame</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">df1</span><span class="p">,</span> <span class="n">df2</span><span class="p">])</span>  <span class="c1"># you can choose how to merge headers too</span>
+<span class="k">assert</span> <a class="sphinx-codeautolink-a" href="https://docs.python.org/3/library/functions.html#isinstance" title="isinstance"><span class="nb">isinstance</span></a><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">tfs</span><span class="o">.</span><span class="n">TfsDataFrame</span><span class="p">)</span>  <span class="c1"># that's ok!</span>
+</pre></div>
+</div>
+<p>That’s it!
+Happy using :)</p>
+</section>
+</section>
+</div>
+</div>
+<footer><div aria-label="Footer" class="rst-footer-buttons" role="navigation">
+<a accesskey="p" class="btn btn-neutral float-left" href="index.html" rel="prev" title="Welcome to tfs-pandas’ documentation!"><span aria-hidden="true" class="fa fa-arrow-circle-left"></span> Previous</a>
+<a accesskey="n" class="btn btn-neutral float-right" href="modules/index.html" rel="next" title="API Reference">Next <span aria-hidden="true" class="fa fa-arrow-circle-right"></span></a>
+</div>
+<hr/>
+<div role="contentinfo">
+<p>© Copyright .</p>
+</div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+</div>
+</div>
+</section>
+</div>
+<script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+</body>
+</html>
