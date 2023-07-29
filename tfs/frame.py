@@ -209,6 +209,7 @@ def concat(
 def validate(
     data_frame: Union[TfsDataFrame, pd.DataFrame],
     info_str: str = "",
+    compatibility: str = "madx",
     non_unique_behavior: str = "warn",
 ) -> None:
     """
@@ -217,7 +218,8 @@ def validate(
 
     .. admonition:: **Methodology**
 
-        This function performs several different checks on the provided dataframe:
+        This function performs several different checks on the provided dataframe. The following checks
+        are performed for all compatibility modes (``MAD-X`` and ``MAD-NG``):
          1. Checking no single element is a `list` or `tuple`, which is done with a 
             custom vectorized function applied column-by-column on the dataframe.
          2. Checking for non-physical values in the dataframe, which is done by
@@ -226,10 +228,16 @@ def validate(
          4. Checking for column names that are not strings.
          5. Checking for column names including spaces.
 
+         When checking for ``MAD-X`` compatibility specifically, the following additional checks are performed:
+          1. Checking for no boolean values in the dataframe headers.
+          2. Checking for no complex dtype columns in the dataframe.
 
     Args:
         data_frame (Union[TfsDataFrame, pd.DataFrame]): the dataframe to check on.
         info_str (str): additional information to include in logging statements.
+        compatibility (str): Which code to check for compatibility with. Accepted values
+            are `madx`, `mad-x`, `madng` and `mad-ng`. This argument is case-insensitive.
+            Defauts to `madx`.
         non_unique_behavior (str): behavior to adopt if non-unique indices or columns are found in the
             dataframe. Accepts `warn` and `raise` as values, case-insensitively, which dictates
             to respectively issue a warning or raise an error if non-unique elements are found.
@@ -260,7 +268,7 @@ def validate(
             f"{inf_or_nan_bool_df.index[inf_or_nan_bool_df.any(axis='columns')].tolist()}"
         )
 
-    # Other sanity checks
+    # ----- Other sanity checks ----- #
     if data_frame.index.has_duplicates:
         LOGGER.warning("Non-unique indices found.")
         if non_unique_behavior.lower() == "raise":
@@ -279,5 +287,24 @@ def validate(
     if any(" " in c for c in data_frame.columns):
         LOGGER.debug(f"Space(s) found in TFS columns, dataframe {info_str} is invalid")
         raise TfsFormatError("TFS-Columns can not contain spaces.")
+
+    # TODO: compatibility argument
+    # ----- Additional checks for MAD-X compatibility mode ----- #
+    if compatibility.lower() in ("madx", "mad-x"):
+        # Check that no boolean values are in the headers
+        if any(isinstance(header, bool) for header in data_frame.headers.values()):
+            LOGGER.debug(
+                f"Boolean values found in headers of dataframe {info_str}, which is incompatible with MAD-X."
+                "Change their types in order to keep compatibility with MAD-X."
+            )
+            raise TfsFormatError("TFS-Headers can not contain boolean values in MAD-X compatibility mode.")
+
+        # Check that the dataframe contains no complex dtype columns
+        if any(pd.api.types.is_complex_dtype(column) for column in data_frame.columns):
+            LOGGER.debug(
+                f"Complex dtype column found in dataframe {info_str}, which is incompatible with MAD-X."
+                "Change the column dtypes or split it into real and imaginary values to keep compatibility with MAD-X."
+            )
+            raise TfsFormatError("TFS-Dataframe can not contain complex dtype columns in MAD-X compatibility mode.")
 
     LOGGER.debug(f"DataFrame {info_str} validated")
