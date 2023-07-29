@@ -32,7 +32,7 @@ def read_tfs(
     tfs_file_path: Union[pathlib.Path, str],
     index: str = None,
     non_unique_behavior: str = "warn",
-    validate: bool = True,
+    validate: str = "madx",
 ) -> TfsDataFrame:
     """
     Parses the **TFS** table present in **tfs_file_path** and returns a ``TfsDataFrame``.
@@ -65,10 +65,16 @@ def read_tfs(
             a string, in which case it will be cast to a Path object.
         index (str): Name of the column to set as index. If not given, looks in **tfs_file_path**
             for a column starting with `INDEX&&&`.
-        non_unique_behavior (str): behavior to adopt if non-unique indices or columns are found in the
-            dataframe. Accepts `warn` and `raise` as values, case-insensitively, which dictates
+        non_unique_behavior (str): behavior to adopt if non-unique indices or columns are found in
+            the dataframe. Accepts `warn` and `raise` as values, case-insensitively, which dictates
             to respectively issue a warning or raise an error if non-unique elements are found.
-        validate (bool): Whether to validate the dataframe after reading it. Defaults to ``False``.
+        validate (str): If an accepted value is given, validation will be performed before writing
+            to disk. Defauts to `madx`, which will assert compatibility of the data with the ``MAD-X``
+            code (aka the file data respects rules for what would have been output by ``MAD-X``). If 
+            `madng` is given then compatibility with the ``MAD-NG`` code is checked, which has more
+            features. Accepted values are `madx`, `mad-x`, `madng` and `mad-ng`. This argument is
+            case-insensitive. If any other value is given, validation will be skipped. See the `validate`
+            function for more information on the validation steps.
 
     Returns:
         A ``TfsDataFrame`` object with the loaded data from the file.
@@ -159,8 +165,8 @@ def read_tfs(
         LOGGER.debug("Attempting to find index identifier in columns")
         tfs_data_frame = _find_and_set_index(tfs_data_frame)
 
-    if validate:
-        validate_frame(tfs_data_frame, f"from file {tfs_file_path.absolute()}", non_unique_behavior)
+    if isinstance(validate, str) and validate.lower() in ("madx", "mad-x", "madng", "mad-ng"):
+        validate_frame(tfs_data_frame, f"from file {tfs_file_path.absolute()}", validate, non_unique_behavior)
 
     return tfs_data_frame
 
