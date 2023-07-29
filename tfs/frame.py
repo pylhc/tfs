@@ -288,7 +288,6 @@ def validate(
         LOGGER.debug(f"Space(s) found in TFS columns, dataframe {info_str} is invalid")
         raise TfsFormatError("TFS-Columns can not contain spaces.")
 
-    # TODO: compatibility argument
     # ----- Additional checks for MAD-X compatibility mode ----- #
     if compatibility.lower() in ("madx", "mad-x"):
         # Check that no boolean values are in the headers
