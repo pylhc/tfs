@@ -37,7 +37,7 @@ DEPENDENCIES = [
 EXTRA_DEPENDENCIES = {
     "test": ["pytest>=5.2", "pytest-cov>=2.9", "cpymad>=1.8.1", "zstandard>=0.15.2"],
     "hdf5": ["h5py>=2.9.0", "tables>=3.6.0"],
-    "doc": ["sphinx<7.0", "sphinx_rtd_theme", "sphinx_copybutton", "sphinx-prompt", "sphinx_codeautolink"],
+    "doc": ["sphinx", "sphinx_rtd_theme", "sphinx_copybutton", "sphinx-prompt", "sphinx_codeautolink"],
 }
 EXTRA_DEPENDENCIES.update({"all": [elem for list_ in EXTRA_DEPENDENCIES.values() for elem in list_]})
 EXTRA_DEPENDENCIES["test"] += EXTRA_DEPENDENCIES["hdf5"]
