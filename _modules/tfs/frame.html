@@ -13,14 +13,13 @@
     <script src="../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/jquery.js"></script>
-        <script src="../../_static/underscore.js"></script>
-        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/sphinx_highlight.js"></script>
-        <script src="../../_static/clipboard.min.js"></script>
-        <script src="../../_static/copybutton.js"></script>
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../_static/documentation_options.js?v=229cbe3b"></script>
+        <script src="../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="../../_static/copybutton.js?v=f281be69"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" /> 
@@ -115,7 +114,9 @@
 <span class="n">LOGGER</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="TfsDataFrame"><a class="viewcode-back" href="../../modules/index.html#tfs.frame.TfsDataFrame">[docs]</a><span class="k">class</span> <span class="nc">TfsDataFrame</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
+<div class="viewcode-block" id="TfsDataFrame">
+<a class="viewcode-back" href="../../modules/index.html#tfs.frame.TfsDataFrame">[docs]</a>
+<span class="k">class</span> <span class="nc">TfsDataFrame</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Class to hold the information of the built an extended ``pandas`` ``DataFrame``, together with a way</span>
 <span class="sd">    of getting the headers of the **TFS** file. The file headers are stored in a dictionary upon read.</span>
@@ -177,7 +178,9 @@
         <span class="n">headers_string</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_headers_repr</span><span class="p">()</span>
         <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">headers_string</span><span class="si">}{</span><span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span>
 
-<div class="viewcode-block" id="TfsDataFrame.merge"><a class="viewcode-back" href="../../modules/index.html#tfs.frame.TfsDataFrame.merge">[docs]</a>    <span class="k">def</span> <span class="nf">merge</span><span class="p">(</span>
+<div class="viewcode-block" id="TfsDataFrame.merge">
+<a class="viewcode-back" href="../../modules/index.html#tfs.frame.TfsDataFrame.merge">[docs]</a>
+    <span class="k">def</span> <span class="nf">merge</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">right</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="s2">&quot;TfsDataFrame&quot;</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">],</span>
         <span class="n">how_headers</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -219,10 +222,14 @@
             <span class="k">if</span> <span class="n">new_headers</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
             <span class="k">else</span> <span class="n">merge_headers</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">headers</span><span class="p">,</span> <span class="n">right</span><span class="o">.</span><span class="n">headers</span><span class="p">,</span> <span class="n">how</span><span class="o">=</span><span class="n">how_headers</span><span class="p">)</span>
         <span class="p">)</span>
-        <span class="k">return</span> <span class="n">TfsDataFrame</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">dframe</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">new_headers</span><span class="p">)</span></div></div>
+        <span class="k">return</span> <span class="n">TfsDataFrame</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">dframe</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">new_headers</span><span class="p">)</span></div>
+</div>
 
 
-<div class="viewcode-block" id="merge_headers"><a class="viewcode-back" href="../../modules/index.html#tfs.frame.merge_headers">[docs]</a><span class="k">def</span> <span class="nf">merge_headers</span><span class="p">(</span><span class="n">headers_left</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">headers_right</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">how</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">OrderedDict</span><span class="p">:</span>
+
+<div class="viewcode-block" id="merge_headers">
+<a class="viewcode-back" href="../../modules/index.html#tfs.frame.merge_headers">[docs]</a>
+<span class="k">def</span> <span class="nf">merge_headers</span><span class="p">(</span><span class="n">headers_left</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">headers_right</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">how</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">OrderedDict</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Merge headers of two ``TfsDataFrames`` together.</span>
 
@@ -256,7 +263,10 @@
     <span class="k">return</span> <span class="n">OrderedDict</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>  <span class="c1"># so that the TfsDataFrame still has an OrderedDict as header</span></div>
 
 
-<div class="viewcode-block" id="concat"><a class="viewcode-back" href="../../modules/index.html#tfs.frame.concat">[docs]</a><span class="k">def</span> <span class="nf">concat</span><span class="p">(</span>
+
+<div class="viewcode-block" id="concat">
+<a class="viewcode-back" href="../../modules/index.html#tfs.frame.concat">[docs]</a>
+<span class="k">def</span> <span class="nf">concat</span><span class="p">(</span>
     <span class="n">objs</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">TfsDataFrame</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]],</span>
     <span class="n">how_headers</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">new_headers</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -302,7 +312,10 @@
     <span class="k">return</span> <span class="n">TfsDataFrame</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">dframe</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">new_headers</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="validate"><a class="viewcode-back" href="../../modules/index.html#tfs.frame.validate">[docs]</a><span class="k">def</span> <span class="nf">validate</span><span class="p">(</span>
+
+<div class="viewcode-block" id="validate">
+<a class="viewcode-back" href="../../modules/index.html#tfs.frame.validate">[docs]</a>
+<span class="k">def</span> <span class="nf">validate</span><span class="p">(</span>
     <span class="n">data_frame</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">TfsDataFrame</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">],</span>
     <span class="n">info_str</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
     <span class="n">non_unique_behavior</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;warn&quot;</span><span class="p">,</span>
@@ -377,6 +390,7 @@
         <span class="k">raise</span> <span class="n">TfsFormatError</span><span class="p">(</span><span class="s2">&quot;TFS-Columns can not contain spaces.&quot;</span><span class="p">)</span>
 
     <span class="n">LOGGER</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;DataFrame </span><span class="si">{</span><span class="n">info_str</span><span class="si">}</span><span class="s2"> validated&quot;</span><span class="p">)</span></div>
+
 </pre></div>
 
            </div>
