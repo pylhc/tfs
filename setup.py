@@ -30,7 +30,7 @@ with README.open("r") as docs:
 # Dependencies for the package itself
 DEPENDENCIES = [
     "numpy>=1.19.0",
-    "pandas>=1.0",
+    "pandas>=1.0,<2.1.0",
 ]
 
 # Extra dependencies
