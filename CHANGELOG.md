@@ -1,5 +1,10 @@
 # TFS-Pandas Changelog
 
+## Version 3.7.1
+
+- Changed:
+    - The dependency on `pandas` was restricted to avoid the latest version, `2.1.0` and above as a temporary workaround to an attribute access bug that arose with it. 
+
 ## Version 3.7.0
 
 Minor API changes to the `TFSCollections`:
