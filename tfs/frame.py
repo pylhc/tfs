@@ -40,25 +40,21 @@ class TfsDataFrame(pd.DataFrame):
         try:
             return super().__getitem__(key)
         except KeyError as error:
-            pass
-
-        try:
-            return self.headers[key]
-        except KeyError:
-            raise KeyError(f"{key} is neither in the DataFrame nor in headers.")
-        except TypeError:
-            raise error
+            try:
+                return self.headers[key]
+            except KeyError:
+                raise KeyError(f"{key} is neither in the DataFrame nor in headers.")
+            except TypeError:
+                raise error
 
     def __getattr__(self, name: str) -> object:
         try:
             return super().__getattr__(name)
         except AttributeError:
-            pass
-        
-        try:
-            return self.headers[name]
-        except KeyError:
-            raise AttributeError(f"{name} is neither in the DataFrame nor in headers.")
+            try:
+                return self.headers[name]
+            except KeyError:
+                raise AttributeError(f"{name} is neither in the DataFrame nor in headers.")
 
     @property
     def _constructor(self):
