@@ -1,5 +1,10 @@
 # TFS-Pandas Changelog
 
+## Version 3.7.2
+
+- Fixed:
+    - fixing the issues with `pandas` > `v2.1.0` (see `tfs-pandas` `v3.7.1`) by overwriting the `_constructor_from_mgr` function.  
+
 ## Version 3.7.1
 
 - Changed:
