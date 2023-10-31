@@ -58,7 +58,19 @@ class TfsDataFrame(pd.DataFrame):
 
     @property
     def _constructor(self):
+        """ Function called, whenever a new ``TfsDataFrame`` is created
+        by pandas functionality, to ensure the new object is also a ``TfsDataFrame``.
+        """
         return TfsDataFrame
+    
+    def _constructor_from_mgr(self, mgr, axes):
+        """ Initialize new ``TfsDataFrame`` from a dataframe manager. 
+        This function is needed since pandas v2.1.0 to ensure the new object 
+        given to __init__() already contains the headers. 
+        See https://github.com/pandas-dev/pandas/issues/55120 """
+        obj = self._from_mgr(mgr, axes)
+        obj.headers = {}
+        return obj
 
     def _headers_repr(self) -> str:
         space: str = " " * 4
