@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>tfs.frame &mdash; tfs-pandas 3.7.1 documentation</title>
+  <title>tfs.frame &mdash; tfs-pandas 3.7.2 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
@@ -15,7 +15,7 @@
   
         <script src="../../_static/jquery.js?v=5d32c60e"></script>
         <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../../_static/documentation_options.js?v=86e43a22"></script>
+        <script src="../../_static/documentation_options.js?v=b11cb048"></script>
         <script src="../../_static/doctools.js?v=888ff710"></script>
         <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
         <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -155,7 +155,19 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">_constructor</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Function called, whenever a new ``TfsDataFrame`` is created</span>
+<span class="sd">        by pandas functionality, to ensure the new object is also a ``TfsDataFrame``.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">TfsDataFrame</span>
+    
+    <span class="k">def</span> <span class="nf">_constructor_from_mgr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mgr</span><span class="p">,</span> <span class="n">axes</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Initialize new ``TfsDataFrame`` from a dataframe manager. </span>
+<span class="sd">        This function is needed since pandas v2.1.0 to ensure the new object </span>
+<span class="sd">        given to __init__() already contains the headers. </span>
+<span class="sd">        See https://github.com/pandas-dev/pandas/issues/55120 &quot;&quot;&quot;</span>
+        <span class="n">obj</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_from_mgr</span><span class="p">(</span><span class="n">mgr</span><span class="p">,</span> <span class="n">axes</span><span class="p">)</span>
+        <span class="n">obj</span><span class="o">.</span><span class="n">headers</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">return</span> <span class="n">obj</span>
 
     <span class="k">def</span> <span class="nf">_headers_repr</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="n">space</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot; &quot;</span> <span class="o">*</span> <span class="mi">4</span>

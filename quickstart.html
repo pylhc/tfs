@@ -4,7 +4,7 @@
 <head>
 <meta charset="utf-8"/><meta content="Docutils 0.18.1: http://docutils.sourceforge.net/" name="generator"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>2 Minutes to tfs-pandas — tfs-pandas 3.7.1 documentation</title>
+<title>2 Minutes to tfs-pandas — tfs-pandas 3.7.2 documentation</title>
 <link href="_static/pygments.css" rel="stylesheet" type="text/css"/>
 <link href="_static/css/theme.css" rel="stylesheet" type="text/css"/>
 <link href="_static/copybutton.css" rel="stylesheet" type="text/css"/>
@@ -15,7 +15,7 @@
   <![endif]-->
 <script src="_static/jquery.js?v=5d32c60e"></script>
 <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-<script src="_static/documentation_options.js?v=86e43a22"></script>
+<script src="_static/documentation_options.js?v=b11cb048"></script>
 <script src="_static/doctools.js?v=888ff710"></script>
 <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
 <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -106,7 +106,7 @@ That’s how little it takes!</p>
 <span class="n">tfs</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">"path_to_output.tfs"</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="n">save_index</span><span class="o">=</span><span class="s2">"index_column"</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Once loaded, you get your data in a <code class="xref py py-obj docutils literal notranslate"><span class="pre">TfsDataFrame</span></code>, which is a <a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.1.0)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code></a> with a <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a> of headers attached to it.
+<p>Once loaded, you get your data in a <code class="xref py py-obj docutils literal notranslate"><span class="pre">TfsDataFrame</span></code>, which is a <a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.1.2)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code></a> with a <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.12)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a> of headers attached to it.
 You can access and manipulate all data as you would with a <code class="xref py py-obj docutils literal notranslate"><span class="pre">DataFrame</span></code>:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Access and modify the headers with the .headers attribute</span>
 <span class="n">useful_variable</span> <span class="o">=</span> <span class="n">data_frame</span><span class="o">.</span><span class="n">headers</span><span class="p">[</span><span class="s2">"SOME_KEY"</span><span class="p">]</span>
@@ -150,7 +150,7 @@ First though, one needs to install the package with the <code class="xref py py-
 </section>
 <section id="compatibility">
 <h2>Compatibility<a class="headerlink" href="#compatibility" title="Link to this heading"></a></h2>
-<p>Finally, some replacement functions are provided for some <a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/index.html#module-pandas" title="(in pandas v2.1.0)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pandas</span></code></a> operations which, if used, would return a <a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.1.0)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code></a> instead of a <code class="xref py py-obj docutils literal notranslate"><span class="pre">TfsDataFrame</span></code>.</p>
+<p>Finally, some replacement functions are provided for some <a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/index.html#module-pandas" title="(in pandas v2.1.2)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pandas</span></code></a> operations which, if used, would return a <a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.1.2)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code></a> instead of a <code class="xref py py-obj docutils literal notranslate"><span class="pre">TfsDataFrame</span></code>.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">df1</span> <span class="o">=</span> <span class="n">tfs</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s2">"file1.tfs"</span><span class="p">)</span>
 <span class="n">df2</span> <span class="o">=</span> <span class="n">tfs</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s2">"file2.tfs"</span><span class="p">)</span>
 
