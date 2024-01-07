@@ -53,7 +53,7 @@ setuptools.setup(
     url=ABOUT_TFS["__url__"],
     packages=setuptools.find_packages(include=(MODULE_NAME,)),
     include_package_data=True,
-    python_requires=">=3.7",
+    python_requires=">=3.9",
     license=ABOUT_TFS["__license__"],
     classifiers=[
         "Development Status :: 5 - Production/Stable",
