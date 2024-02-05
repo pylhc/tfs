@@ -194,6 +194,8 @@ def _get_header_line(name: str, value, width: int) -> str:
     type_str = _value_to_type_string(value)
     if type_str == "%s":
         value = f'"{value}"'
+    if type_str == "%b":
+        value = str(bool(value))
     return f"@ {name:<{width}} {type_str} {value:>{width}}"
 
 
@@ -256,10 +258,12 @@ def _dtype_to_id_string(type_: type) -> str:
     Returns:
         The ID string.
     """
-    if pdtypes.is_integer_dtype(type_) or pdtypes.is_bool_dtype(type_):
+    if pdtypes.is_integer_dtype(type_):
         return "%d"
     elif pdtypes.is_float_dtype(type_):
         return "%le"
+    elif pdtypes.is_bool_dtype(type_):
+        return "%b"
     elif pdtypes.is_string_dtype(type_):
         return "%s"
     raise TypeError(

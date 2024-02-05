@@ -283,7 +283,10 @@ def _parse_header(str_list: List[str]) -> tuple:
 
     name = " ".join(str_list[0:type_index])
     value_string = " ".join(str_list[(type_index + 1) :])
-    return name, _id_to_type(str_list[type_index])(value_string.strip('"'))
+    if _id_to_type(str_list[type_index]) == bool:
+        return name, _string_to_bool(value_string.strip('"'))
+    else:
+        return name, _id_to_type(str_list[type_index])(value_string.strip('"'))
 
 
 def _find_and_set_index(data_frame: TfsDataFrame) -> TfsDataFrame:
@@ -309,6 +312,13 @@ def _find_and_set_index(data_frame: TfsDataFrame) -> TfsDataFrame:
 
 def _compute_types(str_list: List[str]) -> List[type]:
     return [_id_to_type(string) for string in str_list]
+
+
+def _string_to_bool(string: str) -> bool:
+    if string.lower() in ['true', '1']:
+        return True
+    elif string.lower() in ['false', '0']:
+        return False
 
 
 def _id_to_type(type_str: str) -> type:
