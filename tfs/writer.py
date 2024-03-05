@@ -97,7 +97,12 @@ def write_tfs(
     """
     left_align_first_column = False
     tfs_file_path = pathlib.Path(tfs_file_path)
-    
+
+    # Force a conversion from pd.Series-like to TfsDataFrame to avoid empty columns issues
+    if not isinstance(data_frame, (TfsDataFrame, pd.DataFrame)):
+        data_frame = TfsDataFrame(data_frame)
+        data_frame.columns = data_frame.columns.astype(str)  # need column names to be strings
+
     if validate:
         validate_frame(data_frame, f"to be written in {tfs_file_path.absolute()}", non_unique_behavior)
 

@@ -2,7 +2,6 @@ import logging
 import pathlib
 import random
 import string
-import sys
 
 import numpy
 import pandas
@@ -35,6 +34,22 @@ class TestWrites:
         new = read_tfs(write_location)
         assert_frame_equal(df, new)
         assert_dict_equal(df.headers, new.headers, compare_keys=True)
+
+    def test_tfs_write_series_like_dataframe(self, tmp_path):
+        """Write-read a pandas.Series-like to disk and make sure all goes right."""
+        df = pandas.Series([1,2,3,4,5])
+
+        write_location = tmp_path / "test.tfs"
+        test_headers = {"test": 1, "test_string": "test_write_series_like"}
+        write_tfs(write_location, df, headers_dict=test_headers, save_index=True)
+        assert write_location.is_file()
+
+        # Read data will be TfsDataFrame, so in pd.DataFrame-like form
+        # For the comparison we only compare the column (as Series-like) and accept that the
+        # user sees a little difference in the data format (Series vs DataFrame with 1 column)
+        new = read_tfs(write_location)
+        assert_series_equal(df, new["0"], check_names=False)  
+        assert_dict_equal(test_headers, new.headers, compare_keys=True)
 
     def test_madx_reads_written_tfsdataframes(self, _bigger_tfs_dataframe, tmp_path):
         dframe = _bigger_tfs_dataframe
