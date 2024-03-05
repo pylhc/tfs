@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>tfs.writer &mdash; tfs-pandas 3.7.2 documentation</title>
+  <title>tfs.writer &mdash; tfs-pandas 3.7.3 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
@@ -17,7 +17,7 @@
   
         <script src="../../_static/jquery.js?v=5d32c60e"></script>
         <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../../_static/documentation_options.js?v=b11cb048"></script>
+        <script src="../../_static/documentation_options.js?v=15643451"></script>
         <script src="../../_static/doctools.js?v=888ff710"></script>
         <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
         <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -196,7 +196,12 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">left_align_first_column</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="n">tfs_file_path</span> <span class="o">=</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="n">tfs_file_path</span><span class="p">)</span>
-    
+
+    <span class="c1"># Force a conversion from pd.Series-like to TfsDataFrame to avoid empty columns issues</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data_frame</span><span class="p">,</span> <span class="p">(</span><span class="n">TfsDataFrame</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)):</span>
+        <span class="n">data_frame</span> <span class="o">=</span> <span class="n">TfsDataFrame</span><span class="p">(</span><span class="n">data_frame</span><span class="p">)</span>
+        <span class="n">data_frame</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="n">data_frame</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>  <span class="c1"># need column names to be strings</span>
+
     <span class="k">if</span> <span class="n">validate</span><span class="p">:</span>
         <span class="n">validate_frame</span><span class="p">(</span><span class="n">data_frame</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;to be written in </span><span class="si">{</span><span class="n">tfs_file_path</span><span class="o">.</span><span class="n">absolute</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">non_unique_behavior</span><span class="p">)</span>
 
