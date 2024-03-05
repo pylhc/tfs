@@ -263,8 +263,10 @@ def validate(
         raise TfsFormatError("Lists or tuple elements are not accepted in a TfsDataFrame")
 
     # -----  Check that no element is non-physical value in the dataframe ----- #
-    with pd.option_context('mode.use_inf_as_na', True):
-        inf_or_nan_bool_df = data_frame.isna()
+    # The pd.option_context('mode.use_inf_as_na', True) context manager raises FutureWarning
+    # and will likely disappear in pandas 3.0 so we replaced inf values by NaNs before calling
+    # .isna(). Since .replace() returns a copy we're not modifying the original dataframe.
+    inf_or_nan_bool_df = data_frame.replace([np.inf, -np.inf], np.nan).isna()  # 
 
     if inf_or_nan_bool_df.to_numpy().any():
         LOGGER.warning(
