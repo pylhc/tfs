@@ -1,5 +1,10 @@
 # TFS-Pandas Changelog
 
+## Version 3.7.3
+
+- Fixed:
+    - Fixed a regression where the writing of a `pd.Series`-like object to disk was raising an error. It is now possible again.  
+
 ## Version 3.7.2
 
 - Fixed:
