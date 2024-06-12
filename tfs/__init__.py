@@ -19,4 +19,4 @@ __license__ = "MIT"
 read = read_tfs
 write = write_tfs
 
-__all__ = [concat, read, write, read_hdf, write_hdf, TfsDataFrame, __version__]
+__all__ = ["concat", "read", "write", "read_hdf", "write_hdf", "TfsDataFrame", "TfsFormatError", "__version__"]
