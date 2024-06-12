@@ -4,7 +4,7 @@ Collection
 
 Advanced **TFS** files reading and writing functionality.
 """
-from typing import Tuple, List, Dict
+from typing import Tuple, Dict
 
 import pathlib
 
