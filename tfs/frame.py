@@ -264,9 +264,12 @@ def validate(
 
     # -----  Check that no element is non-physical value in the dataframe ----- #
     # The pd.option_context('mode.use_inf_as_na', True) context manager raises FutureWarning
-    # and will likely disappear in pandas 3.0 so we replaced inf values by NaNs before calling
-    # .isna(). Since .replace() returns a copy we're not modifying the original dataframe.
-    inf_or_nan_bool_df = data_frame.replace([np.inf, -np.inf], np.nan).isna()  # 
+    # and will likely disappear in pandas 3.0 so we replace 'inf' values by NaNs before calling
+    # .isna(). Additionally, the downcasting behaviour of .replace() is deprecated and raises a
+    # FutureWarning, so we use .infer_objects() first to attemps soft conversion to a better dtype
+    # for object-dtype columns (which strings can be). Since .infer_objects() and .replace() return
+    # (lazy for the former) copies we're not modifying the original dataframe during validation :)
+    inf_or_nan_bool_df = data_frame.infer_objects().replace([np.inf, -np.inf], np.nan).isna()
 
     if inf_or_nan_bool_df.to_numpy().any():
         LOGGER.warning(
