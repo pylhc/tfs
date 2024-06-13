@@ -135,8 +135,8 @@ def read_tfs(
         tfs_file_path,
         engine="c",  # faster, and we do not need the features of the python engine
         skiprows=metadata.non_data_lines,  # no need to read these lines again
-        sep="\s+",  # understands ' ' is our delimiter | replaced use of deprecated 'delim_whitespace' option in 3.8.0
-        skipinitialspace=True,  # understands ' ' and '     ' are both valid delimiters
+        sep="\s+",  # understands ' ' as delimiter | replaced deprecated 'delim_whitespace' in tfs-pandas 3.8.0
+        skipinitialspace=True,  # allow to skip spaces after delimiter (understands ' ' and '     ' are both valid delimiters)
         quotechar='"',  # elements surrounded by " are one entry -> correct parsing of strings with spaces
         names=metadata.column_names,  # column names we have determined, avoids using first read row for columns
         dtype=dict(
