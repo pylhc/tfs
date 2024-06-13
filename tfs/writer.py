@@ -241,7 +241,7 @@ def _quote_string_columns(data_frame: Union[TfsDataFrame, pd.DataFrame]) -> Unio
                 return f'"{s}"'
         return s
 
-    data_frame = data_frame.applymap(quote_strings)
+    data_frame = data_frame.map(quote_strings)
     return data_frame
 
 
