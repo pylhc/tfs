@@ -1,5 +1,17 @@
 # TFS-Pandas Changelog
 
+## Version 3.8.0
+
+- Changed:
+  - The minimum required `pandas` version is now `pandas 2.1`.
+  - Support for `Python 3.8` has been dropped. The minimum required Python version is now `3.9`.
+
+- Fixed:
+  - Solved a `DeprecationWarning` appearing when writing a `TfsDataFrame` to disk due to the use of `.applymap`, byusing the now recommended `.map` method.
+  - Solved a `DeprecationWarning` appearing when reading a file from disk due to the use of `delim_whitespace` in our reader, by using the now recommended `sep` option.
+  - Solved a `FutureWarning` appearing when validating a `TfsDataFrame` due to the use of the `pd.option_context('mode.use_inf_as_na', True)` context manager during validation by explicitely casting infinite values to `NaNs`.
+  - Solved a `FutureWarning` appearing when validating a `TfsDataFrame` due to object downcasting happening during validation by explicitely infering dtypes first.
+
 ## Version 3.7.3
 
 - Fixed:
