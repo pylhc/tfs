@@ -7,13 +7,7 @@ from tfs.hdf import read_hdf, write_hdf
 from tfs.reader import read_tfs
 from tfs.writer import write_tfs
 
-__title__ = "tfs-pandas"
-__description__ = "Read and write tfs files."
-__url__ = "https://github.com/pylhc/tfs"
 __version__ = "3.8.0"
-__author__ = "pylhc"
-__author_email__ = "pylhc@github.com"
-__license__ = "MIT"
 
 # aliases
 read = read_tfs
