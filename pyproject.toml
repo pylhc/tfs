@@ -43,7 +43,7 @@ classifiers = [
 
 # ----- Project Dependencies ----- #
 
-dependencies = ["numpy>=1.19.0", "pandas>=2.1"]
+dependencies = ["numpy>=1.19.0,<2.0", "pandas>=2.1"]
 
 [project.optional-dependencies]
 test = [
