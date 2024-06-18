@@ -1,27 +1,18 @@
 # ----- Build Configuration ----- #
 [build-system]
-requires = ["hatchling"]
-build-backend = "hatchling.build"
-
-[tool.hatch.version]
-path = "tfs/__init__.py"
-
-[tool.hatch.build.targets.sdist]
-exclude = ["/.github", "/doc", "/tests"]
-
-[tool.hatch.build.targets.wheel]
-packages = ["tfs"]
+requires = ["setuptools", "setuptools-scm"]
+build-backend = "setuptools.build_meta"
 
 # ----- Project Metadata ----- #
 
 [project]
 name = "tfs"
 readme = "README.md"
-description = "Read and write TFS files."
-authors = [{name = "pylhc", email = "pylhc@github.com"}]
-license = "MIT"
 dynamic = ["version"]
 requires-python = ">=3.9"
+description = "Read and write TFS files."
+authors = [{name = "pylhc", email = "pylhc@github.com"}]
+license = {text = "MIT"}
 
 classifiers = [
     "Development Status :: 5 - Production/Stable",
