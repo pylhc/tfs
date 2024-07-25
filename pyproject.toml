@@ -15,3 +15,35 @@ exclude = [
 [tool.hatch.build.targets.wheel]
 packages = ["tfs"]
 
+[project]
+name = "tfs-pandas"
+readme = "README.md"
+description = "Read and write tfs files."
+authors = [
+    {name = "PyLHC", email = "pylhc@github.com"},
+    {name = "Felix Soubelet", email = "felix.soubelet@cern.ch"},
+    {name = "Joschua Dilly", email = "joschua.dilly@cern.ch"},
+]
+license = "MIT"
+dynamic = ["version"]
+requires-python = ">=3.9"
+
+keywords = [
+  "MAD-X",
+  "TFS",
+  ]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Natural Language :: English",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Typing :: Typed",
+]
