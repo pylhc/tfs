@@ -53,3 +53,28 @@ dependencies = [
     "pandas >= 2.1",
 ]
 
+[project.optional-dependencies]
+hdf5 = [
+    "h5py >= 2.9.0",
+    "tables >= 3.6.0"
+]
+test = [
+    "tfs-pandas[hdf5]",
+    "pytest >= 5.2",
+    "pytest-cov >= 2.9",
+    "cpymad >= 1.8.1",
+    "zstandard >= 0.15.2",
+]
+doc = [
+    "sphinx >= 7.0",
+    "sphinx_rtd_theme >= 2.0",
+    "sphinx_copybutton >= 0.4",
+    "sphinx-prompt >= 1.7",
+    "sphinx_codeautolink >= 0.14",
+]
+
+all = [
+    "tfs-pandas[hdf5]",
+    "tfs-pandas[test]",
+    "tfs-pandas[doc]",
+]
