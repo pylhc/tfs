@@ -15,4 +15,4 @@ jobs:
     uses: pylhc/.github/.github/workflows/tests.yml@master
     with:
       extra-dependencies: test  # test includes hdf5 dependency specifier
-      pytest-options: -k "not hdf"  # skik HDF tests for now as pytables is not ok with numpy 2.0
+      pytest-options: '-k "not hdf"'  # skip HDF tests for now as pytables is not ok with numpy 2.0
