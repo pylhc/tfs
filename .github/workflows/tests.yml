@@ -12,6 +12,8 @@ on:  # Runs on any push event to any branch except master (the coverage workflow
 
 jobs:
   tests:
+    strategy:
+      fail-fast: false  # tfs tests are short
     uses: pylhc/.github/.github/workflows/tests.yml@master
     with:
       extra-dependencies: test  # test includes hdf5 dependency specifier
