@@ -78,3 +78,9 @@ all = [
     "tfs-pandas[test]",
     "tfs-pandas[doc]",
 ]
+
+[project.urls]
+homepage = "https://github.com/pylhc/tfs"
+repository = "https://github.com/pylhc/tfs"
+documentation = "pylhc.github.io/tfs/ "
+changelog = "https://github.com/pylhc/tfs/blob/master/CHANGELOG.md"
