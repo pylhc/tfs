@@ -43,6 +43,7 @@ classifiers = [
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: Implementation :: CPython",
     "Topic :: Scientific/Engineering",
     "Topic :: Software Development :: Libraries :: Python Modules",
     "Typing :: Typed",
@@ -60,7 +61,7 @@ hdf5 = [
 ]
 test = [
     "tfs-pandas[hdf5]",
-    "pytest >= 5.2",
+    "pytest >= 7.0",
     "pytest-cov >= 2.9",
     "cpymad >= 1.8.1",
     "zstandard >= 0.15.2",
@@ -82,5 +83,5 @@ all = [
 [project.urls]
 homepage = "https://github.com/pylhc/tfs"
 repository = "https://github.com/pylhc/tfs"
-documentation = "pylhc.github.io/tfs/ "
+documentation = "https://pylhc.github.io/tfs/ "
 changelog = "https://github.com/pylhc/tfs/blob/master/CHANGELOG.md"
