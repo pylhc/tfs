@@ -31,7 +31,7 @@ requires-python = ">=3.9"
 keywords = [
   "MAD-X",
   "TFS",
-  ]
+]
 classifiers = [
     "Development Status :: 5 - Production/Stable",
     "Intended Audience :: Science/Research",
