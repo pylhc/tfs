@@ -20,9 +20,7 @@ name = "tfs-pandas"
 readme = "README.md"
 description = "Read and write tfs files."
 authors = [
-    {name = "PyLHC", email = "pylhc@github.com"},
-    {name = "Felix Soubelet", email = "felix.soubelet@cern.ch"},
-    {name = "Joschua Dilly", email = "joschua.dilly@cern.ch"},
+    {name = "OMC Team", email = "pylhc@github.com"},  # see zenodo file / commits for details
 ]
 license = "MIT"
 dynamic = ["version"]
