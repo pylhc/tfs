@@ -15,4 +15,3 @@ jobs:
     uses: pylhc/.github/.github/workflows/tests.yml@master
     with:
       extra-dependencies: test  # test includes hdf5 dependency specifier
-      pytest-options: --ignore=tests/test_hdf.py  # TODO: restore HDF tests when pytables is ok with numpy 2.0
