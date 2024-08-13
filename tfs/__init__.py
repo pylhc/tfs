@@ -3,7 +3,7 @@ Exposes TfsDataFrame, read and write directly in tfs namespace, as well as the p
 """
 from tfs.errors import TfsFormatError
 from tfs.frame import TfsDataFrame, concat
-# from tfs.hdf import read_hdf, write_hdf  # TODO: uncomment as soon as pytables has a compatible version
+from tfs.hdf import read_hdf, write_hdf
 from tfs.reader import read_tfs
 from tfs.writer import write_tfs
 
