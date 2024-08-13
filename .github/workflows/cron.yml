@@ -11,3 +11,4 @@ jobs:
       uses: pylhc/.github/.github/workflows/cron.yml@master
       with:
         extra-dependencies: test,hdf5
+        pytest-options: --ignore=tests/test_hdf.py  # skip HDF tests for now as pytables is not ok with numpy 2.0
