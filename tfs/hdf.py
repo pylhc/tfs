@@ -20,11 +20,6 @@ try:
     import tables
 except ImportError:
     tables = None
-except ValueError:  # TODO: remove when pytables is numpy 2.0 compatible
-    # This one happens with numpy 2.0, pytables crashes at import
-    # because of dtype definition issues. We catch so this module
-    # can be imported in the __init__, and raises later if used.
-    tables = None
 
 import logging
 
