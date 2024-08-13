@@ -55,7 +55,7 @@ dependencies = [
 [project.optional-dependencies]
 hdf5 = [
     "h5py >= 3.0",
-    "tables >= 3.10"
+    "tables >= 3.9"
 ]
 test = [
     "tfs-pandas[hdf5]",
