@@ -1,5 +1,10 @@
 # TFS-Pandas Changelog
 
+## Version 3.8.1
+
+- Fixed:
+  - The package is now fully compatible with `numpy 2.x` thanks to a `pytables` compatibility release.
+
 ## Version 3.8.0
 
 - Changed:
