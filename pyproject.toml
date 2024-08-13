@@ -57,7 +57,7 @@ dependencies = [
 [project.optional-dependencies]
 hdf5 = [
     "h5py >= 3.0",
-    "tables >= 3.6, < 2.0; python_version < '3.10'",  # TODO: remove this when we drop python 3.9 support
+    "tables >= 3.6, < 3.10; python_version < '3.10'",  # TODO: remove this when we drop python 3.9 support
     "tables >= 3.10; python_version >= '3.10'",  # TODO: require 3.10.1 when it's out and we drop python 3.9 support
 ]
 test = [
