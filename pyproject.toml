@@ -47,15 +47,18 @@ classifiers = [
     "Typing :: Typed",
 ]
 
+# TODO: when we drop python 3.9, require pytables 3.10.1 minimum and stop caring about numpy 2 compability
 dependencies = [
-    "numpy >= 1.24",
+    "numpy >= 1.24, < 2.0; python_version < '3.10'",  # first pytables compatible with numpy 2 is 3.10 but does not support python 3.9
+    "numpy >= 1.24; python_version >= '3.10'",  # otherwise we can use numpy 2 as on python 3.10 there is a pytables which is ok with it
     "pandas >= 2.1",
 ]
 
 [project.optional-dependencies]
 hdf5 = [
     "h5py >= 3.0",
-    "tables >= 3.9"  # TODO: up to 3.10 when we drop python 3.9 support (it does too, and supports numpy 2.0)
+    "tables >= 3.6, < 2.0; python_version < '3.10'"  # TODO: remove this when we drop python 3.9 support
+    "tables >= 3.10; python_version >= '3.10'"  # TODO: require 3.10.1 when it's out and we drop python 3.9 support
 ]
 test = [
     "tfs-pandas[hdf5]",
