@@ -12,5 +12,5 @@ jobs:
       uses: pylhc/.github/.github/workflows/coverage.yml@master
       with:
         src-dir: tfs      
-        pytest-options: --ignore=tests/test_hdf.py  # skip HDF tests for now as pytables is not ok with numpy 2.0
+        pytest-options: --ignore=tests/test_hdf.py  # TODO: restore HDF tests when pytables is ok with numpy 2.0
       secrets: inherit
