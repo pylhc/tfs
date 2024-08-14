@@ -3,12 +3,13 @@
 ## Version 3.8.1
 
 - Changed:
-  - The minimum required `numpy` version is now `numpy 1.24`.
   - Migrated to standard `pyproject.toml`.
+  - The minimum required `numpy` version is now `numpy 1.24`.
 
 - Fixed:
-  - The package is now fully compatible with `numpy 2.x` on `Python >= 3.10` thanks to a `pytables` compatibility release.
-  - The package is still limited to `numpy < 2` on `Python 3.9` due to the lack of compatibility with `pytables` on this versions.
+  - The package is now compatible with `numpy 2.x`.
+  - The package's HDF functionality is fully compatible with `numpy 2.x` on `Python >= 3.10` thanks to a `pytables` compatibility release.
+  - The package's HDF functionality limits to `numpy < 2` on `Python 3.9` due to the lack of compatibility from `pytables` on this versions.
 
 ## Version 3.8.0
 
