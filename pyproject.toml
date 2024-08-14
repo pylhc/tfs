@@ -47,31 +47,32 @@ classifiers = [
     "Typing :: Typed",
 ]
 
-# TODO: when we drop python 3.9, require pytables 3.10.1 minimum and stop caring about numpy 2 compability
 dependencies = [
-    "numpy >= 1.24, < 2.0; python_version < '3.10'",  # first pytables compatible with numpy 2 is 3.10 but does not support python 3.9
-    "numpy >= 1.24; python_version >= '3.10'",  # otherwise we can use numpy 2 as on python 3.10 there is a pytables which is ok with it
-    "pandas >= 2.1",
+  "numpy >= 1.24",
+  "pandas >= 2.1",
 ]
 
 [project.optional-dependencies]
+# TODO: when we drop python 3.9, require pytables 3.10.1 minimum and stop caring about numpy 2 compability
 hdf5 = [
-    "h5py >= 3.0",
-    "tables >= 3.6",  # TODO: require 3.10.1 minimum when it's out and we drop python 3.9 support
+  "numpy >= 1.24, < 2.0; python_version < '3.10'",  # first pytables compatible with numpy 2 is 3.10 but does not support python 3.9
+  "numpy >= 1.24; python_version >= '3.10'",  # otherwise we can use numpy 2 as on python 3.10 there is a pytables which is ok with it
+  "h5py >= 3.0",
+  "tables >= 3.9",  # TODO: require 3.10.1 minimum when it's out and we drop python 3.9 support
 ]
 test = [
-    "tfs-pandas[hdf5]",
-    "pytest >= 7.0",
-    "pytest-cov >= 2.9",
-    "cpymad >= 1.8.1",
-    "zstandard >= 0.15.2",
+  "tfs-pandas[hdf5]",
+  "pytest >= 7.0",
+  "pytest-cov >= 2.9",
+  "cpymad >= 1.8.1",
+  "zstandard >= 0.15.2",
 ]
 doc = [
-    "sphinx >= 7.0",
-    "sphinx_rtd_theme >= 2.0",
-    "sphinx_copybutton >= 0.4",
-    "sphinx-prompt >= 1.7",
-    "sphinx_codeautolink >= 0.14",
+  "sphinx >= 7.0",
+  "sphinx_rtd_theme >= 2.0",
+  "sphinx_copybutton >= 0.4",
+  "sphinx-prompt >= 1.7",
+  "sphinx_codeautolink >= 0.14",
 ]
 
 all = [
