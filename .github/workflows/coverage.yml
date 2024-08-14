@@ -11,5 +11,5 @@ jobs:
   coverage:
       uses: pylhc/.github/.github/workflows/coverage.yml@master
       with:
-        src-dir: tfs
+        src-dir: tfs      
       secrets: inherit
