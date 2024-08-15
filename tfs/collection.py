@@ -4,6 +4,7 @@ Collection
 
 Advanced **TFS** files reading and writing functionality.
 """
+
 from __future__ import annotations  # for delayed type annotations
 
 import pathlib
@@ -109,6 +110,7 @@ class TfsCollection(metaclass=_MetaTfsCollection):
     ``self.allow_write`` attribute is set to ``True``, an assignment on one of the attributes will
     trigger the corresponding file write.
     """
+
     INDEX = "NAME"
 
     def __init__(self, directory: pathlib.Path, allow_write: bool | None = None):
@@ -120,7 +122,7 @@ class TfsCollection(metaclass=_MetaTfsCollection):
         self._buffer = {}
 
     def get_filename(self, name: str) -> str:
-        """ Return the actual filename of the property `name`.
+        """Return the actual filename of the property `name`.
 
         Arguments:
             name (str): Property name of the file.
@@ -136,7 +138,7 @@ class TfsCollection(metaclass=_MetaTfsCollection):
         return self._get_filename(*definition.args, **definition.kwargs)
 
     def get_path(self, name: str) -> pathlib.Path:
-        """ Return the actual file path of the property `name` (convenience function).
+        """Return the actual file path of the property `name` (convenience function).
 
         Arguments:
             name (str): Property name of the file.
@@ -272,13 +274,15 @@ class TfsCollection(metaclass=_MetaTfsCollection):
         def __getattr__(self, attr) -> str:
             return self[attr]
 
-        def __call__(self, exist: bool = False) -> dict[str, str]:
-            all_filenames = {name: self.parent.get_filename(name)
-                             for name in self.parent.defined_properties}
+        def __call__(self, exist: bool = False) -> dict[str, str]:  # noqa: FBT001, FBT002
+            all_filenames = {name: self.parent.get_filename(name) for name in self.parent.defined_properties}
             if not exist:
                 return all_filenames
-            return {name: filename for name, filename in all_filenames.items()
-                    if (self.parent.directory / filename).is_file()}
+            return {
+                name: filename
+                for name, filename in all_filenames.items()
+                if (self.parent.directory / filename).is_file()
+            }
 
 
 class Tfs:
@@ -287,6 +291,7 @@ class Tfs:
     Any parameter given to this class will be passed to the ``_get_filename()`` method,
     together with the plane if ``two_planes=False`` is not present.
     """
+
     PLANES = "x", "y"
 
     def __init__(self, *args, **kwargs):
@@ -306,21 +311,21 @@ class Tfs:
         properties = [None, None]
         for idx, plane in enumerate(self.PLANES):
             planed = self.get_planed_copy(plane)
-            properties[idx] = planed._get_property_single_plane()
+            properties[idx] = planed._get_property_single_plane()  # noqa: SLF001
         return tuple(properties)
 
     def _get_property_single_plane(self) -> property:
         def getter_funct(other: TfsCollection):
-            filename = other._get_filename(*self.args, **self.kwargs)
-            return other._load_tfs(filename)
+            filename = other._get_filename(*self.args, **self.kwargs)  # noqa: SLF001
+            return other._load_tfs(filename)  # noqa: SLF001
 
         def setter_funct(other: TfsCollection, value):
             try:
-                filename, data_frame = other._write_to(value, *self.args, **self.kwargs)
-                other._write_tfs(filename, data_frame)
+                filename, data_frame = other._write_to(value, *self.args, **self.kwargs)  # noqa: SLF001
+                other._write_tfs(filename, data_frame)  # noqa: SLF001
             except NotImplementedError:
-                filename = other._get_filename(*self.args, **self.kwargs)
-                other._write_tfs(filename, value)
+                filename = other._get_filename(*self.args, **self.kwargs)  # noqa: SLF001
+                other._write_tfs(filename, value)  # noqa: SLF001
 
         return property(fget=getter_funct, fset=setter_funct)
 
