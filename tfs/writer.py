@@ -161,7 +161,7 @@ def _autoset_pandas_types(data_frame: TfsDataFrame | pd.DataFrame) -> TfsDataFra
         if not data_frame.size and "No objects to concatenate" in pd_convert_error.args[0]:
             LOGGER.warning("An empty dataframe was provided, no types were inferred")
             return data_frame.copy()  # since it's empty anyway, nothing to convert
-        raise pd_convert_error
+        raise
 
 
 def _insert_index_column(data_frame: TfsDataFrame | pd.DataFrame, save_index: str) -> None:
