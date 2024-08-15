@@ -1,6 +1,9 @@
 # TFS-Pandas Changelog
 
-## IN PROGRESS - 3.9.0
+## Version 3.8.2
+
+- Changed:
+  - The headers of a `TfsDataFrame` are now stored as a `dict` and no longer an `OrderedDict`. This is transparent to the user.
 
 - Fixed:
   - Removed a workaround function which is no longer necessary due to the higher minimum `pandas` version.
