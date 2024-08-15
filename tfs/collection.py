@@ -94,7 +94,7 @@ class TfsCollection(metaclass=_MetaTfsCollection):
 
     If the file to be loaded is not defined for two planes then the attribute can be declared
     and accessed as:
-    
+
     .. code-block:: python
 
         >>> coupling = Tfs("getcouple.tfs", two_planes=False)  # declaration
