@@ -7,13 +7,16 @@ Additional functions to modify **TFS** files.
 from __future__ import annotations
 
 import logging
-from pathlib import Path
+from typing import TYPE_CHECKING
 
 import numpy as np
 
 from tfs.errors import TfsFormatError
 from tfs.reader import read_tfs
 from tfs.writer import write_tfs
+
+if TYPE_CHECKING:
+    from pathlib import Path
 
 LOGGER = logging.getLogger(__name__)
 
