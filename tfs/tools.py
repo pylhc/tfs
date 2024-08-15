@@ -37,7 +37,8 @@ def significant_digits(
         A tuple of the rounded value and error with regards to the size of the error.
     """
     if error == 0:
-        raise ValueError("Input error of 0. Cannot compute significant digits.")
+        errmsg = "Input error of 0. Cannot compute significant digits."
+        raise ValueError(errmsg)
     digits = -int(np.floor(np.log10(error)))
     if np.floor(error * 10 ** digits) == 1:
         digits = digits + 1
