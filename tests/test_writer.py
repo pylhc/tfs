@@ -170,7 +170,7 @@ class TestWrites:
         write_tfs(tmp_path / "temporary.tfs", df, validate=False)
         assert "Non-unique column names found" not in caplog.text
 
-    def test_no_validation_non_unique_columns(self, tmp_path, caplog):
+    def test_no_validation_non_unique_columns(self, tmp_path):
         # Making sure this goes through if we skip validation
         df = TfsDataFrame(columns=["A", "B", "A"])
         write_tfs(tmp_path / "temporary.tfs", df, validate=False)
