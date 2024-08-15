@@ -7,12 +7,15 @@ Advanced **TFS** files reading and writing functionality.
 from __future__ import annotations  # for delayed type annotations
 
 import pathlib
+from typing import TYPE_CHECKING
 
-from pandas import DataFrame
-
-from tfs.frame import TfsDataFrame
 from tfs.reader import read_tfs
 from tfs.writer import write_tfs
+
+if TYPE_CHECKING:
+    from pandas import DataFrame
+
+    from tfs.frame import TfsDataFrame
 
 
 class _MetaTfsCollection(type):
