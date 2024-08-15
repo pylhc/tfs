@@ -9,7 +9,7 @@ import pathlib
 import shlex
 from collections import OrderedDict
 from dataclasses import dataclass
-from typing import List, Union
+from typing import Union
 
 import numpy as np
 import pandas as pd
@@ -275,7 +275,7 @@ def _read_metadata(tfs_file_path: Union[str, pathlib.Path]) -> _TfsMetaData:
     )
 
 
-def _parse_header(str_list: List[str]) -> tuple:
+def _parse_header(str_list: list[str]) -> tuple:
     type_index = next((index for index, part in enumerate(str_list) if part.startswith("%")), None)
     if type_index is None:
         raise TfsFormatError(f"No data type found in header: '{''.join(str_list)}'")
@@ -306,7 +306,7 @@ def _find_and_set_index(data_frame: TfsDataFrame) -> TfsDataFrame:
     return data_frame
 
 
-def _compute_types(str_list: List[str]) -> List[type]:
+def _compute_types(str_list: list[str]) -> list[type]:
     return [_id_to_type(string) for string in str_list]
 
 
