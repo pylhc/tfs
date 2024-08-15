@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>tfs.frame &mdash; tfs-pandas 3.8.1 documentation</title>
+  <title>tfs.frame &mdash; tfs-pandas 3.8.2 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
@@ -17,7 +17,7 @@
   
         <script src="../../_static/jquery.js?v=5d32c60e"></script>
         <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../../_static/documentation_options.js?v=30f795a6"></script>
+        <script src="../../_static/documentation_options.js?v=070f1fcc"></script>
         <script src="../../_static/doctools.js?v=9a2dae69"></script>
         <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
         <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -106,7 +106,6 @@
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
 
 <span class="kn">import</span> <span class="nn">logging</span>
-<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
 <span class="kn">from</span> <span class="nn">contextlib</span> <span class="kn">import</span> <span class="n">suppress</span>
 <span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">partial</span><span class="p">,</span> <span class="n">reduce</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">ClassVar</span>
@@ -252,23 +251,25 @@
 
 <div class="viewcode-block" id="merge_headers">
 <a class="viewcode-back" href="../../modules/index.html#tfs.frame.merge_headers">[docs]</a>
-<span class="k">def</span> <span class="nf">merge_headers</span><span class="p">(</span><span class="n">headers_left</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">headers_right</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">how</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">OrderedDict</span><span class="p">:</span>
+<span class="k">def</span> <span class="nf">merge_headers</span><span class="p">(</span><span class="n">headers_left</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">headers_right</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">how</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Merge headers of two ``TfsDataFrames`` together.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        headers_left (dict): Headers of caller (left) ``TfsDataFrame`` when calling ``.append``, ``.join`` or</span>
-<span class="sd">            ``.merge``. Headers of the left (preceeding) ``TfsDataFrame`` when calling ``tfs.frame.concat``.</span>
-<span class="sd">        headers_right (dict): Headers of other (right) ``TfsDataFrame`` when calling ``.append``, ``.join``</span>
-<span class="sd">            or ``.merge``. Headers of the left (preceeding) ``TfsDataFrame`` when calling</span>
-<span class="sd">            ``tfs.frame.concat``.</span>
-<span class="sd">        how (str): Type of merge to be performed, either **left** or **right**. If **left*, prioritize keys</span>
-<span class="sd">            from **headers_left** in case of duplicate keys. If **right**, prioritize keys from</span>
-<span class="sd">            **headers_right** in case of duplicate keys. Case insensitive. If ``None`` is given,</span>
-<span class="sd">            an empty dictionary will be returned.</span>
+<span class="sd">        headers_left (dict): Headers of caller (left) ``TfsDataFrame`` when calling</span>
+<span class="sd">            ``.append``, ``.join`` or ``.merge``. Headers of the left (preceeding)</span>
+<span class="sd">            ``TfsDataFrame`` when calling ``tfs.frame.concat``.</span>
+<span class="sd">        headers_right (dict): Headers of other (right) ``TfsDataFrame`` when calling</span>
+<span class="sd">            ``.append``, ``.join`` or ``.merge``. Headers of the left (preceeding)</span>
+<span class="sd">            ``TfsDataFrame`` when calling ``tfs.frame.concat``.</span>
+<span class="sd">        how (str): Type of merge to be performed, either **left** or **right**. If</span>
+<span class="sd">            **left**, prioritize keys from **headers_left** in case of duplicate keys.</span>
+<span class="sd">            If **right**, prioritize keys from **headers_right** in case of duplicate</span>
+<span class="sd">            keys. Case-insensitive. If ``None`` is given, an empty dictionary will be</span>
+<span class="sd">            returned.</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        A new ``OrderedDict`` as the merge of the two provided dictionaries.</span>
+<span class="sd">        A new dictionary as the merge of the two provided dictionaries.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">accepted_merges</span><span class="p">:</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;left&quot;</span><span class="p">,</span> <span class="s2">&quot;right&quot;</span><span class="p">,</span> <span class="s2">&quot;none&quot;</span><span class="p">}</span>
     <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">how</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">accepted_merges</span><span class="p">:</span>  <span class="c1"># handles being given None</span>
@@ -277,14 +278,14 @@
 
     <span class="n">LOGGER</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Merging headers with method &#39;</span><span class="si">{</span><span class="n">how</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
     <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">how</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;left&quot;</span><span class="p">:</span>  <span class="c1"># we prioritize the contents of headers_left</span>
-        <span class="n">result</span> <span class="o">=</span> <span class="n">headers_right</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">result</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="n">headers_right</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
         <span class="n">result</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">headers_left</span><span class="p">)</span>
     <span class="k">elif</span> <span class="nb">str</span><span class="p">(</span><span class="n">how</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;right&quot;</span><span class="p">:</span>  <span class="c1"># we prioritize the contents of headers_right</span>
-        <span class="n">result</span> <span class="o">=</span> <span class="n">headers_left</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">result</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="n">headers_left</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
         <span class="n">result</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">headers_right</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>  <span class="c1"># we were given None, result will be an empty dict</span>
         <span class="n">result</span> <span class="o">=</span> <span class="p">{}</span>
-    <span class="k">return</span> <span class="n">OrderedDict</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>  <span class="c1"># so that the TfsDataFrame still has an OrderedDict as header</span></div>
+    <span class="k">return</span> <span class="n">result</span></div>
 
 
 

@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>tfs.reader &mdash; tfs-pandas 3.8.1 documentation</title>
+  <title>tfs.reader &mdash; tfs-pandas 3.8.2 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
@@ -17,7 +17,7 @@
   
         <script src="../../_static/jquery.js?v=5d32c60e"></script>
         <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../../_static/documentation_options.js?v=30f795a6"></script>
+        <script src="../../_static/documentation_options.js?v=070f1fcc"></script>
         <script src="../../_static/doctools.js?v=9a2dae69"></script>
         <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
         <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -107,7 +107,6 @@
 <span class="kn">import</span> <span class="nn">logging</span>
 <span class="kn">import</span> <span class="nn">pathlib</span>
 <span class="kn">import</span> <span class="nn">shlex</span>
-<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
 <span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
@@ -270,7 +269,7 @@
 
 <div class="viewcode-block" id="read_headers">
 <a class="viewcode-back" href="../../modules/index.html#tfs.reader.read_headers">[docs]</a>
-<span class="k">def</span> <span class="nf">read_headers</span><span class="p">(</span><span class="n">tfs_file_path</span><span class="p">:</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span> <span class="o">|</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">OrderedDict</span><span class="p">:</span>
+<span class="k">def</span> <span class="nf">read_headers</span><span class="p">(</span><span class="n">tfs_file_path</span><span class="p">:</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span> <span class="o">|</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Parses the top of the **tfs_file_path** and returns the headers.</span>
 
@@ -280,7 +279,7 @@
 <span class="sd">            a Path object.</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        An ``OrderedDict`` with the headers read from the file.</span>
+<span class="sd">        An dictionary with the headers read from the file.</span>
 
 
 <span class="sd">    Examples:</span>
@@ -310,7 +309,7 @@
 <span class="k">class</span> <span class="nc">_TfsMetaData</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;A dataclass to encapsulate the metadata read from a TFS file.&quot;&quot;&quot;</span>
 
-    <span class="n">headers</span><span class="p">:</span> <span class="n">OrderedDict</span>
+    <span class="n">headers</span><span class="p">:</span> <span class="nb">dict</span>
     <span class="n">non_data_lines</span><span class="p">:</span> <span class="nb">int</span>
     <span class="n">column_names</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
     <span class="n">column_types</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
@@ -337,7 +336,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">LOGGER</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Reading headers and metadata from file&quot;</span><span class="p">)</span>
     <span class="n">tfs_file_path</span> <span class="o">=</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="n">tfs_file_path</span><span class="p">)</span>
-    <span class="n">headers</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+    <span class="n">headers</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="n">column_names</span> <span class="o">=</span> <span class="n">column_types</span> <span class="o">=</span> <span class="kc">None</span>
 
     <span class="c1"># Read the headers, chunk by chunk (line by line) with pandas.read_csv as a</span>
