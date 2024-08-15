@@ -33,7 +33,7 @@ def read_tfs(
     tfs_file_path: pathlib.Path | str,
     index: str | None = None,
     non_unique_behavior: str = "warn",
-    validate: bool = True,
+    validate: bool = True,  # noqa: FBT001, FBT002
 ) -> TfsDataFrame:
     """
     Parses the **TFS** table present in **tfs_file_path** and returns a ``TfsDataFrame``.
