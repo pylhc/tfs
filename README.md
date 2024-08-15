@@ -4,24 +4,26 @@
 [![Code Climate coverage](https://img.shields.io/codeclimate/coverage/pylhc/tfs.svg?style=popout)](https://codeclimate.com/github/pylhc/tfs)
 [![Code Climate maintainability (percentage)](https://img.shields.io/codeclimate/maintainability-percentage/pylhc/tfs.svg?style=popout)](https://codeclimate.com/github/pylhc/tfs)
 <!-- [![GitHub last commit](https://img.shields.io/github/last-commit/pylhc/tfs.svg?style=popout)](https://github.com/pylhc/tfs/) -->
-[![PyPI Version](https://img.shields.io/pypi/v/tfs-pandas?label=PyPI&logo=pypi)](https://pypi.org/project/tfs-pandas/)
 [![GitHub release](https://img.shields.io/github/v/release/pylhc/tfs?logo=github)](https://github.com/pylhc/tfs/)
+[![PyPI Version](https://img.shields.io/pypi/v/tfs-pandas?label=PyPI&logo=pypi)](https://pypi.org/project/tfs-pandas/)
 [![Conda-forge Version](https://img.shields.io/conda/vn/conda-forge/tfs-pandas?color=orange&logo=anaconda)](https://anaconda.org/conda-forge/tfs-pandas)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.5070986.svg)](https://doi.org/10.5281/zenodo.5070986)
 
-This package provides reading and writing functionality for [**Table Format System (TFS)** files](http://mad.web.cern.ch/mad/madx.old/Introduction/tfs.html). 
-Files are read into a `TfsDataFrame`, a class built on top of the famous `pandas.DataFrame`, which in addition to the normal behavior attaches an `OrderedDict` of headers to the `DataFrame`.
+This package provides reading and writing functionality for [**Table Format System (TFS)** files](http://mad.web.cern.ch/mad/madx.old/Introduction/tfs.html).
+Files are read into a `TfsDataFrame`, a class built on top of the famous `pandas.DataFrame`, which in addition to the normal behavior attaches a dictionary of headers to the `DataFrame`.
 
 See the [API documentation](https://pylhc.github.io/tfs/) for details.
 
 ## Installing
 
 Installation is easily done via `pip`:
+
 ```bash
 python -m pip install tfs-pandas
 ```
 
 One can also install in a `conda`/`mamba` environment via the `conda-forge` channel with:
+
 ```bash
 conda install -c conda-forge tfs-pandas
 ```
@@ -29,6 +31,7 @@ conda install -c conda-forge tfs-pandas
 ## Example Usage
 
 The package is imported as `tfs`, and exports top-level functions for reading and writing:
+
 ```python
 import tfs
 
@@ -50,6 +53,7 @@ tfs.write("path_to_output.tfs", data_frame, save_index="index_column")
 ```
 
 Reading and writing compressed files is also supported, and done automatically based on the provided file extension:
+
 ```python
 import tfs
 
