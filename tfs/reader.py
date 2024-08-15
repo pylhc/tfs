@@ -4,12 +4,13 @@ Reader
 
 Reading functionalty for **TFS** files.
 """
+from __future__ import annotations
+
 import logging
 import pathlib
 import shlex
 from collections import OrderedDict
 from dataclasses import dataclass
-from typing import Union
 
 import numpy as np
 import pandas as pd
@@ -29,8 +30,8 @@ _UNEXPECTED_SEP: str = (
 
 
 def read_tfs(
-    tfs_file_path: Union[pathlib.Path, str],
-    index: str = None,
+    tfs_file_path: pathlib.Path | str,
+    index: str | None = None,
     non_unique_behavior: str = "warn",
     validate: bool = True,
 ) -> TfsDataFrame:
@@ -61,7 +62,7 @@ def read_tfs(
         validated before being returned.
 
     Args:
-        tfs_file_path (Union[pathlib.Path, str]): Path object to the **TFS** file to read. Can be
+        tfs_file_path (pathlib.Path | str): Path object to the **TFS** file to read. Can be
             a string, in which case it will be cast to a Path object.
         index (str): Name of the column to set as index. If not given, looks in **tfs_file_path**
             for a column starting with `INDEX&&&`.
@@ -164,12 +165,12 @@ def read_tfs(
     return tfs_data_frame
 
 
-def read_headers(tfs_file_path: Union[str, pathlib.Path]) -> OrderedDict:
+def read_headers(tfs_file_path: pathlib.Path | str) -> OrderedDict:
     """
     Parses the top of the **tfs_file_path** and returns the headers.
 
     Args:
-        tfs_file_path (Union[pathlib.Path, str]): Path object to the **TFS**
+        tfs_file_path (pathlib.Path | str): Path object to the **TFS**
             file to read. Can be a string, in which case it will be cast to
             a Path object.
 
@@ -209,7 +210,7 @@ class _TfsMetaData:
     column_types: np.ndarray
 
 
-def _read_metadata(tfs_file_path: Union[str, pathlib.Path]) -> _TfsMetaData:
+def _read_metadata(tfs_file_path: pathlib.Path | str) -> _TfsMetaData:
     """
     Parses the beginning of the **tfs_file_path** to extract metadata (all non dataframe lines).
 
@@ -222,7 +223,7 @@ def _read_metadata(tfs_file_path: Union[str, pathlib.Path]) -> _TfsMetaData:
         returned.
 
     Args:
-        tfs_file_path (Union[pathlib.Path, str]): Path object to the **TFS** file to read. Can be
+        tfs_file_path (pathlib.Path | str): Path object to the **TFS** file to read. Can be
             a string, in which case it will be cast to a Path object.
 
     Returns:
