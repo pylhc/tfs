@@ -147,7 +147,7 @@ class TfsCollection(metaclass=_MetaTfsCollection):
         """
         return self.directory / self.get_filename(name)
 
-    def _get_filename(self, *args, **kwargs):
+    def _get_filename(self, *args, **kwargs):  # noqa: ARG002
         """
         Return the filename to be loaded or written.
 
@@ -159,7 +159,7 @@ class TfsCollection(metaclass=_MetaTfsCollection):
         errmsg = "This is an abstract method, it should be implemented in subclasses."
         raise NotImplementedError(errmsg)
 
-    def _write_to(self, *args, **kwargs):
+    def _write_to(self, *args, **kwargs):  # noqa: ARG002
         """
         Returns the filename and `TfsDataFrame` to be written on assignments.
 
