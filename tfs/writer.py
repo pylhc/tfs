@@ -163,7 +163,8 @@ def _get_headers_string(headers_dict: dict, width: int) -> str:
 
 def _get_header_line(name: str, value, width: int) -> str:
     if not isinstance(name, str):
-        raise TypeError(f"{name} is not a string")
+        errmsg = f"{name} is not a string"
+        raise TypeError(errmsg)
     type_str = _value_to_type_string(value)
     if type_str == "%s":
         value = f'"{value}"'
@@ -235,9 +236,8 @@ def _dtype_to_id_string(type_: type) -> str:
         return "%le"
     elif pdtypes.is_string_dtype(type_):
         return "%s"
-    raise TypeError(
-        f"Provided type '{type_}' could not be identified as either a bool, int, float or string dtype"
-    )
+    errmsg = f"Provided type '{type_}' could not be identified as either a bool, int, float or string dtype"
+    raise TypeError(errmsg)
 
 
 def _dtype_to_formatter(type_: type, colsize: int) -> str:
@@ -260,6 +260,5 @@ def _dtype_to_formatter(type_: type, colsize: int) -> str:
         return f"{colsize}.{colsize - len('-0.e-000')}g"
     elif pdtypes.is_string_dtype(type_):
         return f"{colsize}s"
-    raise TypeError(
-        f"Provided type '{type_}' could not be identified as either a bool, int, float or string dtype"
-    )
+    errmsg = f"Provided type '{type_}' could not be identified as either a bool, int, float or string dtype"
+    raise TypeError(errmsg)
