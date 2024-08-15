@@ -4,8 +4,9 @@ HDF5 I/O
 
 Additional tools for reading and writing ``TfsDataFrames`` into ``hdf5`` files.
 """
+from __future__ import annotations
+
 from pathlib import Path
-from typing import Union
 
 import pandas as pd
 
@@ -26,7 +27,7 @@ import logging
 LOGGER = logging.getLogger(__name__)
 
 
-def write_hdf(path: Union[Path, str], df: TfsDataFrame, **kwargs) -> None:
+def write_hdf(path: Path | str, df: TfsDataFrame, **kwargs) -> None:
     """Write TfsDataFrame to hdf5 file. The dataframe will be written into
     the group ``data``, the headers into the group ``headers``.
     Only one dataframe per file is allowed.
@@ -51,7 +52,7 @@ def write_hdf(path: Union[Path, str], df: TfsDataFrame, **kwargs) -> None:
     if user_mode is not None and user_mode != "w":
         if path.exists():
             raise AttributeError(f"'mode=\"{user_mode}\"' is not allowed here. "
-                                 f"The output file at {str(path)} will always be overwritten!")
+                                 f"The output file at {path!s} will always be overwritten!")
         LOGGER.warning(f"'mode=\"{user_mode}\"' is not allowed here. "
                        f"Mode \"w\" will be used.")
 
@@ -63,7 +64,7 @@ def write_hdf(path: Union[Path, str], df: TfsDataFrame, **kwargs) -> None:
             hf.create_dataset(f"headers/{key}", data=value)
 
 
-def read_hdf(path: Union[Path, str]) -> TfsDataFrame:
+def read_hdf(path: Path | str) -> TfsDataFrame:
     """Read TfsDataFrame from hdf5 file. The DataFrame needs to be stored
     in a group named ``data``, while the headers are stored in ``headers``.
 
