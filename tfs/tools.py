@@ -6,7 +6,7 @@ Additional functions to modify **TFS** files.
 """
 import logging
 from pathlib import Path
-from typing import List, Tuple, Union
+from typing import Union
 
 import numpy as np
 
@@ -19,7 +19,7 @@ LOGGER = logging.getLogger(__name__)
 
 def significant_digits(
     value: float, error: float, return_floats: bool = False
-) -> Union[Tuple[str, str], Tuple[float, float]]:
+) -> Union[tuple[str, str], tuple[float, float]]:
     """
     Computes `value` and its error properly rounded with respect to the size of `error`.
 
@@ -46,12 +46,12 @@ def significant_digits(
     return res
 
 
-def remove_nan_from_files(list_of_files: List[Union[str, Path]], replace: bool = False) -> None:
+def remove_nan_from_files(list_of_files: list[Union[str, Path]], replace: bool = False) -> None:
     """
     Remove ``NaN`` entries from files in `list_of_files`.
 
     Args:
-        list_of_files (List[Union[str, Path]]): list of Paths to **TFS** files meant to be sanitized.
+        list_of_files (list[Union[str, Path]]): list of Paths to **TFS** files meant to be sanitized.
             The elements of the list can be strings or Path objects.
         replace (bool): if ``True``, the provided files will be overwritten. Otherwise new files
             with `.dropna` appended to the original filenames will be written to disk. Defaults to
@@ -61,7 +61,7 @@ def remove_nan_from_files(list_of_files: List[Union[str, Path]], replace: bool =
         try:
             tfs_data_frame = read_tfs(filepath)
             LOGGER.info(f"Read file {filepath:s}")
-        except (IOError, TfsFormatError):
+        except (OSError, TfsFormatError):
             LOGGER.warning(f"Skipped file {filepath:s} as it could not be loaded")
         else:
             tfs_data_frame = tfs_data_frame.dropna(axis="index")
@@ -70,18 +70,18 @@ def remove_nan_from_files(list_of_files: List[Union[str, Path]], replace: bool =
             write_tfs(filepath, tfs_data_frame)
 
 
-def remove_header_comments_from_files(list_of_files: List[Union[str, Path]]) -> None:
+def remove_header_comments_from_files(list_of_files: list[Union[str, Path]]) -> None:
     """
     Check the files in the provided list for invalid headers (no type defined) and removes those
     inplace when found.
 
     Args:
-        list_of_files (List[Union[str, Path]]): list of Paths to **TFS** files meant to be checked.
+        list_of_files (list[Union[str, Path]]): list of Paths to **TFS** files meant to be checked.
             The entries of the list can be strings or Path objects.
     """
     for filepath in list_of_files:
         LOGGER.info(f"Checking file: {filepath}")
-        with open(filepath, "r") as f:
+        with open(filepath) as f:
             f_lines = f.readlines()
 
         delete_indicies = []
