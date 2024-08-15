@@ -80,7 +80,7 @@ def read_hdf(path: Path | str) -> TfsDataFrame:
     df = pd.read_hdf(path, key="data")
     with h5py.File(path, mode="r") as hf:
         headers = hf.get('headers')
-        headers = {k: headers[k][()] for k in headers.keys()}
+        headers = {key: headers[key][()] for key in headers}
 
     for key, value in headers.items():
         try:
