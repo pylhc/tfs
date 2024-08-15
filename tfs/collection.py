@@ -111,7 +111,7 @@ class TfsCollection(metaclass=_MetaTfsCollection):
     """
     INDEX = "NAME"
 
-    def __init__(self, directory: pathlib.Path, allow_write: bool = None):
+    def __init__(self, directory: pathlib.Path, allow_write: bool | None = None):
         self.directory = pathlib.Path(directory) if isinstance(directory, str) else directory
         self.allow_write = False if allow_write is None else allow_write
         self.maybe_call = _MaybeCall(self)
