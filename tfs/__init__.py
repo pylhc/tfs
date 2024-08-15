@@ -1,6 +1,7 @@
 """
 Exposes TfsDataFrame, read and write directly in tfs namespace, as well as the package version.
 """
+
 from tfs.errors import TfsFormatError
 from tfs.frame import TfsDataFrame, concat
 from tfs.hdf import read_hdf, write_hdf
@@ -19,4 +20,13 @@ __license__ = "MIT"
 read = read_tfs
 write = write_tfs
 
-__all__ = ["concat", "read", "write", "read_hdf", "write_hdf", "TfsDataFrame", "TfsFormatError", "__version__"]
+__all__ = [
+    "concat",
+    "read",
+    "write",
+    "read_hdf",
+    "write_hdf",
+    "TfsDataFrame",
+    "TfsFormatError",
+    "__version__",
+]

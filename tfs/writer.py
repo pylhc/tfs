@@ -4,6 +4,7 @@ Writer
 
 Writing functionalty for **TFS** files.
 """
+
 from __future__ import annotations
 
 import logging
@@ -171,12 +172,16 @@ def _get_header_line(name: str, value, width: int) -> str:
     return f"@ {name:<{width}} {type_str} {value:>{width}}"
 
 
-def _get_colnames_string(colnames: list[str], colwidth: int, left_align_first_column: bool) -> str:  # noqa: FBT001
+def _get_colnames_string(
+    colnames: list[str], colwidth: int, left_align_first_column: bool
+) -> str:  # noqa: FBT001
     format_string = _get_row_format_string([None] * len(colnames), colwidth, left_align_first_column)
     return "* " + format_string.format(*colnames)
 
 
-def _get_coltypes_string(types: pd.Series, colwidth: int, left_align_first_column: bool) -> str:  # noqa: FBT001
+def _get_coltypes_string(
+    types: pd.Series, colwidth: int, left_align_first_column: bool
+) -> str:  # noqa: FBT001
     fmt = _get_row_format_string([str] * len(types), colwidth, left_align_first_column)
     return "$ " + fmt.format(*[_dtype_to_id_string(type_) for type_ in types])
 
@@ -194,7 +199,9 @@ def _get_data_string(
     return "\n".join(data_frame.apply(lambda series: format_strings.format(*series), axis=1))
 
 
-def _get_row_format_string(dtypes: list[type], colwidth: int, left_align_first_column: bool) -> str:  # noqa: FBT001
+def _get_row_format_string(
+    dtypes: list[type], colwidth: int, left_align_first_column: bool
+) -> str:  # noqa: FBT001
     return " ".join(
         f"{{{indx:d}:"
         f"{'<' if (not indx) and left_align_first_column else '>'}"
@@ -205,7 +212,7 @@ def _get_row_format_string(dtypes: list[type], colwidth: int, left_align_first_c
 
 def _quote_string_columns(data_frame: TfsDataFrame | pd.DataFrame) -> TfsDataFrame | pd.DataFrame:
     def quote_strings(s):
-        if isinstance(s, str) and  not s.startswith(('"', "'")):
+        if isinstance(s, str) and not s.startswith(('"', "'")):
             return f'"{s}"'
         return s
 

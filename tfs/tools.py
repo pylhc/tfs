@@ -4,6 +4,7 @@ Tools
 
 Additional functions to modify **TFS** files.
 """
+
 from __future__ import annotations
 
 import logging
@@ -40,7 +41,7 @@ def significant_digits(
         errmsg = "Input error of 0. Cannot compute significant digits."
         raise ValueError(errmsg)
     digits = -int(np.floor(np.log10(error)))
-    if np.floor(error * 10 ** digits) == 1:
+    if np.floor(error * 10**digits) == 1:
         digits = digits + 1
     res = (
         f"{round(value, digits):.{max(digits, 0)}f}",
@@ -51,7 +52,9 @@ def significant_digits(
     return res
 
 
-def remove_nan_from_files(list_of_files: list[str | Path], replace: bool = False) -> None:  # noqa: FBT001, FBT002
+def remove_nan_from_files(
+    list_of_files: list[str | Path], replace: bool = False
+) -> None:  # noqa: FBT001, FBT002
     """
     Remove ``NaN`` entries from files in `list_of_files`.
 

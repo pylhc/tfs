@@ -4,6 +4,7 @@ Reader
 
 Reading functionalty for **TFS** files.
 """
+
 from __future__ import annotations
 
 import logging
@@ -249,12 +250,11 @@ def _read_metadata(tfs_file_path: pathlib.Path | str) -> _TfsMetaData:
         engine="python",  # only engine that supports this sep argument
         dtype=str,  # we are reading the headers so we only expect and want strings, they are parsed afterwards
     ) as file_reader:
-        for (
-            line_record
-        ) in file_reader:  # each read chunk / line is made into a DataFrame, colname 0 and value is the read line
+        # Now each read chunk / line is made into a DataFrame, colname 0 and value is the read line
+        for line_record in file_reader:
             line = line_record.loc[:, 0].values[0]  # this is the value of the line as a string
             if not line:
-                continue   # empty line
+                continue  # empty line
             line_components = shlex.split(line)
             if line_components[0] == HEADER:
                 name, value = _parse_header(line_components[1:])

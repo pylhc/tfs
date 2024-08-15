@@ -5,6 +5,7 @@ Frame
 Contains the class definition of a ``TfsDataFrame``, inherited from the ``pandas`` ``DataFrame``, as well
 as a utility function to validate the correctness of a ``TfsDataFrame``.
 """
+
 from __future__ import annotations
 
 import logging
@@ -66,16 +67,16 @@ class TfsDataFrame(pd.DataFrame):
 
     @property
     def _constructor(self):
-        """ Function called, whenever a new ``TfsDataFrame`` is created
+        """Function called, whenever a new ``TfsDataFrame`` is created
         by pandas functionality, to ensure the new object is also a ``TfsDataFrame``.
         """
         return TfsDataFrame
 
     def _constructor_from_mgr(self, mgr, axes):
-        """ Initialize new ``TfsDataFrame`` from a dataframe manager.
+        """Initialize new ``TfsDataFrame`` from a dataframe manager.
         This function is needed since pandas v2.1.0 to ensure the new object
         given to __init__() already contains the headers.
-        See https://github.com/pandas-dev/pandas/issues/55120 """
+        See https://github.com/pandas-dev/pandas/issues/55120"""
         obj = self._from_mgr(mgr, axes)
         obj.headers = {}
         return obj
@@ -262,6 +263,7 @@ def validate(
     # ----- Check that no element is a list / tuple in the dataframe ----- #
     def _element_is_list(element):
         return isinstance(element, (list, tuple))
+
     _element_is_list = np.vectorize(_element_is_list)
 
     list_or_tuple_bool_df = data_frame.apply(_element_is_list)
