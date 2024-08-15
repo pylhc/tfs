@@ -152,12 +152,12 @@ class TestFailures:
         with pytest.raises(TfsFormatError):
             _ = tfs.reader._id_to_type(unexpected_id)  # noqa: SLF001
 
-    def test_fail_read_no_coltypes(self, _no_coltypes_tfs_path, caplog):
+    def test_fail_read_no_coltypes(self, _no_coltypes_tfs_path):
         with pytest.raises(TfsFormatError) as e:
             _ = read_tfs(_no_coltypes_tfs_path)
         assert "column types" in str(e)
 
-    def test_fail_read_no_colnames(self, _no_colnames_tfs_path, caplog):
+    def test_fail_read_no_colnames(self, _no_colnames_tfs_path):
         with pytest.raises(TfsFormatError) as e:
             _ = read_tfs(_no_colnames_tfs_path)
         assert "column names" in str(e)
