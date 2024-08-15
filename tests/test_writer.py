@@ -3,8 +3,8 @@ import pathlib
 import random
 import string
 
-import numpy
-import pandas
+import numpy as np
+import pandas as pd
 import pytest
 from cpymad.madx import Madx
 from pandas._testing import assert_dict_equal
@@ -22,7 +22,7 @@ class TestWrites:
         df = TfsDataFrame(
             index=range(3),
             columns=[],
-            data=numpy.random.rand(3, 0),
+            data=np.random.rand(3, 0),
             headers={"Title": "Tfs Title", "Value": 3.3663},
         )
 
@@ -36,7 +36,7 @@ class TestWrites:
 
     def test_tfs_write_series_like_dataframe(self, tmp_path):
         """Write-read a pandas.Series-like to disk and make sure all goes right."""
-        df = pandas.Series([1,2,3,4,5])
+        df = pd.Series([1,2,3,4,5])
 
         write_location = tmp_path / "test.tfs"
         test_headers = {"test": 1, "test_string": "test_write_series_like"}
@@ -66,14 +66,14 @@ class TestWrites:
             for column in dframe.columns:
                 assert column in madx.table.test_table
                 assert_series_equal(
-                    pandas.Series(madx.table.test_table[column]), dframe[column], check_names=False
+                    pd.Series(madx.table.test_table[column]), dframe[column], check_names=False
                 )
 
     def test_tfs_write_empty_index_dataframe(self, tmp_path):
         df = TfsDataFrame(
             index=[],
             columns=["a", "b", "c"],
-            data=numpy.random.rand(0, 3),
+            data=np.random.rand(0, 3),
             headers={"Title": "Tfs Title", "Value": 3.3663},
         )
 
@@ -307,7 +307,7 @@ def _tfs_dataframe() -> TfsDataFrame:
     return TfsDataFrame(
         index=range(3),
         columns="a b c d e".split(),
-        data=numpy.random.rand(3, 5),
+        data=np.random.rand(3, 5),
         headers={"Title": "Tfs Title", "Value": 3.3663},
     )
 
@@ -317,7 +317,7 @@ def _bigger_tfs_dataframe() -> TfsDataFrame:
     return TfsDataFrame(
         index=range(50),
         columns=list(string.ascii_lowercase),
-        data=numpy.random.rand(50, len(list(string.ascii_lowercase))),
+        data=np.random.rand(50, len(list(string.ascii_lowercase))),
         headers={"Title": "Tfs Title", "Value": 3.3663},
     )
 
@@ -327,7 +327,7 @@ def _dataframe_empty_headers() -> TfsDataFrame:
     return TfsDataFrame(
         index=range(3),
         columns="a b c d e".split(),
-        data=numpy.random.rand(3, 5),
+        data=np.random.rand(3, 5),
         headers={},
     )
 
@@ -335,9 +335,9 @@ def _dataframe_empty_headers() -> TfsDataFrame:
 @pytest.fixture
 def _messed_up_dataframe() -> TfsDataFrame:
     """Returns a TfsDataFrame with mixed types in each column, some elements being lists."""
-    int_row = numpy.array([random.randint(int(-1e5), int(1e5)) for _ in range(4)], dtype=numpy.float64)
-    float_row = numpy.array([round(random.uniform(-1e5, 1e5), 7) for _ in range(4)], dtype=numpy.float64)
-    string_row = numpy.array([_rand_string() for _ in range(4)], dtype=str)
+    int_row = np.array([random.randint(int(-1e5), int(1e5)) for _ in range(4)], dtype=np.float64)
+    float_row = np.array([round(random.uniform(-1e5, 1e5), 7) for _ in range(4)], dtype=np.float64)
+    string_row = np.array([_rand_string() for _ in range(4)], dtype=str)
     list_floats_row = [[1.0, 14.777], [2.0, 1243.9], [3.0], [123414.0, 9909.12795]]
     return TfsDataFrame(
         index=range(4),
@@ -380,11 +380,11 @@ def _list_column_in_dataframe() -> TfsDataFrame:
 
 
 @pytest.fixture
-def _pd_dataframe() -> pandas.DataFrame:
-    return pandas.DataFrame(
+def _pd_dataframe() -> pd.DataFrame:
+    return pd.DataFrame(
         index=range(3),
         columns="a b c d e".split(),
-        data=numpy.random.rand(3, 5),
+        data=np.random.rand(3, 5),
     )
 
 
