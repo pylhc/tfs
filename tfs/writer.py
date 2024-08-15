@@ -9,7 +9,6 @@ from __future__ import annotations
 
 import logging
 import pathlib
-from collections import OrderedDict
 
 import numpy as np
 import pandas as pd
@@ -112,7 +111,7 @@ def write_tfs(
         try:
             headers_dict = data_frame.headers
         except AttributeError:
-            headers_dict = OrderedDict()
+            headers_dict = {}
 
     data_frame = data_frame.convert_dtypes(convert_integer=False)
 
