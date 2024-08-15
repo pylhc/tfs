@@ -2,7 +2,6 @@ import logging
 import pathlib
 import random
 import string
-import sys
 
 import numpy
 import pandas
@@ -35,6 +34,22 @@ class TestWrites:
         new = read_tfs(write_location)
         assert_frame_equal(df, new)
         assert_dict_equal(df.headers, new.headers, compare_keys=True)
+
+    def test_tfs_write_series_like_dataframe(self, tmp_path):
+        """Write-read a pandas.Series-like to disk and make sure all goes right."""
+        df = pandas.Series([1,2,3,4,5])
+
+        write_location = tmp_path / "test.tfs"
+        test_headers = {"test": 1, "test_string": "test_write_series_like"}
+        write_tfs(write_location, df, headers_dict=test_headers, save_index=True)
+        assert write_location.is_file()
+
+        # Read data will be TfsDataFrame, so in pd.DataFrame-like form
+        # For the comparison we only compare the column (as Series-like) and accept that the
+        # user sees a little difference in the data format (Series vs DataFrame with 1 column)
+        new = read_tfs(write_location)
+        assert_series_equal(df, new["0"], check_names=False)  
+        assert_dict_equal(test_headers, new.headers, compare_keys=True)
 
     def test_madx_reads_written_tfsdataframes(self, _bigger_tfs_dataframe, tmp_path):
         dframe = _bigger_tfs_dataframe
@@ -321,7 +336,7 @@ def _dataframe_empty_headers() -> TfsDataFrame:
 @pytest.fixture()
 def _messed_up_dataframe() -> TfsDataFrame:
     """Returns a TfsDataFrame with mixed types in each column, some elements being lists."""
-    int_row = numpy.array([random.randint(-1e5, 1e5) for _ in range(4)], dtype=numpy.float64)
+    int_row = numpy.array([random.randint(int(-1e5), int(1e5)) for _ in range(4)], dtype=numpy.float64)
     float_row = numpy.array([round(random.uniform(-1e5, 1e5), 7) for _ in range(4)], dtype=numpy.float64)
     string_row = numpy.array([_rand_string() for _ in range(4)], dtype=str)
     list_floats_row = [[1.0, 14.777], [2.0, 1243.9], [3.0], [123414.0, 9909.12795]]
@@ -336,7 +351,7 @@ def _messed_up_dataframe() -> TfsDataFrame:
 @pytest.fixture()
 def _dict_column_in_dataframe() -> TfsDataFrame:
     """Returns a TfsDataFrame with a column having dictionaries as elements."""
-    int_elements = [random.randint(-1e5, 1e5) for _ in range(4)]
+    int_elements = [random.randint(int(-1e5), int(1e5)) for _ in range(4)]
     float_elements = [round(random.uniform(-1e5, 1e5), 7) for _ in range(4)]
     string_elements = [_rand_string() for _ in range(4)]
     dict_elements = [{"a": "dict"}, {"b": 14}, {"c": 444.12}, {"d": [1, 2]}]
@@ -352,7 +367,7 @@ def _dict_column_in_dataframe() -> TfsDataFrame:
 @pytest.fixture()
 def _list_column_in_dataframe() -> TfsDataFrame:
     """Returns a TfsDataFrame with a column having lists as elements."""
-    int_elements = [random.randint(-1e5, 1e5) for _ in range(4)]
+    int_elements = [random.randint(int(-1e5), int(1e5)) for _ in range(4)]
     float_elements = [round(random.uniform(-1e5, 1e5), 7) for _ in range(4)]
     string_elements = [_rand_string() for _ in range(4)]
     list_elements = [[1.0, 14.777], [2.0, 1243.9], [3.0], [123414.0, 9909.12795]]

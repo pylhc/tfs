@@ -1,0 +1,88 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.version]
+path = "tfs/__init__.py"
+
+[tool.hatch.build.targets.sdist]
+exclude = [
+  "/.github",
+  "/doc",
+  "/tests",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["tfs"]
+
+[project]
+name = "tfs-pandas"
+readme = "README.md"
+description = "Read and write tfs files."
+authors = [
+    {name = "OMC Team", email = "pylhc@github.com"},  # see zenodo file / commits for details
+]
+license = "MIT"
+dynamic = ["version"]
+requires-python = ">=3.9"
+
+keywords = [
+  "MAD-X",
+  "TFS",
+]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Natural Language :: English",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: Implementation :: CPython",
+    "Topic :: Scientific/Engineering",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Typing :: Typed",
+]
+
+dependencies = [
+  "numpy >= 1.24",
+  "pandas >= 2.1",
+]
+
+[project.optional-dependencies]
+# TODO: when we drop python 3.9, require pytables 3.10.1 minimum and stop caring about numpy 2 compability
+hdf5 = [
+  "numpy >= 1.24, < 2.0; python_version < '3.10'",  # first pytables compatible with numpy 2 is 3.10 but does not support python 3.9
+  "numpy >= 1.24; python_version >= '3.10'",  # otherwise we can use numpy 2 as on python 3.10 there is a pytables which is ok with it
+  "h5py >= 3.0",
+  "tables >= 3.9",  # TODO: require 3.10.1 minimum when it's out and we drop python 3.9 support
+]
+test = [
+  "tfs-pandas[hdf5]",
+  "pytest >= 7.0",
+  "pytest-cov >= 2.9",
+  "cpymad >= 1.8.1",
+  "zstandard >= 0.15.2",
+]
+doc = [
+  "sphinx >= 7.0",
+  "sphinx_rtd_theme >= 2.0",
+  "sphinx_copybutton >= 0.4",
+  "sphinx-prompt >= 1.7",
+  "sphinx_codeautolink >= 0.14",
+]
+
+all = [
+    "tfs-pandas[hdf5]",
+    "tfs-pandas[test]",
+    "tfs-pandas[doc]",
+]
+
+[project.urls]
+homepage = "https://github.com/pylhc/tfs"
+repository = "https://github.com/pylhc/tfs"
+documentation = "https://pylhc.github.io/tfs/ "
+changelog = "https://github.com/pylhc/tfs/blob/master/CHANGELOG.md"

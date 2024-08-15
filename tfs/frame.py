@@ -58,7 +58,19 @@ class TfsDataFrame(pd.DataFrame):
 
     @property
     def _constructor(self):
+        """ Function called, whenever a new ``TfsDataFrame`` is created
+        by pandas functionality, to ensure the new object is also a ``TfsDataFrame``.
+        """
         return TfsDataFrame
+    
+    def _constructor_from_mgr(self, mgr, axes):
+        """ Initialize new ``TfsDataFrame`` from a dataframe manager. 
+        This function is needed since pandas v2.1.0 to ensure the new object 
+        given to __init__() already contains the headers. 
+        See https://github.com/pandas-dev/pandas/issues/55120 """
+        obj = self._from_mgr(mgr, axes)
+        obj.headers = {}
+        return obj
 
     def _headers_repr(self) -> str:
         space: str = " " * 4
@@ -251,8 +263,13 @@ def validate(
         raise TfsFormatError("Lists or tuple elements are not accepted in a TfsDataFrame")
 
     # -----  Check that no element is non-physical value in the dataframe ----- #
-    with pd.option_context('mode.use_inf_as_na', True):
-        inf_or_nan_bool_df = data_frame.isna()
+    # The pd.option_context('mode.use_inf_as_na', True) context manager raises FutureWarning
+    # and will likely disappear in pandas 3.0 so we replace 'inf' values by NaNs before calling
+    # .isna(). Additionally, the downcasting behaviour of .replace() is deprecated and raises a
+    # FutureWarning, so we use .infer_objects() first to attemps soft conversion to a better dtype
+    # for object-dtype columns (which strings can be). Since .infer_objects() and .replace() return
+    # (lazy for the former) copies we're not modifying the original dataframe during validation :)
+    inf_or_nan_bool_df = data_frame.infer_objects().replace([np.inf, -np.inf], np.nan).isna()
 
     if inf_or_nan_bool_df.to_numpy().any():
         LOGGER.warning(
