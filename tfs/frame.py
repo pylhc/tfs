@@ -43,11 +43,11 @@ class TfsDataFrame(pd.DataFrame):
         except KeyError as error:
             try:
                 return self.headers[key]
-            except KeyError as seconderror:
+            except KeyError as kerror:
                 errmsg = f"{key} is neither in the DataFrame nor in headers."
-                raise KeyError(errmsg) from seconderror
-            except TypeError:
-                raise error
+                raise KeyError(errmsg) from kerror
+            except TypeError as terror:
+                raise error from terror
 
     def __getattr__(self, name: str) -> object:
         try:
