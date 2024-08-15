@@ -267,7 +267,7 @@ class TestFailures:
             _ = tfs.writer._dtype_to_id_string(unexpected_list)  # noqa: SLF001
 
     def test_header_line_raises_on_non_strings(self):
-        not_a_string = dict()
+        not_a_string = {}
         with pytest.raises(TypeError):
             _ = tfs.writer._get_header_line(not_a_string, 10, 10)  # noqa: SLF001
 
