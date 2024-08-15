@@ -5,7 +5,6 @@ Collection
 Advanced **TFS** files reading and writing functionality.
 """
 import pathlib
-from typing import Dict, Tuple
 
 from pandas import DataFrame
 
@@ -254,7 +253,7 @@ class TfsCollection(metaclass=_MetaTfsCollection):
             setattr(self.parent, f"{self.attr}_{plane.lower()}", value)
 
     class _FilenameGetter:
-        def __init__(self, parent: 'TfsCollection'):
+        def __init__(self, parent: TfsCollection):
             self.parent = parent
 
         def __getitem__(self, item) -> str:
@@ -263,7 +262,7 @@ class TfsCollection(metaclass=_MetaTfsCollection):
         def __getattr__(self, attr) -> str:
             return self[attr]
 
-        def __call__(self, exist: bool = False) -> Dict[str, str]:
+        def __call__(self, exist: bool = False) -> dict[str, str]:
             all_filenames = {name: self.parent.get_filename(name)
                              for name in self.parent.defined_properties}
             if not exist:
@@ -294,7 +293,7 @@ class Tfs:
         else:
             return self._get_property_single_plane()
 
-    def _get_property_two_planes(self) -> Tuple[property, property]:
+    def _get_property_two_planes(self) -> tuple[property, property]:
         properties = [None, None]
         for idx, plane in enumerate(self.PLANES):
             planed = self.get_planed_copy(plane)
