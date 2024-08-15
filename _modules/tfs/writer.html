@@ -101,10 +101,12 @@
 
 <span class="sd">Writing functionalty for **TFS** files.</span>
 <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+
 <span class="kn">import</span> <span class="nn">logging</span>
 <span class="kn">import</span> <span class="nn">pathlib</span>
 <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Union</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
@@ -121,14 +123,14 @@
 <div class="viewcode-block" id="write_tfs">
 <a class="viewcode-back" href="../../modules/index.html#tfs.writer.write_tfs">[docs]</a>
 <span class="k">def</span> <span class="nf">write_tfs</span><span class="p">(</span>
-    <span class="n">tfs_file_path</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span>
-    <span class="n">data_frame</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">TfsDataFrame</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">],</span>
-    <span class="n">headers_dict</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">save_index</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">tfs_file_path</span><span class="p">:</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span> <span class="o">|</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">data_frame</span><span class="p">:</span> <span class="n">TfsDataFrame</span> <span class="o">|</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
+    <span class="n">headers_dict</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">save_index</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>  <span class="c1"># noqa: FBT002</span>
     <span class="n">colwidth</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">DEFAULT_COLUMN_WIDTH</span><span class="p">,</span>
     <span class="n">headerswidth</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">DEFAULT_COLUMN_WIDTH</span><span class="p">,</span>
     <span class="n">non_unique_behavior</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;warn&quot;</span><span class="p">,</span>
-    <span class="n">validate</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n">validate</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>  <span class="c1"># noqa: FBT001, FBT002</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Writes the provided ``DataFrame`` to disk at **tfs_file_path**, eventually with the `headers_dict` as</span>
@@ -137,7 +139,7 @@
 <span class="sd">    .. note::</span>
 <span class="sd">        Compression of the output file is possible, by simply providing a valid compression extension</span>
 <span class="sd">        as the **tfs_file_path** suffix. Any compression format supported by ``pandas`` is accepted,</span>
-<span class="sd">        which includes: ``.gz``, ``.bz2``, ``.zip``, ``.xz``, ``.zst``, ``.tar``, ``.tar.gz``, </span>
+<span class="sd">        which includes: ``.gz``, ``.bz2``, ``.zip``, ``.xz``, ``.zst``, ``.tar``, ``.tar.gz``,</span>
 <span class="sd">        ``.tar.xz`` or ``.tar.bz2``. See below for examples.</span>
 
 <span class="sd">    .. warning::</span>
@@ -148,13 +150,13 @@
 <span class="sd">        (such as for instance a sliced FCC lattice).</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        tfs_file_path (Union[pathlib.Path, str]): Path object to the output **TFS** file. Can be</span>
+<span class="sd">        tfs_file_path (pathlib.Path | str): Path object to the output **TFS** file. Can be</span>
 <span class="sd">            a string, in which case it will be cast to a Path object.</span>
-<span class="sd">        data_frame (Union[TfsDataFrame, pd.DataFrame]): ``TfsDataFrame`` or ``pandas.DataFrame`` to</span>
+<span class="sd">        data_frame (TfsDataFrame | pd.DataFrame): ``TfsDataFrame`` or ``pandas.DataFrame`` to</span>
 <span class="sd">            write to file.</span>
 <span class="sd">        headers_dict (dict): Headers for the `data_frame`. If not provided, assumes a ``TfsDataFrame``</span>
 <span class="sd">            was given and tries to use ``data_frame.headers``.</span>
-<span class="sd">        save_index (Union[str, bool]): bool or string. Default to ``False``. If ``True``, saves</span>
+<span class="sd">        save_index (str | bool): bool or string. Default to ``False``. If ``True``, saves</span>
 <span class="sd">            the index of `data_frame` to a column identifiable by `INDEX&amp;&amp;&amp;`. If given as string,</span>
 <span class="sd">            saves the index of `data_frame` to a column named by the provided value.</span>
 <span class="sd">        colwidth (int): Column width, can not be smaller than `MIN_COLUMN_WIDTH`.</span>
@@ -171,21 +173,21 @@
 <span class="sd">        .. code-block:: python</span>
 
 <span class="sd">            &gt;&gt;&gt; tfs.write(&quot;filename.tfs&quot;, dataframe)</span>
-<span class="sd">        </span>
+
 <span class="sd">        If one wants to, for instance, raise and error on non-unique indices or columns,</span>
 <span class="sd">        one can do so as:</span>
 
 <span class="sd">        .. code-block:: python</span>
 
 <span class="sd">            &gt;&gt;&gt; tfs.write(&quot;filename.tfs&quot;, dataframe, non_unique_behavior=&quot;raise&quot;)</span>
-<span class="sd">        </span>
+
 <span class="sd">        One can choose to skip dataframe validation **at one&#39;s own risk** before writing</span>
 <span class="sd">        it to file. This is done as:</span>
 
 <span class="sd">        .. code-block:: python</span>
 
 <span class="sd">            &gt;&gt;&gt; tfs.write(&quot;filename.tfs&quot;, dataframe, validate=False)</span>
-<span class="sd">        </span>
+
 <span class="sd">        It is possible to directly have the output file be compressed, by specifying a</span>
 <span class="sd">        valid compression extension as the **tfs_file_path** suffix. The detection</span>
 <span class="sd">        and compression is handled automatically. For instance:</span>
@@ -211,7 +213,7 @@
         <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
             <span class="n">headers_dict</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
 
-    <span class="n">data_frame</span> <span class="o">=</span> <span class="n">_autoset_pandas_types</span><span class="p">(</span><span class="n">data_frame</span><span class="p">)</span>  <span class="c1"># will always make a copy of the provided df</span>
+    <span class="n">data_frame</span> <span class="o">=</span> <span class="n">data_frame</span><span class="o">.</span><span class="n">convert_dtypes</span><span class="p">(</span><span class="n">convert_integer</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">save_index</span><span class="p">:</span>
         <span class="n">left_align_first_column</span> <span class="o">=</span> <span class="kc">True</span>
@@ -227,44 +229,12 @@
     <span class="k">with</span> <span class="n">get_handle</span><span class="p">(</span><span class="n">tfs_file_path</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;w&quot;</span><span class="p">,</span> <span class="n">compression</span><span class="o">=</span><span class="s2">&quot;infer&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">output_path</span><span class="p">:</span>
         <span class="n">tfs_handle</span> <span class="o">=</span> <span class="n">output_path</span><span class="o">.</span><span class="n">handle</span>
         <span class="n">tfs_handle</span><span class="o">.</span><span class="n">write</span><span class="p">(</span>  <span class="c1"># the last &quot;\n&quot; is to have an EOL at EOF, which is UNIX standard</span>
-            <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">((</span><span class="n">line</span> <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="p">(</span><span class="n">headers_str</span><span class="p">,</span> <span class="n">colnames_str</span><span class="p">,</span> <span class="n">coltypes_str</span><span class="p">,</span> <span class="n">data_str</span><span class="p">)</span> <span class="k">if</span> <span class="n">line</span><span class="p">))</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">line</span> <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="p">(</span><span class="n">headers_str</span><span class="p">,</span> <span class="n">colnames_str</span><span class="p">,</span> <span class="n">coltypes_str</span><span class="p">,</span> <span class="n">data_str</span><span class="p">)</span> <span class="k">if</span> <span class="n">line</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
         <span class="p">)</span></div>
 
 
 
-<span class="k">def</span> <span class="nf">_autoset_pandas_types</span><span class="p">(</span><span class="n">data_frame</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">TfsDataFrame</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">TfsDataFrame</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Tries to apply the ``.convert_dtypes()`` method of pandas on a copy on the provided dataframe.</span>
-<span class="sd">    If the operation is not possible, checks if the provided dataframe is empty (which prevents</span>
-<span class="sd">    ``convert_dtypes()`` to internally use ``pd.concat``) and then return only a copy of the original</span>
-<span class="sd">    dataframe. Otherwise, raise the exception given by ``pandas``.</span>
-
-<span class="sd">    NOTE: Starting with pandas 1.3.0, this behavior which was a bug has been fixed. This means no</span>
-<span class="sd">    ``ValueError`` is raised by calling ``.convert_dtypes()`` on an empty ``DataFrame``, and from</span>
-<span class="sd">    this function a warning is logged. The function is kept as to not force a new min version</span>
-<span class="sd">    requirement on ``pandas`` or Python for users. When one day we make ``pandas &gt;= 1.3.0`` the</span>
-<span class="sd">    minimum requirement, we can remove the checks altogether and just call ``.convert_dtypes()``.</span>
-<span class="sd">    See my comment at https://github.com/pylhc/tfs/pull/83#issuecomment-874208869</span>
-
-<span class="sd">    Args:</span>
-<span class="sd">        data_frame (Union[TfsDataFrame, pd.DataFrame]): ``TfsDataFrame`` or ``pandas.DataFrame`` to</span>
-<span class="sd">            determine the types of.</span>
-
-<span class="sd">    Returns:</span>
-<span class="sd">        The dataframe with dtypes inferred as much as possible to the ``pandas`` dtypes.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">LOGGER</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Attempting conversion of dataframe to pandas dtypes&quot;</span><span class="p">)</span>
-    <span class="k">try</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">data_frame</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span><span class="o">.</span><span class="n">convert_dtypes</span><span class="p">(</span><span class="n">convert_integer</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>  <span class="c1"># do not force floats to int</span>
-    <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">pd_convert_error</span><span class="p">:</span>  <span class="c1"># If used on empty dataframes (uses concat internally)</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">data_frame</span><span class="o">.</span><span class="n">size</span> <span class="ow">and</span> <span class="s2">&quot;No objects to concatenate&quot;</span> <span class="ow">in</span> <span class="n">pd_convert_error</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
-            <span class="n">LOGGER</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;An empty dataframe was provided, no types were inferred&quot;</span><span class="p">)</span>
-            <span class="k">return</span> <span class="n">data_frame</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>  <span class="c1"># since it&#39;s empty anyway, nothing to convert</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">pd_convert_error</span>
-
-
-<span class="k">def</span> <span class="nf">_insert_index_column</span><span class="p">(</span><span class="n">data_frame</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">TfsDataFrame</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">],</span> <span class="n">save_index</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="k">def</span> <span class="nf">_insert_index_column</span><span class="p">(</span><span class="n">data_frame</span><span class="p">:</span> <span class="n">TfsDataFrame</span> <span class="o">|</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">save_index</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">save_index</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>  <span class="c1"># save index into column by name given</span>
         <span class="n">idx_name</span> <span class="o">=</span> <span class="n">save_index</span>
     <span class="k">else</span><span class="p">:</span>  <span class="c1"># save index into column, which can be found by INDEX_ID</span>
@@ -289,33 +259,37 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">headers_dict</span><span class="p">:</span>
         <span class="k">return</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">_get_header_line</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">headers_dict</span><span class="p">[</span><span class="n">name</span><span class="p">],</span> <span class="n">width</span><span class="p">)</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">headers_dict</span><span class="p">)</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="k">return</span> <span class="s2">&quot;&quot;</span>
+    <span class="k">return</span> <span class="s2">&quot;&quot;</span>
 
 
 <span class="k">def</span> <span class="nf">_get_header_line</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">width</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> is not a string&quot;</span><span class="p">)</span>
+        <span class="n">errmsg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> is not a string&quot;</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="n">errmsg</span><span class="p">)</span>
     <span class="n">type_str</span> <span class="o">=</span> <span class="n">_value_to_type_string</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">type_str</span> <span class="o">==</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">:</span>
         <span class="n">value</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;&quot;</span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s1">&quot;&#39;</span>
     <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;@ </span><span class="si">{</span><span class="n">name</span><span class="si">:</span><span class="s2">&lt;</span><span class="si">{</span><span class="n">width</span><span class="si">}}</span><span class="s2"> </span><span class="si">{</span><span class="n">type_str</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">value</span><span class="si">:</span><span class="s2">&gt;</span><span class="si">{</span><span class="n">width</span><span class="si">}}</span><span class="s2">&quot;</span>
 
 
-<span class="k">def</span> <span class="nf">_get_colnames_string</span><span class="p">(</span><span class="n">colnames</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">colwidth</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">left_align_first_column</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="k">def</span> <span class="nf">_get_colnames_string</span><span class="p">(</span>
+    <span class="n">colnames</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">colwidth</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">left_align_first_column</span><span class="p">:</span> <span class="nb">bool</span>  <span class="c1"># noqa: FBT001, FBT002</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
     <span class="n">format_string</span> <span class="o">=</span> <span class="n">_get_row_format_string</span><span class="p">([</span><span class="kc">None</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">colnames</span><span class="p">),</span> <span class="n">colwidth</span><span class="p">,</span> <span class="n">left_align_first_column</span><span class="p">)</span>
     <span class="k">return</span> <span class="s2">&quot;* &quot;</span> <span class="o">+</span> <span class="n">format_string</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">*</span><span class="n">colnames</span><span class="p">)</span>
 
 
-<span class="k">def</span> <span class="nf">_get_coltypes_string</span><span class="p">(</span><span class="n">types</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">,</span> <span class="n">colwidth</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">left_align_first_column</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="k">def</span> <span class="nf">_get_coltypes_string</span><span class="p">(</span>
+    <span class="n">types</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">,</span> <span class="n">colwidth</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">left_align_first_column</span><span class="p">:</span> <span class="nb">bool</span>  <span class="c1"># noqa: FBT001, FBT002</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
     <span class="n">fmt</span> <span class="o">=</span> <span class="n">_get_row_format_string</span><span class="p">([</span><span class="nb">str</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">types</span><span class="p">),</span> <span class="n">colwidth</span><span class="p">,</span> <span class="n">left_align_first_column</span><span class="p">)</span>
     <span class="k">return</span> <span class="s2">&quot;$ &quot;</span> <span class="o">+</span> <span class="n">fmt</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">*</span><span class="p">[</span><span class="n">_dtype_to_id_string</span><span class="p">(</span><span class="n">type_</span><span class="p">)</span> <span class="k">for</span> <span class="n">type_</span> <span class="ow">in</span> <span class="n">types</span><span class="p">])</span>
 
 
 <span class="k">def</span> <span class="nf">_get_data_string</span><span class="p">(</span>
-    <span class="n">data_frame</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">TfsDataFrame</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">],</span>
+    <span class="n">data_frame</span><span class="p">:</span> <span class="n">TfsDataFrame</span> <span class="o">|</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
     <span class="n">colwidth</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
-    <span class="n">left_align_first_column</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+    <span class="n">left_align_first_column</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>  <span class="c1"># noqa: FBT001</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">data_frame</span><span class="o">.</span><span class="n">index</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">data_frame</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
         <span class="k">return</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
@@ -325,7 +299,9 @@
     <span class="k">return</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">data_frame</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">series</span><span class="p">:</span> <span class="n">format_strings</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">*</span><span class="n">series</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>
 
 
-<span class="k">def</span> <span class="nf">_get_row_format_string</span><span class="p">(</span><span class="n">dtypes</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">type</span><span class="p">],</span> <span class="n">colwidth</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">left_align_first_column</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="k">def</span> <span class="nf">_get_row_format_string</span><span class="p">(</span>
+    <span class="n">dtypes</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">type</span><span class="p">],</span> <span class="n">colwidth</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">left_align_first_column</span><span class="p">:</span> <span class="nb">bool</span>  <span class="c1"># noqa: FBT001, FBT002</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
     <span class="k">return</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
         <span class="sa">f</span><span class="s2">&quot;</span><span class="se">{{</span><span class="si">{</span><span class="n">indx</span><span class="si">:</span><span class="s2">d</span><span class="si">}</span><span class="s2">:&quot;</span>
         <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="s1">&#39;&lt;&#39;</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="ow">not</span><span class="w"> </span><span class="n">indx</span><span class="p">)</span><span class="w"> </span><span class="ow">and</span><span class="w"> </span><span class="n">left_align_first_column</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="s1">&#39;&gt;&#39;</span><span class="si">}</span><span class="s2">&quot;</span>
@@ -334,15 +310,13 @@
     <span class="p">)</span>
 
 
-<span class="k">def</span> <span class="nf">_quote_string_columns</span><span class="p">(</span><span class="n">data_frame</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">TfsDataFrame</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">TfsDataFrame</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]:</span>
+<span class="k">def</span> <span class="nf">_quote_string_columns</span><span class="p">(</span><span class="n">data_frame</span><span class="p">:</span> <span class="n">TfsDataFrame</span> <span class="o">|</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TfsDataFrame</span> <span class="o">|</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
     <span class="k">def</span> <span class="nf">quote_strings</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;&quot;&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">s</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;&#39;&quot;</span><span class="p">)):</span>
-                <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;&quot;</span><span class="si">{</span><span class="n">s</span><span class="si">}</span><span class="s1">&quot;&#39;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">s</span><span class="o">.</span><span class="n">startswith</span><span class="p">((</span><span class="s1">&#39;&quot;&#39;</span><span class="p">,</span> <span class="s2">&quot;&#39;&quot;</span><span class="p">)):</span>
+            <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;&quot;</span><span class="si">{</span><span class="n">s</span><span class="si">}</span><span class="s1">&quot;&#39;</span>
         <span class="k">return</span> <span class="n">s</span>
 
-    <span class="n">data_frame</span> <span class="o">=</span> <span class="n">data_frame</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">quote_strings</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">data_frame</span>
+    <span class="k">return</span> <span class="n">data_frame</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">quote_strings</span><span class="p">)</span>  <span class="c1"># makes a copy, we don&#39;t modify the original</span>
 
 
 <span class="k">def</span> <span class="nf">_value_to_type_string</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
@@ -363,13 +337,12 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">pdtypes</span><span class="o">.</span><span class="n">is_integer_dtype</span><span class="p">(</span><span class="n">type_</span><span class="p">)</span> <span class="ow">or</span> <span class="n">pdtypes</span><span class="o">.</span><span class="n">is_bool_dtype</span><span class="p">(</span><span class="n">type_</span><span class="p">):</span>
         <span class="k">return</span> <span class="s2">&quot;</span><span class="si">%d</span><span class="s2">&quot;</span>
-    <span class="k">elif</span> <span class="n">pdtypes</span><span class="o">.</span><span class="n">is_float_dtype</span><span class="p">(</span><span class="n">type_</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">pdtypes</span><span class="o">.</span><span class="n">is_float_dtype</span><span class="p">(</span><span class="n">type_</span><span class="p">):</span>
         <span class="k">return</span> <span class="s2">&quot;</span><span class="si">%le</span><span class="s2">&quot;</span>
-    <span class="k">elif</span> <span class="n">pdtypes</span><span class="o">.</span><span class="n">is_string_dtype</span><span class="p">(</span><span class="n">type_</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">pdtypes</span><span class="o">.</span><span class="n">is_string_dtype</span><span class="p">(</span><span class="n">type_</span><span class="p">):</span>
         <span class="k">return</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">&quot;</span>
-    <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
-        <span class="sa">f</span><span class="s2">&quot;Provided type &#39;</span><span class="si">{</span><span class="n">type_</span><span class="si">}</span><span class="s2">&#39; could not be identified as either a bool, int, float or string dtype&quot;</span>
-    <span class="p">)</span>
+    <span class="n">errmsg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Provided type &#39;</span><span class="si">{</span><span class="n">type_</span><span class="si">}</span><span class="s2">&#39; could not be identified as either a bool, int, float or string dtype&quot;</span>
+    <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="n">errmsg</span><span class="p">)</span>
 
 
 <span class="k">def</span> <span class="nf">_dtype_to_formatter</span><span class="p">(</span><span class="n">type_</span><span class="p">:</span> <span class="nb">type</span><span class="p">,</span> <span class="n">colsize</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
@@ -377,8 +350,8 @@
 <span class="sd">    Return the proper string formatter for the provided dtype.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        type_ (type): an instance of the built-in type (in this package, one of ``numpy`` or ``pandas``</span>
-<span class="sd">            types) to get the formatter for.</span>
+<span class="sd">        type_ (type): an instance of the built-in type (in this package, one of</span>
+<span class="sd">            ``numpy`` or ``pandas`` types) to get the formatter for.</span>
 <span class="sd">        colsize (int): size of the written column to use for the formatter.</span>
 
 <span class="sd">    Returns:</span>
@@ -388,13 +361,12 @@
         <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">colsize</span><span class="si">}</span><span class="s2">&quot;</span>
     <span class="k">if</span> <span class="n">pdtypes</span><span class="o">.</span><span class="n">is_integer_dtype</span><span class="p">(</span><span class="n">type_</span><span class="p">)</span> <span class="ow">or</span> <span class="n">pdtypes</span><span class="o">.</span><span class="n">is_bool_dtype</span><span class="p">(</span><span class="n">type_</span><span class="p">):</span>
         <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">colsize</span><span class="si">}</span><span class="s2">d&quot;</span>
-    <span class="k">elif</span> <span class="n">pdtypes</span><span class="o">.</span><span class="n">is_float_dtype</span><span class="p">(</span><span class="n">type_</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">pdtypes</span><span class="o">.</span><span class="n">is_float_dtype</span><span class="p">(</span><span class="n">type_</span><span class="p">):</span>
         <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">colsize</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">colsize</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="nb">len</span><span class="p">(</span><span class="s1">&#39;-0.e-000&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">g&quot;</span>
-    <span class="k">elif</span> <span class="n">pdtypes</span><span class="o">.</span><span class="n">is_string_dtype</span><span class="p">(</span><span class="n">type_</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">pdtypes</span><span class="o">.</span><span class="n">is_string_dtype</span><span class="p">(</span><span class="n">type_</span><span class="p">):</span>
         <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">colsize</span><span class="si">}</span><span class="s2">s&quot;</span>
-    <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
-        <span class="sa">f</span><span class="s2">&quot;Provided type &#39;</span><span class="si">{</span><span class="n">type_</span><span class="si">}</span><span class="s2">&#39; could not be identified as either a bool, int, float or string dtype&quot;</span>
-    <span class="p">)</span>
+    <span class="n">errmsg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Provided type &#39;</span><span class="si">{</span><span class="n">type_</span><span class="si">}</span><span class="s2">&#39; could not be identified as either a bool, int, float or string dtype&quot;</span>
+    <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="n">errmsg</span><span class="p">)</span>
 </pre></div>
 
            </div>

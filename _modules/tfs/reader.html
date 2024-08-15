@@ -101,12 +101,14 @@
 
 <span class="sd">Reading functionalty for **TFS** files.</span>
 <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+
 <span class="kn">import</span> <span class="nn">logging</span>
 <span class="kn">import</span> <span class="nn">pathlib</span>
 <span class="kn">import</span> <span class="nn">shlex</span>
 <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
 <span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Union</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
@@ -128,10 +130,10 @@
 <div class="viewcode-block" id="read_tfs">
 <a class="viewcode-back" href="../../modules/index.html#tfs.reader.read_tfs">[docs]</a>
 <span class="k">def</span> <span class="nf">read_tfs</span><span class="p">(</span>
-    <span class="n">tfs_file_path</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span>
-    <span class="n">index</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">tfs_file_path</span><span class="p">:</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span> <span class="o">|</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">index</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">non_unique_behavior</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;warn&quot;</span><span class="p">,</span>
-    <span class="n">validate</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n">validate</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>  <span class="c1"># noqa: FBT001, FBT002</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TfsDataFrame</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Parses the **TFS** table present in **tfs_file_path** and returns a ``TfsDataFrame``.</span>
@@ -160,7 +162,7 @@
 <span class="sd">        validated before being returned.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        tfs_file_path (Union[pathlib.Path, str]): Path object to the **TFS** file to read. Can be</span>
+<span class="sd">        tfs_file_path (pathlib.Path | str): Path object to the **TFS** file to read. Can be</span>
 <span class="sd">            a string, in which case it will be cast to a Path object.</span>
 <span class="sd">        index (str): Name of the column to set as index. If not given, looks in **tfs_file_path**</span>
 <span class="sd">            for a column starting with `INDEX&amp;&amp;&amp;`.</span>
@@ -223,9 +225,11 @@
     <span class="n">metadata</span><span class="p">:</span> <span class="n">_TfsMetaData</span> <span class="o">=</span> <span class="n">_read_metadata</span><span class="p">(</span><span class="n">tfs_file_path</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">metadata</span><span class="o">.</span><span class="n">column_names</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="n">TfsFormatError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;No column names in file </span><span class="si">{</span><span class="n">tfs_file_path</span><span class="o">.</span><span class="n">absolute</span><span class="p">()</span><span class="si">}</span><span class="s2">. File not read.&quot;</span><span class="p">)</span>
+        <span class="n">errmsg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;No column names in file </span><span class="si">{</span><span class="n">tfs_file_path</span><span class="o">.</span><span class="n">absolute</span><span class="p">()</span><span class="si">}</span><span class="s2">. File not read.&quot;</span>
+        <span class="k">raise</span> <span class="n">TfsFormatError</span><span class="p">(</span><span class="n">errmsg</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">metadata</span><span class="o">.</span><span class="n">column_types</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="n">TfsFormatError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;No column types in file </span><span class="si">{</span><span class="n">tfs_file_path</span><span class="o">.</span><span class="n">absolute</span><span class="p">()</span><span class="si">}</span><span class="s2">. File not read.&quot;</span><span class="p">)</span>
+        <span class="n">errmsg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;No column types in file </span><span class="si">{</span><span class="n">tfs_file_path</span><span class="o">.</span><span class="n">absolute</span><span class="p">()</span><span class="si">}</span><span class="s2">. File not read.&quot;</span>
+        <span class="k">raise</span> <span class="n">TfsFormatError</span><span class="p">(</span><span class="n">errmsg</span><span class="p">)</span>
 
     <span class="n">LOGGER</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Parsing data part of the file&quot;</span><span class="p">)</span>
     <span class="c1"># DO NOT use comment=COMMENTS in here, if you do and the symbol is in an element for some</span>
@@ -266,12 +270,12 @@
 
 <div class="viewcode-block" id="read_headers">
 <a class="viewcode-back" href="../../modules/index.html#tfs.reader.read_headers">[docs]</a>
-<span class="k">def</span> <span class="nf">read_headers</span><span class="p">(</span><span class="n">tfs_file_path</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">OrderedDict</span><span class="p">:</span>
+<span class="k">def</span> <span class="nf">read_headers</span><span class="p">(</span><span class="n">tfs_file_path</span><span class="p">:</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span> <span class="o">|</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">OrderedDict</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Parses the top of the **tfs_file_path** and returns the headers.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        tfs_file_path (Union[pathlib.Path, str]): Path object to the **TFS**</span>
+<span class="sd">        tfs_file_path (pathlib.Path | str): Path object to the **TFS**</span>
 <span class="sd">            file to read. Can be a string, in which case it will be cast to</span>
 <span class="sd">            a Path object.</span>
 
@@ -312,7 +316,7 @@
     <span class="n">column_types</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
 
 
-<span class="k">def</span> <span class="nf">_read_metadata</span><span class="p">(</span><span class="n">tfs_file_path</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">_TfsMetaData</span><span class="p">:</span>
+<span class="k">def</span> <span class="nf">_read_metadata</span><span class="p">(</span><span class="n">tfs_file_path</span><span class="p">:</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span> <span class="o">|</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_TfsMetaData</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Parses the beginning of the **tfs_file_path** to extract metadata (all non dataframe lines).</span>
 
@@ -325,7 +329,7 @@
 <span class="sd">        returned.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        tfs_file_path (Union[pathlib.Path, str]): Path object to the **TFS** file to read. Can be</span>
+<span class="sd">        tfs_file_path (pathlib.Path | str): Path object to the **TFS** file to read. Can be</span>
 <span class="sd">            a string, in which case it will be cast to a Path object.</span>
 
 <span class="sd">    Returns:</span>
@@ -349,12 +353,11 @@
         <span class="n">engine</span><span class="o">=</span><span class="s2">&quot;python&quot;</span><span class="p">,</span>  <span class="c1"># only engine that supports this sep argument</span>
         <span class="n">dtype</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>  <span class="c1"># we are reading the headers so we only expect and want strings, they are parsed afterwards</span>
     <span class="p">)</span> <span class="k">as</span> <span class="n">file_reader</span><span class="p">:</span>
-        <span class="k">for</span> <span class="p">(</span>
-            <span class="n">line_record</span>
-        <span class="p">)</span> <span class="ow">in</span> <span class="n">file_reader</span><span class="p">:</span>  <span class="c1"># each read chunk / line is made into a DataFrame, colname 0 and value is the read line</span>
+        <span class="c1"># Now each read chunk / line is made into a DataFrame, colname 0 and value is the read line</span>
+        <span class="k">for</span> <span class="n">line_record</span> <span class="ow">in</span> <span class="n">file_reader</span><span class="p">:</span>
             <span class="n">line</span> <span class="o">=</span> <span class="n">line_record</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>  <span class="c1"># this is the value of the line as a string</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">line</span><span class="p">:</span>
-                <span class="k">continue</span>   <span class="c1"># empty line</span>
+                <span class="k">continue</span>  <span class="c1"># empty line</span>
             <span class="n">line_components</span> <span class="o">=</span> <span class="n">shlex</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">line_components</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">HEADER</span><span class="p">:</span>
                 <span class="n">name</span><span class="p">,</span> <span class="n">value</span> <span class="o">=</span> <span class="n">_parse_header</span><span class="p">(</span><span class="n">line_components</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span>
@@ -378,10 +381,11 @@
     <span class="p">)</span>
 
 
-<span class="k">def</span> <span class="nf">_parse_header</span><span class="p">(</span><span class="n">str_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">:</span>
+<span class="k">def</span> <span class="nf">_parse_header</span><span class="p">(</span><span class="n">str_list</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">:</span>
     <span class="n">type_index</span> <span class="o">=</span> <span class="nb">next</span><span class="p">((</span><span class="n">index</span> <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">part</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">str_list</span><span class="p">)</span> <span class="k">if</span> <span class="n">part</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;%&quot;</span><span class="p">)),</span> <span class="kc">None</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">type_index</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="n">TfsFormatError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;No data type found in header: &#39;</span><span class="si">{</span><span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">str_list</span><span class="p">)</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
+        <span class="n">errmsg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;No data type found in header: &#39;</span><span class="si">{</span><span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">str_list</span><span class="p">)</span><span class="si">}</span><span class="s2">&#39;&quot;</span>
+        <span class="k">raise</span> <span class="n">TfsFormatError</span><span class="p">(</span><span class="n">errmsg</span><span class="p">)</span>
 
     <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">str_list</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">type_index</span><span class="p">])</span>
     <span class="n">value_string</span> <span class="o">=</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">str_list</span><span class="p">[(</span><span class="n">type_index</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="p">:])</span>
@@ -409,17 +413,18 @@
     <span class="k">return</span> <span class="n">data_frame</span>
 
 
-<span class="k">def</span> <span class="nf">_compute_types</span><span class="p">(</span><span class="n">str_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">type</span><span class="p">]:</span>
+<span class="k">def</span> <span class="nf">_compute_types</span><span class="p">(</span><span class="n">str_list</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">type</span><span class="p">]:</span>
     <span class="k">return</span> <span class="p">[</span><span class="n">_id_to_type</span><span class="p">(</span><span class="n">string</span><span class="p">)</span> <span class="k">for</span> <span class="n">string</span> <span class="ow">in</span> <span class="n">str_list</span><span class="p">]</span>
 
 
 <span class="k">def</span> <span class="nf">_id_to_type</span><span class="p">(</span><span class="n">type_str</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">type</span><span class="p">:</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">ID_TO_TYPE</span><span class="p">[</span><span class="n">type_str</span><span class="p">]</span>
-    <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>  <span class="c1"># could be a &quot;%[num]s&quot; that MAD-X likes to output</span>
+    <span class="k">except</span> <span class="ne">KeyError</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>  <span class="c1"># could be a &quot;%[num]s&quot; that MAD-X likes to output</span>
         <span class="k">if</span> <span class="n">_is_madx_string_col_identifier</span><span class="p">(</span><span class="n">type_str</span><span class="p">):</span>
             <span class="k">return</span> <span class="nb">str</span>
-        <span class="k">raise</span> <span class="n">TfsFormatError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unknown data type: </span><span class="si">{</span><span class="n">type_str</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">errmsg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Unknown data type: </span><span class="si">{</span><span class="n">type_str</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="k">raise</span> <span class="n">TfsFormatError</span><span class="p">(</span><span class="n">errmsg</span><span class="p">)</span> <span class="kn">from</span> <span class="nn">err</span>
 
 
 <span class="k">def</span> <span class="nf">_is_madx_string_col_identifier</span><span class="p">(</span><span class="n">type_str</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
