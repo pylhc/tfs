@@ -2,7 +2,6 @@
 Here we only test that reading and writing with compression keeps the data intact.
 """
 import pathlib
-import sys
 
 import pytest
 from pandas._testing import assert_dict_equal
