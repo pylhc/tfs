@@ -24,7 +24,7 @@ class TestFailures:
         headers_left = OrderedDict()
         headers_right = OrderedDict()
 
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError, match="Invalid 'how' argument"):
             merge_headers(headers_left, headers_right, how=how)
 
     def test_access_errors(self):
