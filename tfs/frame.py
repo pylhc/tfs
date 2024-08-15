@@ -10,7 +10,7 @@ from collections import OrderedDict
 from collections.abc import Sequence
 from contextlib import suppress
 from functools import partial, reduce
-from typing import Set, Union
+from typing import Union
 
 import numpy as np
 import pandas as pd
@@ -157,7 +157,7 @@ def merge_headers(headers_left: dict, headers_right: dict, how: str) -> OrderedD
     Returns:
         A new ``OrderedDict`` as the merge of the two provided dictionaries.
     """
-    accepted_merges: Set[str] = {"left", "right", "none"}
+    accepted_merges: set[str] = {"left", "right", "none"}
     if str(how).lower() not in accepted_merges:  # handles being given None
         raise ValueError(f"Invalid 'how' argument, should be one of {accepted_merges}")
 
