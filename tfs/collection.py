@@ -300,8 +300,7 @@ class Tfs:
     def get_property(self):
         if self._two_planes:
             return self._get_property_two_planes()
-        else:
-            return self._get_property_single_plane()
+        return self._get_property_single_plane()
 
     def _get_property_two_planes(self) -> tuple[property, property]:
         properties = [None, None]
