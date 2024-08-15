@@ -7,7 +7,7 @@ Writing functionalty for **TFS** files.
 import logging
 import pathlib
 from collections import OrderedDict
-from typing import List, Union
+from typing import Union
 
 import numpy as np
 import pandas as pd
@@ -128,7 +128,7 @@ def write_tfs(
     with get_handle(tfs_file_path, mode="w", compression="infer") as output_path:
         tfs_handle = output_path.handle
         tfs_handle.write(  # the last "\n" is to have an EOL at EOF, which is UNIX standard
-            "\n".join((line for line in (headers_str, colnames_str, coltypes_str, data_str) if line)) + "\n"
+            "\n".join(line for line in (headers_str, colnames_str, coltypes_str, data_str) if line) + "\n"
         )
 
 
@@ -202,7 +202,7 @@ def _get_header_line(name: str, value, width: int) -> str:
     return f"@ {name:<{width}} {type_str} {value:>{width}}"
 
 
-def _get_colnames_string(colnames: List[str], colwidth: int, left_align_first_column: bool) -> str:
+def _get_colnames_string(colnames: list[str], colwidth: int, left_align_first_column: bool) -> str:
     format_string = _get_row_format_string([None] * len(colnames), colwidth, left_align_first_column)
     return "* " + format_string.format(*colnames)
 
@@ -225,7 +225,7 @@ def _get_data_string(
     return "\n".join(data_frame.apply(lambda series: format_strings.format(*series), axis=1))
 
 
-def _get_row_format_string(dtypes: List[type], colwidth: int, left_align_first_column: bool) -> str:
+def _get_row_format_string(dtypes: list[type], colwidth: int, left_align_first_column: bool) -> str:
     return " ".join(
         f"{{{indx:d}:"
         f"{'<' if (not indx) and left_align_first_column else '>'}"
