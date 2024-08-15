@@ -317,11 +317,11 @@ def _compute_types(str_list: list[str]) -> list[type]:
 def _id_to_type(type_str: str) -> type:
     try:
         return ID_TO_TYPE[type_str]
-    except KeyError:  # could be a "%[num]s" that MAD-X likes to output
+    except KeyError as err:  # could be a "%[num]s" that MAD-X likes to output
         if _is_madx_string_col_identifier(type_str):
             return str
         errmsg = f"Unknown data type: {type_str}"
-        raise TfsFormatError(errmsg)
+        raise TfsFormatError(errmsg) from err
 
 
 def _is_madx_string_col_identifier(type_str: str) -> bool:
