@@ -143,8 +143,8 @@ class TestWrite:
         assert_frame_equal(tfs_y, read_tfs(c.get_path("nofile_y"), index=c.INDEX))
 
         c.allow_write = False
-        with pytest.raises(IOError):
-            c.flush()
+        with pytest.raises(OSError, match="Cannot flush TfsCollection"):
+            c.flush()  # because allow_write is set to False
 
         tfs_x_after_flush = read_tfs(c.get_path("file_x"), index=c.INDEX)
         tfs_y_after_flush = read_tfs(c.get_path("nofile_y"), index=c.INDEX)
