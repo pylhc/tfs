@@ -248,7 +248,8 @@ def validate(
             to respectively issue a warning or raise an error if non-unique elements are found.
     """
     if non_unique_behavior.lower() not in ("warn", "raise"):
-        raise KeyError("Invalid value for parameter 'non_unique_behavior'")
+        errmsg = "Invalid value for parameter 'non_unique_behavior'."
+        raise KeyError(errmsg)
 
     # ----- Check that no element is a list / tuple in the dataframe ----- #
     def _element_is_list(element):
@@ -261,7 +262,8 @@ def validate(
             f"DataFrame {info_str} contains list/tuple values at Index: "
             f"{list_or_tuple_bool_df.index[list_or_tuple_bool_df.any(axis='columns')].tolist()}"
         )
-        raise TfsFormatError("Lists or tuple elements are not accepted in a TfsDataFrame")
+        errmsg = "Lists or tuple elements are not accepted in a TfsDataFrame"
+        raise TfsFormatError(errmsg)
 
     # -----  Check that no element is non-physical value in the dataframe ----- #
     # The pd.option_context('mode.use_inf_as_na', True) context manager raises FutureWarning
@@ -282,20 +284,24 @@ def validate(
     if data_frame.index.has_duplicates:
         LOGGER.warning("Non-unique indices found.")
         if non_unique_behavior.lower() == "raise":
-            raise TfsFormatError("The dataframe contains non-unique indices")
+            errmsg = "The dataframe contains non-unique indices."
+            raise TfsFormatError(errmsg)
 
     if data_frame.columns.has_duplicates:
         LOGGER.warning("Non-unique column names found.")
         if non_unique_behavior.lower() == "raise":
-            raise TfsFormatError("The dataframe contains non-unique columns.")
+            errmsg = "The dataframe contains non-unique columns."
+            raise TfsFormatError(errmsg)
 
     # The following are deal-breakers for the TFS format and would not, for instance, be accepted by MAD-X
     if any(not isinstance(c, str) for c in data_frame.columns):
         LOGGER.debug(f"Some column-names are not of string-type, dataframe {info_str} is invalid.")
-        raise TfsFormatError("TFS-Columns need to be strings.")
+        errmsg = "TFS-Columns need to be strings."
+        raise TfsFormatError(errmsg)
 
     if any(" " in c for c in data_frame.columns):
         LOGGER.debug(f"Space(s) found in TFS columns, dataframe {info_str} is invalid")
-        raise TfsFormatError("TFS-Columns can not contain spaces.")
+        errmsg = "TFS-Columns can not contain spaces."
+        raise TfsFormatError(errmsg)
 
     LOGGER.debug(f"DataFrame {info_str} validated")
