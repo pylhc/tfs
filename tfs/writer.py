@@ -209,8 +209,7 @@ def _quote_string_columns(data_frame: TfsDataFrame | pd.DataFrame) -> TfsDataFra
             return f'"{s}"'
         return s
 
-    data_frame = data_frame.map(quote_strings)
-    return data_frame
+    return data_frame.map(quote_strings)  # makes a copy, we don't modify the original
 
 
 def _value_to_type_string(value) -> str:
