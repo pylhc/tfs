@@ -1,5 +1,10 @@
 # TFS-Pandas Changelog
 
+## IN PROGRESS - 3.9.0
+
+- Fixed:
+  - Removed a workaround function which is no longer necessary due to the higher minimum `pandas` version.
+
 ## Version 3.8.1
 
 - Changed:

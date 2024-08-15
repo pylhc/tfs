@@ -1,5 +1,5 @@
-import os
 import pathlib
+
 import pytest
 from pandas.testing import assert_frame_equal
 
@@ -143,8 +143,8 @@ class TestWrite:
         assert_frame_equal(tfs_y, read_tfs(c.get_path("nofile_y"), index=c.INDEX))
 
         c.allow_write = False
-        with pytest.raises(IOError):
-            c.flush()
+        with pytest.raises(OSError, match="Cannot flush TfsCollection"):
+            c.flush()  # because allow_write is set to False
 
         tfs_x_after_flush = read_tfs(c.get_path("file_x"), index=c.INDEX)
         tfs_y_after_flush = read_tfs(c.get_path("nofile_y"), index=c.INDEX)
@@ -156,7 +156,7 @@ class TestFilenames:
 
     def test_tfscollection_getfilename_not_implemented(self):
         with pytest.raises(NotImplementedError):
-            TfsCollection._get_filename("doesnt matter")
+            TfsCollection._get_filename("doesnt matter")  # noqa: SLF001
 
     def test_get_filename(self, _input_dir_pathlib: pathlib.Path):
         c = CollectionTest(_input_dir_pathlib, allow_write=False)
@@ -186,13 +186,13 @@ class TestFilenames:
         assert c.filenames()["file_x"] == "file_x.tfs"
         assert c.filenames()["nofile_y"] == "nofile_y.tfs"
 
-        assert all(f in c.filenames().keys() for f in exist_properties)
-        assert all(f in c.filenames().keys() for f in not_exist_properties)
+        assert all(f in c.filenames() for f in exist_properties)
+        assert all(f in c.filenames() for f in not_exist_properties)
         assert all(f in c.filenames().values() for f in exist_files)
         assert all(f in c.filenames().values() for f in not_exist_files)
 
-        assert all(f in c.filenames(exist=True).keys() for f in exist_properties)
-        assert all(f not in c.filenames(exist=True).keys() for f in not_exist_properties)
+        assert all(f in c.filenames(exist=True) for f in exist_properties)
+        assert all(f not in c.filenames(exist=True) for f in not_exist_properties)
         assert all(f in c.filenames(exist=True).values() for f in exist_files)
         assert all(f not in c.filenames(exist=True).values() for f in not_exist_files)
 
@@ -254,10 +254,10 @@ class TestOther:
         assert res_file[1] == 13
 
     def test_buffer_clear(self, _dummy_collection):
-        _dummy_collection._buffer["some_key"] = 5
-        assert _dummy_collection._buffer["some_key"]
+        _dummy_collection._buffer["some_key"] = 5  # noqa: SLF001
+        assert _dummy_collection._buffer["some_key"]  # noqa: SLF001
         _dummy_collection.clear()
-        assert not _dummy_collection._buffer
+        assert not _dummy_collection._buffer  # noqa: SLF001
 
     def test_no_attribute(self, _dummy_collection):
         with pytest.raises(AttributeError):
@@ -269,26 +269,26 @@ def _read_tfs(path):
     return read_tfs(path).set_index("NAME", drop=False)
 
 
-@pytest.fixture()
+@pytest.fixture
 def _tfs_x() -> TfsDataFrame:
     return _read_tfs(INPUT_DIR / "file_x.tfs")
 
 
-@pytest.fixture()
+@pytest.fixture
 def _tfs_y() -> TfsDataFrame:
     return _read_tfs(INPUT_DIR / "file_y.tfs")
 
 
-@pytest.fixture()
+@pytest.fixture
 def _input_dir_pathlib() -> pathlib.Path:
     return INPUT_DIR
 
 
-@pytest.fixture()
+@pytest.fixture
 def _input_dir_str() -> str:
     return str(INPUT_DIR)
 
 
-@pytest.fixture()
+@pytest.fixture
 def _dummy_collection() -> TfsCollection:
     return TfsCollection("")

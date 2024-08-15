@@ -1,12 +1,12 @@
-import sys
+
+from pathlib import Path
 
 import numpy as np
 import pytest
-from pathlib import Path
-
-from tfs import TfsDataFrame, write_hdf, read_hdf
-from pandas.testing import assert_frame_equal
 from pandas._testing import assert_dict_equal
+from pandas.testing import assert_frame_equal
+
+from tfs import TfsDataFrame, read_hdf, write_hdf
 
 
 class TestHDF:

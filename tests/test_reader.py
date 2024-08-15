@@ -46,7 +46,7 @@ class TestRead:
         assert isinstance(test_file.index[0], str)
 
     def test_tfs_read_wrong_file_no_validation(self, _space_in_colnames_tfs_path: pathlib.Path):
-        # Read file has a space in a column name which should raise, we make sure that it 
+        # Read file has a space in a column name which should raise, we make sure that it
         # goes through when explicitely skipping validation
         df = read_tfs(_space_in_colnames_tfs_path, index="NAME", validate=False)
         assert "BPM RES" in df.columns
@@ -58,7 +58,7 @@ class TestRead:
 
     def test_id_to_type_handles_madx_string_identifier(self):
         madx_str_id = "%20s"
-        assert tfs.reader._id_to_type(madx_str_id) is str
+        assert tfs.reader._id_to_type(madx_str_id) is str  # noqa: SLF001
 
     def test_tfs_read_write_read_pathlib_input(self, _tfs_file_pathlib: pathlib.Path, tmp_path):
         original = read_tfs(_tfs_file_pathlib)
@@ -92,11 +92,11 @@ class TestRead:
         assert isinstance(headers, dict)
         assert len(headers) > 0
         assert len(str(headers)) > 0
-        assert all(key in headers.keys() for key in ["TITLE", "DPP", "Q1", "Q1RMS", "NATQ1", "NATQ1RMS", "BPMCOUNT"])
+        assert all(key in headers for key in ["TITLE", "DPP", "Q1", "Q1RMS", "NATQ1", "NATQ1RMS", "BPMCOUNT"])
 
     def test_read_empty_strings_ok(self, _empty_strings_tfs_path):
         df = read_tfs(_empty_strings_tfs_path)
-        
+
         # Make sure the NAME column is properly inferred to string dtype
         assert isinstance(df.convert_dtypes().NAME.dtype, StringDtype)
         # Make sure there are no nans in the NAME column
@@ -150,14 +150,14 @@ class TestFailures:
     def test_id_to_type_fails_unexpected_identifiers(self):
         unexpected_id = "%t"
         with pytest.raises(TfsFormatError):
-            _ = tfs.reader._id_to_type(unexpected_id)
+            _ = tfs.reader._id_to_type(unexpected_id)  # noqa: SLF001
 
-    def test_fail_read_no_coltypes(self, _no_coltypes_tfs_path, caplog):
+    def test_fail_read_no_coltypes(self, _no_coltypes_tfs_path):
         with pytest.raises(TfsFormatError) as e:
             _ = read_tfs(_no_coltypes_tfs_path)
         assert "column types" in str(e)
 
-    def test_fail_read_no_colnames(self, _no_colnames_tfs_path, caplog):
+    def test_fail_read_no_colnames(self, _no_colnames_tfs_path):
         with pytest.raises(TfsFormatError) as e:
             _ = read_tfs(_no_colnames_tfs_path)
         assert "column names" in str(e)
@@ -165,7 +165,7 @@ class TestFailures:
     def test_id_to_type_handles_typo_str_id(self):
         typoed_str_id = "%%s"
         with pytest.raises(TfsFormatError):
-            _ = tfs.reader._id_to_type(typoed_str_id)
+            _ = tfs.reader._id_to_type(typoed_str_id)  # noqa: SLF001
 
     def test_fail_space_in_colname(self, _space_in_colnames_tfs_path: pathlib.Path):
         # Read file has a space in a column name which should raise
@@ -185,61 +185,61 @@ class TestWarnings:
 # ------ Fixtures ------ #
 
 
-@pytest.fixture()
+@pytest.fixture
 def _tfs_file_pathlib() -> pathlib.Path:
     return INPUTS_DIR / "file_x.tfs"
 
 
-@pytest.fixture()
+@pytest.fixture
 def _tfs_file_str() -> str:
     return str((INPUTS_DIR / "file_x.tfs").absolute())
 
 
-@pytest.fixture()
+@pytest.fixture
 def _no_coltypes_tfs_path() -> pathlib.Path:
     return INPUTS_DIR / "no_coltypes.tfs"
 
 
-@pytest.fixture()
+@pytest.fixture
 def _no_colnames_tfs_path() -> pathlib.Path:
     return INPUTS_DIR / "no_colnames.tfs"
 
 
-@pytest.fixture()
+@pytest.fixture
 def _space_in_colnames_tfs_path() -> pathlib.Path:
     return INPUTS_DIR / "space_in_colname.tfs"
 
 
-@pytest.fixture()
+@pytest.fixture
 def _tfs_file_wise() -> pathlib.Path:
     return INPUTS_DIR / "wise_header.tfs"
 
 
-@pytest.fixture()
+@pytest.fixture
 def _tfs_file_empty_lines() -> pathlib.Path:
     return INPUTS_DIR / "empty_lines_in_header.tfs"
 
 
-@pytest.fixture()
+@pytest.fixture
 def _tfs_file_single_header_empty_line() -> pathlib.Path:
     return INPUTS_DIR / "single_header_line_and_empty_line.tfs"
 
 
-@pytest.fixture()
+@pytest.fixture
 def _tfs_file_with_whitespaces() -> pathlib.Path:
     return INPUTS_DIR / "line_with_whitespaces_in_header.tfs"
 
 
-@pytest.fixture()
+@pytest.fixture
 def _tfs_file_without_header() -> pathlib.Path:
     return INPUTS_DIR / "no_header.tfs"
 
 
-@pytest.fixture()
+@pytest.fixture
 def _tfs_file_without_header_but_empty_line() -> pathlib.Path:
     return INPUTS_DIR / "no_header_just_an_empty_line.tfs"
 
 
-@pytest.fixture()
+@pytest.fixture
 def _empty_strings_tfs_path() -> pathlib.Path:
     return INPUTS_DIR / "empty_strings.tfs"

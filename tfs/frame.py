@@ -5,16 +5,23 @@ Frame
 Contains the class definition of a ``TfsDataFrame``, inherited from the ``pandas`` ``DataFrame``, as well
 as a utility function to validate the correctness of a ``TfsDataFrame``.
 """
+
+from __future__ import annotations
+
 import logging
 from collections import OrderedDict
 from contextlib import suppress
 from functools import partial, reduce
-from typing import Sequence, Set, Union
+from typing import TYPE_CHECKING, ClassVar
 
 import numpy as np
 import pandas as pd
 
 from tfs.errors import TfsFormatError
+
+if TYPE_CHECKING:
+    from collections.abc import Sequence
+
 
 LOGGER = logging.getLogger(__name__)
 
@@ -27,7 +34,7 @@ class TfsDataFrame(pd.DataFrame):
     it does not conflict with a column name in the dataframe.
     """
 
-    _metadata = ["headers"]
+    _metadata: ClassVar = ["headers"]
 
     def __init__(self, *args, **kwargs):
         self.headers = {}
@@ -42,10 +49,11 @@ class TfsDataFrame(pd.DataFrame):
         except KeyError as error:
             try:
                 return self.headers[key]
-            except KeyError:
-                raise KeyError(f"{key} is neither in the DataFrame nor in headers.")
-            except TypeError:
-                raise error
+            except KeyError as kerror:
+                errmsg = f"{key} is neither in the DataFrame nor in headers."
+                raise KeyError(errmsg) from kerror
+            except TypeError as terror:
+                raise error from terror
 
     def __getattr__(self, name: str) -> object:
         try:
@@ -53,21 +61,22 @@ class TfsDataFrame(pd.DataFrame):
         except AttributeError:
             try:
                 return self.headers[name]
-            except KeyError:
-                raise AttributeError(f"{name} is neither in the DataFrame nor in headers.")
+            except KeyError as error:
+                errmsg = f"{name} is neither in the DataFrame nor in headers."
+                raise AttributeError(errmsg) from error
 
     @property
     def _constructor(self):
-        """ Function called, whenever a new ``TfsDataFrame`` is created
+        """Function called, whenever a new ``TfsDataFrame`` is created
         by pandas functionality, to ensure the new object is also a ``TfsDataFrame``.
         """
         return TfsDataFrame
-    
+
     def _constructor_from_mgr(self, mgr, axes):
-        """ Initialize new ``TfsDataFrame`` from a dataframe manager. 
-        This function is needed since pandas v2.1.0 to ensure the new object 
-        given to __init__() already contains the headers. 
-        See https://github.com/pandas-dev/pandas/issues/55120 """
+        """Initialize new ``TfsDataFrame`` from a dataframe manager.
+        This function is needed since pandas v2.1.0 to ensure the new object
+        given to __init__() already contains the headers.
+        See https://github.com/pandas-dev/pandas/issues/55120"""
         obj = self._from_mgr(mgr, axes)
         obj.headers = {}
         return obj
@@ -81,7 +90,7 @@ class TfsDataFrame(pd.DataFrame):
         s: str = ""
         if len(self.headers):
             s += "Headers:\n"
-            if len(self.headers) > 7:
+            if len(self.headers) > 7:  # noqa: PLR2004
                 items = list(self.headers.items())
                 s += f"{_str_items(items[:3])}\n{space}...\n{_str_items(items[-3:])}\n"
             else:
@@ -95,18 +104,18 @@ class TfsDataFrame(pd.DataFrame):
 
     def merge(
         self,
-        right: Union["TfsDataFrame", pd.DataFrame],
-        how_headers: str = None,
-        new_headers: dict = None,
+        right: TfsDataFrame | pd.DataFrame,
+        how_headers: str | None = None,
+        new_headers: dict | None = None,
         **kwargs,
-    ) -> "TfsDataFrame":
+    ) -> TfsDataFrame:
         """
         Merge ``TfsDataFrame`` objects with a database-style join. Data manipulation is done by the
         ``pandas.Dataframe`` method of the same name. Resulting headers are either merged according to the
         provided **how_headers** method or as given via **new_headers**.
 
         Args:
-            right (Union[TfsDataFrame, pd.DataFrame]): The ``TfsDataFrame`` to merge with the caller.
+            right (TfsDataFrame | pd.DataFrame): The ``TfsDataFrame`` to merge with the caller.
             how_headers (str): Type of merge to be performed for the headers. Either **left** or **right**.
                 Refer to :func:`tfs.frame.merge_headers` for behavior. If ``None`` is provided and
                 **new_headers** is not provided, the final headers will be empty. Case insensitive,
@@ -156,9 +165,10 @@ def merge_headers(headers_left: dict, headers_right: dict, how: str) -> OrderedD
     Returns:
         A new ``OrderedDict`` as the merge of the two provided dictionaries.
     """
-    accepted_merges: Set[str] = {"left", "right", "none"}
+    accepted_merges: set[str] = {"left", "right", "none"}
     if str(how).lower() not in accepted_merges:  # handles being given None
-        raise ValueError(f"Invalid 'how' argument, should be one of {accepted_merges}")
+        errmsg = f"Invalid 'how' argument, should be one of {accepted_merges}"
+        raise ValueError(errmsg)
 
     LOGGER.debug(f"Merging headers with method '{how}'")
     if str(how).lower() == "left":  # we prioritize the contents of headers_left
@@ -173,9 +183,9 @@ def merge_headers(headers_left: dict, headers_right: dict, how: str) -> OrderedD
 
 
 def concat(
-    objs: Sequence[Union[TfsDataFrame, pd.DataFrame]],
-    how_headers: str = None,
-    new_headers: dict = None,
+    objs: Sequence[TfsDataFrame | pd.DataFrame],
+    how_headers: str | None = None,
+    new_headers: dict | None = None,
     **kwargs,
 ) -> TfsDataFrame:
     """
@@ -190,7 +200,7 @@ def concat(
         **how_headers** and **new_headers** as ``None`` (their defaults) to end up with empty headers.
 
     Args:
-        objs (Sequence[Union[TfsDataFrame, pd.DataFrame]]): the ``TfsDataFrame`` objects to be concatenated.
+        objs (Sequence[TfsDataFrame | pd.DataFrame]): the ``TfsDataFrame`` objects to be concatenated.
         how_headers (str): Type of merge to be performed for the headers. Either **left** or **right**.
             Refer to :func:`tfs.frame.merge_headers` for behavior. If ``None`` is provided and
             **new_headers** is not provided, the final headers will be empty. Case insensitive, defaults to
@@ -219,7 +229,7 @@ def concat(
 
 
 def validate(
-    data_frame: Union[TfsDataFrame, pd.DataFrame],
+    data_frame: TfsDataFrame | pd.DataFrame,
     info_str: str = "",
     non_unique_behavior: str = "warn",
 ) -> None:
@@ -230,7 +240,7 @@ def validate(
     .. admonition:: **Methodology**
 
         This function performs several different checks on the provided dataframe:
-         1. Checking no single element is a `list` or `tuple`, which is done with a 
+         1. Checking no single element is a `list` or `tuple`, which is done with a
             custom vectorized function applied column-by-column on the dataframe.
          2. Checking for non-physical values in the dataframe, which is done by
             applying the ``isna`` function with the right option context.
@@ -240,18 +250,20 @@ def validate(
 
 
     Args:
-        data_frame (Union[TfsDataFrame, pd.DataFrame]): the dataframe to check on.
+        data_frame (TfsDataFrame | pd.DataFrame): the dataframe to check on.
         info_str (str): additional information to include in logging statements.
         non_unique_behavior (str): behavior to adopt if non-unique indices or columns are found in the
             dataframe. Accepts `warn` and `raise` as values, case-insensitively, which dictates
             to respectively issue a warning or raise an error if non-unique elements are found.
     """
     if non_unique_behavior.lower() not in ("warn", "raise"):
-        raise KeyError("Invalid value for parameter 'non_unique_behavior'")
+        errmsg = "Invalid value for parameter 'non_unique_behavior'."
+        raise KeyError(errmsg)
 
     # ----- Check that no element is a list / tuple in the dataframe ----- #
     def _element_is_list(element):
         return isinstance(element, (list, tuple))
+
     _element_is_list = np.vectorize(_element_is_list)
 
     list_or_tuple_bool_df = data_frame.apply(_element_is_list)
@@ -260,7 +272,8 @@ def validate(
             f"DataFrame {info_str} contains list/tuple values at Index: "
             f"{list_or_tuple_bool_df.index[list_or_tuple_bool_df.any(axis='columns')].tolist()}"
         )
-        raise TfsFormatError("Lists or tuple elements are not accepted in a TfsDataFrame")
+        errmsg = "Lists or tuple elements are not accepted in a TfsDataFrame"
+        raise TfsFormatError(errmsg)
 
     # -----  Check that no element is non-physical value in the dataframe ----- #
     # The pd.option_context('mode.use_inf_as_na', True) context manager raises FutureWarning
@@ -281,20 +294,24 @@ def validate(
     if data_frame.index.has_duplicates:
         LOGGER.warning("Non-unique indices found.")
         if non_unique_behavior.lower() == "raise":
-            raise TfsFormatError("The dataframe contains non-unique indices")
+            errmsg = "The dataframe contains non-unique indices."
+            raise TfsFormatError(errmsg)
 
     if data_frame.columns.has_duplicates:
         LOGGER.warning("Non-unique column names found.")
         if non_unique_behavior.lower() == "raise":
-            raise TfsFormatError("The dataframe contains non-unique columns.")
+            errmsg = "The dataframe contains non-unique columns."
+            raise TfsFormatError(errmsg)
 
     # The following are deal-breakers for the TFS format and would not, for instance, be accepted by MAD-X
     if any(not isinstance(c, str) for c in data_frame.columns):
         LOGGER.debug(f"Some column-names are not of string-type, dataframe {info_str} is invalid.")
-        raise TfsFormatError("TFS-Columns need to be strings.")
+        errmsg = "TFS-Columns need to be strings."
+        raise TfsFormatError(errmsg)
 
     if any(" " in c for c in data_frame.columns):
         LOGGER.debug(f"Space(s) found in TFS columns, dataframe {info_str} is invalid")
-        raise TfsFormatError("TFS-Columns can not contain spaces.")
+        errmsg = "TFS-Columns can not contain spaces."
+        raise TfsFormatError(errmsg)
 
     LOGGER.debug(f"DataFrame {info_str} validated")

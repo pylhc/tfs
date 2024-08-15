@@ -4,12 +4,14 @@ Reader
 
 Reading functionalty for **TFS** files.
 """
+
+from __future__ import annotations
+
 import logging
 import pathlib
 import shlex
 from collections import OrderedDict
 from dataclasses import dataclass
-from typing import List, Union
 
 import numpy as np
 import pandas as pd
@@ -29,10 +31,10 @@ _UNEXPECTED_SEP: str = (
 
 
 def read_tfs(
-    tfs_file_path: Union[pathlib.Path, str],
-    index: str = None,
+    tfs_file_path: pathlib.Path | str,
+    index: str | None = None,
     non_unique_behavior: str = "warn",
-    validate: bool = True,
+    validate: bool = True,  # noqa: FBT001, FBT002
 ) -> TfsDataFrame:
     """
     Parses the **TFS** table present in **tfs_file_path** and returns a ``TfsDataFrame``.
@@ -61,7 +63,7 @@ def read_tfs(
         validated before being returned.
 
     Args:
-        tfs_file_path (Union[pathlib.Path, str]): Path object to the **TFS** file to read. Can be
+        tfs_file_path (pathlib.Path | str): Path object to the **TFS** file to read. Can be
             a string, in which case it will be cast to a Path object.
         index (str): Name of the column to set as index. If not given, looks in **tfs_file_path**
             for a column starting with `INDEX&&&`.
@@ -124,9 +126,11 @@ def read_tfs(
     metadata: _TfsMetaData = _read_metadata(tfs_file_path)
 
     if metadata.column_names is None:
-        raise TfsFormatError(f"No column names in file {tfs_file_path.absolute()}. File not read.")
+        errmsg = f"No column names in file {tfs_file_path.absolute()}. File not read."
+        raise TfsFormatError(errmsg)
     if metadata.column_types is None:
-        raise TfsFormatError(f"No column types in file {tfs_file_path.absolute()}. File not read.")
+        errmsg = f"No column types in file {tfs_file_path.absolute()}. File not read."
+        raise TfsFormatError(errmsg)
 
     LOGGER.debug("Parsing data part of the file")
     # DO NOT use comment=COMMENTS in here, if you do and the symbol is in an element for some
@@ -164,12 +168,12 @@ def read_tfs(
     return tfs_data_frame
 
 
-def read_headers(tfs_file_path: Union[str, pathlib.Path]) -> OrderedDict:
+def read_headers(tfs_file_path: pathlib.Path | str) -> OrderedDict:
     """
     Parses the top of the **tfs_file_path** and returns the headers.
 
     Args:
-        tfs_file_path (Union[pathlib.Path, str]): Path object to the **TFS**
+        tfs_file_path (pathlib.Path | str): Path object to the **TFS**
             file to read. Can be a string, in which case it will be cast to
             a Path object.
 
@@ -209,7 +213,7 @@ class _TfsMetaData:
     column_types: np.ndarray
 
 
-def _read_metadata(tfs_file_path: Union[str, pathlib.Path]) -> _TfsMetaData:
+def _read_metadata(tfs_file_path: pathlib.Path | str) -> _TfsMetaData:
     """
     Parses the beginning of the **tfs_file_path** to extract metadata (all non dataframe lines).
 
@@ -222,7 +226,7 @@ def _read_metadata(tfs_file_path: Union[str, pathlib.Path]) -> _TfsMetaData:
         returned.
 
     Args:
-        tfs_file_path (Union[pathlib.Path, str]): Path object to the **TFS** file to read. Can be
+        tfs_file_path (pathlib.Path | str): Path object to the **TFS** file to read. Can be
             a string, in which case it will be cast to a Path object.
 
     Returns:
@@ -246,12 +250,11 @@ def _read_metadata(tfs_file_path: Union[str, pathlib.Path]) -> _TfsMetaData:
         engine="python",  # only engine that supports this sep argument
         dtype=str,  # we are reading the headers so we only expect and want strings, they are parsed afterwards
     ) as file_reader:
-        for (
-            line_record
-        ) in file_reader:  # each read chunk / line is made into a DataFrame, colname 0 and value is the read line
+        # Now each read chunk / line is made into a DataFrame, colname 0 and value is the read line
+        for line_record in file_reader:
             line = line_record.loc[:, 0].values[0]  # this is the value of the line as a string
             if not line:
-                continue   # empty line
+                continue  # empty line
             line_components = shlex.split(line)
             if line_components[0] == HEADER:
                 name, value = _parse_header(line_components[1:])
@@ -275,10 +278,11 @@ def _read_metadata(tfs_file_path: Union[str, pathlib.Path]) -> _TfsMetaData:
     )
 
 
-def _parse_header(str_list: List[str]) -> tuple:
+def _parse_header(str_list: list[str]) -> tuple:
     type_index = next((index for index, part in enumerate(str_list) if part.startswith("%")), None)
     if type_index is None:
-        raise TfsFormatError(f"No data type found in header: '{''.join(str_list)}'")
+        errmsg = f"No data type found in header: '{''.join(str_list)}'"
+        raise TfsFormatError(errmsg)
 
     name = " ".join(str_list[0:type_index])
     value_string = " ".join(str_list[(type_index + 1) :])
@@ -306,17 +310,18 @@ def _find_and_set_index(data_frame: TfsDataFrame) -> TfsDataFrame:
     return data_frame
 
 
-def _compute_types(str_list: List[str]) -> List[type]:
+def _compute_types(str_list: list[str]) -> list[type]:
     return [_id_to_type(string) for string in str_list]
 
 
 def _id_to_type(type_str: str) -> type:
     try:
         return ID_TO_TYPE[type_str]
-    except KeyError:  # could be a "%[num]s" that MAD-X likes to output
+    except KeyError as err:  # could be a "%[num]s" that MAD-X likes to output
         if _is_madx_string_col_identifier(type_str):
             return str
-        raise TfsFormatError(f"Unknown data type: {type_str}")
+        errmsg = f"Unknown data type: {type_str}"
+        raise TfsFormatError(errmsg) from err
 
 
 def _is_madx_string_col_identifier(type_str: str) -> bool:

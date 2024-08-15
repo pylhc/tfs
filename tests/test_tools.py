@@ -66,15 +66,15 @@ def test_significant_digits():
     assert s[0] == 0.0339
     assert s[1] == 0.0015
 
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="Input error of 0."):
         s = significant_digits(0.0338577, 0.0)
 
 
-@pytest.fixture()
+@pytest.fixture
 def _bad_file_pathlib() -> pathlib.Path:
     return CURRENT_DIR / "inputs" / "bad_file.tfs"
 
 
-@pytest.fixture()
+@pytest.fixture
 def _bad_file_str() -> str:
     return os.path.join(os.path.dirname(__file__), "inputs", "bad_file.tfs")

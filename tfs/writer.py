@@ -4,10 +4,12 @@ Writer
 
 Writing functionalty for **TFS** files.
 """
+
+from __future__ import annotations
+
 import logging
 import pathlib
 from collections import OrderedDict
-from typing import List, Union
 
 import numpy as np
 import pandas as pd
@@ -22,14 +24,14 @@ LOGGER = logging.getLogger(__name__)
 
 
 def write_tfs(
-    tfs_file_path: Union[pathlib.Path, str],
-    data_frame: Union[TfsDataFrame, pd.DataFrame],
-    headers_dict: dict = None,
-    save_index: Union[str, bool] = False,
+    tfs_file_path: pathlib.Path | str,
+    data_frame: TfsDataFrame | pd.DataFrame,
+    headers_dict: dict | None = None,
+    save_index: str | bool = False,  # noqa: FBT002
     colwidth: int = DEFAULT_COLUMN_WIDTH,
     headerswidth: int = DEFAULT_COLUMN_WIDTH,
     non_unique_behavior: str = "warn",
-    validate: bool = True,
+    validate: bool = True,  # noqa: FBT001, FBT002
 ) -> None:
     """
     Writes the provided ``DataFrame`` to disk at **tfs_file_path**, eventually with the `headers_dict` as
@@ -38,7 +40,7 @@ def write_tfs(
     .. note::
         Compression of the output file is possible, by simply providing a valid compression extension
         as the **tfs_file_path** suffix. Any compression format supported by ``pandas`` is accepted,
-        which includes: ``.gz``, ``.bz2``, ``.zip``, ``.xz``, ``.zst``, ``.tar``, ``.tar.gz``, 
+        which includes: ``.gz``, ``.bz2``, ``.zip``, ``.xz``, ``.zst``, ``.tar``, ``.tar.gz``,
         ``.tar.xz`` or ``.tar.bz2``. See below for examples.
 
     .. warning::
@@ -49,13 +51,13 @@ def write_tfs(
         (such as for instance a sliced FCC lattice).
 
     Args:
-        tfs_file_path (Union[pathlib.Path, str]): Path object to the output **TFS** file. Can be
+        tfs_file_path (pathlib.Path | str): Path object to the output **TFS** file. Can be
             a string, in which case it will be cast to a Path object.
-        data_frame (Union[TfsDataFrame, pd.DataFrame]): ``TfsDataFrame`` or ``pandas.DataFrame`` to
+        data_frame (TfsDataFrame | pd.DataFrame): ``TfsDataFrame`` or ``pandas.DataFrame`` to
             write to file.
         headers_dict (dict): Headers for the `data_frame`. If not provided, assumes a ``TfsDataFrame``
             was given and tries to use ``data_frame.headers``.
-        save_index (Union[str, bool]): bool or string. Default to ``False``. If ``True``, saves
+        save_index (str | bool): bool or string. Default to ``False``. If ``True``, saves
             the index of `data_frame` to a column identifiable by `INDEX&&&`. If given as string,
             saves the index of `data_frame` to a column named by the provided value.
         colwidth (int): Column width, can not be smaller than `MIN_COLUMN_WIDTH`.
@@ -72,21 +74,21 @@ def write_tfs(
         .. code-block:: python
 
             >>> tfs.write("filename.tfs", dataframe)
-        
+
         If one wants to, for instance, raise and error on non-unique indices or columns,
         one can do so as:
 
         .. code-block:: python
 
             >>> tfs.write("filename.tfs", dataframe, non_unique_behavior="raise")
-        
+
         One can choose to skip dataframe validation **at one's own risk** before writing
         it to file. This is done as:
 
         .. code-block:: python
 
             >>> tfs.write("filename.tfs", dataframe, validate=False)
-        
+
         It is possible to directly have the output file be compressed, by specifying a
         valid compression extension as the **tfs_file_path** suffix. The detection
         and compression is handled automatically. For instance:
@@ -112,7 +114,7 @@ def write_tfs(
         except AttributeError:
             headers_dict = OrderedDict()
 
-    data_frame = _autoset_pandas_types(data_frame)  # will always make a copy of the provided df
+    data_frame = data_frame.convert_dtypes(convert_integer=False)
 
     if save_index:
         left_align_first_column = True
@@ -128,43 +130,11 @@ def write_tfs(
     with get_handle(tfs_file_path, mode="w", compression="infer") as output_path:
         tfs_handle = output_path.handle
         tfs_handle.write(  # the last "\n" is to have an EOL at EOF, which is UNIX standard
-            "\n".join((line for line in (headers_str, colnames_str, coltypes_str, data_str) if line)) + "\n"
+            "\n".join(line for line in (headers_str, colnames_str, coltypes_str, data_str) if line) + "\n"
         )
 
 
-def _autoset_pandas_types(data_frame: Union[TfsDataFrame, pd.DataFrame]) -> Union[TfsDataFrame, pd.DataFrame]:
-    """
-    Tries to apply the ``.convert_dtypes()`` method of pandas on a copy on the provided dataframe.
-    If the operation is not possible, checks if the provided dataframe is empty (which prevents
-    ``convert_dtypes()`` to internally use ``pd.concat``) and then return only a copy of the original
-    dataframe. Otherwise, raise the exception given by ``pandas``.
-
-    NOTE: Starting with pandas 1.3.0, this behavior which was a bug has been fixed. This means no
-    ``ValueError`` is raised by calling ``.convert_dtypes()`` on an empty ``DataFrame``, and from
-    this function a warning is logged. The function is kept as to not force a new min version
-    requirement on ``pandas`` or Python for users. When one day we make ``pandas >= 1.3.0`` the
-    minimum requirement, we can remove the checks altogether and just call ``.convert_dtypes()``.
-    See my comment at https://github.com/pylhc/tfs/pull/83#issuecomment-874208869
-
-    Args:
-        data_frame (Union[TfsDataFrame, pd.DataFrame]): ``TfsDataFrame`` or ``pandas.DataFrame`` to
-            determine the types of.
-
-    Returns:
-        The dataframe with dtypes inferred as much as possible to the ``pandas`` dtypes.
-    """
-    LOGGER.debug("Attempting conversion of dataframe to pandas dtypes")
-    try:
-        return data_frame.copy().convert_dtypes(convert_integer=False)  # do not force floats to int
-    except ValueError as pd_convert_error:  # If used on empty dataframes (uses concat internally)
-        if not data_frame.size and "No objects to concatenate" in pd_convert_error.args[0]:
-            LOGGER.warning("An empty dataframe was provided, no types were inferred")
-            return data_frame.copy()  # since it's empty anyway, nothing to convert
-        else:
-            raise pd_convert_error
-
-
-def _insert_index_column(data_frame: Union[TfsDataFrame, pd.DataFrame], save_index: str) -> None:
+def _insert_index_column(data_frame: TfsDataFrame | pd.DataFrame, save_index: str) -> None:
     if isinstance(save_index, str):  # save index into column by name given
         idx_name = save_index
     else:  # save index into column, which can be found by INDEX_ID
@@ -189,33 +159,37 @@ def _get_headers_string(headers_dict: dict, width: int) -> str:
     """
     if headers_dict:
         return "\n".join(_get_header_line(name, headers_dict[name], width) for name in headers_dict)
-    else:
-        return ""
+    return ""
 
 
 def _get_header_line(name: str, value, width: int) -> str:
     if not isinstance(name, str):
-        raise TypeError(f"{name} is not a string")
+        errmsg = f"{name} is not a string"
+        raise TypeError(errmsg)
     type_str = _value_to_type_string(value)
     if type_str == "%s":
         value = f'"{value}"'
     return f"@ {name:<{width}} {type_str} {value:>{width}}"
 
 
-def _get_colnames_string(colnames: List[str], colwidth: int, left_align_first_column: bool) -> str:
+def _get_colnames_string(
+    colnames: list[str], colwidth: int, left_align_first_column: bool  # noqa: FBT001, FBT002
+) -> str:
     format_string = _get_row_format_string([None] * len(colnames), colwidth, left_align_first_column)
     return "* " + format_string.format(*colnames)
 
 
-def _get_coltypes_string(types: pd.Series, colwidth: int, left_align_first_column: bool) -> str:
+def _get_coltypes_string(
+    types: pd.Series, colwidth: int, left_align_first_column: bool  # noqa: FBT001, FBT002
+) -> str:
     fmt = _get_row_format_string([str] * len(types), colwidth, left_align_first_column)
     return "$ " + fmt.format(*[_dtype_to_id_string(type_) for type_ in types])
 
 
 def _get_data_string(
-    data_frame: Union[TfsDataFrame, pd.DataFrame],
+    data_frame: TfsDataFrame | pd.DataFrame,
     colwidth: int,
-    left_align_first_column: bool,
+    left_align_first_column: bool,  # noqa: FBT001
 ) -> str:
     if len(data_frame.index) == 0 or len(data_frame.columns) == 0:
         return "\n"
@@ -225,7 +199,9 @@ def _get_data_string(
     return "\n".join(data_frame.apply(lambda series: format_strings.format(*series), axis=1))
 
 
-def _get_row_format_string(dtypes: List[type], colwidth: int, left_align_first_column: bool) -> str:
+def _get_row_format_string(
+    dtypes: list[type], colwidth: int, left_align_first_column: bool  # noqa: FBT001, FBT002
+) -> str:
     return " ".join(
         f"{{{indx:d}:"
         f"{'<' if (not indx) and left_align_first_column else '>'}"
@@ -234,15 +210,13 @@ def _get_row_format_string(dtypes: List[type], colwidth: int, left_align_first_c
     )
 
 
-def _quote_string_columns(data_frame: Union[TfsDataFrame, pd.DataFrame]) -> Union[TfsDataFrame, pd.DataFrame]:
+def _quote_string_columns(data_frame: TfsDataFrame | pd.DataFrame) -> TfsDataFrame | pd.DataFrame:
     def quote_strings(s):
-        if isinstance(s, str):
-            if not (s.startswith('"') or s.startswith("'")):
-                return f'"{s}"'
+        if isinstance(s, str) and not s.startswith(('"', "'")):
+            return f'"{s}"'
         return s
 
-    data_frame = data_frame.map(quote_strings)
-    return data_frame
+    return data_frame.map(quote_strings)  # makes a copy, we don't modify the original
 
 
 def _value_to_type_string(value) -> str:
@@ -263,13 +237,12 @@ def _dtype_to_id_string(type_: type) -> str:
     """
     if pdtypes.is_integer_dtype(type_) or pdtypes.is_bool_dtype(type_):
         return "%d"
-    elif pdtypes.is_float_dtype(type_):
+    if pdtypes.is_float_dtype(type_):
         return "%le"
-    elif pdtypes.is_string_dtype(type_):
+    if pdtypes.is_string_dtype(type_):
         return "%s"
-    raise TypeError(
-        f"Provided type '{type_}' could not be identified as either a bool, int, float or string dtype"
-    )
+    errmsg = f"Provided type '{type_}' could not be identified as either a bool, int, float or string dtype"
+    raise TypeError(errmsg)
 
 
 def _dtype_to_formatter(type_: type, colsize: int) -> str:
@@ -277,8 +250,8 @@ def _dtype_to_formatter(type_: type, colsize: int) -> str:
     Return the proper string formatter for the provided dtype.
 
     Args:
-        type_ (type): an instance of the built-in type (in this package, one of ``numpy`` or ``pandas``
-            types) to get the formatter for.
+        type_ (type): an instance of the built-in type (in this package, one of
+            ``numpy`` or ``pandas`` types) to get the formatter for.
         colsize (int): size of the written column to use for the formatter.
 
     Returns:
@@ -288,10 +261,9 @@ def _dtype_to_formatter(type_: type, colsize: int) -> str:
         return f"{colsize}"
     if pdtypes.is_integer_dtype(type_) or pdtypes.is_bool_dtype(type_):
         return f"{colsize}d"
-    elif pdtypes.is_float_dtype(type_):
+    if pdtypes.is_float_dtype(type_):
         return f"{colsize}.{colsize - len('-0.e-000')}g"
-    elif pdtypes.is_string_dtype(type_):
+    if pdtypes.is_string_dtype(type_):
         return f"{colsize}s"
-    raise TypeError(
-        f"Provided type '{type_}' could not be identified as either a bool, int, float or string dtype"
-    )
+    errmsg = f"Provided type '{type_}' could not be identified as either a bool, int, float or string dtype"
+    raise TypeError(errmsg)

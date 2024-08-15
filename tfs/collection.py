@@ -4,15 +4,19 @@ Collection
 
 Advanced **TFS** files reading and writing functionality.
 """
-from typing import Tuple, Dict
+
+from __future__ import annotations  # for delayed type annotations
 
 import pathlib
+from typing import TYPE_CHECKING
 
-from pandas import DataFrame
-
-from tfs.frame import TfsDataFrame
 from tfs.reader import read_tfs
 from tfs.writer import write_tfs
+
+if TYPE_CHECKING:
+    from pandas import DataFrame
+
+    from tfs.frame import TfsDataFrame
 
 
 class _MetaTfsCollection(type):
@@ -22,7 +26,7 @@ class _MetaTfsCollection(type):
     TfsCollection docs.
     """
 
-    def __new__(mcs, cls_name, bases, dct: dict):
+    def __new__(cls, cls_name, bases, dct: dict):
         new_dict = dict(dct)
         new_dict["_stored_definitions"] = {}
         new_dict["_two_plane_names"] = []
@@ -45,7 +49,7 @@ class _MetaTfsCollection(type):
                     new_key = f"{key}_{plane}"
                     new_dict[new_key] = prop
                     new_dict["_stored_definitions"][new_key] = value.get_planed_copy(plane)
-        return super().__new__(mcs, cls_name, bases, new_dict)
+        return super().__new__(cls, cls_name, bases, new_dict)
 
 
 class TfsCollection(metaclass=_MetaTfsCollection):
@@ -63,9 +67,9 @@ class TfsCollection(metaclass=_MetaTfsCollection):
     .. code-block:: python
 
         >>> # All TFS attributes must be marked with the Tfs(...) class,
-        ... # and generated attribute names will be appended with _x / _y 
+        ... # and generated attribute names will be appended with _x / _y
         ... # depending on files found in "./example"
-        ... class ExampleCollection(TfsCollection): 
+        ... class ExampleCollection(TfsCollection):
         ...     beta = Tfs("beta_phase_{}.tfs")  # A TFS attribute
         ...     other_value = 7  # A traditional attribute.
 
@@ -89,9 +93,9 @@ class TfsCollection(metaclass=_MetaTfsCollection):
         >>> example.beta["y"] = DataFrame()
 
 
-    If the file to be loaded is not defined for two planes then the attribute can be declared 
+    If the file to be loaded is not defined for two planes then the attribute can be declared
     and accessed as:
-    
+
     .. code-block:: python
 
         >>> coupling = Tfs("getcouple.tfs", two_planes=False)  # declaration
@@ -106,9 +110,10 @@ class TfsCollection(metaclass=_MetaTfsCollection):
     ``self.allow_write`` attribute is set to ``True``, an assignment on one of the attributes will
     trigger the corresponding file write.
     """
+
     INDEX = "NAME"
 
-    def __init__(self, directory: pathlib.Path, allow_write: bool = None):
+    def __init__(self, directory: pathlib.Path, allow_write: bool | None = None):
         self.directory = pathlib.Path(directory) if isinstance(directory, str) else directory
         self.allow_write = False if allow_write is None else allow_write
         self.maybe_call = _MaybeCall(self)
@@ -117,7 +122,7 @@ class TfsCollection(metaclass=_MetaTfsCollection):
         self._buffer = {}
 
     def get_filename(self, name: str) -> str:
-        """ Return the actual filename of the property `name`.
+        """Return the actual filename of the property `name`.
 
         Arguments:
             name (str): Property name of the file.
@@ -128,11 +133,12 @@ class TfsCollection(metaclass=_MetaTfsCollection):
         """
         definition: Tfs = self._stored_definitions.get(name)
         if not definition:
-            raise AttributeError(f"TfsCollection does not have any property named {name}.")
+            errmsg = f"TfsCollection does not have any property named {name}."
+            raise AttributeError(errmsg)
         return self._get_filename(*definition.args, **definition.kwargs)
 
     def get_path(self, name: str) -> pathlib.Path:
-        """ Return the actual file path of the property `name` (convenience function).
+        """Return the actual file path of the property `name` (convenience function).
 
         Arguments:
             name (str): Property name of the file.
@@ -143,7 +149,7 @@ class TfsCollection(metaclass=_MetaTfsCollection):
         """
         return self.directory / self.get_filename(name)
 
-    def _get_filename(self, *args, **kwargs):
+    def _get_filename(self, *args, **kwargs):  # noqa: ARG002
         """
         Return the filename to be loaded or written.
 
@@ -152,9 +158,10 @@ class TfsCollection(metaclass=_MetaTfsCollection):
         not present in the Tfs(...) definition, it will also be given the keyword argument
         ``plane="x"`` or ``plane="y"``.
         """
-        raise NotImplementedError("This is an abstract method, it should be implemented in subclasses.")
+        errmsg = "This is an abstract method, it should be implemented in subclasses."
+        raise NotImplementedError(errmsg)
 
-    def _write_to(self, *args, **kwargs):
+    def _write_to(self, *args, **kwargs):  # noqa: ARG002
         """
         Returns the filename and `TfsDataFrame` to be written on assignments.
 
@@ -163,7 +170,8 @@ class TfsCollection(metaclass=_MetaTfsCollection):
         Which means you can define different locations for reading and writing.
         It also gets the value assigned as first parameter. It must return a tuple (filename, tfs_data_frame).
         """
-        raise NotImplementedError("This is an abstract method, it should be implemented in subclasses.")
+        errmsg = "This is an abstract method, it should be implemented in subclasses."
+        raise NotImplementedError(errmsg)
 
     def clear(self):
         """
@@ -178,7 +186,8 @@ class TfsCollection(metaclass=_MetaTfsCollection):
         Write the current state of the TFSDataFrames into their respective files.
         """
         if not self.allow_write:
-            raise IOError("Cannot flush TfsCollection, as `allow_write` is set to `False`.")
+            errmsg = "Cannot flush TfsCollection, as `allow_write` is set to `False`."
+            raise OSError(errmsg)
 
         for filename, data_frame in self._buffer.items():
             write_tfs(self.directory / filename, data_frame)
@@ -220,7 +229,8 @@ class TfsCollection(metaclass=_MetaTfsCollection):
     def __getattr__(self, attr: str) -> object:
         if attr in self._two_plane_names:
             return TfsCollection._TwoPlanes(self, attr)
-        raise AttributeError(f"{self.__class__.__name__} object has no attribute {attr}")
+        errmsg = f"{self.__class__.__name__} object has no attribute {attr}"
+        raise AttributeError(errmsg)
 
     def __getitem__(self, item):
         return getattr(self, item)
@@ -243,7 +253,7 @@ class TfsCollection(metaclass=_MetaTfsCollection):
             self.write_tfs(filename, data_frame)
         self._buffer[filename] = data_frame
 
-    class _TwoPlanes(object):
+    class _TwoPlanes:
         def __init__(self, parent, attr):
             self.parent = parent
             self.attr = attr
@@ -255,7 +265,7 @@ class TfsCollection(metaclass=_MetaTfsCollection):
             setattr(self.parent, f"{self.attr}_{plane.lower()}", value)
 
     class _FilenameGetter:
-        def __init__(self, parent: 'TfsCollection'):
+        def __init__(self, parent: TfsCollection):
             self.parent = parent
 
         def __getitem__(self, item) -> str:
@@ -264,13 +274,15 @@ class TfsCollection(metaclass=_MetaTfsCollection):
         def __getattr__(self, attr) -> str:
             return self[attr]
 
-        def __call__(self, exist: bool = False) -> Dict[str, str]:
-            all_filenames = {name: self.parent.get_filename(name)
-                             for name in self.parent.defined_properties}
+        def __call__(self, exist: bool = False) -> dict[str, str]:  # noqa: FBT001, FBT002
+            all_filenames = {name: self.parent.get_filename(name) for name in self.parent.defined_properties}
             if not exist:
                 return all_filenames
-            return {name: filename for name, filename in all_filenames.items()
-                    if (self.parent.directory / filename).is_file()}
+            return {
+                name: filename
+                for name, filename in all_filenames.items()
+                if (self.parent.directory / filename).is_file()
+            }
 
 
 class Tfs:
@@ -279,6 +291,7 @@ class Tfs:
     Any parameter given to this class will be passed to the ``_get_filename()`` method,
     together with the plane if ``two_planes=False`` is not present.
     """
+
     PLANES = "x", "y"
 
     def __init__(self, *args, **kwargs):
@@ -292,28 +305,27 @@ class Tfs:
     def get_property(self):
         if self._two_planes:
             return self._get_property_two_planes()
-        else:
-            return self._get_property_single_plane()
+        return self._get_property_single_plane()
 
-    def _get_property_two_planes(self) -> Tuple[property, property]:
+    def _get_property_two_planes(self) -> tuple[property, property]:
         properties = [None, None]
         for idx, plane in enumerate(self.PLANES):
             planed = self.get_planed_copy(plane)
-            properties[idx] = planed._get_property_single_plane()
+            properties[idx] = planed._get_property_single_plane()  # noqa: SLF001
         return tuple(properties)
 
     def _get_property_single_plane(self) -> property:
         def getter_funct(other: TfsCollection):
-            filename = other._get_filename(*self.args, **self.kwargs)
-            return other._load_tfs(filename)
+            filename = other._get_filename(*self.args, **self.kwargs)  # noqa: SLF001
+            return other._load_tfs(filename)  # noqa: SLF001
 
         def setter_funct(other: TfsCollection, value):
             try:
-                filename, data_frame = other._write_to(value, *self.args, **self.kwargs)
-                other._write_tfs(filename, data_frame)
+                filename, data_frame = other._write_to(value, *self.args, **self.kwargs)  # noqa: SLF001
+                other._write_tfs(filename, data_frame)  # noqa: SLF001
             except NotImplementedError:
-                filename = other._get_filename(*self.args, **self.kwargs)
-                other._write_tfs(filename, value)
+                filename = other._get_filename(*self.args, **self.kwargs)  # noqa: SLF001
+                other._write_tfs(filename, value)  # noqa: SLF001
 
         return property(fget=getter_funct, fset=setter_funct)
 
@@ -346,6 +358,6 @@ class _MaybeCall:
         def __call__(self, function_call, *args, **kwargs):
             try:
                 tfs_file = getattr(self.parent, self.attr)
-            except IOError:
+            except OSError:
                 return None
             return function_call(tfs_file, *args, **kwargs)

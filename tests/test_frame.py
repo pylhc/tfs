@@ -14,29 +14,29 @@ CURRENT_DIR = pathlib.Path(__file__).parent
 
 
 class TestFailures:
-    def test_validate_raises_on_wrong_unique_behavior(self, caplog):
+    def test_validate_raises_on_wrong_unique_behavior(self):
         df = TfsDataFrame(index=["A", "B", "A"], columns=["A", "B", "A"])
         with pytest.raises(KeyError):
             validate(df, "", non_unique_behavior="invalid")
 
     @pytest.mark.parametrize("how", ["invalid", "not_left", "not_right"])
-    def test_merge_headers_raises_on_invalid_how_key(self, caplog, how):
+    def test_merge_headers_raises_on_invalid_how_key(self, how):
         headers_left = OrderedDict()
         headers_right = OrderedDict()
 
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError, match="Invalid 'how' argument"):
             merge_headers(headers_left, headers_right, how=how)
 
     def test_access_errors(self):
         df = TfsDataFrame(index=["A", "B", "A"], columns=["A", "B", "A"], headers={"HEADER": 10})
         with pytest.raises(AttributeError):
-            df.does_not_exist
+            _ = df.does_not_exist
 
         with pytest.raises(KeyError):
-            df["does also not exist"]
+            _ = df["does also not exist"]
 
         with pytest.raises(KeyError):  # raises KeyError in pandas, TypeError in dict
-            df[[1, 2, 3]]
+            _ = df[[1, 2, 3]]
 
 
 class TestTfsDataFrameMerging:
@@ -79,7 +79,8 @@ class TestHeadersMerging:
         result = merge_headers(headers_left, headers_right, how=how)
 
         assert isinstance(result, OrderedDict)
-        assert len(result) >= len(headers_left) and len(result) >= len(headers_right)  # no key disappeared
+        assert len(result) >= len(headers_left)  # no key disappeared
+        assert len(result) >= len(headers_right)  # no key disappeared
         for key in result:  # check that we prioritized headers_left's contents
             if key in headers_left and key in headers_right:
                 assert result[key] == headers_left[key]
@@ -91,7 +92,8 @@ class TestHeadersMerging:
         result = merge_headers(headers_left, headers_right, how=how)
 
         assert isinstance(result, OrderedDict)
-        assert len(result) >= len(headers_left) and len(result) >= len(headers_right)  # no key disappeared
+        assert len(result) >= len(headers_left)  # no key disappeared
+        assert len(result) >= len(headers_right)  # no key disappeared
         for key in result:  # check that we prioritized headers_right's contents
             if key in headers_left and key in headers_right:
                 assert result[key] == headers_right[key]
@@ -132,7 +134,7 @@ class TestPrinting:
         assert "Headers" in print_out
 
         # Check that the ellipsis worked
-        assert not all(key in print_out for key in headers.keys())
+        assert not all(key in print_out for key in headers)
         assert not all(str(val) in print_out for val in headers.values())
         assert "..." in print_out
 
@@ -185,11 +187,11 @@ class TestTfsDataFramesConcatenating:
 # ------ Fixtures ------ #
 
 
-@pytest.fixture()
+@pytest.fixture
 def _tfs_file_x_pathlib() -> pathlib.Path:
     return CURRENT_DIR / "inputs" / "file_x.tfs"
 
 
-@pytest.fixture()
+@pytest.fixture
 def _tfs_file_y_pathlib() -> pathlib.Path:
     return CURRENT_DIR / "inputs" / "file_x.tfs"
