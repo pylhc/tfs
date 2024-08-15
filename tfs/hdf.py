@@ -72,7 +72,7 @@ def read_hdf(path: Path | str) -> TfsDataFrame:
 
     Args:
         path (Path, str): Path of the file to read.
-    
+
     Returns:
         A ``TfsDataFrame`` object with the loaded data from the file.
     """
