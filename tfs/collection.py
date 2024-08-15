@@ -25,7 +25,7 @@ class _MetaTfsCollection(type):
     TfsCollection docs.
     """
 
-    def __new__(mcs, cls_name, bases, dct: dict):
+    def __new__(cls, cls_name, bases, dct: dict):
         new_dict = dict(dct)
         new_dict["_stored_definitions"] = {}
         new_dict["_two_plane_names"] = []
@@ -48,7 +48,7 @@ class _MetaTfsCollection(type):
                     new_key = f"{key}_{plane}"
                     new_dict[new_key] = prop
                     new_dict["_stored_definitions"][new_key] = value.get_planed_copy(plane)
-        return super().__new__(mcs, cls_name, bases, new_dict)
+        return super().__new__(cls, cls_name, bases, new_dict)
 
 
 class TfsCollection(metaclass=_MetaTfsCollection):
