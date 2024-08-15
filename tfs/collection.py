@@ -5,6 +5,7 @@ Collection
 Advanced **TFS** files reading and writing functionality.
 """
 from __future__ import annotations  # for delayed type annotations
+
 import pathlib
 
 from pandas import DataFrame
@@ -62,9 +63,9 @@ class TfsCollection(metaclass=_MetaTfsCollection):
     .. code-block:: python
 
         >>> # All TFS attributes must be marked with the Tfs(...) class,
-        ... # and generated attribute names will be appended with _x / _y 
+        ... # and generated attribute names will be appended with _x / _y
         ... # depending on files found in "./example"
-        ... class ExampleCollection(TfsCollection): 
+        ... class ExampleCollection(TfsCollection):
         ...     beta = Tfs("beta_phase_{}.tfs")  # A TFS attribute
         ...     other_value = 7  # A traditional attribute.
 
@@ -88,7 +89,7 @@ class TfsCollection(metaclass=_MetaTfsCollection):
         >>> example.beta["y"] = DataFrame()
 
 
-    If the file to be loaded is not defined for two planes then the attribute can be declared 
+    If the file to be loaded is not defined for two planes then the attribute can be declared
     and accessed as:
     
     .. code-block:: python
