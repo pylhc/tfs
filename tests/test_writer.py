@@ -8,8 +8,7 @@ import pandas
 import pytest
 from cpymad.madx import Madx
 from pandas._testing import assert_dict_equal
-from pandas.testing import (assert_frame_equal, assert_index_equal,
-                            assert_series_equal)
+from pandas.testing import assert_frame_equal, assert_index_equal, assert_series_equal
 
 import tfs
 from tfs import TfsDataFrame, read_tfs, write_tfs
@@ -48,7 +47,7 @@ class TestWrites:
         # For the comparison we only compare the column (as Series-like) and accept that the
         # user sees a little difference in the data format (Series vs DataFrame with 1 column)
         new = read_tfs(write_location)
-        assert_series_equal(df, new["0"], check_names=False)  
+        assert_series_equal(df, new["0"], check_names=False)
         assert_dict_equal(test_headers, new.headers, compare_keys=True)
 
     def test_madx_reads_written_tfsdataframes(self, _bigger_tfs_dataframe, tmp_path):
@@ -260,17 +259,17 @@ class TestFailures:
     def test_dtype_to_format_fails_unexpected_dtypes(self):
         unexpected_list = [1, 2, 3]
         with pytest.raises(TypeError):
-            _ = tfs.writer._dtype_to_formatter(unexpected_list, colsize=10)
+            _ = tfs.writer._dtype_to_formatter(unexpected_list, colsize=10)  # noqa: SLF001
 
     def test_dtype_to_str_fails_unexpected_dtypes(self):
         unexpected_list = [1, 2, 3]
         with pytest.raises(TypeError):
-            _ = tfs.writer._dtype_to_id_string(unexpected_list)
+            _ = tfs.writer._dtype_to_id_string(unexpected_list)  # noqa: SLF001
 
     def test_header_line_raises_on_non_strings(self):
         not_a_string = dict()
         with pytest.raises(TypeError):
-            _ = tfs.writer._get_header_line(not_a_string, 10, 10)
+            _ = tfs.writer._get_header_line(not_a_string, 10, 10)  # noqa: SLF001
 
 
 class TestWarnings:
@@ -303,7 +302,7 @@ class TestWarnings:
 # ------ Fixtures ------ #
 
 
-@pytest.fixture()
+@pytest.fixture
 def _tfs_dataframe() -> TfsDataFrame:
     return TfsDataFrame(
         index=range(3),
@@ -313,7 +312,7 @@ def _tfs_dataframe() -> TfsDataFrame:
     )
 
 
-@pytest.fixture()
+@pytest.fixture
 def _bigger_tfs_dataframe() -> TfsDataFrame:
     return TfsDataFrame(
         index=range(50),
@@ -323,7 +322,7 @@ def _bigger_tfs_dataframe() -> TfsDataFrame:
     )
 
 
-@pytest.fixture()
+@pytest.fixture
 def _dataframe_empty_headers() -> TfsDataFrame:
     return TfsDataFrame(
         index=range(3),
@@ -333,7 +332,7 @@ def _dataframe_empty_headers() -> TfsDataFrame:
     )
 
 
-@pytest.fixture()
+@pytest.fixture
 def _messed_up_dataframe() -> TfsDataFrame:
     """Returns a TfsDataFrame with mixed types in each column, some elements being lists."""
     int_row = numpy.array([random.randint(int(-1e5), int(1e5)) for _ in range(4)], dtype=numpy.float64)
@@ -348,7 +347,7 @@ def _messed_up_dataframe() -> TfsDataFrame:
     )
 
 
-@pytest.fixture()
+@pytest.fixture
 def _dict_column_in_dataframe() -> TfsDataFrame:
     """Returns a TfsDataFrame with a column having dictionaries as elements."""
     int_elements = [random.randint(int(-1e5), int(1e5)) for _ in range(4)]
@@ -364,7 +363,7 @@ def _dict_column_in_dataframe() -> TfsDataFrame:
     )
 
 
-@pytest.fixture()
+@pytest.fixture
 def _list_column_in_dataframe() -> TfsDataFrame:
     """Returns a TfsDataFrame with a column having lists as elements."""
     int_elements = [random.randint(int(-1e5), int(1e5)) for _ in range(4)]
@@ -380,7 +379,7 @@ def _list_column_in_dataframe() -> TfsDataFrame:
     )
 
 
-@pytest.fixture()
+@pytest.fixture
 def _pd_dataframe() -> pandas.DataFrame:
     return pandas.DataFrame(
         index=range(3),

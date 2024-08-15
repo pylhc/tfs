@@ -156,7 +156,7 @@ class TestFilenames:
 
     def test_tfscollection_getfilename_not_implemented(self):
         with pytest.raises(NotImplementedError):
-            TfsCollection._get_filename("doesnt matter")
+            TfsCollection._get_filename("doesnt matter")  # noqa: SLF001
 
     def test_get_filename(self, _input_dir_pathlib: pathlib.Path):
         c = CollectionTest(_input_dir_pathlib, allow_write=False)
@@ -254,10 +254,10 @@ class TestOther:
         assert res_file[1] == 13
 
     def test_buffer_clear(self, _dummy_collection):
-        _dummy_collection._buffer["some_key"] = 5
-        assert _dummy_collection._buffer["some_key"]
+        _dummy_collection._buffer["some_key"] = 5  # noqa: SLF001
+        assert _dummy_collection._buffer["some_key"]  # noqa: SLF001
         _dummy_collection.clear()
-        assert not _dummy_collection._buffer
+        assert not _dummy_collection._buffer  # noqa: SLF001
 
     def test_no_attribute(self, _dummy_collection):
         with pytest.raises(AttributeError):
