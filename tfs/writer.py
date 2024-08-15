@@ -161,8 +161,7 @@ def _autoset_pandas_types(data_frame: TfsDataFrame | pd.DataFrame) -> TfsDataFra
         if not data_frame.size and "No objects to concatenate" in pd_convert_error.args[0]:
             LOGGER.warning("An empty dataframe was provided, no types were inferred")
             return data_frame.copy()  # since it's empty anyway, nothing to convert
-        else:
-            raise pd_convert_error
+        raise pd_convert_error
 
 
 def _insert_index_column(data_frame: TfsDataFrame | pd.DataFrame, save_index: str) -> None:
@@ -190,8 +189,7 @@ def _get_headers_string(headers_dict: dict, width: int) -> str:
     """
     if headers_dict:
         return "\n".join(_get_header_line(name, headers_dict[name], width) for name in headers_dict)
-    else:
-        return ""
+    return ""
 
 
 def _get_header_line(name: str, value, width: int) -> str:
@@ -278,8 +276,8 @@ def _dtype_to_formatter(type_: type, colsize: int) -> str:
     Return the proper string formatter for the provided dtype.
 
     Args:
-        type_ (type): an instance of the built-in type (in this package, one of ``numpy`` or ``pandas``
-            types) to get the formatter for.
+        type_ (type): an instance of the built-in type (in this package, one of
+            ``numpy`` or ``pandas`` types) to get the formatter for.
         colsize (int): size of the written column to use for the formatter.
 
     Returns:
