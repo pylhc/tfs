@@ -5,12 +5,14 @@ Frame
 Contains the class definition of a ``TfsDataFrame``, inherited from the ``pandas`` ``DataFrame``, as well
 as a utility function to validate the correctness of a ``TfsDataFrame``.
 """
+from __future__ import annotations
+
 import logging
 from collections import OrderedDict
 from collections.abc import Sequence
 from contextlib import suppress
 from functools import partial, reduce
-from typing import ClassVar, Union
+from typing import ClassVar
 
 import numpy as np
 import pandas as pd
@@ -98,18 +100,18 @@ class TfsDataFrame(pd.DataFrame):
 
     def merge(
         self,
-        right: Union["TfsDataFrame", pd.DataFrame],
-        how_headers: str = None,
-        new_headers: dict = None,
+        right: TfsDataFrame | pd.DataFrame,
+        how_headers: str | None = None,
+        new_headers: dict | None = None,
         **kwargs,
-    ) -> "TfsDataFrame":
+    ) -> TfsDataFrame:
         """
         Merge ``TfsDataFrame`` objects with a database-style join. Data manipulation is done by the
         ``pandas.Dataframe`` method of the same name. Resulting headers are either merged according to the
         provided **how_headers** method or as given via **new_headers**.
 
         Args:
-            right (Union[TfsDataFrame, pd.DataFrame]): The ``TfsDataFrame`` to merge with the caller.
+            right (TfsDataFrame | pd.DataFrame): The ``TfsDataFrame`` to merge with the caller.
             how_headers (str): Type of merge to be performed for the headers. Either **left** or **right**.
                 Refer to :func:`tfs.frame.merge_headers` for behavior. If ``None`` is provided and
                 **new_headers** is not provided, the final headers will be empty. Case insensitive,
@@ -177,9 +179,9 @@ def merge_headers(headers_left: dict, headers_right: dict, how: str) -> OrderedD
 
 
 def concat(
-    objs: Sequence[Union[TfsDataFrame, pd.DataFrame]],
-    how_headers: str = None,
-    new_headers: dict = None,
+    objs: Sequence[TfsDataFrame | pd.DataFrame],
+    how_headers: str | None = None,
+    new_headers: dict | None = None,
     **kwargs,
 ) -> TfsDataFrame:
     """
@@ -194,7 +196,7 @@ def concat(
         **how_headers** and **new_headers** as ``None`` (their defaults) to end up with empty headers.
 
     Args:
-        objs (Sequence[Union[TfsDataFrame, pd.DataFrame]]): the ``TfsDataFrame`` objects to be concatenated.
+        objs (Sequence[TfsDataFrame | pd.DataFrame]): the ``TfsDataFrame`` objects to be concatenated.
         how_headers (str): Type of merge to be performed for the headers. Either **left** or **right**.
             Refer to :func:`tfs.frame.merge_headers` for behavior. If ``None`` is provided and
             **new_headers** is not provided, the final headers will be empty. Case insensitive, defaults to
@@ -223,7 +225,7 @@ def concat(
 
 
 def validate(
-    data_frame: Union[TfsDataFrame, pd.DataFrame],
+    data_frame: TfsDataFrame | pd.DataFrame,
     info_str: str = "",
     non_unique_behavior: str = "warn",
 ) -> None:
@@ -244,7 +246,7 @@ def validate(
 
 
     Args:
-        data_frame (Union[TfsDataFrame, pd.DataFrame]): the dataframe to check on.
+        data_frame (TfsDataFrame | pd.DataFrame): the dataframe to check on.
         info_str (str): additional information to include in logging statements.
         non_unique_behavior (str): behavior to adopt if non-unique indices or columns are found in the
             dataframe. Accepts `warn` and `raise` as values, case-insensitively, which dictates
