@@ -18,7 +18,7 @@ LOGGER = logging.getLogger(__name__)
 
 
 def significant_digits(
-    value: float, error: float, return_floats: bool = False
+    value: float, error: float, return_floats: bool = False  # noqa: FBT001, FBT002
 ) -> Union[tuple[str, str], tuple[float, float]]:
     """
     Computes `value` and its error properly rounded with respect to the size of `error`.
