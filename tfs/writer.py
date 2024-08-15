@@ -26,11 +26,11 @@ def write_tfs(
     tfs_file_path: pathlib.Path | str,
     data_frame: TfsDataFrame | pd.DataFrame,
     headers_dict: dict | None = None,
-    save_index: str | bool = False,
+    save_index: str | bool = False,  # noqa: FBT002
     colwidth: int = DEFAULT_COLUMN_WIDTH,
     headerswidth: int = DEFAULT_COLUMN_WIDTH,
     non_unique_behavior: str = "warn",
-    validate: bool = True,
+    validate: bool = True,  # noqa: FBT001, FBT002
 ) -> None:
     """
     Writes the provided ``DataFrame`` to disk at **tfs_file_path**, eventually with the `headers_dict` as
@@ -203,12 +203,12 @@ def _get_header_line(name: str, value, width: int) -> str:
     return f"@ {name:<{width}} {type_str} {value:>{width}}"
 
 
-def _get_colnames_string(colnames: list[str], colwidth: int, left_align_first_column: bool) -> str:
+def _get_colnames_string(colnames: list[str], colwidth: int, left_align_first_column: bool) -> str:  # noqa: FBT001
     format_string = _get_row_format_string([None] * len(colnames), colwidth, left_align_first_column)
     return "* " + format_string.format(*colnames)
 
 
-def _get_coltypes_string(types: pd.Series, colwidth: int, left_align_first_column: bool) -> str:
+def _get_coltypes_string(types: pd.Series, colwidth: int, left_align_first_column: bool) -> str:  # noqa: FBT001
     fmt = _get_row_format_string([str] * len(types), colwidth, left_align_first_column)
     return "$ " + fmt.format(*[_dtype_to_id_string(type_) for type_ in types])
 
@@ -216,7 +216,7 @@ def _get_coltypes_string(types: pd.Series, colwidth: int, left_align_first_colum
 def _get_data_string(
     data_frame: TfsDataFrame | pd.DataFrame,
     colwidth: int,
-    left_align_first_column: bool,
+    left_align_first_column: bool,  # noqa: FBT001
 ) -> str:
     if len(data_frame.index) == 0 or len(data_frame.columns) == 0:
         return "\n"
@@ -226,7 +226,7 @@ def _get_data_string(
     return "\n".join(data_frame.apply(lambda series: format_strings.format(*series), axis=1))
 
 
-def _get_row_format_string(dtypes: list[type], colwidth: int, left_align_first_column: bool) -> str:
+def _get_row_format_string(dtypes: list[type], colwidth: int, left_align_first_column: bool) -> str:  # noqa: FBT001
     return " ".join(
         f"{{{indx:d}:"
         f"{'<' if (not indx) and left_align_first_column else '>'}"
