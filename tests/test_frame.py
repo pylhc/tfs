@@ -30,13 +30,13 @@ class TestFailures:
     def test_access_errors(self):
         df = TfsDataFrame(index=["A", "B", "A"], columns=["A", "B", "A"], headers={"HEADER": 10})
         with pytest.raises(AttributeError):
-            df.does_not_exist
+            _ = df.does_not_exist
 
         with pytest.raises(KeyError):
-            df["does also not exist"]
+            _ = df["does also not exist"]
 
         with pytest.raises(KeyError):  # raises KeyError in pandas, TypeError in dict
-            df[[1, 2, 3]]
+            _ = df[[1, 2, 3]]
 
 
 class TestTfsDataFrameMerging:
