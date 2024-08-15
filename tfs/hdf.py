@@ -6,11 +6,15 @@ Additional tools for reading and writing ``TfsDataFrames`` into ``hdf5`` files.
 """
 from __future__ import annotations
 
-from pathlib import Path
+import logging
+from typing import TYPE_CHECKING
 
 import pandas as pd
 
 from tfs import TfsDataFrame
+
+if TYPE_CHECKING:
+    from pathlib import Path
 
 try:
     import h5py
@@ -21,8 +25,6 @@ try:
     import tables
 except ImportError:
     tables = None
-
-import logging
 
 LOGGER = logging.getLogger(__name__)
 
