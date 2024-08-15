@@ -230,9 +230,9 @@ def _dtype_to_id_string(type_: type) -> str:
     """
     if pdtypes.is_integer_dtype(type_) or pdtypes.is_bool_dtype(type_):
         return "%d"
-    elif pdtypes.is_float_dtype(type_):
+    if pdtypes.is_float_dtype(type_):
         return "%le"
-    elif pdtypes.is_string_dtype(type_):
+    if pdtypes.is_string_dtype(type_):
         return "%s"
     errmsg = f"Provided type '{type_}' could not be identified as either a bool, int, float or string dtype"
     raise TypeError(errmsg)
@@ -254,9 +254,9 @@ def _dtype_to_formatter(type_: type, colsize: int) -> str:
         return f"{colsize}"
     if pdtypes.is_integer_dtype(type_) or pdtypes.is_bool_dtype(type_):
         return f"{colsize}d"
-    elif pdtypes.is_float_dtype(type_):
+    if pdtypes.is_float_dtype(type_):
         return f"{colsize}.{colsize - len('-0.e-000')}g"
-    elif pdtypes.is_string_dtype(type_):
+    if pdtypes.is_string_dtype(type_):
         return f"{colsize}s"
     errmsg = f"Provided type '{type_}' could not be identified as either a bool, int, float or string dtype"
     raise TypeError(errmsg)
