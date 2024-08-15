@@ -1,5 +1,4 @@
 import pathlib
-from collections import OrderedDict
 from functools import partial, reduce
 
 import pandas as pd
@@ -21,8 +20,8 @@ class TestFailures:
 
     @pytest.mark.parametrize("how", ["invalid", "not_left", "not_right"])
     def test_merge_headers_raises_on_invalid_how_key(self, how):
-        headers_left = OrderedDict()
-        headers_right = OrderedDict()
+        headers_left = {}
+        headers_right = {}
 
         with pytest.raises(ValueError, match="Invalid 'how' argument"):
             merge_headers(headers_left, headers_right, how=how)
@@ -49,7 +48,7 @@ class TestTfsDataFrameMerging:
         result = dframe_x.merge(dframe_y, how_headers=how_headers, how=how, on=on)
 
         assert isinstance(result, TfsDataFrame)
-        assert isinstance(result.headers, OrderedDict)
+        assert isinstance(result.headers, dict)
         assert_dict_equal(result.headers, merge_headers(dframe_x.headers, dframe_y.headers, how=how_headers))
         assert_frame_equal(result, pd.DataFrame(dframe_x).merge(pd.DataFrame(dframe_y), how=how, on=on))
 
@@ -64,10 +63,10 @@ class TestTfsDataFrameMerging:
         result = dframe_x.merge(dframe_y, how_headers=how_headers, how=how, on=on)
 
         assert isinstance(result, TfsDataFrame)
-        assert isinstance(result.headers, OrderedDict)
+        assert isinstance(result.headers, dict)
 
-        # using empty OrderedDict here as it's what dframe_y is getting when converted in the call
-        assert_dict_equal(result.headers, merge_headers(dframe_x.headers, OrderedDict(), how=how_headers))
+        # using empty dict here as it's what dframe_y is getting when converted in the call
+        assert_dict_equal(result.headers, merge_headers(dframe_x.headers, headers_right={}, how=how_headers))
         assert_frame_equal(result, pd.DataFrame(dframe_x).merge(pd.DataFrame(dframe_y), how=how, on=on))
 
 
@@ -78,7 +77,7 @@ class TestHeadersMerging:
         headers_right = tfs.read(_tfs_file_y_pathlib).headers
         result = merge_headers(headers_left, headers_right, how=how)
 
-        assert isinstance(result, OrderedDict)
+        assert isinstance(result, dict)
         assert len(result) >= len(headers_left)  # no key disappeared
         assert len(result) >= len(headers_right)  # no key disappeared
         for key in result:  # check that we prioritized headers_left's contents
@@ -91,7 +90,7 @@ class TestHeadersMerging:
         headers_right = tfs.read(_tfs_file_y_pathlib).headers
         result = merge_headers(headers_left, headers_right, how=how)
 
-        assert isinstance(result, OrderedDict)
+        assert isinstance(result, dict)
         assert len(result) >= len(headers_left)  # no key disappeared
         assert len(result) >= len(headers_right)  # no key disappeared
         for key in result:  # check that we prioritized headers_right's contents
@@ -103,17 +102,17 @@ class TestHeadersMerging:
         headers_left = tfs.read(_tfs_file_x_pathlib).headers
         headers_right = tfs.read(_tfs_file_y_pathlib).headers
         result = merge_headers(headers_left, headers_right, how=how)
-        assert result == OrderedDict()  # giving None returns empty headers
+        assert result == {}  # giving None returns empty headers
 
     def test_providing_new_headers_overrides_merging(self, _tfs_file_x_pathlib, _tfs_file_y_pathlib):
         dframe_x = tfs.read(_tfs_file_x_pathlib)
         dframe_y = tfs.read(_tfs_file_y_pathlib)
 
-        assert dframe_x.merge(right=dframe_y, new_headers={}).headers == OrderedDict()
-        assert dframe_y.merge(right=dframe_x, new_headers={}).headers == OrderedDict()
+        assert dframe_x.merge(right=dframe_y, new_headers={}).headers == {}
+        assert dframe_y.merge(right=dframe_x, new_headers={}).headers == {}
 
-        assert tfs.concat([dframe_x, dframe_y], new_headers={}).headers == OrderedDict()
-        assert tfs.concat([dframe_y, dframe_x], new_headers={}).headers == OrderedDict()
+        assert tfs.concat([dframe_x, dframe_y], new_headers={}).headers == {}
+        assert tfs.concat([dframe_y, dframe_x], new_headers={}).headers == {}
 
 
 class TestPrinting:
@@ -157,7 +156,7 @@ class TestTfsDataFramesConcatenating:
         merger = partial(merge_headers, how=how_headers)
         all_headers = (tfsdframe.headers for tfsdframe in objs)
         assert isinstance(result, TfsDataFrame)
-        assert isinstance(result.headers, OrderedDict)
+        assert isinstance(result.headers, dict)
         assert_dict_equal(result.headers, reduce(merger, all_headers))
         assert_frame_equal(result, pd.concat(objs, axis=axis, join=join))
 
@@ -175,10 +174,10 @@ class TestTfsDataFramesConcatenating:
         merger = partial(merge_headers, how=how_headers)
         # all_headers = (tfsdframe.headers for tfsdframe in objs)
         assert isinstance(result, TfsDataFrame)
-        assert isinstance(result.headers, OrderedDict)
+        assert isinstance(result.headers, dict)
 
-        all_headers = [  # empty OrderedDicts here as it's what objects are getting when converted in the call
-            dframe.headers if isinstance(dframe, TfsDataFrame) else OrderedDict() for dframe in objs
+        all_headers = [  # empty dicts here as it's what objects are getting when converted in the call
+            dframe.headers if isinstance(dframe, TfsDataFrame) else {} for dframe in objs
         ]
         assert_dict_equal(result.headers, reduce(merger, all_headers))
         assert_frame_equal(result, pd.concat(objs, axis=axis, join=join))
