@@ -4,9 +4,8 @@ Collection
 
 Advanced **TFS** files reading and writing functionality.
 """
-from typing import Tuple, Dict
-
 import pathlib
+from typing import Dict, Tuple
 
 from pandas import DataFrame
 
@@ -178,7 +177,7 @@ class TfsCollection(metaclass=_MetaTfsCollection):
         Write the current state of the TFSDataFrames into their respective files.
         """
         if not self.allow_write:
-            raise IOError("Cannot flush TfsCollection, as `allow_write` is set to `False`.")
+            raise OSError("Cannot flush TfsCollection, as `allow_write` is set to `False`.")
 
         for filename, data_frame in self._buffer.items():
             write_tfs(self.directory / filename, data_frame)
@@ -243,7 +242,7 @@ class TfsCollection(metaclass=_MetaTfsCollection):
             self.write_tfs(filename, data_frame)
         self._buffer[filename] = data_frame
 
-    class _TwoPlanes(object):
+    class _TwoPlanes:
         def __init__(self, parent, attr):
             self.parent = parent
             self.attr = attr
@@ -346,6 +345,6 @@ class _MaybeCall:
         def __call__(self, function_call, *args, **kwargs):
             try:
                 tfs_file = getattr(self.parent, self.attr)
-            except IOError:
+            except OSError:
                 return None
             return function_call(tfs_file, *args, **kwargs)
