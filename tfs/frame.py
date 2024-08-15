@@ -43,9 +43,9 @@ class TfsDataFrame(pd.DataFrame):
         except KeyError as error:
             try:
                 return self.headers[key]
-            except KeyError:
+            except KeyError as seconderror:
                 errmsg = f"{key} is neither in the DataFrame nor in headers."
-                raise KeyError(errmsg)
+                raise KeyError(errmsg) from seconderror
             except TypeError:
                 raise error
 
@@ -55,9 +55,9 @@ class TfsDataFrame(pd.DataFrame):
         except AttributeError:
             try:
                 return self.headers[name]
-            except KeyError:
+            except KeyError as error:
                 errmsg = f"{name} is neither in the DataFrame nor in headers."
-                raise AttributeError(errmsg)
+                raise AttributeError(errmsg) from error
 
     @property
     def _constructor(self):
@@ -84,7 +84,7 @@ class TfsDataFrame(pd.DataFrame):
         s: str = ""
         if len(self.headers):
             s += "Headers:\n"
-            if len(self.headers) > 7:
+            if len(self.headers) > 7:  # noqa: PLR2004
                 items = list(self.headers.items())
                 s += f"{_str_items(items[:3])}\n{space}...\n{_str_items(items[-3:])}\n"
             else:
