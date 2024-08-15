@@ -4,7 +4,6 @@ Constants
 
 General constants used throughout ``tfs-pandas``, relating to the standard of **TFS** files.
 """
-from typing import Dict
 
 import numpy as np
 
@@ -17,7 +16,7 @@ INDEX_ID: str = "INDEX&&&"
 
 # ----- Types Mapping ----- #
 
-ID_TO_TYPE: Dict[str, type] = {  # used when reading files
+ID_TO_TYPE: dict[str, type] = {  # used when reading files
     "%s": str,
     "%bpm_s": str,
     "%le": np.float64,
