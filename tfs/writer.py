@@ -113,7 +113,7 @@ def write_tfs(
         except AttributeError:
             headers_dict = OrderedDict()
 
-    data_frame = _autoset_pandas_types(data_frame)  # will always make a copy of the provided df
+    data_frame = data_frame.convert_dtypes(convert_integer=False)
 
     if save_index:
         left_align_first_column = True
@@ -131,37 +131,6 @@ def write_tfs(
         tfs_handle.write(  # the last "\n" is to have an EOL at EOF, which is UNIX standard
             "\n".join(line for line in (headers_str, colnames_str, coltypes_str, data_str) if line) + "\n"
         )
-
-
-def _autoset_pandas_types(data_frame: TfsDataFrame | pd.DataFrame) -> TfsDataFrame | pd.DataFrame:
-    """
-    Tries to apply the ``.convert_dtypes()`` method of pandas on a copy on the provided dataframe.
-    If the operation is not possible, checks if the provided dataframe is empty (which prevents
-    ``convert_dtypes()`` to internally use ``pd.concat``) and then return only a copy of the original
-    dataframe. Otherwise, raise the exception given by ``pandas``.
-
-    NOTE: Starting with pandas 1.3.0, this behavior which was a bug has been fixed. This means no
-    ``ValueError`` is raised by calling ``.convert_dtypes()`` on an empty ``DataFrame``, and from
-    this function a warning is logged. The function is kept as to not force a new min version
-    requirement on ``pandas`` or Python for users. When one day we make ``pandas >= 1.3.0`` the
-    minimum requirement, we can remove the checks altogether and just call ``.convert_dtypes()``.
-    See my comment at https://github.com/pylhc/tfs/pull/83#issuecomment-874208869
-
-    Args:
-        data_frame (TfsDataFrame | pd.DataFrame): ``TfsDataFrame`` or ``pandas.DataFrame`` to
-            determine the types of.
-
-    Returns:
-        The dataframe with dtypes inferred as much as possible to the ``pandas`` dtypes.
-    """
-    LOGGER.debug("Attempting conversion of dataframe to pandas dtypes")
-    try:
-        return data_frame.copy().convert_dtypes(convert_integer=False)  # do not force floats to int
-    except ValueError as pd_convert_error:  # If used on empty dataframes (uses concat internally)
-        if not data_frame.size and "No objects to concatenate" in pd_convert_error.args[0]:
-            LOGGER.warning("An empty dataframe was provided, no types were inferred")
-            return data_frame.copy()  # since it's empty anyway, nothing to convert
-        raise
 
 
 def _insert_index_column(data_frame: TfsDataFrame | pd.DataFrame, save_index: str) -> None:
