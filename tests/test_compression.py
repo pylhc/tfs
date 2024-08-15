@@ -70,7 +70,7 @@ def test_read_headers_compressed(_tfs_compressed_filex_no_suffix, extension):
     assert len(headers) > 0
     assert len(str(headers)) > 0
     assert all(
-        key in headers.keys()
+        key in headers
         for key in ["TITLE", "DPP", "Q1", "Q1RMS", "NATQ1", "NATQ1RMS", "BPMCOUNT"]
     )
 
@@ -86,23 +86,23 @@ def _path_with_added_extension(path: pathlib.Path, extension: str) -> pathlib.Pa
 # ------ Fixtures ------ #
 
 
-@pytest.fixture()
+@pytest.fixture
 def _tfs_filex() -> pathlib.Path:
     return CURRENT_DIR / "inputs" / "file_x.tfs"
 
 
-@pytest.fixture()
+@pytest.fixture
 def _tfs_filey() -> pathlib.Path:
     return CURRENT_DIR / "inputs" / "file_y.tfs"
 
 
-@pytest.fixture()
+@pytest.fixture
 def _tfs_compressed_filex_no_suffix() -> pathlib.Path:
     """Add the wanted compression suffix to this."""
     return CURRENT_DIR / "inputs" / "compressed" / "file_x.tfs"
 
 
-@pytest.fixture()
+@pytest.fixture
 def _tfs_compressed_filey_no_suffix() -> pathlib.Path:
     """Add the wanted compression suffix to this."""
     return CURRENT_DIR / "inputs" / "compressed" / "file_y.tfs"
