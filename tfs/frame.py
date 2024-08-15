@@ -7,9 +7,10 @@ as a utility function to validate the correctness of a ``TfsDataFrame``.
 """
 import logging
 from collections import OrderedDict
+from collections.abc import Sequence
 from contextlib import suppress
 from functools import partial, reduce
-from typing import Sequence, Set, Union
+from typing import Set, Union
 
 import numpy as np
 import pandas as pd
@@ -62,7 +63,7 @@ class TfsDataFrame(pd.DataFrame):
         by pandas functionality, to ensure the new object is also a ``TfsDataFrame``.
         """
         return TfsDataFrame
-    
+
     def _constructor_from_mgr(self, mgr, axes):
         """ Initialize new ``TfsDataFrame`` from a dataframe manager. 
         This function is needed since pandas v2.1.0 to ensure the new object 
