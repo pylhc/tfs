@@ -125,9 +125,11 @@ def read_tfs(
     metadata: _TfsMetaData = _read_metadata(tfs_file_path)
 
     if metadata.column_names is None:
-        raise TfsFormatError(f"No column names in file {tfs_file_path.absolute()}. File not read.")
+        errmsg = f"No column names in file {tfs_file_path.absolute()}. File not read."
+        raise TfsFormatError(errmsg)
     if metadata.column_types is None:
-        raise TfsFormatError(f"No column types in file {tfs_file_path.absolute()}. File not read.")
+        errmsg = f"No column types in file {tfs_file_path.absolute()}. File not read."
+        raise TfsFormatError(errmsg)
 
     LOGGER.debug("Parsing data part of the file")
     # DO NOT use comment=COMMENTS in here, if you do and the symbol is in an element for some
@@ -279,7 +281,8 @@ def _read_metadata(tfs_file_path: pathlib.Path | str) -> _TfsMetaData:
 def _parse_header(str_list: list[str]) -> tuple:
     type_index = next((index for index, part in enumerate(str_list) if part.startswith("%")), None)
     if type_index is None:
-        raise TfsFormatError(f"No data type found in header: '{''.join(str_list)}'")
+        errmsg = f"No data type found in header: '{''.join(str_list)}'"
+        raise TfsFormatError(errmsg)
 
     name = " ".join(str_list[0:type_index])
     value_string = " ".join(str_list[(type_index + 1) :])
@@ -317,7 +320,8 @@ def _id_to_type(type_str: str) -> type:
     except KeyError:  # could be a "%[num]s" that MAD-X likes to output
         if _is_madx_string_col_identifier(type_str):
             return str
-        raise TfsFormatError(f"Unknown data type: {type_str}")
+        errmsg = f"Unknown data type: {type_str}"
+        raise TfsFormatError(errmsg)
 
 
 def _is_madx_string_col_identifier(type_str: str) -> bool:
