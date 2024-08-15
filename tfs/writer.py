@@ -39,7 +39,7 @@ def write_tfs(
     .. note::
         Compression of the output file is possible, by simply providing a valid compression extension
         as the **tfs_file_path** suffix. Any compression format supported by ``pandas`` is accepted,
-        which includes: ``.gz``, ``.bz2``, ``.zip``, ``.xz``, ``.zst``, ``.tar``, ``.tar.gz``, 
+        which includes: ``.gz``, ``.bz2``, ``.zip``, ``.xz``, ``.zst``, ``.tar``, ``.tar.gz``,
         ``.tar.xz`` or ``.tar.bz2``. See below for examples.
 
     .. warning::
@@ -73,21 +73,21 @@ def write_tfs(
         .. code-block:: python
 
             >>> tfs.write("filename.tfs", dataframe)
-        
+
         If one wants to, for instance, raise and error on non-unique indices or columns,
         one can do so as:
 
         .. code-block:: python
 
             >>> tfs.write("filename.tfs", dataframe, non_unique_behavior="raise")
-        
+
         One can choose to skip dataframe validation **at one's own risk** before writing
         it to file. This is done as:
 
         .. code-block:: python
 
             >>> tfs.write("filename.tfs", dataframe, validate=False)
-        
+
         It is possible to directly have the output file be compressed, by specifying a
         valid compression extension as the **tfs_file_path** suffix. The detection
         and compression is handled automatically. For instance:
