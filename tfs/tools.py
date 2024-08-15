@@ -70,9 +70,8 @@ def remove_nan_from_files(list_of_files: list[str | Path], replace: bool = False
             LOGGER.warning(f"Skipped file {filepath:s} as it could not be loaded")
         else:
             tfs_data_frame = tfs_data_frame.dropna(axis="index")
-            if not replace:
-                filepath += ".dropna"
-            write_tfs(filepath, tfs_data_frame)
+            exit_filepath = filepath if replace is True else f"{filepath}.dropna"
+            write_tfs(exit_filepath, tfs_data_frame)
 
 
 def remove_header_comments_from_files(list_of_files: list[str | Path]) -> None:
