@@ -10,7 +10,7 @@ from collections import OrderedDict
 from collections.abc import Sequence
 from contextlib import suppress
 from functools import partial, reduce
-from typing import Union
+from typing import ClassVar, Union
 
 import numpy as np
 import pandas as pd
@@ -28,7 +28,7 @@ class TfsDataFrame(pd.DataFrame):
     it does not conflict with a column name in the dataframe.
     """
 
-    _metadata = ["headers"]
+    _metadata: ClassVar = ["headers"]
 
     def __init__(self, *args, **kwargs):
         self.headers = {}
