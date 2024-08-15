@@ -9,15 +9,18 @@ from __future__ import annotations
 
 import logging
 from collections import OrderedDict
-from collections.abc import Sequence
 from contextlib import suppress
 from functools import partial, reduce
-from typing import ClassVar
+from typing import TYPE_CHECKING, ClassVar
 
 import numpy as np
 import pandas as pd
 
 from tfs.errors import TfsFormatError
+
+if TYPE_CHECKING:
+    from collections.abc import Sequence
+
 
 LOGGER = logging.getLogger(__name__)
 
