@@ -206,7 +206,7 @@ def _get_row_format_string(dtypes: list[type], colwidth: int, left_align_first_c
 def _quote_string_columns(data_frame: TfsDataFrame | pd.DataFrame) -> TfsDataFrame | pd.DataFrame:
     def quote_strings(s):
         if isinstance(s, str):
-            if not (s.startswith('"') or s.startswith("'")):
+            if not s.startswith(('"', "'")):
                 return f'"{s}"'
         return s
 
