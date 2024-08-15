@@ -90,5 +90,5 @@ changelog = "https://github.com/pylhc/tfs/blob/master/CHANGELOG.md"
 
 [tool.ruff]
 
-# Assume Python 3.10+
+# Assume Python 3.9+
 target-version = "py39"
