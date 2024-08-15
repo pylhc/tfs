@@ -65,9 +65,9 @@ class TfsDataFrame(pd.DataFrame):
         return TfsDataFrame
 
     def _constructor_from_mgr(self, mgr, axes):
-        """ Initialize new ``TfsDataFrame`` from a dataframe manager. 
-        This function is needed since pandas v2.1.0 to ensure the new object 
-        given to __init__() already contains the headers. 
+        """ Initialize new ``TfsDataFrame`` from a dataframe manager.
+        This function is needed since pandas v2.1.0 to ensure the new object
+        given to __init__() already contains the headers.
         See https://github.com/pandas-dev/pandas/issues/55120 """
         obj = self._from_mgr(mgr, axes)
         obj.headers = {}
@@ -231,7 +231,7 @@ def validate(
     .. admonition:: **Methodology**
 
         This function performs several different checks on the provided dataframe:
-         1. Checking no single element is a `list` or `tuple`, which is done with a 
+         1. Checking no single element is a `list` or `tuple`, which is done with a
             custom vectorized function applied column-by-column on the dataframe.
          2. Checking for non-physical values in the dataframe, which is done by
             applying the ``isna`` function with the right option context.
