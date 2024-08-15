@@ -10,7 +10,6 @@ from __future__ import annotations
 import logging
 import pathlib
 import shlex
-from collections import OrderedDict
 from dataclasses import dataclass
 
 import numpy as np
@@ -168,7 +167,7 @@ def read_tfs(
     return tfs_data_frame
 
 
-def read_headers(tfs_file_path: pathlib.Path | str) -> OrderedDict:
+def read_headers(tfs_file_path: pathlib.Path | str) -> dict:
     """
     Parses the top of the **tfs_file_path** and returns the headers.
 
@@ -178,7 +177,7 @@ def read_headers(tfs_file_path: pathlib.Path | str) -> OrderedDict:
             a Path object.
 
     Returns:
-        An ``OrderedDict`` with the headers read from the file.
+        An dictionary with the headers read from the file.
 
 
     Examples:
@@ -207,7 +206,7 @@ def read_headers(tfs_file_path: pathlib.Path | str) -> OrderedDict:
 class _TfsMetaData:
     """A dataclass to encapsulate the metadata read from a TFS file."""
 
-    headers: OrderedDict
+    headers: dict
     non_data_lines: int
     column_names: np.ndarray
     column_types: np.ndarray
@@ -234,7 +233,7 @@ def _read_metadata(tfs_file_path: pathlib.Path | str) -> _TfsMetaData:
     """
     LOGGER.debug("Reading headers and metadata from file")
     tfs_file_path = pathlib.Path(tfs_file_path)
-    headers = OrderedDict()
+    headers = {}
     column_names = column_types = None
 
     # Read the headers, chunk by chunk (line by line) with pandas.read_csv as a
