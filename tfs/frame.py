@@ -44,7 +44,8 @@ class TfsDataFrame(pd.DataFrame):
             try:
                 return self.headers[key]
             except KeyError:
-                raise KeyError(f"{key} is neither in the DataFrame nor in headers.")
+                errmsg = f"{key} is neither in the DataFrame nor in headers."
+                raise KeyError(errmsg)
             except TypeError:
                 raise error
 
@@ -55,7 +56,8 @@ class TfsDataFrame(pd.DataFrame):
             try:
                 return self.headers[name]
             except KeyError:
-                raise AttributeError(f"{name} is neither in the DataFrame nor in headers.")
+                errmsg = f"{name} is neither in the DataFrame nor in headers."
+                raise AttributeError(errmsg)
 
     @property
     def _constructor(self):
@@ -159,7 +161,8 @@ def merge_headers(headers_left: dict, headers_right: dict, how: str) -> OrderedD
     """
     accepted_merges: set[str] = {"left", "right", "none"}
     if str(how).lower() not in accepted_merges:  # handles being given None
-        raise ValueError(f"Invalid 'how' argument, should be one of {accepted_merges}")
+        errmsg = f"Invalid 'how' argument, should be one of {accepted_merges}"
+        raise ValueError(errmsg)
 
     LOGGER.debug(f"Merging headers with method '{how}'")
     if str(how).lower() == "left":  # we prioritize the contents of headers_left
