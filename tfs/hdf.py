@@ -46,17 +46,16 @@ def write_hdf(path: Path | str, df: TfsDataFrame, **kwargs) -> None:
     _check_imports()
     # Check for `key` kwarg (forbidden) ---
     if "key" in kwargs:
-        raise AttributeError("The argument 'key' is not allowed here, "
-                             "as only one TfsDataFrame per file is supported.")
+        errmsg = "The argument 'key' is not allowed here, as only one TfsDataFrame per file is supported."
+        raise AttributeError(errmsg)
 
     # Check for `mode` kwarg (allowed under circumstances but generally ignored) ---
     user_mode = kwargs.pop('mode', None)
     if user_mode is not None and user_mode != "w":
         if path.exists():
-            raise AttributeError(f"'mode=\"{user_mode}\"' is not allowed here. "
-                                 f"The output file at {path!s} will always be overwritten!")
-        LOGGER.warning(f"'mode=\"{user_mode}\"' is not allowed here. "
-                       f"Mode \"w\" will be used.")
+            errmsg = f"'mode=\"{user_mode}\"' is not allowed here. The output file at {path!s} will always be overwritten!"
+            raise AttributeError(errmsg)
+        LOGGER.warning(f"'mode=\"{user_mode}\"' is not allowed here. Mode \"w\" will be used.")
 
     # Actual writing of the output file ---
     df.to_hdf(path, key='data', mode='w', **kwargs)
@@ -95,9 +94,10 @@ def _check_imports():
     not_imported = [name for name, package in (('tables', tables), ('h5py', h5py)) if package is None]
     if len(not_imported):
         names = ", ".join(f"`{name}`" for name in not_imported)
-        raise ImportError(f"Package(s) {names} could not be imported. "
-                          "Please make sure that this package is installed to use hdf-functionality, "
-                          "e.g. install `tfs-pandas` with the `hdf5` extra-dependencies: `tfs-pandas[hdf5]`")
+        errmsg = f"Package(s) {names} could not be imported."
+        "Please make sure that this package is installed to use hdf-functionality, "
+        "e.g. install `tfs-pandas` with the `hdf5` extra-dependencies: `tfs-pandas[hdf5]`"
+        raise ImportError(errmsg)
 
 
 
