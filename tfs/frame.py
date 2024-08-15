@@ -9,7 +9,6 @@ as a utility function to validate the correctness of a ``TfsDataFrame``.
 from __future__ import annotations
 
 import logging
-from collections import OrderedDict
 from contextlib import suppress
 from functools import partial, reduce
 from typing import TYPE_CHECKING, ClassVar
@@ -147,23 +146,25 @@ class TfsDataFrame(pd.DataFrame):
         return TfsDataFrame(data=dframe, headers=new_headers)
 
 
-def merge_headers(headers_left: dict, headers_right: dict, how: str) -> OrderedDict:
+def merge_headers(headers_left: dict, headers_right: dict, how: str) -> dict:
     """
     Merge headers of two ``TfsDataFrames`` together.
 
     Args:
-        headers_left (dict): Headers of caller (left) ``TfsDataFrame`` when calling ``.append``, ``.join`` or
-            ``.merge``. Headers of the left (preceeding) ``TfsDataFrame`` when calling ``tfs.frame.concat``.
-        headers_right (dict): Headers of other (right) ``TfsDataFrame`` when calling ``.append``, ``.join``
-            or ``.merge``. Headers of the left (preceeding) ``TfsDataFrame`` when calling
-            ``tfs.frame.concat``.
-        how (str): Type of merge to be performed, either **left** or **right**. If **left*, prioritize keys
-            from **headers_left** in case of duplicate keys. If **right**, prioritize keys from
-            **headers_right** in case of duplicate keys. Case insensitive. If ``None`` is given,
-            an empty dictionary will be returned.
+        headers_left (dict): Headers of caller (left) ``TfsDataFrame`` when calling
+            ``.append``, ``.join`` or ``.merge``. Headers of the left (preceeding)
+            ``TfsDataFrame`` when calling ``tfs.frame.concat``.
+        headers_right (dict): Headers of other (right) ``TfsDataFrame`` when calling
+            ``.append``, ``.join`` or ``.merge``. Headers of the left (preceeding)
+            ``TfsDataFrame`` when calling ``tfs.frame.concat``.
+        how (str): Type of merge to be performed, either **left** or **right**. If
+            **left**, prioritize keys from **headers_left** in case of duplicate keys.
+            If **right**, prioritize keys from **headers_right** in case of duplicate
+            keys. Case-insensitive. If ``None`` is given, an empty dictionary will be
+            returned.
 
     Returns:
-        A new ``OrderedDict`` as the merge of the two provided dictionaries.
+        A new dictionary as the merge of the two provided dictionaries.
     """
     accepted_merges: set[str] = {"left", "right", "none"}
     if str(how).lower() not in accepted_merges:  # handles being given None
@@ -172,14 +173,14 @@ def merge_headers(headers_left: dict, headers_right: dict, how: str) -> OrderedD
 
     LOGGER.debug(f"Merging headers with method '{how}'")
     if str(how).lower() == "left":  # we prioritize the contents of headers_left
-        result = headers_right.copy()
+        result: dict = headers_right.copy()
         result.update(headers_left)
     elif str(how).lower() == "right":  # we prioritize the contents of headers_right
-        result = headers_left.copy()
+        result: dict = headers_left.copy()
         result.update(headers_right)
     else:  # we were given None, result will be an empty dict
         result = {}
-    return OrderedDict(result)  # so that the TfsDataFrame still has an OrderedDict as header
+    return result
 
 
 def concat(
