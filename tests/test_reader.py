@@ -92,7 +92,7 @@ class TestRead:
         assert isinstance(headers, dict)
         assert len(headers) > 0
         assert len(str(headers)) > 0
-        assert all(key in headers.keys() for key in ["TITLE", "DPP", "Q1", "Q1RMS", "NATQ1", "NATQ1RMS", "BPMCOUNT"])
+        assert all(key in headers for key in ["TITLE", "DPP", "Q1", "Q1RMS", "NATQ1", "NATQ1RMS", "BPMCOUNT"])
 
     def test_read_empty_strings_ok(self, _empty_strings_tfs_path):
         df = read_tfs(_empty_strings_tfs_path)
