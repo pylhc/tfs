@@ -4,6 +4,7 @@ Collection
 
 Advanced **TFS** files reading and writing functionality.
 """
+from __future__ import annotations  # for delayed type annotations
 import pathlib
 
 from pandas import DataFrame
