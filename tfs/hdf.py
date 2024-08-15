@@ -6,6 +6,7 @@ Additional tools for reading and writing ``TfsDataFrames`` into ``hdf5`` files.
 """
 from __future__ import annotations
 
+import contextlib
 import logging
 from typing import TYPE_CHECKING
 
@@ -82,10 +83,8 @@ def read_hdf(path: Path | str) -> TfsDataFrame:
         headers = {key: headers[key][()] for key in headers}
 
     for key, value in headers.items():
-        try:
+        with contextlib.suppress(AttributeError):  # probably numeric
             headers[key] = value.decode('utf-8')  # converts byte-strings back
-        except AttributeError:
-            pass  # probably numeric
     return TfsDataFrame(df, headers=headers)
 
 
