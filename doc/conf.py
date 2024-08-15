@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 #
 # TFS-Pandas documentation build configuration file, created by
 # sphinx-quickstart on Tue Feb  6 12:10:18 2018.
@@ -54,7 +53,7 @@ extensions = [
     "sphinx.ext.coverage",  # Collect doc coverage stats
     "sphinx.ext.doctest",  # Test snippets in the documentation
     "sphinx.ext.githubpages",  # Publish HTML docs in GitHub Pages
-    "sphinx.ext.intersphinx",  # Link to other projects’ documentation
+    "sphinx.ext.intersphinx",  # Link to other projects' documentation
     "sphinx.ext.mathjax",  # Render math via JavaScript
     "sphinx.ext.napoleon",  # Support for NumPy and Google style docstrings
     "sphinx.ext.todo",  # Support for todo items
