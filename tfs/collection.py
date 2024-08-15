@@ -131,7 +131,8 @@ class TfsCollection(metaclass=_MetaTfsCollection):
         """
         definition: Tfs = self._stored_definitions.get(name)
         if not definition:
-            raise AttributeError(f"TfsCollection does not have any property named {name}.")
+            errmsg = f"TfsCollection does not have any property named {name}."
+            raise AttributeError(errmsg)
         return self._get_filename(*definition.args, **definition.kwargs)
 
     def get_path(self, name: str) -> pathlib.Path:
@@ -155,7 +156,8 @@ class TfsCollection(metaclass=_MetaTfsCollection):
         not present in the Tfs(...) definition, it will also be given the keyword argument
         ``plane="x"`` or ``plane="y"``.
         """
-        raise NotImplementedError("This is an abstract method, it should be implemented in subclasses.")
+        errmsg = "This is an abstract method, it should be implemented in subclasses."
+        raise NotImplementedError(errmsg)
 
     def _write_to(self, *args, **kwargs):
         """
@@ -166,7 +168,8 @@ class TfsCollection(metaclass=_MetaTfsCollection):
         Which means you can define different locations for reading and writing.
         It also gets the value assigned as first parameter. It must return a tuple (filename, tfs_data_frame).
         """
-        raise NotImplementedError("This is an abstract method, it should be implemented in subclasses.")
+        errmsg = "This is an abstract method, it should be implemented in subclasses."
+        raise NotImplementedError(errmsg)
 
     def clear(self):
         """
@@ -181,7 +184,8 @@ class TfsCollection(metaclass=_MetaTfsCollection):
         Write the current state of the TFSDataFrames into their respective files.
         """
         if not self.allow_write:
-            raise OSError("Cannot flush TfsCollection, as `allow_write` is set to `False`.")
+            errmsg = "Cannot flush TfsCollection, as `allow_write` is set to `False`."
+            raise OSError(errmsg)
 
         for filename, data_frame in self._buffer.items():
             write_tfs(self.directory / filename, data_frame)
@@ -223,7 +227,8 @@ class TfsCollection(metaclass=_MetaTfsCollection):
     def __getattr__(self, attr: str) -> object:
         if attr in self._two_plane_names:
             return TfsCollection._TwoPlanes(self, attr)
-        raise AttributeError(f"{self.__class__.__name__} object has no attribute {attr}")
+        errmsg = f"{self.__class__.__name__} object has no attribute {attr}"
+        raise AttributeError(errmsg)
 
     def __getitem__(self, item):
         return getattr(self, item)
