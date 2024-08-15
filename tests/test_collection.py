@@ -1,5 +1,5 @@
-import os
 import pathlib
+
 import pytest
 from pandas.testing import assert_frame_equal
 
@@ -186,13 +186,13 @@ class TestFilenames:
         assert c.filenames()["file_x"] == "file_x.tfs"
         assert c.filenames()["nofile_y"] == "nofile_y.tfs"
 
-        assert all(f in c.filenames().keys() for f in exist_properties)
-        assert all(f in c.filenames().keys() for f in not_exist_properties)
+        assert all(f in c.filenames() for f in exist_properties)
+        assert all(f in c.filenames() for f in not_exist_properties)
         assert all(f in c.filenames().values() for f in exist_files)
         assert all(f in c.filenames().values() for f in not_exist_files)
 
-        assert all(f in c.filenames(exist=True).keys() for f in exist_properties)
-        assert all(f not in c.filenames(exist=True).keys() for f in not_exist_properties)
+        assert all(f in c.filenames(exist=True) for f in exist_properties)
+        assert all(f not in c.filenames(exist=True) for f in not_exist_properties)
         assert all(f in c.filenames(exist=True).values() for f in exist_files)
         assert all(f not in c.filenames(exist=True).values() for f in not_exist_files)
 
@@ -269,26 +269,26 @@ def _read_tfs(path):
     return read_tfs(path).set_index("NAME", drop=False)
 
 
-@pytest.fixture()
+@pytest.fixture
 def _tfs_x() -> TfsDataFrame:
     return _read_tfs(INPUT_DIR / "file_x.tfs")
 
 
-@pytest.fixture()
+@pytest.fixture
 def _tfs_y() -> TfsDataFrame:
     return _read_tfs(INPUT_DIR / "file_y.tfs")
 
 
-@pytest.fixture()
+@pytest.fixture
 def _input_dir_pathlib() -> pathlib.Path:
     return INPUT_DIR
 
 
-@pytest.fixture()
+@pytest.fixture
 def _input_dir_str() -> str:
     return str(INPUT_DIR)
 
 
-@pytest.fixture()
+@pytest.fixture
 def _dummy_collection() -> TfsCollection:
     return TfsCollection("")
