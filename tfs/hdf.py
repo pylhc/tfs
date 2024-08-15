@@ -93,10 +93,9 @@ def _check_imports():
     not_imported = [name for name, package in (('tables', tables), ('h5py', h5py)) if package is None]
     if len(not_imported):
         names = ", ".join(f"`{name}`" for name in not_imported)
-        errmsg = f"Package(s) {names} could not be imported."
-        "Please make sure that this package is installed to use hdf-functionality, "
-        "e.g. install `tfs-pandas` with the `hdf5` extra-dependencies: `tfs-pandas[hdf5]`"
+        errmsg = (
+            f"Package(s) {names} could not be imported."
+            "Please make sure that this package is installed to use hdf-functionality, "
+            "e.g. install `tfs-pandas` with the `hdf5` extra-dependencies: `tfs-pandas[hdf5]`"
+        )
         raise ImportError(errmsg)
-
-
-
