@@ -79,7 +79,8 @@ class TestHeadersMerging:
         result = merge_headers(headers_left, headers_right, how=how)
 
         assert isinstance(result, OrderedDict)
-        assert len(result) >= len(headers_left) and len(result) >= len(headers_right)  # no key disappeared
+        assert len(result) >= len(headers_left)  # no key disappeared
+        assert len(result) >= len(headers_right)  # no key disappeared
         for key in result:  # check that we prioritized headers_left's contents
             if key in headers_left and key in headers_right:
                 assert result[key] == headers_left[key]
@@ -91,7 +92,8 @@ class TestHeadersMerging:
         result = merge_headers(headers_left, headers_right, how=how)
 
         assert isinstance(result, OrderedDict)
-        assert len(result) >= len(headers_left) and len(result) >= len(headers_right)  # no key disappeared
+        assert len(result) >= len(headers_left)  # no key disappeared
+        assert len(result) >= len(headers_right)  # no key disappeared
         for key in result:  # check that we prioritized headers_right's contents
             if key in headers_left and key in headers_right:
                 assert result[key] == headers_right[key]
