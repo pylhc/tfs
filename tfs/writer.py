@@ -4,10 +4,11 @@ Writer
 
 Writing functionalty for **TFS** files.
 """
+from __future__ import annotations
+
 import logging
 import pathlib
 from collections import OrderedDict
-from typing import Union
 
 import numpy as np
 import pandas as pd
@@ -22,10 +23,10 @@ LOGGER = logging.getLogger(__name__)
 
 
 def write_tfs(
-    tfs_file_path: Union[pathlib.Path, str],
-    data_frame: Union[TfsDataFrame, pd.DataFrame],
-    headers_dict: dict = None,
-    save_index: Union[str, bool] = False,
+    tfs_file_path: pathlib.Path | str,
+    data_frame: TfsDataFrame | pd.DataFrame,
+    headers_dict: dict | None = None,
+    save_index: str | bool = False,
     colwidth: int = DEFAULT_COLUMN_WIDTH,
     headerswidth: int = DEFAULT_COLUMN_WIDTH,
     non_unique_behavior: str = "warn",
@@ -49,13 +50,13 @@ def write_tfs(
         (such as for instance a sliced FCC lattice).
 
     Args:
-        tfs_file_path (Union[pathlib.Path, str]): Path object to the output **TFS** file. Can be
+        tfs_file_path (pathlib.Path | str): Path object to the output **TFS** file. Can be
             a string, in which case it will be cast to a Path object.
-        data_frame (Union[TfsDataFrame, pd.DataFrame]): ``TfsDataFrame`` or ``pandas.DataFrame`` to
+        data_frame (TfsDataFrame | pd.DataFrame): ``TfsDataFrame`` or ``pandas.DataFrame`` to
             write to file.
         headers_dict (dict): Headers for the `data_frame`. If not provided, assumes a ``TfsDataFrame``
             was given and tries to use ``data_frame.headers``.
-        save_index (Union[str, bool]): bool or string. Default to ``False``. If ``True``, saves
+        save_index (str | bool): bool or string. Default to ``False``. If ``True``, saves
             the index of `data_frame` to a column identifiable by `INDEX&&&`. If given as string,
             saves the index of `data_frame` to a column named by the provided value.
         colwidth (int): Column width, can not be smaller than `MIN_COLUMN_WIDTH`.
@@ -132,7 +133,7 @@ def write_tfs(
         )
 
 
-def _autoset_pandas_types(data_frame: Union[TfsDataFrame, pd.DataFrame]) -> Union[TfsDataFrame, pd.DataFrame]:
+def _autoset_pandas_types(data_frame: TfsDataFrame | pd.DataFrame) -> TfsDataFrame | pd.DataFrame:
     """
     Tries to apply the ``.convert_dtypes()`` method of pandas on a copy on the provided dataframe.
     If the operation is not possible, checks if the provided dataframe is empty (which prevents
@@ -147,7 +148,7 @@ def _autoset_pandas_types(data_frame: Union[TfsDataFrame, pd.DataFrame]) -> Unio
     See my comment at https://github.com/pylhc/tfs/pull/83#issuecomment-874208869
 
     Args:
-        data_frame (Union[TfsDataFrame, pd.DataFrame]): ``TfsDataFrame`` or ``pandas.DataFrame`` to
+        data_frame (TfsDataFrame | pd.DataFrame): ``TfsDataFrame`` or ``pandas.DataFrame`` to
             determine the types of.
 
     Returns:
@@ -164,7 +165,7 @@ def _autoset_pandas_types(data_frame: Union[TfsDataFrame, pd.DataFrame]) -> Unio
             raise pd_convert_error
 
 
-def _insert_index_column(data_frame: Union[TfsDataFrame, pd.DataFrame], save_index: str) -> None:
+def _insert_index_column(data_frame: TfsDataFrame | pd.DataFrame, save_index: str) -> None:
     if isinstance(save_index, str):  # save index into column by name given
         idx_name = save_index
     else:  # save index into column, which can be found by INDEX_ID
@@ -213,7 +214,7 @@ def _get_coltypes_string(types: pd.Series, colwidth: int, left_align_first_colum
 
 
 def _get_data_string(
-    data_frame: Union[TfsDataFrame, pd.DataFrame],
+    data_frame: TfsDataFrame | pd.DataFrame,
     colwidth: int,
     left_align_first_column: bool,
 ) -> str:
@@ -234,7 +235,7 @@ def _get_row_format_string(dtypes: list[type], colwidth: int, left_align_first_c
     )
 
 
-def _quote_string_columns(data_frame: Union[TfsDataFrame, pd.DataFrame]) -> Union[TfsDataFrame, pd.DataFrame]:
+def _quote_string_columns(data_frame: TfsDataFrame | pd.DataFrame) -> TfsDataFrame | pd.DataFrame:
     def quote_strings(s):
         if isinstance(s, str):
             if not (s.startswith('"') or s.startswith("'")):
