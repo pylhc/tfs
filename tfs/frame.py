@@ -16,6 +16,7 @@ from typing import TYPE_CHECKING, ClassVar
 import numpy as np
 import pandas as pd
 
+from tfs.constants import VALIDATION_MODES
 from tfs.errors import (
     DuplicateColumnsError,
     DuplicateIndicesError,
@@ -271,7 +272,7 @@ def validate(
             dataframe. Accepts `warn` and `raise` as values, case-insensitively, which dictates
             to respectively issue a warning or raise an error if non-unique elements are found.
     """
-    if compatibility.lower() not in ("madx", "mad-x", "madng", "mad-ng"):
+    if compatibility.lower() not in VALIDATION_MODES:
         errmsg = f"Invalid compatibility mode provided: '{compatibility}'."
         raise ValueError(errmsg)
 

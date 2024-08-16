@@ -15,7 +15,7 @@ import pandas as pd
 from pandas.api import types as pdtypes
 from pandas.io.common import get_handle
 
-from tfs.constants import DEFAULT_COLUMN_WIDTH, INDEX_ID, MIN_COLUMN_WIDTH
+from tfs.constants import DEFAULT_COLUMN_WIDTH, INDEX_ID, MIN_COLUMN_WIDTH, VALIDATION_MODES
 from tfs.frame import TfsDataFrame
 from tfs.frame import validate as validate_frame
 
@@ -110,7 +110,7 @@ def write_tfs(
         data_frame.columns = data_frame.columns.astype(str)  # need column names to be strings
 
     # Only perform validation if a valid mode is given (MAD-X or MAD-NG compatibility)
-    if isinstance(validate, str) and validate.lower() in ("madx", "mad-x", "madng", "mad-ng"):
+    if isinstance(validate, str) and validate.lower() in VALIDATION_MODES:
         validate_frame(
             data_frame,
             info_str=f"to be written in {tfs_file_path.absolute()}",
