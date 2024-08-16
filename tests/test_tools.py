@@ -4,7 +4,7 @@ from shutil import copyfile
 
 import pytest
 
-from tfs.errors import AbsentTypeIdentifierError, TfsFormatError
+from tfs.errors import AbsentTypeIdentifierError
 from tfs.reader import read_tfs
 from tfs.tools import remove_header_comments_from_files, remove_nan_from_files, significant_digits
 
