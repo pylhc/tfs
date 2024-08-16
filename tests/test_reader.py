@@ -191,21 +191,24 @@ class TestFailures:
         with pytest.raises(UnknownTypeIdentifierError, match="Unknown data type"):
             _ = tfs.reader._id_to_type(typoed_str_id)  # noqa: SLF001
 
-    def test_fail_space_in_colname(self, _space_in_colnames_tfs_path: pathlib.Path):
+    @pytest.mark.parametrize("validation_mode", ["madx", "mad-x", "madng", "MAD-NG"])
+    def test_validation_raises_space_in_colname(self, _space_in_colnames_tfs_path: pathlib.Path, validation_mode):
         # Read file has a space in a column name which should raise
         with pytest.raises(SpaceinColumnNameError, match="TFS-Columns can not contain spaces."):
-            _ = read_tfs(_space_in_colnames_tfs_path, index="NAME")
+            _ = read_tfs(_space_in_colnames_tfs_path, index="NAME", validate=validation_mode)
 
-    def test_wrong_boolean_header_raises(self, _invalid_bool_in_header_tfs_file):
+    @pytest.mark.parametrize("validation_mode", ["madx", "mad-x", "madng", "MAD-NG"])
+    def test_validation_raises_wrong_boolean_header(self, _invalid_bool_in_header_tfs_file, validation_mode):
         # The file header has a boolean value that is not accepted
         with pytest.raises(InvalidBooleanHeaderError, match="Invalid boolean header value parsed"):
-            _ = read_tfs(_invalid_bool_in_header_tfs_file)
+            _ = read_tfs(_invalid_bool_in_header_tfs_file, validate=validation_mode)
 
 
 class TestWarnings:
-    def test_warn_unphysical_values(self, caplog):
+    @pytest.mark.parametrize("validation_mode", ["madx", "mad-x", "madng", "MAD-NG"])
+    def test_warn_unphysical_values(self, validation_mode, caplog):
         nan_tfs_path = pathlib.Path(__file__).parent / "inputs" / "has_nans.tfs"
-        _ = read_tfs(nan_tfs_path, index="NAME")
+        _ = read_tfs(nan_tfs_path, index="NAME", validate=validation_mode)
         for record in caplog.records:
             assert record.levelname == "WARNING"
         assert "contains non-physical values at Index:" in caplog.text
