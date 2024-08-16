@@ -8,6 +8,7 @@ Big release with compatibility for `MAD-NG`.
   - Handling of boolean headers values (`MAD-NG` feature).
   - Handling of complex-type columns (`MAD-NG` feature).
   - Compatibility modes for dataframe validation are either `MAD-X` or `MAD-NG`.
+  - Several new exceptions have been created to be more specific. They all inherit from `TfsFormatError` so user code catching it will still work.
 
 - Changed:
   - By default, `TfsDataFrame` validation is now skipped on reading.
