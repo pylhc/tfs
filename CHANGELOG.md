@@ -2,7 +2,15 @@
 
 ## Version 4.0.0
 
+Big release with compatibility for `MAD-NG`.
 
+- Added:
+  - Handling of boolean headers values (`MAD-NG` feature).
+  - Handling of complex-type columns (`MAD-NG` feature).
+  - Compatibility modes for dataframe validation are either `MAD-X` or `MAD-NG`.
+
+- Changed:
+  - By default, `TfsDataFrame` validation is now skipped on reading.
 
 ## Version 3.8.2
 
