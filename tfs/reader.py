@@ -48,7 +48,7 @@ def read_tfs(
     tfs_file_path: pathlib.Path | str,
     index: str | None = None,
     non_unique_behavior: str = "warn",
-    validate: str = "madx",  # TODO: should reader accept MAD-NG too by default?
+    validate: str | None = None,
 ) -> TfsDataFrame:
     """
     Parses the **TFS** table present in **tfs_file_path** and returns a ``TfsDataFrame``.
@@ -85,11 +85,8 @@ def read_tfs(
             the dataframe. Accepts `warn` and `raise` as values, case-insensitively, which dictates
             to respectively issue a warning or raise an error if non-unique elements are found.
         validate (str): If an accepted value is given, validation will be performed after loading.
-            Defauts to `madx`, which will assert compatibility of the data with the ``MAD-X``code.
-            If  `madng` is given then compatibility with the ``MAD-NG`` code is checked, which has more
-            features. Accepted values are `madx`, `mad-x`, `madng` and `mad-ng`, case-insensitive. If
-            any other value is given, validation will be skipped. See the `validate` function for more
-            information on the validation steps.
+            Defauts to `None`, which skips validation. Accepted values are `madx`, `mad-x`, `madng`
+            and `mad-ng`, case-insensitive. See the `validate` function for more information.
 
     Returns:
         A ``TfsDataFrame`` object with the loaded data from the file.
