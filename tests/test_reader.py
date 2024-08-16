@@ -11,7 +11,7 @@ from tfs.errors import (
     AbsentColumnNameError,
     AbsentColumnTypeError,
     InvalidBooleanHeaderError,
-    TfsFormatError,
+    SpaceinColumnNameError,
     UnknownTypeIdentifierError,
 )
 from tfs.reader import read_headers, read_tfs
@@ -193,7 +193,7 @@ class TestFailures:
 
     def test_fail_space_in_colname(self, _space_in_colnames_tfs_path: pathlib.Path):
         # Read file has a space in a column name which should raise
-        with pytest.raises(TfsFormatError):
+        with pytest.raises(SpaceinColumnNameError, match="TFS-Columns can not contain spaces."):
             _ = read_tfs(_space_in_colnames_tfs_path, index="NAME", validate=True)
 
     def test_wrong_boolean_header_raises(self, _invalid_bool_in_header_tfs_file):
