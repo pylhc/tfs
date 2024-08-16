@@ -28,8 +28,8 @@ from tfs.constants import (
 from tfs.errors import (
     AbsentColumnNameError,
     AbsentColumnTypeError,
+    AbsentTypeIdentifierError,
     InvalidBooleanHeaderError,
-    TfsFormatError,
     UnknownTypeIdentifierError,
 )
 from tfs.frame import TfsDataFrame
@@ -305,14 +305,13 @@ def _parse_header(str_list: list[str]) -> tuple[str, bool | str | int | float]:
         type identifier).
 
     Raises:
-        TfsFormatError: if no type identifier is found in the header line.
+        AbsentTypeIdentifierError: if no type identifier is found in the header line.
         InvalidBooleanHeaderError: if the identifier type indicates a boolean
             but the corresponding value is not an accepted boolean.
     """
     type_index = next((index for index, part in enumerate(str_list) if part.startswith("%")), None)
     if type_index is None:
-        errmsg = f"No data type found in header: '{''.join(str_list)}'"
-        raise TfsFormatError(errmsg)
+        raise AbsentTypeIdentifierError(str_list)
 
     # Get name and string of the header, and determine its type
     name: str = " ".join(str_list[0:type_index])

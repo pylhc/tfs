@@ -35,6 +35,14 @@ class AbsentColumnTypeError(TfsFormatError):
         super().__init__(errmsg)
 
 
+class AbsentTypeIdentifierError(TfsFormatError):
+    """Raised when a **TFS** file's header line does not provide type identifier."""
+
+    def __init__(self, header_line_elements: list[str]) -> None:
+        errmsg = f"No data type found in header: '{''.join(header_line_elements)}'"
+        super().__init__(errmsg)
+
+
 class DuplicateColumnsError(TfsFormatError):
     """Raised when a **TfsDataFrame** has duplicate columns."""
 
