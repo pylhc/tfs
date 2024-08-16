@@ -42,7 +42,7 @@ class DuplicateColumnsError(TfsFormatError):
 # ----- Exceptions for Validation ----- #
 
 
-class IterableInDataframeError(TfsFormatError):
+class IterableInDataFrameError(TfsFormatError):
     """Raised when an list / tuple is found in the column of a **TfsDataFrame**."""
 
     def __init__(self) -> None:
