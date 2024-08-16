@@ -232,7 +232,7 @@ def read_headers(tfs_file_path: pathlib.Path | str) -> dict:
 # ----- Helpers ----- #
 
 
-@dataclass(slots=True)
+@dataclass
 class _TfsMetaData:
     """A dataclass to encapsulate the metadata read from a TFS file."""
 
