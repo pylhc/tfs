@@ -168,6 +168,8 @@ def _get_header_line(name: str, value, width: int) -> str:
     type_str = _value_to_type_string(value)
     if type_str == "%s":
         value = f'"{value}"'
+    elif type_str == "%b":
+        value = str(bool(value))
     return f"@ {name:<{width}} {type_str} {value:>{width}}"
 
 
@@ -234,12 +236,14 @@ def _dtype_to_id_string(type_: type) -> str:
     Returns:
         The ID string.
     """
-    if pdtypes.is_integer_dtype(type_) or pdtypes.is_bool_dtype(type_):
+    if pdtypes.is_integer_dtype(type_):
         return "%d"
     if pdtypes.is_float_dtype(type_):
         return "%le"
     if pdtypes.is_string_dtype(type_):
         return "%s"
+    if pdtypes.is_bool_dtype(type_):
+        return "%b"
     errmsg = f"Provided type '{type_}' could not be identified as either a bool, int, float or string dtype"
     raise TypeError(errmsg)
 
