@@ -182,12 +182,12 @@ class TestFailures:
     def test_fail_space_in_colname(self, _space_in_colnames_tfs_path: pathlib.Path):
         # Read file has a space in a column name which should raise
         with pytest.raises(TfsFormatError):
-            read_tfs(_space_in_colnames_tfs_path, index="NAME", validate=True)
+            _ = read_tfs(_space_in_colnames_tfs_path, index="NAME", validate=True)
 
-    def test_wrong_boolean_header_raises(self, _bool_in_header_tfs_file):
+    def test_wrong_boolean_header_raises(self, _invalid_bool_in_header_tfs_file):
         # The file header has a boolean value that is not accepted
         with pytest.raises(InvalidBooleanHeader, match="Invalid boolean header value parsed"):
-            read_tfs(_bool_in_header_tfs_file)
+            _ = read_tfs(_invalid_bool_in_header_tfs_file)
 
 
 class TestWarnings:
