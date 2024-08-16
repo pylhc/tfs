@@ -202,7 +202,7 @@ def read_headers(tfs_file_path: pathlib.Path | str) -> dict:
 # ----- Helpers ----- #
 
 
-@dataclass
+@dataclass(slots=True)
 class _TfsMetaData:
     """A dataclass to encapsulate the metadata read from a TFS file."""
 
@@ -277,10 +277,25 @@ def _read_metadata(tfs_file_path: pathlib.Path | str) -> _TfsMetaData:
     )
 
 
-def _parse_header(str_list: list[str]) -> tuple[str, ]:
+def _parse_header(str_list: list[str]) -> tuple[str, bool | str | int | float]:
     """
-    Expects a header line content after the '@' header identifier,
-    as a list of parsed elements."""
+    Expects a parsed header line content after the '@' header identifier,
+    as a .
+
+    Args:
+        str_list (list[str]): list of parsed elements from the header line
+            (we use parse in reader with 'shlex.split`).
+
+    Returns:
+        A tuple with the name of the header parameter for this line, as
+        well as its value cast to the proper type (as determined by the
+        type identifier).
+
+    Raises:
+        TfsFormatError: if no type identifier is found in the header line.
+        InvalidBooleanHeader: if the identifier type indicates a boolean
+            but the corresponding value is not an accepted boolean.
+    """
     type_index = next((index for index, part in enumerate(str_list) if part.startswith("%")), None)
     if type_index is None:
         errmsg = f"No data type found in header: '{''.join(str_list)}'"
