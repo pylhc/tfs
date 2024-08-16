@@ -16,7 +16,7 @@ from typing import TYPE_CHECKING, ClassVar
 import numpy as np
 import pandas as pd
 
-from tfs.errors import TfsFormatError, IterableInDataframeError
+from tfs.errors import IterableInDataframeError, TfsFormatError
 
 if TYPE_CHECKING:
     from collections.abc import Sequence

@@ -5,9 +5,19 @@ Errors
 Errors that can be raised during the handling of **TFS** files.
 """
 
+# ----- Main Exception to Inherit From ----- #
+
+
+class TfsFormatError(Exception):
+    """
+    Raised when a wrong format is detected in the **TFS** file or dataframe.
+    """
+
+
 # ----- Exceptions Relating to Headers ----- #
 
-class InvalidBooleanHeaderError(Exception):
+
+class InvalidBooleanHeaderError(TfsFormatError):
     """
     Raised when an unaccepted boolean header
     value is read in the **TFS** file.
@@ -17,19 +27,22 @@ class InvalidBooleanHeaderError(Exception):
         errmsg = f"Invalid boolean header value parsed: '{header_value}'"
         super().__init__(errmsg)
 
-# ----- Main Exception to Inherit From ----- #
 
-class TfsFormatError(Exception):
-    """Raised when a wrong format is detected in the **TFS** file."""
+# ----- Exceptions for DataFrame Content ----- #
 
 
-# ----- Exceptions Relating to Validation ----- #
+class DuplicateColumnsError(TfsFormatError):
+    """Raised when a **TfsDataFrame** has duplicate columns."""
 
-class TfsValidationError(TfsFormatError):
-    """Raised when a **TFS** file or dataframe does not pass validation."""
+    def __init__(self) -> None:
+        errmsg = "The dataframe contains non-unique columns."
+        super().__init__(errmsg)
 
 
-class IterableInDataframeError(TfsValidationError):
+# ----- Exceptions for Validation ----- #
+
+
+class IterableInDataframeError(TfsFormatError):
     """Raised when an list / tuple is found in the column of a **TfsDataFrame**."""
 
     def __init__(self) -> None:
