@@ -15,8 +15,8 @@ from dataclasses import dataclass
 import numpy as np
 import pandas as pd
 
-from tfs.constants import COMMENTS, HEADER, ID_TO_TYPE, INDEX_ID, NAMES, TYPES
-from tfs.errors import TfsFormatError
+from tfs.constants import COMMENTS, HEADER, ID_TO_TYPE, INDEX_ID, NAMES, TYPES, VALID_TRUE_BOOLEANS, VALID_BOOLEANS_HEADERS, VALID_FALSE_BOOLEANS
+from tfs.errors import TfsFormatError, InvalidBooleanHeader
 from tfs.frame import TfsDataFrame
 from tfs.frame import validate as validate_frame
 
@@ -277,15 +277,24 @@ def _read_metadata(tfs_file_path: pathlib.Path | str) -> _TfsMetaData:
     )
 
 
-def _parse_header(str_list: list[str]) -> tuple:
+def _parse_header(str_list: list[str]) -> tuple[str, ]:
+    """
+    Expects a header line content after the '@' header identifier,
+    as a list of parsed elements."""
     type_index = next((index for index, part in enumerate(str_list) if part.startswith("%")), None)
     if type_index is None:
         errmsg = f"No data type found in header: '{''.join(str_list)}'"
         raise TfsFormatError(errmsg)
 
-    name = " ".join(str_list[0:type_index])
-    value_string = " ".join(str_list[(type_index + 1) :])
-    return name, _id_to_type(str_list[type_index])(value_string.strip('"'))
+    # Get name and string of the header, and determine its type
+    name: str = " ".join(str_list[0:type_index])
+    value_string: str = " ".join(str_list[(type_index + 1) :])
+    value_string: str = value_string.strip('"')
+    value_type: type = _id_to_type(str_list[type_index])
+
+    if value_type is bool:  # special handling for boolean values
+        return name, _string_to_bool(value_string)
+    return name, value_type(value_string)
 
 
 def _find_and_set_index(data_frame: TfsDataFrame) -> TfsDataFrame:
@@ -311,6 +320,19 @@ def _find_and_set_index(data_frame: TfsDataFrame) -> TfsDataFrame:
 
 def _compute_types(str_list: list[str]) -> list[type]:
     return [_id_to_type(string) for string in str_list]
+
+
+def _string_to_bool(val_str: str) -> bool:
+    """
+    Infers the boolean value from a string value in the headers.
+    Raises ``InvalidBooleanHeader`` when encountering invalid value.
+    """
+    if val_str.lower().capitalize() not in VALID_BOOLEANS_HEADERS:
+        raise InvalidBooleanHeader(val_str)
+
+    if val_str.lower().capitalize() in VALID_TRUE_BOOLEANS:
+        return True
+    return False
 
 
 def _id_to_type(type_str: str) -> type:
