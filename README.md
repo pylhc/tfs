@@ -52,7 +52,7 @@ tfs.frame.validate(data_frame, non_unique_behavior="raise")  # or choose "warn"
 tfs.write("path_to_output.tfs", data_frame, save_index="index_column")
 ```
 
-Reading and writing compressed files is also supported, and done automatically based on the provided file extension:
+Compression is automatically supported, based on the provided file extension (for supported formats):
 
 ```python
 import tfs
