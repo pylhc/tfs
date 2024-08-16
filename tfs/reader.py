@@ -25,7 +25,13 @@ from tfs.constants import (
     VALID_BOOLEANS_HEADERS,
     VALID_TRUE_BOOLEANS,
 )
-from tfs.errors import InvalidBooleanHeaderError, AbsentColumnNameError, AbsentColumnTypeError, TfsFormatError
+from tfs.errors import (
+    AbsentColumnNameError,
+    AbsentColumnTypeError,
+    InvalidBooleanHeaderError,
+    TfsFormatError,
+    UnknownTypeIdentifierError,
+)
 from tfs.frame import TfsDataFrame
 from tfs.frame import validate as validate_frame
 
@@ -363,8 +369,7 @@ def _id_to_type(type_str: str) -> type:
     except KeyError as err:  # could be a "%[num]s" that MAD-X likes to output
         if _is_madx_string_col_identifier(type_str):
             return str
-        errmsg = f"Unknown data type: {type_str}"
-        raise TfsFormatError(errmsg) from err
+        raise UnknownTypeIdentifierError(type_str) from err
 
 
 def _is_madx_string_col_identifier(type_str: str) -> bool:

@@ -84,3 +84,11 @@ class SpaceinColumnNameError(TfsFormatError):
     def __init__(self) -> None:
         errmsg = "TFS-Columns can not contain spaces."
         super().__init__(errmsg)
+
+
+class UnknownTypeIdentifierError(TfsFormatError):
+    """Raised when a **TFS** file contains an unknown type identifier."""
+
+    def __init__(self, type_identifier: str) -> None:
+        errmsg = f"Unknown data type: {type_identifier}"
+        super().__init__(errmsg)
