@@ -7,7 +7,7 @@ from pandas.testing import assert_frame_equal
 
 import tfs
 from tfs.constants import HEADER
-from tfs.errors import TfsFormatError
+from tfs.errors import TfsFormatError, InvalidBooleanHeader
 from tfs.reader import read_headers, read_tfs
 from tfs.writer import write_tfs
 
@@ -184,6 +184,11 @@ class TestFailures:
         with pytest.raises(TfsFormatError):
             read_tfs(_space_in_colnames_tfs_path, index="NAME", validate=True)
 
+    def test_wrong_boolean_header_raises(self, _bool_in_header_tfs_file):
+        # The file header has a boolean value that is not accepted
+        with pytest.raises(InvalidBooleanHeader, match="Invalid boolean header value parsed"):
+            read_tfs(_bool_in_header_tfs_file)
+
 
 class TestWarnings:
     def test_warn_unphysical_values(self, caplog):
@@ -200,6 +205,11 @@ class TestWarnings:
 @pytest.fixture
 def _bool_in_header_tfs_file() -> pathlib.Path:
     """Copy of _tfs_file_pathlib with BOOL in header."""
+    return INPUTS_DIR / "bool_header.tfs"
+
+@pytest.fixture
+def _invalid_bool_in_header_tfs_file() -> pathlib.Path:
+    """TFS file with invalid value for bool header."""
     return INPUTS_DIR / "bool_header.tfs"
 
 
