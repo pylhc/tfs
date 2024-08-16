@@ -16,7 +16,7 @@ from typing import TYPE_CHECKING, ClassVar
 import numpy as np
 import pandas as pd
 
-from tfs.errors import DuplicateIndicesError, IterableInDataFrameError, TfsFormatError
+from tfs.errors import DuplicateIndicesError, DuplicateColumnsError, IterableInDataFrameError, TfsFormatError
 
 if TYPE_CHECKING:
     from collections.abc import Sequence
@@ -299,8 +299,7 @@ def validate(
     if data_frame.columns.has_duplicates:
         LOGGER.warning("Non-unique column names found.")
         if non_unique_behavior.lower() == "raise":
-            errmsg = "The dataframe contains non-unique columns."
-            raise TfsFormatError(errmsg)
+            raise DuplicateColumnsError
 
     # The following are deal-breakers for the TFS format and would not, for instance, be accepted by MAD-X
     if any(not isinstance(c, str) for c in data_frame.columns):
