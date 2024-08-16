@@ -273,7 +273,7 @@ def validate(
             f"DataFrame {info_str} contains list/tuple values at Index: "
             f"{list_or_tuple_bool_df.index[list_or_tuple_bool_df.any(axis='columns')].tolist()}"
         )
-        raise IterableInDataframeError
+        raise IterableInDataFrameError
 
     # -----  Check that no element is non-physical value in the dataframe ----- #
     # The pd.option_context('mode.use_inf_as_na', True) context manager raises FutureWarning
