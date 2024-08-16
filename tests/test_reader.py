@@ -7,7 +7,13 @@ from pandas.testing import assert_frame_equal
 
 import tfs
 from tfs.constants import HEADER
-from tfs.errors import AbsentColumnNameError, InvalidBooleanHeaderError, TfsFormatError, UnknownTypeIdentifierError
+from tfs.errors import (
+    AbsentColumnNameError,
+    AbsentColumnTypeError,
+    InvalidBooleanHeaderError,
+    TfsFormatError,
+    UnknownTypeIdentifierError,
+)
 from tfs.reader import read_headers, read_tfs
 from tfs.writer import write_tfs
 
@@ -173,17 +179,16 @@ class TestFailures:
             _ = tfs.reader._id_to_type(unexpected_id)  # noqa: SLF001
 
     def test_fail_read_no_coltypes(self, _no_coltypes_tfs_path):
-        with pytest.raises(TfsFormatError) as e:
+        with pytest.raises(AbsentColumnTypeError):
             _ = read_tfs(_no_coltypes_tfs_path)
-        assert "column types" in str(e)
 
     def test_fail_read_no_colnames(self, _no_colnames_tfs_path):
-        with pytest.raises(AbsentColumnNameError, match="No column names in file"):
+        with pytest.raises(AbsentColumnNameError):
             _ = read_tfs(_no_colnames_tfs_path)
 
     def test_id_to_type_handles_typo_str_id(self):
         typoed_str_id = "%%s"
-        with pytest.raises(TfsFormatError):
+        with pytest.raises(UnknownTypeIdentifierError, match="Unknown data type"):
             _ = tfs.reader._id_to_type(typoed_str_id)  # noqa: SLF001
 
     def test_fail_space_in_colname(self, _space_in_colnames_tfs_path: pathlib.Path):

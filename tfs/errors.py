@@ -23,7 +23,7 @@ class AbsentColumnNameError(TfsFormatError):
     """Raised when a **TFS** file does not provide column names."""
 
     def __init__(self, file_path: Path) -> None:
-        errmsg = f"No column names in file {file_path.absolute()}. File not read."
+        errmsg = f"Missing column name(s) in file {file_path.absolute()}. File not read."
         super().__init__(errmsg)
 
 
@@ -31,7 +31,7 @@ class AbsentColumnTypeError(TfsFormatError):
     """Raised when a **TFS** file does not provide column type identifiers."""
 
     def __init__(self, file_path: Path) -> None:
-        errmsg = f"No column types in file {file_path.absolute()}. File not read."
+        errmsg = f"Missing column type(s) in file {file_path.absolute()}. File not read."
         super().__init__(errmsg)
 
 
