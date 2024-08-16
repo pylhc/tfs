@@ -137,6 +137,18 @@ class TestRead:
         df_for_compare = read_tfs(_tfs_file_pathlib)
         assert_frame_equal(df, df_for_compare)
 
+    def test_real_file_with_boolean_headers(self, _bool_in_header_tfs_file, _tfs_file_pathlib):
+        df = read_tfs(_bool_in_header_tfs_file)
+        assert df.headers["BOOLTRUE1"] is True  # true resolves to True
+        assert df.headers["BOOLTRUE2"] is True  # True resolves to True
+        assert df.headers["BOOLTRUE3"] is True  # 1 resolves to True
+        assert df.headers["BOOLFALSE1"] is False  # false resolves to False
+        assert df.headers["BOOLFALSE2"] is False  # False resolves to False
+        assert df.headers["BOOLFALSE3"] is False  # 0 resolves to False
+
+        df_for_compare = read_tfs(_tfs_file_pathlib)
+        assert_frame_equal(df, df_for_compare)
+
 
 class TestFailures:
     def test_absent_attributes_and_keys(self, _tfs_file_str: str):
@@ -183,6 +195,12 @@ class TestWarnings:
 
 
 # ------ Fixtures ------ #
+
+
+@pytest.fixture
+def _bool_in_header_tfs_file() -> pathlib.Path:
+    """Copy of _tfs_file_pathlib with BOOL in header."""
+    return INPUTS_DIR / "bool_header.tfs"
 
 
 @pytest.fixture
