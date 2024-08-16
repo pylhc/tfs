@@ -30,7 +30,7 @@ def test_clean_file_pathlib_input(_bad_file_pathlib: pathlib.Path, tmp_path):
 def test_clean_file_str_input(_bad_file_str: str, tmp_path):
     clean_location = tmp_path / "clean_file.tfs"
     copyfile(_bad_file_str, clean_location)
-    with pytest.raises(TfsFormatError):
+    with pytest.raises(AbsentTypeIdentifierError):
         read_tfs(_bad_file_str)
 
     remove_header_comments_from_files([clean_location])
