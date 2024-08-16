@@ -6,10 +6,6 @@ Errors that can be raised during the handling of **TFS** files.
 """
 
 
-class TfsFormatError(Exception):
-    """Raised when a wrong format is detected in the **TFS** file."""
-
-
 class InvalidBooleanHeader(Exception):
     """
     Raised when an unaccepted boolean header
@@ -19,3 +15,7 @@ class InvalidBooleanHeader(Exception):
     def __init__(self, header_value: str) -> None:
         errmsg = f"Invalid boolean header value parsed: '{header_value}'"
         super().__init__(errmsg)
+
+
+class TfsFormatError(Exception):
+    """Raised when a wrong format is detected in the **TFS** file."""
