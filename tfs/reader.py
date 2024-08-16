@@ -25,7 +25,7 @@ from tfs.constants import (
     VALID_BOOLEANS_HEADERS,
     VALID_TRUE_BOOLEANS,
 )
-from tfs.errors import InvalidBooleanHeaderError, TfsFormatError
+from tfs.errors import InvalidBooleanHeaderError, AbsentColumnNameError, AbsentColumnTypeError, TfsFormatError
 from tfs.frame import TfsDataFrame
 from tfs.frame import validate as validate_frame
 
@@ -134,11 +134,9 @@ def read_tfs(
     metadata: _TfsMetaData = _read_metadata(tfs_file_path)
 
     if metadata.column_names is None:
-        errmsg = f"No column names in file {tfs_file_path.absolute()}. File not read."
-        raise TfsFormatError(errmsg)
+        raise AbsentColumnNameError(tfs_file_path)
     if metadata.column_types is None:
-        errmsg = f"No column types in file {tfs_file_path.absolute()}. File not read."
-        raise TfsFormatError(errmsg)
+        raise AbsentColumnTypeError(tfs_file_path)
 
     LOGGER.debug("Parsing data part of the file")
     # DO NOT use comment=COMMENTS in here, if you do and the symbol is in an element for some

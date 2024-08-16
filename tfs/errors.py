@@ -4,6 +4,7 @@ Errors
 
 Errors that can be raised during the handling of **TFS** files.
 """
+from pathlib import Path
 
 # ----- Main Exception to Inherit From ----- #
 
@@ -29,6 +30,22 @@ class InvalidBooleanHeaderError(TfsFormatError):
 
 
 # ----- Exceptions for DataFrame Content ----- #
+
+
+class AbsentColumnNameError(TfsFormatError):
+    """Raised when a **TFS** file does not provide column names."""
+
+    def __init__(self, file_path: Path) -> None:
+        errmsg = f"No column names in file {file_path.absolute()}. File not read."
+        super().__init__(errmsg)
+
+
+class AbsentColumnTypeError(TfsFormatError):
+    """Raised when a **TFS** file does not provide column type identifiers."""
+
+    def __init__(self, file_path: Path) -> None:
+        errmsg = f"No column types in file {file_path.absolute()}. File not read."
+        super().__init__(errmsg)
 
 
 class DuplicateColumnsError(TfsFormatError):
