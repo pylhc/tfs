@@ -7,7 +7,7 @@ from pandas.testing import assert_frame_equal
 
 import tfs
 from tfs.constants import HEADER
-from tfs.errors import InvalidBooleanHeader, TfsFormatError
+from tfs.errors import InvalidBooleanHeaderError, TfsFormatError
 from tfs.reader import read_headers, read_tfs
 from tfs.writer import write_tfs
 
@@ -194,7 +194,7 @@ class TestFailures:
 
     def test_wrong_boolean_header_raises(self, _invalid_bool_in_header_tfs_file):
         # The file header has a boolean value that is not accepted
-        with pytest.raises(InvalidBooleanHeader, match="Invalid boolean header value parsed"):
+        with pytest.raises(InvalidBooleanHeaderError, match="Invalid boolean header value parsed"):
             _ = read_tfs(_invalid_bool_in_header_tfs_file)
 
 

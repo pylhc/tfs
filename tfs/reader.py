@@ -25,7 +25,7 @@ from tfs.constants import (
     VALID_BOOLEANS_HEADERS,
     VALID_TRUE_BOOLEANS,
 )
-from tfs.errors import InvalidBooleanHeader, TfsFormatError
+from tfs.errors import InvalidBooleanHeaderError, TfsFormatError
 from tfs.frame import TfsDataFrame
 from tfs.frame import validate as validate_frame
 
@@ -302,7 +302,7 @@ def _parse_header(str_list: list[str]) -> tuple[str, bool | str | int | float]:
 
     Raises:
         TfsFormatError: if no type identifier is found in the header line.
-        InvalidBooleanHeader: if the identifier type indicates a boolean
+        InvalidBooleanHeaderError: if the identifier type indicates a boolean
             but the corresponding value is not an accepted boolean.
     """
     type_index = next((index for index, part in enumerate(str_list) if part.startswith("%")), None)
@@ -349,10 +349,10 @@ def _compute_types(str_list: list[str]) -> list[type]:
 def _string_to_bool(val_str: str) -> bool:
     """
     Infers the boolean value from a string value in the headers.
-    Raises ``InvalidBooleanHeader`` when encountering invalid value.
+    Raises ``InvalidBooleanHeaderError`` when encountering invalid value.
     """
     if val_str.lower().capitalize() not in VALID_BOOLEANS_HEADERS:
-        raise InvalidBooleanHeader(val_str)
+        raise InvalidBooleanHeaderError(val_str)
 
     if val_str.lower().capitalize() in VALID_TRUE_BOOLEANS:
         return True
