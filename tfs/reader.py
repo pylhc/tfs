@@ -108,6 +108,16 @@ def read_tfs(
 
             >>> tfs.read(pathlib.Path("filename.tfs"))
 
+        It is possible to load compressed files if the compression format is supported by pandas.
+        (see above). The compression format detection is handled automatically from the extension
+        of the provided **tfs_file_path** suffix. For instance:
+
+        .. code-block:: python
+
+            >>> tfs.read("filename.tfs.gz")
+            >>> tfs.read("filename.tfs.bz2")
+            >>> tfs.read("filename.tfs.zip")
+
         If one wants to set a specific column as index, this is done as:
 
         .. code-block:: python
@@ -128,15 +138,11 @@ def read_tfs(
 
             >>> tfs.read("filename.tfs", validate=False)
 
-        It is possible to load compressed files if the compression format is supported by pandas.
-        (see above). The compression format detection is handled automatically from the extension
-        of the provided **tfs_file_path** suffix. For instance:
+        To validate for compatibility with a certain code, provide a valid argument:
 
         .. code-block:: python
 
-            >>> tfs.read("filename.tfs.gz")
-            >>> tfs.read("filename.tfs.bz2")
-            >>> tfs.read("filename.tfs.zip")
+            >>> tfs.read("filename.tfs", validate="MAD-NG")
     """
     tfs_file_path = pathlib.Path(tfs_file_path)
     LOGGER.debug(f"Reading path: {tfs_file_path.absolute()}")
