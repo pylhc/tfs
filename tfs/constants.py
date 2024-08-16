@@ -28,6 +28,7 @@ ID_TO_TYPE: dict[str, type] = {
     "%f": np.float64,
     "%hd": np.int64,
     "%d": np.int64,
+    "%i": np.complex128,
 }
 
 # ----- Specific Accepted Values ----- #
