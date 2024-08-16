@@ -12,7 +12,13 @@ from pandas.testing import assert_frame_equal, assert_index_equal, assert_series
 
 import tfs
 from tfs import TfsDataFrame, read_tfs, write_tfs
-from tfs.errors import TfsFormatError
+from tfs.errors import (
+    DuplicateColumnsError,
+    DuplicateIndicesError,
+    IterableInDataFrameError,
+    NonStringColumnNameError,
+    SpaceinColumnNameError,
+)
 
 CURRENT_DIR = pathlib.Path(__file__).parent
 
@@ -189,7 +195,7 @@ class TestWrites:
 class TestFailures:
     def test_raising_on_non_unique_columns(self, caplog):
         df = TfsDataFrame(columns=["A", "B", "A"])
-        with pytest.raises(TfsFormatError):
+        with pytest.raises(DuplicateColumnsError, match="The dataframe contains non-unique columns."):
             write_tfs("", df, non_unique_behavior="raise")
 
         for record in caplog.records:
@@ -198,7 +204,7 @@ class TestFailures:
 
     def test_raising_on_non_unique_index(self, caplog):
         df = TfsDataFrame(index=["A", "B", "A"])
-        with pytest.raises(TfsFormatError):
+        with pytest.raises(DuplicateIndicesError, match="The dataframe contains non-unique indices."):
             write_tfs("", df, non_unique_behavior="raise")
 
         for record in caplog.records:
@@ -207,7 +213,7 @@ class TestFailures:
 
     def test_raising_on_non_unique_both(self, caplog):
         df = TfsDataFrame(index=["A", "B", "A"], columns=["A", "B", "A"])
-        with pytest.raises(TfsFormatError):
+        with pytest.raises(DuplicateIndicesError, match="The dataframe contains non-unique indices."):
             write_tfs("", df, non_unique_behavior="raise")
 
         for record in caplog.records:
@@ -217,7 +223,7 @@ class TestFailures:
     def test_fail_on_wrong_column_type(self, caplog):
         caplog.set_level(logging.DEBUG)
         df = TfsDataFrame(columns=range(5))
-        with pytest.raises(TfsFormatError):
+        with pytest.raises(NonStringColumnNameError, match="TFS-Columns need to be strings."):
             write_tfs("", df)
 
         for record in caplog.records:
@@ -227,7 +233,7 @@ class TestFailures:
     def test_fail_on_spaces_columns(self, caplog):
         caplog.set_level(logging.DEBUG)
         df = TfsDataFrame(columns=["allowed", "not allowed"])
-        with pytest.raises(TfsFormatError):
+        with pytest.raises(SpaceinColumnNameError, match="TFS-Columns can not contain spaces."):
             write_tfs("", df)
 
         for record in caplog.records:
@@ -236,7 +242,8 @@ class TestFailures:
 
     def test_messed_up_dataframe_fails_writes(self, _messed_up_dataframe: TfsDataFrame):
         messed_tfs = _messed_up_dataframe
-        with pytest.raises(TfsFormatError):  # raises in validate because of list elements
+        # This df raises in validate because of list elements
+        with pytest.raises(IterableInDataFrameError, match="Lists or tuple elements are not accepted in a TfsDataFrame"):
             write_tfs("", messed_tfs)
 
     def test_dict_column_dataframe_fails_writes(self, _dict_column_in_dataframe: TfsDataFrame, tmp_path):
@@ -252,7 +259,8 @@ class TestFailures:
     def test_list_column_dataframe_fails_writes(self, _list_column_in_dataframe: TfsDataFrame, tmp_path, caplog):
         list_col_tfs = _list_column_in_dataframe
         write_location = tmp_path / "test.tfs"
-        with pytest.raises(TfsFormatError):  # we look for these and raise in validate
+        # This df raises in validate because of list colnames
+        with pytest.raises(IterableInDataFrameError, match="Lists or tuple elements are not accepted in a TfsDataFrame"):
             write_tfs(write_location, list_col_tfs)
 
         for record in caplog.records:
