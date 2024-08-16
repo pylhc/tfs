@@ -7,7 +7,7 @@ from pandas.testing import assert_frame_equal
 
 import tfs
 from tfs.constants import HEADER
-from tfs.errors import TfsFormatError, InvalidBooleanHeader
+from tfs.errors import InvalidBooleanHeader, TfsFormatError
 from tfs.reader import read_headers, read_tfs
 from tfs.writer import write_tfs
 
