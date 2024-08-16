@@ -47,11 +47,19 @@ class DuplicateIndicesError(TfsFormatError):
         super().__init__(errmsg)
 
 
-class NonStringColumnError(TfsFormatError):
+class NonStringColumnNameError(TfsFormatError):
     """Raised when a **TfsDataFrame** has non-string type column names."""
 
     def __init__(self) -> None:
         errmsg = "TFS-Columns need to be strings."
+        super().__init__(errmsg)
+
+
+class SpaceinColumnNameError(TfsFormatError):
+    """Raised when a **TfsDataFrame** has spaces in column names."""
+
+    def __init__(self) -> None:
+        errmsg = "TFS-Columns can not contain spaces."
         super().__init__(errmsg)
 
 
