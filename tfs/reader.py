@@ -363,13 +363,13 @@ def _string_to_bool(val_str: str) -> bool:
     return False
 
 
-def _id_to_type(type_str: str) -> type:
+def _id_to_type(type_identifier: str) -> type:
     try:
-        return ID_TO_TYPE[type_str]
+        return ID_TO_TYPE[type_identifier]
     except KeyError as err:  # could be a "%[num]s" that MAD-X likes to output
-        if _is_madx_string_col_identifier(type_str):
+        if _is_madx_string_col_identifier(type_identifier):
             return str
-        raise UnknownTypeIdentifierError(type_str) from err
+        raise UnknownTypeIdentifierError(type_identifier) from err
 
 
 def _is_madx_string_col_identifier(type_str: str) -> bool:
