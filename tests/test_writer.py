@@ -176,6 +176,16 @@ class TestWrites:
         write_tfs(tmp_path / "temporary.tfs", df, validate=False)
         assert (tmp_path / "temporary.tfs").is_file()
 
+    def test_tfs_write_read_boolean_headers(self, _dataframe_boolean_headers: TfsDataFrame, tmp_path):
+        write_location = tmp_path / "test.tfs"
+        write_tfs(write_location, _dataframe_boolean_headers)
+        assert write_location.is_file()
+
+        new = read_tfs(write_location)
+        assert_frame_equal(_dataframe_boolean_headers, new, check_exact=False)  # float precision
+        assert_dict_equal(_dataframe_boolean_headers.headers, new.headers, compare_keys=True)
+
+
 class TestFailures:
     def test_raising_on_non_unique_columns(self, caplog):
         df = TfsDataFrame(columns=["A", "B", "A"])
@@ -329,6 +339,16 @@ def _dataframe_empty_headers() -> TfsDataFrame:
         columns="a b c d e".split(),
         data=np.random.rand(3, 5),
         headers={},
+    )
+
+
+@pytest.fixture
+def _dataframe_boolean_headers() -> TfsDataFrame:
+    return TfsDataFrame(
+        index=range(3),
+        columns="a b c d e".split(),
+        data=np.random.rand(3, 5),
+        headers={"Title": "Tfs Test", "Bool1": True, "Bool2": False, "Bool3": 1},
     )
 
 
