@@ -4,6 +4,7 @@ Errors
 
 Errors that can be raised during the handling of **TFS** files.
 """
+
 from pathlib import Path
 
 # ----- Main Exception to Inherit From ----- #
@@ -15,21 +16,7 @@ class TfsFormatError(Exception):
     """
 
 
-# ----- Exceptions Relating to Headers ----- #
-
-
-class InvalidBooleanHeaderError(TfsFormatError):
-    """
-    Raised when an unaccepted boolean header
-    value is read in the **TFS** file.
-    """
-
-    def __init__(self, header_value: str) -> None:
-        errmsg = f"Invalid boolean header value parsed: '{header_value}'"
-        super().__init__(errmsg)
-
-
-# ----- Exceptions for DataFrame Content ----- #
+# ----- Specific Exceptions ----- #
 
 
 class AbsentColumnNameError(TfsFormatError):
@@ -64,6 +51,25 @@ class DuplicateIndicesError(TfsFormatError):
         super().__init__(errmsg)
 
 
+class InvalidBooleanHeaderError(TfsFormatError):
+    """
+    Raised when an unaccepted boolean header
+    value is read in the **TFS** file.
+    """
+
+    def __init__(self, header_value: str) -> None:
+        errmsg = f"Invalid boolean header value parsed: '{header_value}'"
+        super().__init__(errmsg)
+
+
+class IterableInDataFrameError(TfsFormatError):
+    """Raised when an list / tuple is found in the column of a **TfsDataFrame**."""
+
+    def __init__(self) -> None:
+        errmsg = "Lists or tuple elements are not accepted in a TfsDataFrame"
+        super().__init__(errmsg)
+
+
 class NonStringColumnNameError(TfsFormatError):
     """Raised when a **TfsDataFrame** has non-string type column names."""
 
@@ -77,15 +83,4 @@ class SpaceinColumnNameError(TfsFormatError):
 
     def __init__(self) -> None:
         errmsg = "TFS-Columns can not contain spaces."
-        super().__init__(errmsg)
-
-
-# ----- Exceptions for Validation ----- #
-
-
-class IterableInDataFrameError(TfsFormatError):
-    """Raised when an list / tuple is found in the column of a **TfsDataFrame**."""
-
-    def __init__(self) -> None:
-        errmsg = "Lists or tuple elements are not accepted in a TfsDataFrame"
         super().__init__(errmsg)
