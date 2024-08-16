@@ -18,6 +18,7 @@ INDEX_ID: str = "INDEX&&&"
 
 ID_TO_TYPE: dict[str, type] = {  # used when reading files
     "%s": str,
+    "%b": bool,
     "%bpm_s": str,
     "%le": np.float64,
     "%f": np.float64,
