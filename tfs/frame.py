@@ -16,7 +16,7 @@ from typing import TYPE_CHECKING, ClassVar
 import numpy as np
 import pandas as pd
 
-from tfs.errors import IterableInDataFrameError, TfsFormatError
+from tfs.errors import DuplicateIndicesError, IterableInDataFrameError, TfsFormatError
 
 if TYPE_CHECKING:
     from collections.abc import Sequence
@@ -294,8 +294,7 @@ def validate(
     if data_frame.index.has_duplicates:
         LOGGER.warning("Non-unique indices found.")
         if non_unique_behavior.lower() == "raise":
-            errmsg = "The dataframe contains non-unique indices."
-            raise TfsFormatError(errmsg)
+            raise DuplicateIndicesError
 
     if data_frame.columns.has_duplicates:
         LOGGER.warning("Non-unique column names found.")

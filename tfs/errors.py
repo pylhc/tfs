@@ -10,7 +10,7 @@ Errors that can be raised during the handling of **TFS** files.
 
 class TfsFormatError(Exception):
     """
-    Raised when a wrong format is detected in the **TFS** file or dataframe.
+    Raised when an issue is detected in the **TFS** file or dataframe.
     """
 
 
@@ -36,6 +36,13 @@ class DuplicateColumnsError(TfsFormatError):
 
     def __init__(self) -> None:
         errmsg = "The dataframe contains non-unique columns."
+        super().__init__(errmsg)
+
+class DuplicateIndicesError(TfsFormatError):
+    """Raised when a **TfsDataFrame** has duplicate columns."""
+
+    def __init__(self) -> None:
+        errmsg = "The dataframe contains non-unique indices."
         super().__init__(errmsg)
 
 
