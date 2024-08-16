@@ -210,7 +210,7 @@ def _bool_in_header_tfs_file() -> pathlib.Path:
 @pytest.fixture
 def _invalid_bool_in_header_tfs_file() -> pathlib.Path:
     """TFS file with invalid value for bool header."""
-    return INPUTS_DIR / "bool_header.tfs"
+    return INPUTS_DIR / "invalid_bool_header.tfs"
 
 
 @pytest.fixture
