@@ -4,7 +4,7 @@ from shutil import copyfile
 
 import pytest
 
-from tfs.errors import TfsFormatError
+from tfs.errors import AbsentTypeIdentifierError, TfsFormatError
 from tfs.reader import read_tfs
 from tfs.tools import remove_header_comments_from_files, remove_nan_from_files, significant_digits
 
@@ -14,8 +14,8 @@ CURRENT_DIR = pathlib.Path(__file__).parent
 def test_clean_file_pathlib_input(_bad_file_pathlib: pathlib.Path, tmp_path):
     clean_location = tmp_path / "clean_file.tfs"
     copyfile(_bad_file_pathlib, clean_location)
-    with pytest.raises(TfsFormatError):
-        read_tfs(_bad_file_pathlib)
+    with pytest.raises(AbsentTypeIdentifierError):
+        _ = read_tfs(_bad_file_pathlib)
 
     remove_header_comments_from_files([clean_location])
     df = read_tfs(clean_location)
