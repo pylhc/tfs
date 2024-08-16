@@ -7,7 +7,7 @@ from pandas.testing import assert_frame_equal
 
 import tfs
 from tfs.constants import HEADER
-from tfs.errors import InvalidBooleanHeaderError, TfsFormatError
+from tfs.errors import InvalidBooleanHeaderError, TfsFormatError, UnknownTypeIdentifierError
 from tfs.reader import read_headers, read_tfs
 from tfs.writer import write_tfs
 
@@ -169,7 +169,7 @@ class TestFailures:
 
     def test_id_to_type_fails_unexpected_identifiers(self):
         unexpected_id = "%t"
-        with pytest.raises(TfsFormatError):
+        with pytest.raises(UnknownTypeIdentifierError):
             _ = tfs.reader._id_to_type(unexpected_id)  # noqa: SLF001
 
     def test_fail_read_no_coltypes(self, _no_coltypes_tfs_path):
