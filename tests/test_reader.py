@@ -144,7 +144,7 @@ class TestRead:
         assert_frame_equal(df, df_for_compare)
 
     def test_real_file_with_boolean_headers(self, _bool_in_header_tfs_file, _tfs_file_pathlib):
-        df = read_tfs(_bool_in_header_tfs_file)
+        df = read_tfs(_bool_in_header_tfs_file, validate=False)  # MAD-X does not accept those
         assert df.headers["BOOLTRUE1"] is True  # true resolves to True
         assert df.headers["BOOLTRUE2"] is True  # True resolves to True
         assert df.headers["BOOLTRUE3"] is True  # 1 resolves to True
@@ -156,10 +156,10 @@ class TestRead:
         assert_frame_equal(df, df_for_compare)
 
     def test_tfs_read_write_read_boolean_headers(self, _bool_in_header_tfs_file, tmp_path):
-        original = read_tfs(_bool_in_header_tfs_file)
+        original = read_tfs(_bool_in_header_tfs_file, validate="madng")  # booleans are MAD-NG feature
         write_location = tmp_path / "bool_headers.tfs"
-        write_tfs(write_location, original)
-        new = read_tfs(write_location)
+        write_tfs(write_location, original, validate="madng")  # booleans are MAD-NG feature
+        new = read_tfs(write_location, validate="madng")  # booleans are MAD-NG feature
         assert_frame_equal(original, new)
         assert_dict_equal(original.headers, new.headers, compare_keys=True)
 
@@ -194,7 +194,7 @@ class TestFailures:
     def test_fail_space_in_colname(self, _space_in_colnames_tfs_path: pathlib.Path):
         # Read file has a space in a column name which should raise
         with pytest.raises(SpaceinColumnNameError, match="TFS-Columns can not contain spaces."):
-            _ = read_tfs(_space_in_colnames_tfs_path, index="NAME", validate=True)
+            _ = read_tfs(_space_in_colnames_tfs_path, index="NAME")
 
     def test_wrong_boolean_header_raises(self, _invalid_bool_in_header_tfs_file):
         # The file header has a boolean value that is not accepted
@@ -205,7 +205,7 @@ class TestFailures:
 class TestWarnings:
     def test_warn_unphysical_values(self, caplog):
         nan_tfs_path = pathlib.Path(__file__).parent / "inputs" / "has_nans.tfs"
-        _ = read_tfs(nan_tfs_path, index="NAME", validate=True)
+        _ = read_tfs(nan_tfs_path, index="NAME")
         for record in caplog.records:
             assert record.levelname == "WARNING"
         assert "contains non-physical values at Index:" in caplog.text

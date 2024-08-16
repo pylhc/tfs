@@ -142,10 +142,10 @@ class TestWrites:
 
     def test_tfs_write_read_pandasdf(self, _pd_dataframe, tmp_path):
         write_location = tmp_path / "test.tfs"
-        write_tfs(write_location, _pd_dataframe)
+        write_tfs(write_location, _pd_dataframe, validate=False)  # validation would complain 'no headers'
         assert write_location.is_file()
 
-        new = read_tfs(write_location)
+        new = read_tfs(write_location, validate=False)  # validation would complain 'no headers'
         assert_frame_equal(
             _pd_dataframe,
             new,
@@ -184,10 +184,10 @@ class TestWrites:
 
     def test_tfs_write_read_boolean_headers(self, _dataframe_boolean_headers: TfsDataFrame, tmp_path):
         write_location = tmp_path / "test.tfs"
-        write_tfs(write_location, _dataframe_boolean_headers)
+        write_tfs(write_location, _dataframe_boolean_headers, validate="madng")  # booleans are MAD-NG feature
         assert write_location.is_file()
 
-        new = read_tfs(write_location)
+        new = read_tfs(write_location, validate="madng")  # booleans are MAD-NG feature
         assert_frame_equal(_dataframe_boolean_headers, new, check_exact=False)  # float precision
         assert_dict_equal(_dataframe_boolean_headers.headers, new.headers, compare_keys=True)
 

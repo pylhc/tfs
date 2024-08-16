@@ -48,7 +48,7 @@ def read_tfs(
     tfs_file_path: pathlib.Path | str,
     index: str | None = None,
     non_unique_behavior: str = "warn",
-    validate: str = "madx",
+    validate: str = "madx",  # TODO: should reader accept MAD-NG too by default?
 ) -> TfsDataFrame:
     """
     Parses the **TFS** table present in **tfs_file_path** and returns a ``TfsDataFrame``.
