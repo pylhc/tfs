@@ -16,7 +16,7 @@ from typing import TYPE_CHECKING, ClassVar
 import numpy as np
 import pandas as pd
 
-from tfs.errors import DuplicateIndicesError, DuplicateColumnsError, IterableInDataFrameError, TfsFormatError
+from tfs.errors import DuplicateIndicesError, DuplicateColumnsError, IterableInDataFrameError, NonStringColumnError, TfsFormatError
 
 if TYPE_CHECKING:
     from collections.abc import Sequence
@@ -304,8 +304,7 @@ def validate(
     # The following are deal-breakers for the TFS format and would not, for instance, be accepted by MAD-X
     if any(not isinstance(c, str) for c in data_frame.columns):
         LOGGER.debug(f"Some column-names are not of string-type, dataframe {info_str} is invalid.")
-        errmsg = "TFS-Columns need to be strings."
-        raise TfsFormatError(errmsg)
+        raise NonStringColumnError
 
     if any(" " in c for c in data_frame.columns):
         LOGGER.debug(f"Space(s) found in TFS columns, dataframe {info_str} is invalid")

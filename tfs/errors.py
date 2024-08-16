@@ -38,11 +38,20 @@ class DuplicateColumnsError(TfsFormatError):
         errmsg = "The dataframe contains non-unique columns."
         super().__init__(errmsg)
 
+
 class DuplicateIndicesError(TfsFormatError):
-    """Raised when a **TfsDataFrame** has duplicate columns."""
+    """Raised when a **TfsDataFrame** has duplicate indices."""
 
     def __init__(self) -> None:
         errmsg = "The dataframe contains non-unique indices."
+        super().__init__(errmsg)
+
+
+class NonStringColumnError(TfsFormatError):
+    """Raised when a **TfsDataFrame** has non-string type column names."""
+
+    def __init__(self) -> None:
+        errmsg = "TFS-Columns need to be strings."
         super().__init__(errmsg)
 
 
