@@ -15,8 +15,17 @@ from dataclasses import dataclass
 import numpy as np
 import pandas as pd
 
-from tfs.constants import COMMENTS, HEADER, ID_TO_TYPE, INDEX_ID, NAMES, TYPES, VALID_TRUE_BOOLEANS, VALID_BOOLEANS_HEADERS, VALID_FALSE_BOOLEANS
-from tfs.errors import TfsFormatError, InvalidBooleanHeader
+from tfs.constants import (
+    COMMENTS,
+    HEADER,
+    ID_TO_TYPE,
+    INDEX_ID,
+    NAMES,
+    TYPES,
+    VALID_BOOLEANS_HEADERS,
+    VALID_TRUE_BOOLEANS,
+)
+from tfs.errors import InvalidBooleanHeader, TfsFormatError
 from tfs.frame import TfsDataFrame
 from tfs.frame import validate as validate_frame
 
