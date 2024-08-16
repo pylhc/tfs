@@ -149,6 +149,14 @@ class TestRead:
         df_for_compare = read_tfs(_tfs_file_pathlib)
         assert_frame_equal(df, df_for_compare)
 
+    def test_tfs_read_write_read_boolean_headers(self, _bool_in_header_tfs_file, tmp_path):
+        original = read_tfs(_bool_in_header_tfs_file)
+        write_location = tmp_path / "bool_headers.tfs"
+        write_tfs(write_location, original)
+        new = read_tfs(write_location)
+        assert_frame_equal(original, new)
+        assert_dict_equal(original.headers, new.headers, compare_keys=True)
+
 
 class TestFailures:
     def test_absent_attributes_and_keys(self, _tfs_file_str: str):
