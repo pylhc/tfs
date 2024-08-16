@@ -15,7 +15,7 @@ CURRENT_DIR = pathlib.Path(__file__).parent
 class TestFailures:
     def test_validate_raises_on_wrong_unique_behavior(self):
         df = TfsDataFrame(index=["A", "B", "A"], columns=["A", "B", "A"])
-        with pytest.raises(KeyError):
+        with pytest.raises(ValueError):
             validate(df, "", non_unique_behavior="invalid")
 
     @pytest.mark.parametrize("how", ["invalid", "not_left", "not_right"])

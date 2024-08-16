@@ -78,6 +78,10 @@ class IterableInDataFrameError(TfsFormatError):
         super().__init__(errmsg)
 
 
+class MADXCompatibilityError(TfsFormatError):
+    """Raised when validation for **MADX** compatibility fails."""
+
+
 class NonStringColumnNameError(TfsFormatError):
     """Raised when a **TfsDataFrame** has non-string type column names."""
 
