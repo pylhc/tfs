@@ -30,7 +30,7 @@ def write_tfs(
     colwidth: int = DEFAULT_COLUMN_WIDTH,
     headerswidth: int = DEFAULT_COLUMN_WIDTH,
     non_unique_behavior: str = "warn",
-    validate: bool = True,  # noqa: FBT001, FBT002
+    validate: str = "madx",
 ) -> None:
     """
     Writes the provided ``DataFrame`` to disk at **tfs_file_path**, eventually with the `headers_dict` as
@@ -64,7 +64,12 @@ def write_tfs(
         non_unique_behavior (str): behavior to adopt if non-unique indices or columns are found in the
             dataframe. Accepts `warn` and `raise` as values, case-insensitively, which dictates
             to respectively issue a warning or raise an error if non-unique elements are found.
-        validate (bool): Whether to validate the dataframe before writing it to file. Defaults to ``True``.
+        validate (str): If an accepted value is given, validation will be performed before writing.
+            Defauts to `madx`, which will assert compatibility of the data with the ``MAD-X``code.
+            If  `madng` is given then compatibility with the ``MAD-NG`` code is checked, which has more
+            features. Accepted values are `madx`, `mad-x`, `madng` and `mad-ng`, case-insensitive. If
+            any other value is given, validation will be skipped. See the `validate` function for more
+            information on the validation steps.
 
     Examples:
         Writing to file is simple, as most arguments have sane default values.
@@ -104,8 +109,14 @@ def write_tfs(
         data_frame = TfsDataFrame(data_frame)
         data_frame.columns = data_frame.columns.astype(str)  # need column names to be strings
 
-    if validate:
-        validate_frame(data_frame, f"to be written in {tfs_file_path.absolute()}", non_unique_behavior)
+    # Only perform validation if a valid mode is given (MAD-X or MAD-NG compatibility)
+    if isinstance(validate, str) and validate.lower() in ("madx", "mad-x", "madng", "mad-ng"):
+        validate_frame(
+            data_frame,
+            info_str=f"to be written in {tfs_file_path.absolute()}",
+            non_unique_behavior=non_unique_behavior,
+            compatibility=validate,
+        )
 
     if headers_dict is None:  # tries to get headers from TfsDataFrame
         try:
