@@ -44,7 +44,7 @@ class TestRead:
         assert isinstance(test_file.index[0], str)
 
     def test_tfs_read_no_validation(self, _tfs_file_pathlib: pathlib.Path):
-        test_file = read_tfs(_tfs_file_pathlib, index="NAME", validate=False)
+        test_file = read_tfs(_tfs_file_pathlib, index="NAME")
         assert len(test_file.headers) > 0
         assert len(test_file.columns) > 0
         assert len(test_file.index) > 0
@@ -54,12 +54,12 @@ class TestRead:
     def test_tfs_read_wrong_file_no_validation(self, _space_in_colnames_tfs_path: pathlib.Path):
         # Read file has a space in a column name which should raise, we make sure that it
         # goes through when explicitely skipping validation
-        df = read_tfs(_space_in_colnames_tfs_path, index="NAME", validate=False)
+        df = read_tfs(_space_in_colnames_tfs_path, index="NAME")
         assert "BPM RES" in df.columns
 
     def test_tfs_read_no_validation_doesnt_warn(self, caplog):
         nan_tfs_path = pathlib.Path(__file__).parent / "inputs" / "has_nans.tfs"
-        _ = read_tfs(nan_tfs_path, index="NAME", validate=False)
+        _ = read_tfs(nan_tfs_path, index="NAME")
         assert "contains non-physical values at Index:" not in caplog.text
 
     def test_id_to_type_handles_madx_string_identifier(self):
@@ -144,7 +144,7 @@ class TestRead:
         assert_frame_equal(df, df_for_compare)
 
     def test_real_file_with_boolean_headers(self, _bool_in_header_tfs_file, _tfs_file_pathlib):
-        df = read_tfs(_bool_in_header_tfs_file, validate=False)  # MAD-X does not accept those
+        df = read_tfs(_bool_in_header_tfs_file)  # MAD-X does not accept those
         assert df.headers["BOOLTRUE1"] is True  # true resolves to True
         assert df.headers["BOOLTRUE2"] is True  # True resolves to True
         assert df.headers["BOOLTRUE3"] is True  # 1 resolves to True
@@ -156,10 +156,10 @@ class TestRead:
         assert_frame_equal(df, df_for_compare)
 
     def test_tfs_read_write_read_boolean_headers(self, _bool_in_header_tfs_file, tmp_path):
-        original = read_tfs(_bool_in_header_tfs_file, validate="madng")  # booleans are MAD-NG feature
+        original = read_tfs(_bool_in_header_tfs_file)
         write_location = tmp_path / "bool_headers.tfs"
         write_tfs(write_location, original, validate="madng")  # booleans are MAD-NG feature
-        new = read_tfs(write_location, validate="madng")  # booleans are MAD-NG feature
+        new = read_tfs(write_location)
         assert_frame_equal(original, new)
         assert_dict_equal(original.headers, new.headers, compare_keys=True)
 
