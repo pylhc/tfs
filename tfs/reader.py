@@ -158,7 +158,7 @@ def read_tfs(
     # complex-dtyped and will provide a specific converter function for pandas to use
     dtypes_dict = dict(zip(metadata.column_names, metadata.column_types))
     converters: dict[str, Callable] = {}
-    
+
     if np.complex128 in metadata.column_types:
         LOGGER.debug("Complex columns detected, reading as strings and casting later")
         for colname, dtype in zip(metadata.column_names, metadata.column_types):
