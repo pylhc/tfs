@@ -1,0 +1,22 @@
+@ name               %04s     "test"
+@ type               %04s     "user"
+@ title              %08s     "no-title"
+@ origin             %18s     "MAD 0.9.7 Linux 64"
+@ date               %08s     "18/10/23"
+@ time               %08s     "19:31:49"
+@ refcol             %06s     "string"
+@ string             %06s     "string"
+@ number             %le       1.23456789
+@ integer            %le       12345670
+@ complex            %lz      1.3+1.2i
+@ boolean            %b       true
+@ list               %05t     {1, 2, 3, 4, 5}
+@ table              %02t     {1, 2}
+@ range              %lr      1..11
+* string             number             integer            complex            boolean            range              generator
+$ %s                 %le                %le                %lz                %b                 %lr                %lz
+  "a"                 1.1                1                 1+2i               true               1..11              1.1+1.1i
+  "b"                 2.2                2                 2+3i               false              2..12              2.2+2.2i
+  "c"                 3.3                3                 3+4i               true               3..13              3.3+3.3i
+  "d"                 4.4                4                 4+5i               false              4..14              4.4+4.4i
+  "e"                 5.5                5                 5+6i               true               5..15              5.5+5.5i
