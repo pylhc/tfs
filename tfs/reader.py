@@ -153,6 +153,17 @@ def read_tfs(
     if metadata.column_types is None:
         raise AbsentColumnTypeError(tfs_file_path)
 
+    # Special case if we have complex columns: the pandas engines do NOT support reading complex numbers.
+    # We will note which columns are complex and read them as strings, then ensure they use j (and not i)
+    # for the imaginary part and finally force conversion to complex numbers after reading.
+    complex_cols = []
+    if np.complex128 in metadata.column_types:
+        LOGGER.debug("Complex columns detected, reading as strings and casting later")
+        for idx, (colname, dtype) in enumerate(zip(metadata.column_names, metadata.column_types)):
+            if dtype is np.complex128:
+                complex_cols.append(colname)  # to cast them to complex later
+                metadata.column_types[idx] = str  # we will parse it as a string
+
     LOGGER.debug("Parsing data part of the file")
     # DO NOT use comment=COMMENTS in here, if you do and the symbol is in an element for some
     # reason then the entire parsing will crash
@@ -167,6 +178,12 @@ def read_tfs(
             zip(metadata.column_names, metadata.column_types)
         ),  # assign types at read-time to avoid re-assigning later
     )
+
+    # Special case if we have complex columns: they were read as strings, now we cast them to complex
+    if complex_cols:
+        LOGGER.debug("Casting complex columns (read as strings) to complex numbers")
+        data_frame.loc[:, complex_cols] = data_frame.loc[:, complex_cols].map(lambda string: string.replace("i", "j"))
+        data_frame.loc[:, complex_cols] = data_frame.loc[:, complex_cols].astype(np.complex128)
 
     LOGGER.debug("Converting to TfsDataFrame")
     tfs_data_frame = TfsDataFrame(data_frame, headers=metadata.headers)
