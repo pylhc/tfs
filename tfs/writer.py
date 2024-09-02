@@ -259,7 +259,7 @@ def _dtype_to_id_string(type_: type) -> str:
         return "%b"
     if pdtypes.is_complex_dtype(type_):
         return "%lz"
-    errmsg = f"Provided type '{type_}' could not be identified as either a bool, int, float or string dtype"
+    errmsg = f"Provided type '{type_}' could not be identified as either a bool, int, float complex or string dtype"
     raise TypeError(errmsg)
 
 
@@ -283,5 +283,7 @@ def _dtype_to_formatter(type_: type, colsize: int) -> str:
         return f"{colsize}.{colsize - len('-0.e-000')}g"
     if pdtypes.is_string_dtype(type_):
         return f"{colsize}s"
-    errmsg = f"Provided type '{type_}' could not be identified as either a bool, int, float or string dtype"
+    if pdtypes.is_complex_dtype(type_):  # same string formatter as float
+        return f"{colsize}.{colsize - len('-0.e-000')}g"
+    errmsg = f"Provided type '{type_}' could not be identified as either a bool, int, float, complex or string dtype"
     raise TypeError(errmsg)
