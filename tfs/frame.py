@@ -342,6 +342,15 @@ def validate(
             errmsg = "TFS-Headers can not contain boolean values in MAD-X compatibility mode."
             raise MADXCompatibilityError(errmsg)
 
+        # Check that no complex values are in the headers
+        if any(isinstance(header, complex) for header in data_frame.headers.values()):
+            LOGGER.debug(
+                f"Complex values found in headers of dataframe {info_str}, which is incompatible with MAD-X."
+                "Change their types in order to keep compatibility with MAD-X."
+            )
+            errmsg = "TFS-Headers can not contain complex values in MAD-X compatibility mode."
+            raise MADXCompatibilityError(errmsg)
+
         # Check that the dataframe contains no complex dtype columns
         if any(pdtypes.is_complex_dtype(type_) for type_ in data_frame.dtypes):
             LOGGER.debug(
