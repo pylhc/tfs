@@ -11,6 +11,7 @@ import logging
 import pathlib
 import shlex
 from dataclasses import dataclass
+from typing import Callable
 
 import numpy as np
 import pandas as pd
@@ -153,16 +154,17 @@ def read_tfs(
     if metadata.column_types is None:
         raise AbsentColumnTypeError(tfs_file_path)
 
-    # Special case if we have complex columns: the pandas engines do NOT support reading complex numbers.
-    # We will note which columns are complex and read them as strings, then ensure they use j (and not i)
-    # for the imaginary part and finally force conversion to complex numbers after reading.
-    complex_cols = []
+    # The pandas engines do NOT support reading complex numbers, so we take note of which columns are
+    # complex-dtyped and will provide a specific converter function for pandas to use
+    dtypes_dict = dict(zip(metadata.column_names, metadata.column_types))
+    converters: dict[str, Callable] = {}
+    
     if np.complex128 in metadata.column_types:
         LOGGER.debug("Complex columns detected, reading as strings and casting later")
-        for idx, (colname, dtype) in enumerate(zip(metadata.column_names, metadata.column_types)):
+        for colname, dtype in zip(metadata.column_names, metadata.column_types):
             if dtype is np.complex128:
-                complex_cols.append(colname)  # to cast them to complex later
-                metadata.column_types[idx] = str  # we will parse it as a string
+                converters[colname] = _parse_complex  # will a special converter
+                del dtypes_dict[colname]  # remove to avoid ParserWarning saying we provided both
 
     LOGGER.debug("Parsing data part of the file")
     # DO NOT use comment=COMMENTS in here, if you do and the symbol is in an element for some
@@ -174,16 +176,9 @@ def read_tfs(
         sep=r"\s+",  # understands ' ' as delimiter | replaced deprecated 'delim_whitespace' in tfs-pandas 3.8.0
         quotechar='"',  # elements surrounded by " are one entry -> correct parsing of strings with spaces
         names=metadata.column_names,  # column names we have determined, avoids using first read row for columns
-        dtype=dict(
-            zip(metadata.column_names, metadata.column_types)
-        ),  # assign types at read-time to avoid re-assigning later
+        dtype=dtypes_dict,  # assign types at read-time to avoid conversions later
+        converters=converters,  # special handling for complex columns
     )
-
-    # Special case if we have complex columns: they were read as strings, now we cast them to complex
-    if complex_cols:
-        LOGGER.debug("Casting complex columns (read as strings) to complex numbers")
-        data_frame.loc[:, complex_cols] = data_frame.loc[:, complex_cols].map(lambda string: string.replace("i", "j"))
-        data_frame.loc[:, complex_cols] = data_frame.loc[:, complex_cols].astype(np.complex128)
 
     LOGGER.debug("Converting to TfsDataFrame")
     tfs_data_frame = TfsDataFrame(data_frame, headers=metadata.headers)
@@ -425,3 +420,19 @@ def _is_madx_string_col_identifier(type_str: str) -> bool:
         return True
     except ValueError:
         return False
+
+
+def _parse_complex(complex_string: str) -> np.complex128:
+    """
+    Helper for pandas (as a converter) to handles complex columns. Assumes the file
+    might be from MAD-NG, in which case it uses 'i' for the imaginary part and we
+    need to convert it to 'j' for Python.
+
+    Args:
+        complex_string (str): the string representation of the complex number, for
+        instance '1.0+2.0i' or '7.5342+164j'.
+
+    Returns:
+        The (potentially adapted) value as a numpy.complex128.
+    """
+    return np.complex128(complex_string.replace("i", "j"))
