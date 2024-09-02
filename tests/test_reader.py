@@ -190,16 +190,6 @@ class TestFailures:
             _ = tfs.reader._id_to_type(typoed_str_id)  # noqa: SLF001
 
 
-class TestWarnings:
-    @pytest.mark.parametrize("validation_mode", ["madx", "mad-x", "madng", "MAD-NG"])
-    def test_warn_unphysical_values(self, validation_mode, caplog):
-        nan_tfs_path = pathlib.Path(__file__).parent / "inputs" / "has_nans.tfs"
-        _ = read_tfs(nan_tfs_path, index="NAME", validate=validation_mode)
-        for record in caplog.records:
-            assert record.levelname == "WARNING"
-        assert "contains non-physical values at Index:" in caplog.text
-
-
 # ------ Fixtures ------ #
 
 

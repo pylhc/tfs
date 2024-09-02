@@ -8,6 +8,17 @@ from tfs.reader import read_tfs
 
 INPUTS_DIR = pathlib.Path(__file__).parent / "inputs"
 
+
+class TestWarnings:
+    @pytest.mark.parametrize("validation_mode", ["madx", "mad-x", "madng", "MAD-NG"])
+    def test_warn_unphysical_values(self, validation_mode, caplog):
+        nan_tfs_path = INPUTS_DIR / "has_nans.tfs"
+        _ = read_tfs(nan_tfs_path, index="NAME", validate=validation_mode)
+        for record in caplog.records:
+            assert record.levelname == "WARNING"
+        assert "contains non-physical values at Index:" in caplog.text
+
+
 class TestFailures:
     def test_validate_raises_on_wrong_unique_behavior(self):
         df = TfsDataFrame(index=["A", "B", "A"], columns=["A", "B", "A"])
