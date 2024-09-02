@@ -337,6 +337,8 @@ def _parse_header(str_list: list[str]) -> tuple[str, bool | str | int | float]:
 
     if value_type is bool:  # special handling for boolean values
         return name, _string_to_bool(value_string)
+    elif value_type is np.complex128:  # MAD-NG uses i for imaginary but Python needs j
+        value_string = value_string.replace("i", "j")
     return name, value_type(value_string)
 
 
