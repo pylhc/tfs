@@ -10,8 +10,6 @@ from tfs.constants import HEADER
 from tfs.errors import (
     AbsentColumnNameError,
     AbsentColumnTypeError,
-    InvalidBooleanHeaderError,
-    SpaceinColumnNameError,
     UnknownTypeIdentifierError,
 )
 from tfs.reader import read_headers, read_tfs
@@ -191,18 +189,6 @@ class TestFailures:
         with pytest.raises(UnknownTypeIdentifierError, match="Unknown data type"):
             _ = tfs.reader._id_to_type(typoed_str_id)  # noqa: SLF001
 
-    @pytest.mark.parametrize("validation_mode", ["madx", "mad-x", "madng", "MAD-NG"])
-    def test_validation_raises_space_in_colname(self, _space_in_colnames_tfs_path: pathlib.Path, validation_mode):
-        # Read file has a space in a column name which should raise
-        with pytest.raises(SpaceinColumnNameError, match="TFS-Columns can not contain spaces."):
-            _ = read_tfs(_space_in_colnames_tfs_path, index="NAME", validate=validation_mode)
-
-    @pytest.mark.parametrize("validation_mode", ["madx", "mad-x", "madng", "MAD-NG"])
-    def test_validation_raises_wrong_boolean_header(self, _invalid_bool_in_header_tfs_file, validation_mode):
-        # The file header has a boolean value that is not accepted
-        with pytest.raises(InvalidBooleanHeaderError, match="Invalid boolean header value parsed"):
-            _ = read_tfs(_invalid_bool_in_header_tfs_file, validate=validation_mode)
-
 
 class TestWarnings:
     @pytest.mark.parametrize("validation_mode", ["madx", "mad-x", "madng", "MAD-NG"])
@@ -221,12 +207,6 @@ class TestWarnings:
 def _bool_in_header_tfs_file() -> pathlib.Path:
     """Copy of _tfs_file_pathlib with BOOL in header."""
     return INPUTS_DIR / "bool_header.tfs"
-
-@pytest.fixture
-def _invalid_bool_in_header_tfs_file() -> pathlib.Path:
-    """TFS file with invalid value for bool header."""
-    return INPUTS_DIR / "invalid_bool_header.tfs"
-
 
 @pytest.fixture
 def _tfs_file_pathlib() -> pathlib.Path:

@@ -7,7 +7,7 @@ from pandas._testing import assert_dict_equal
 from pandas.testing import assert_frame_equal
 
 import tfs
-from tfs.frame import TfsDataFrame, concat, merge_headers, validate
+from tfs.frame import TfsDataFrame, concat, merge_headers
 
 CURRENT_DIR = pathlib.Path(__file__).parent
 
