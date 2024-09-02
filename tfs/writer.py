@@ -124,7 +124,9 @@ def write_tfs(
         except AttributeError:
             headers_dict = {}
 
-    data_frame = data_frame.convert_dtypes(convert_integer=False)
+    # Let pandas try to infer the best dtypes for the data to write (only to write, the
+    # actual dataframe provided by the user is not changed so this operation is fine).
+    data_frame = data_frame.convert_dtypes(convert_integer=False, convert_floating=False)  # would try and fail to convert complex to floats
 
     if save_index:
         left_align_first_column = True
@@ -255,6 +257,8 @@ def _dtype_to_id_string(type_: type) -> str:
         return "%s"
     if pdtypes.is_bool_dtype(type_):
         return "%b"
+    if pdtypes.is_complex_dtype(type_):
+        return "%lz"
     errmsg = f"Provided type '{type_}' could not be identified as either a bool, int, float or string dtype"
     raise TypeError(errmsg)
 
