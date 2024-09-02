@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import logging
 import pathlib
+import string
 
 import numpy as np
 import pandas as pd
@@ -179,11 +180,8 @@ def _get_header_line(name: str, value, width: int) -> str:
         errmsg = f"{name} is not a string"
         raise TypeError(errmsg)
     type_str = _value_to_type_string(value)
-    if type_str == "%s":
-        value = f'"{value}"'
-    elif type_str == "%b":
-        value = str(bool(value))
-    return f"@ {name:<{width}} {type_str} {value:>{width}}"
+    value_str = TfsStringFormatter().format_field(value, _value_to_string_format_id(value))
+    return f"@ {name:<{width}} {type_str} {value_str:>{width}}"
 
 
 def _get_colnames_string(
@@ -197,7 +195,7 @@ def _get_coltypes_string(
     types: pd.Series, colwidth: int, left_align_first_column: bool  # noqa: FBT001
 ) -> str:
     fmt = _get_row_format_string([str] * len(types), colwidth, left_align_first_column)
-    return "$ " + fmt.format(*[_dtype_to_id_string(type_) for type_ in types])
+    return "$ " + fmt.format(*[_dtype_to_tfs_format_id(type_) for type_ in types])
 
 
 def _get_data_string(
@@ -208,9 +206,9 @@ def _get_data_string(
     if len(data_frame.index) == 0 or len(data_frame.columns) == 0:
         return "\n"
     format_strings = "  " + _get_row_format_string(data_frame.dtypes, colwidth, left_align_first_column)
-    data_frame = _quote_string_columns(data_frame)
     data_frame = data_frame.astype(object)  # overrides pandas auto-conversion (lead to format bug)
-    return "\n".join(data_frame.apply(lambda series: format_strings.format(*series), axis=1))
+    string_formatter = TfsStringFormatter()
+    return "\n".join(data_frame.apply(lambda series: string_formatter.format(format_strings, *series), axis=1))
 
 
 def _get_row_format_string(
@@ -219,26 +217,22 @@ def _get_row_format_string(
     return " ".join(
         f"{{{indx:d}:"
         f"{'<' if (not indx) and left_align_first_column else '>'}"
-        f"{_dtype_to_formatter(type_, colwidth)}}}"
+        f"{_dtype_to_formatter_string(type_, colwidth)}}}"
         for indx, type_ in enumerate(dtypes)
     )
 
 
-def _quote_string_columns(data_frame: TfsDataFrame | pd.DataFrame) -> TfsDataFrame | pd.DataFrame:
-    def quote_strings(s):
-        if isinstance(s, str) and not s.startswith(('"', "'")):
-            return f'"{s}"'
-        return s
-
-    return data_frame.map(quote_strings)  # makes a copy, we don't modify the original
-
-
 def _value_to_type_string(value) -> str:
     dtype_ = np.array(value).dtype  # let numpy handle conversion to it dtypes
-    return _dtype_to_id_string(dtype_)
+    return _dtype_to_tfs_format_id(dtype_)
 
 
-def _dtype_to_id_string(type_: type) -> str:
+def _value_to_string_format_id(value) -> str:
+    dtype_ = np.array(value).dtype
+    return _dtype_to_string_format_id(dtype_)
+
+
+def _dtype_to_tfs_format_id(type_: type) -> str:
     """
     Return the proper **TFS** identifier for the provided dtype.
 
@@ -263,9 +257,9 @@ def _dtype_to_id_string(type_: type) -> str:
     raise TypeError(errmsg)
 
 
-def _dtype_to_formatter(type_: type, colsize: int) -> str:
+def _dtype_to_formatter_string(type_: type, colsize: int) -> str:
     """
-    Return the proper string formatter for the provided dtype.
+    Return the proper formatter string for the provided dtype.
 
     Args:
         type_ (type): an instance of the built-in type (in this package, one of
@@ -273,17 +267,69 @@ def _dtype_to_formatter(type_: type, colsize: int) -> str:
         colsize (int): size of the written column to use for the formatter.
 
     Returns:
-        The formatter.
+        The formatter string.
     """
-    if type_ is None:
-        return f"{colsize}"
-    if pdtypes.is_integer_dtype(type_) or pdtypes.is_bool_dtype(type_):
-        return f"{colsize}d"
+    type_id = _dtype_to_string_format_id(type_) 
     if pdtypes.is_float_dtype(type_):
-        return f"{colsize}.{colsize - len('-0.e-000')}g"
+        return f"{colsize}.{colsize - len('-0.e-000')}{type_id}"
+    if pdtypes.is_complex_dtype(type_):
+        return f"{colsize}.{colsize - len('-0.e-000')}{type_id}"
+    return f"{colsize}{type_id}"
+
+
+def _dtype_to_string_format_id(type_: type) -> str:
+    """
+    Return the string-formatter type-identifier for the provided dtype.
+    Of special note are here "b" for boolean and "c" for complex numbers.
+
+    Args:
+        type_ (type): an instance of the built-in type (in this package, one of
+            ``numpy`` or ``pandas`` types) to get the formatter for.
+
+    Returns:
+        str: the formatter type-identifier. 
+    """
+
+    if type_ is None:
+        return "" 
+    if pdtypes.is_integer_dtype(type_):
+        return "d"
+    if pdtypes.is_bool_dtype(type_):
+        return "b"  # can only be used with TfsStringFormatter
+    if pdtypes.is_float_dtype(type_):
+        return "g"
     if pdtypes.is_string_dtype(type_):
-        return f"{colsize}s"
-    if pdtypes.is_complex_dtype(type_):  # same string formatter as float
-        return f"{colsize}.{colsize - len('-0.e-000')}g"
+        return "s"
+    if pdtypes.is_complex_dtype(type_):
+        return "c"  # can only be used with TfsStringFormatter
+    
     errmsg = f"Provided type '{type_}' could not be identified as either a bool, int, float, complex or string dtype"
     raise TypeError(errmsg)
+
+
+class TfsStringFormatter(string.Formatter):
+    def format_field(self, value, format_spec):
+        if format_spec.endswith("b"):
+            return self._format_boolean(value, format_spec)
+        
+        elif format_spec.endswith("c"):
+            return self._format_complex(value, format_spec)
+
+        if format_spec.endswith("s"):
+            return self._format_string(value, format_spec)
+
+        return super().format_field(value, format_spec) 
+
+    def _format_boolean(self, value, format_spec):
+        return super().format_field(value, f"{format_spec[:-1]}d")
+
+    def _format_complex(self, value, format_spec):
+        return super().format_field(value, f"{format_spec[:-1]}g").replace("j", "i")
+    
+    def _format_string(self, value, format_spec: str) -> str:
+        try:
+            if not value.startswith(('"', "'")):
+                value = f'"{value}"'
+        except AttributeError:
+            pass
+        return super().format_field(value, format_spec)
