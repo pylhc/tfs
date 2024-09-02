@@ -343,7 +343,7 @@ def validate(
             raise MADXCompatibilityError(errmsg)
 
         # Check that the dataframe contains no complex dtype columns
-        if any(pdtypes.is_complex_dtype(tpe) for tpe in data_frame.dtypes):
+        if any(pdtypes.is_complex_dtype(type_) for type_ in data_frame.dtypes):
             LOGGER.debug(
                 f"Complex dtype column found in dataframe {info_str}, which is incompatible with MAD-X."
                 "Change the column dtypes or split it into real and imaginary values to keep compatibility with MAD-X."
