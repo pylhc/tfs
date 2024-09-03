@@ -1,13 +1,12 @@
 import pathlib
 
 import pytest
-from pandas.testing import assert_frame_equal
 
 from tfs import read_tfs
 from tfs.collection import Tfs, TfsCollection
 from tfs.frame import TfsDataFrame
 
-from .conftest import INPUTS_DIR
+from .conftest import INPUTS_DIR, assert_tfs_frame_equal
 
 
 class CollectionTest(TfsCollection):
@@ -26,24 +25,24 @@ class TestRead:
         self, _input_dir_pathlib: pathlib.Path, _tfs_x: TfsDataFrame, _tfs_y: TfsDataFrame
     ):
         c = CollectionTest(_input_dir_pathlib, allow_write=False)
-        assert_frame_equal(_tfs_x, c.file_x)
-        assert_frame_equal(_tfs_x, c.filex)
+        assert_tfs_frame_equal(_tfs_x, c.file_x)
+        assert_tfs_frame_equal(_tfs_x, c.filex)
         # test that both capitalized and lowered plane keys are accepted
-        assert_frame_equal(_tfs_x, c.file["x"])
-        assert_frame_equal(_tfs_x, c.file["X"])
-        assert_frame_equal(_tfs_y, c.file["y"])
-        assert_frame_equal(_tfs_y, c.file["Y"])
+        assert_tfs_frame_equal(_tfs_x, c.file["x"])
+        assert_tfs_frame_equal(_tfs_x, c.file["X"])
+        assert_tfs_frame_equal(_tfs_y, c.file["y"])
+        assert_tfs_frame_equal(_tfs_y, c.file["Y"])
         assert c.value == 10
 
     def test_read_str_input(self, _input_dir_str: str, _tfs_x: TfsDataFrame, _tfs_y: TfsDataFrame):
         c = CollectionTest(_input_dir_str, allow_write=False)
-        assert_frame_equal(_tfs_x, c.file_x)
-        assert_frame_equal(_tfs_x, c.filex)
+        assert_tfs_frame_equal(_tfs_x, c.file_x)
+        assert_tfs_frame_equal(_tfs_x, c.filex)
         # test that both capitalized and lowered plane keys are accepted
-        assert_frame_equal(_tfs_x, c.file["x"])
-        assert_frame_equal(_tfs_x, c.file["X"])
-        assert_frame_equal(_tfs_y, c.file["y"])
-        assert_frame_equal(_tfs_y, c.file["Y"])
+        assert_tfs_frame_equal(_tfs_x, c.file["x"])
+        assert_tfs_frame_equal(_tfs_x, c.file["X"])
+        assert_tfs_frame_equal(_tfs_y, c.file["y"])
+        assert_tfs_frame_equal(_tfs_y, c.file["Y"])
         assert c.value == 10
 
 
@@ -56,21 +55,21 @@ class TestWrite:
 
         c.nofile_x = _tfs_y  # only assigns dataframe without writing (use _tfs_y so that we can set _tfs_x below)
         assert not file_x_path.is_file()
-        assert_frame_equal(_tfs_y, c.nofile_x)
+        assert_tfs_frame_equal(_tfs_y, c.nofile_x)
 
         c.allow_write = True
         c.nofile_x = _tfs_x  # should overwrite _tfs_y in buffer
         assert file_x_path.is_file()
-        assert_frame_equal(_tfs_x, c.nofile_x)
+        assert_tfs_frame_equal(_tfs_x, c.nofile_x)
 
         tfs_x_loaded = _read_tfs(file_x_path)
-        assert_frame_equal(_tfs_x, tfs_x_loaded)
+        assert_tfs_frame_equal(_tfs_x, tfs_x_loaded)
 
         c.nofile["y"] = _tfs_y
         file_y_path = tmp_path / "nofile_y.tfs"
         assert file_y_path.is_file()
-        assert_frame_equal(_tfs_y, c.nofile["y"])
-        assert_frame_equal(_tfs_y, c.nofile["Y"])
+        assert_tfs_frame_equal(_tfs_y, c.nofile["y"])
+        assert_tfs_frame_equal(_tfs_y, c.nofile["Y"])
 
     def test_write_tfs(self, _tfs_x: TfsDataFrame, tmp_path):
         c = CollectionTest(tmp_path)
@@ -114,18 +113,18 @@ class TestWrite:
         c.file_x.loc["BPMSX.4L2.B1", "NUMBER"] = -199
         c.nofile_y.loc["BPMSX.4L2.B1", "NUMBER"] = -19
 
-        assert_frame_equal(tfs_x, read_tfs(c.get_path("file_x"), index=c.INDEX))
-        assert_frame_equal(tfs_y, read_tfs(c.get_path("nofile_y"), index=c.INDEX))
+        assert_tfs_frame_equal(tfs_x, read_tfs(c.get_path("file_x"), index=c.INDEX))
+        assert_tfs_frame_equal(tfs_y, read_tfs(c.get_path("nofile_y"), index=c.INDEX))
 
         c.flush()
 
         tfs_x_after_flush = read_tfs(c.get_path("file_x"), index=c.INDEX)
         tfs_y_after_flush = read_tfs(c.get_path("nofile_y"), index=c.INDEX)
         with pytest.raises(AssertionError):
-            assert_frame_equal(tfs_x, tfs_x_after_flush)
+            assert_tfs_frame_equal(tfs_x, tfs_x_after_flush)
 
         with pytest.raises(AssertionError):
-            assert_frame_equal(tfs_y, tfs_y_after_flush)
+            assert_tfs_frame_equal(tfs_y, tfs_y_after_flush)
 
         assert tfs_x_after_flush.loc["BPMSX.4L2.B1", "NUMBER"] == -199
         assert tfs_y_after_flush.loc["BPMSX.4L2.B1", "NUMBER"] == -19
@@ -141,8 +140,8 @@ class TestWrite:
         c.file_x.loc["BPMSX.4L2.B1", "NUMBER"] = -199
         c.nofile_y.loc["BPMSX.4L2.B1", "NUMBER"] = -19
 
-        assert_frame_equal(tfs_x, read_tfs(c.get_path("file_x"), index=c.INDEX))
-        assert_frame_equal(tfs_y, read_tfs(c.get_path("nofile_y"), index=c.INDEX))
+        assert_tfs_frame_equal(tfs_x, read_tfs(c.get_path("file_x"), index=c.INDEX))
+        assert_tfs_frame_equal(tfs_y, read_tfs(c.get_path("nofile_y"), index=c.INDEX))
 
         c.allow_write = False
         with pytest.raises(OSError, match="Cannot flush TfsCollection"):
@@ -150,8 +149,8 @@ class TestWrite:
 
         tfs_x_after_flush = read_tfs(c.get_path("file_x"), index=c.INDEX)
         tfs_y_after_flush = read_tfs(c.get_path("nofile_y"), index=c.INDEX)
-        assert_frame_equal(tfs_x, tfs_x_after_flush)
-        assert_frame_equal(tfs_y, tfs_y_after_flush)
+        assert_tfs_frame_equal(tfs_x, tfs_x_after_flush)
+        assert_tfs_frame_equal(tfs_y, tfs_y_after_flush)
 
 
 class TestFilenames:
@@ -211,22 +210,22 @@ class TestOther:
         c = CollectionTest(_input_dir_pathlib, allow_write=False)
 
         # Getting (partly tested in read-test as well)
-        assert_frame_equal(c.file_x, c.file["x"])
-        assert_frame_equal(c.file_x, c.file["X"])
-        assert_frame_equal(c.file_x, c["file_x"])
+        assert_tfs_frame_equal(c.file_x, c.file["x"])
+        assert_tfs_frame_equal(c.file_x, c.file["X"])
+        assert_tfs_frame_equal(c.file_x, c["file_x"])
 
         # Setting
         c.nofile_y = c.file_y
-        assert_frame_equal(c.nofile_y, c.file_y)
+        assert_tfs_frame_equal(c.nofile_y, c.file_y)
 
         c["nofile_y"] = c.file_x
-        assert_frame_equal(c.nofile_y, c.file_x)
+        assert_tfs_frame_equal(c.nofile_y, c.file_x)
 
         c.nofile["y"] = c.file_y
-        assert_frame_equal(c.nofile_y, c.file_y)
+        assert_tfs_frame_equal(c.nofile_y, c.file_y)
 
         c.nofile["Y"] = c.file_x
-        assert_frame_equal(c.nofile_y, c.file_x)
+        assert_tfs_frame_equal(c.nofile_y, c.file_x)
 
     def test_index(self, _input_dir_pathlib: pathlib.Path, _tfs_x: TfsDataFrame):
         c = CollectionTest(_input_dir_pathlib)
