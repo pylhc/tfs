@@ -161,14 +161,14 @@ def _insert_index_column(data_frame: TfsDataFrame | pd.DataFrame, save_index: st
 def _get_headers_string(headers_dict: dict, width: int) -> str:
     """
     Returns the string to write a ``TfsDataFrame`` headers to file. Will return an empty string if
-    called for an empty headers dictionary, in order not write an line to file.
+    called for an empty headers dictionary, in order not write a line to file.
 
     Args:
         headers_dict (dict): the ``TfsDataFrame`` headers.
         width (int): column width to use when formatting keys and values from the headers dict.
 
     Returns:
-        A full string representation for the headers dictionary.
+        A full string representation for the headers dictionary, TFS compliant.
     """
     if headers_dict:
         return "\n".join(_get_header_line(name, headers_dict[name], width) for name in headers_dict)
@@ -176,6 +176,26 @@ def _get_headers_string(headers_dict: dict, width: int) -> str:
 
 
 def _get_header_line(name: str, value, width: int) -> str:
+    """
+    Creates and returns the string value for a single header line, based
+    on the name of the header parameter and its value.
+    
+    For instance, calling this for 'param' header which is a float equal to
+    1.792 and using the DEFAULT_COLUMN_WIDTH of the package would yield:
+    "@ param                %le                1.792"
+
+
+    Args:
+        name (str): name of the header parameter, as its entry in the headers
+            dictionary.
+        value: value of the header parameter. Any valid type is accepted here
+            (int, float, str, potentially bool, complex etc.) and the type
+            of this value is used to infer the formatting.
+        width (int): column width to use when formatting the header line.
+
+    Returns:
+        The full, formatted header line string.
+    """
     if not isinstance(name, str):
         errmsg = f"{name} is not a string"
         raise TypeError(errmsg)
@@ -187,6 +207,7 @@ def _get_header_line(name: str, value, width: int) -> str:
 def _get_colnames_string(
     colnames: list[str], colwidth: int, left_align_first_column: bool  # noqa: FBT001
 ) -> str:
+    """Returns the string for the line with the column names."""
     format_string = _get_row_format_string([None] * len(colnames), colwidth, left_align_first_column)
     return "* " + format_string.format(*colnames)
 
@@ -194,6 +215,7 @@ def _get_colnames_string(
 def _get_coltypes_string(
     types: pd.Series, colwidth: int, left_align_first_column: bool  # noqa: FBT001
 ) -> str:
+    """Returns the string for the line with the column type specifiers."""
     fmt = _get_row_format_string([str] * len(types), colwidth, left_align_first_column)
     return "$ " + fmt.format(*[_dtype_to_tfs_format_id(type_) for type_ in types])
 
@@ -203,6 +225,19 @@ def _get_data_string(
     colwidth: int,
     left_align_first_column: bool,  # noqa: FBT001
 ) -> str:
+    """
+    Returns the complete string to be written for the data part of the dataframe.
+    This corresponds to all the data rows, after the column names and the column
+    type specifiers.
+
+    Args:
+        data_frame (TfsDataFrame | pd.DataFrame): the dataframe to write.
+        colwidth (int): column width to use when formatting the data.
+        left_align_first_column (bool): whether to left-align the first column or not.
+
+    Returns:
+        The full string representation of the data part of the dataframe.
+    """
     if len(data_frame.index) == 0 or len(data_frame.columns) == 0:
         return "\n"
     format_strings = "  " + _get_row_format_string(data_frame.dtypes, colwidth, left_align_first_column)
@@ -214,6 +249,20 @@ def _get_data_string(
 def _get_row_format_string(
     dtypes: list[type], colwidth: int, left_align_first_column: bool  # noqa: FBT001
 ) -> str:
+    """
+    Returns the formatter string for a given row of the data part of the dataframe,
+    based on the dtypes of the columns and the column width to use for writing. It is
+    a string with the formatting speficiers (for fstrings), one slot per column. For
+    instance: {0:>20s} {1:>20.12g} {2:>20d} {3:>20.12g}".
+
+    Args:
+        dtypes (list): list of the dtypes of the columns.
+        colwidth (int): column width to use when formatting the row.
+        left_align_first_column (bool): whether to left-align the first column or not.
+
+    Returns:
+        The full formatter string for any data row.
+    """
     return " ".join(
         f"{{{indx:d}:"
         f"{'<' if (not indx) and left_align_first_column else '>'}"
@@ -223,18 +272,30 @@ def _get_row_format_string(
 
 
 def _value_to_type_string(value) -> str:
+    """
+    Returns the **TFS** dtype specifier for the provided value,
+    as a string. For instance for a float, it would return "%le".
+    """
     dtype_ = np.array(value).dtype  # let numpy handle conversion to it dtypes
     return _dtype_to_tfs_format_id(dtype_)
 
 
 def _value_to_string_format_id(value) -> str:
+    """
+    Returns the formatter string (for fstrings for instance) for the
+    provided value. It will be used for format strings later on. For
+    instance, for a float it returns 'g', for a complex 'c'.
+    """
     dtype_ = np.array(value).dtype
     return _dtype_to_string_format_id(dtype_)
 
 
 def _dtype_to_tfs_format_id(type_: type) -> str:
     """
-    Return the proper **TFS** identifier for the provided dtype.
+    Return the proper **TFS** identifier for the provided dtype. This
+    is the function called behind the scenes by `_value_to_type_string`,
+    but it takes the inferred dtype as argument. For a float dtype it
+    would return "%le", for a string '%s' etc.
 
     Args:
         type_ (type): an instance of the built-in type (in this package, one of ``numpy`` or ``pandas``
@@ -259,7 +320,11 @@ def _dtype_to_tfs_format_id(type_: type) -> str:
 
 def _dtype_to_formatter_string(type_: type, colsize: int) -> str:
     """
-    Return the proper formatter string for the provided dtype.
+    Return the proper formatter string for the provided dtype. This is
+    the function called behind the scenes by `_value_to_string_format_id`,
+    but it takes the inferred dtype as argument. For a float dtype it
+    would return 'g', for a complex 'c' etc. It is used later for string
+    formatting (you know, when you do f'{variable:.2f}' etc).
 
     Args:
         type_ (type): an instance of the built-in type (in this package, one of
@@ -267,12 +332,10 @@ def _dtype_to_formatter_string(type_: type, colsize: int) -> str:
         colsize (int): size of the written column to use for the formatter.
 
     Returns:
-        The formatter string.
+        The formatter string for the provided dtype.
     """
     type_id = _dtype_to_string_format_id(type_) 
-    if pdtypes.is_float_dtype(type_):
-        return f"{colsize}.{colsize - len('-0.e-000')}{type_id}"
-    if pdtypes.is_complex_dtype(type_):
+    if pdtypes.is_float_dtype(type_) or pdtypes.is_complex_dtype(type_):
         return f"{colsize}.{colsize - len('-0.e-000')}{type_id}"
     return f"{colsize}{type_id}"
 
@@ -308,6 +371,7 @@ def _dtype_to_string_format_id(type_: type) -> str:
 
 
 class TfsStringFormatter(string.Formatter):
+    """Formatter class to be called for proper formatting of TFS strings."""
     def format_field(self, value, format_spec):
         if format_spec.endswith("b"):
             return self._format_boolean(value, format_spec)
