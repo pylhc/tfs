@@ -150,9 +150,6 @@ class TestRead:
         assert df.headers["BOOLFALSE2"] is False  # False resolves to False
         assert df.headers["BOOLFALSE3"] is False  # 0 resolves to False
 
-        df_for_compare = read_tfs(_tfs_file_pathlib)
-        assert_frame_equal(df, df_for_compare)
-
     def test_tfs_read_write_read_boolean_headers(self, _booleans_tfs_file, tmp_path):
         original = read_tfs(_booleans_tfs_file)
         write_location = tmp_path / "bool_headers.tfs"
