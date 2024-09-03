@@ -49,9 +49,11 @@ def _tfs_madng_file() -> pathlib.Path:
     """A TFS file withboth complex values and booleans, in headers and columns."""
     return INPUTS_DIR / "madng.tfs"
 
+
 # The below return (Tfs)DataFrames for the write tests
 # as we start with writing, and don't want to start by
 # reading the files from disk.
+
 
 @pytest.fixture
 def _pd_dataframe() -> pd.DataFrame:
