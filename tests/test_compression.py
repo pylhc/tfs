@@ -120,15 +120,12 @@ def test_read_headers_madng_compressed(_tfs_compressed_madng_no_suffix, extensio
     )
 
 
-# ----- Helpers ------ #
+# ----- Helpers & Fixtures ------ #
 
 
 def _path_with_added_extension(path: pathlib.Path, extension: str) -> pathlib.Path:
     """Adds an extension on top of the existing one for a pathlib.Path object."""
     return path.with_suffix(path.suffix + f".{extension}")
-
-
-# ------ Fixtures ------ #
 
 
 @pytest.fixture
