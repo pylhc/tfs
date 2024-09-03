@@ -180,7 +180,34 @@ class TestWrites:
         write_tfs(tmp_path / "temporary.tfs", df, validate=False)
         assert (tmp_path / "temporary.tfs").is_file()
 
+    # ----- Below are tests for files with MAD-NG features ----- #
 
+    def test_tfs_write_read_with_booleans(self, _dataframe_booleans, tmp_path):
+        write_location = tmp_path / "test.tfs"
+        write_tfs(write_location, _dataframe_booleans, validate="madng")  # booleans are MAD-NG feature
+        assert write_location.is_file()
+
+        new = read_tfs(write_location)
+        assert_frame_equal(_dataframe_booleans, new, check_exact=False)  # float precision
+        assert_dict_equal(_dataframe_booleans.headers, new.headers, compare_keys=True)
+
+    def test_tfs_write_read_with_complex(self, _dataframe_complex, tmp_path):
+        write_location = tmp_path / "test.tfs"
+        write_tfs(write_location, _dataframe_complex, validate="madng")  # booleans are MAD-NG feature
+        assert write_location.is_file()
+
+        new = read_tfs(write_location)
+        assert_frame_equal(_dataframe_complex, new, check_exact=False)  # float precision
+        assert_dict_equal(_dataframe_complex.headers, new.headers, compare_keys=True)
+
+    def test_tfs_write_read_madng_like(self, _dataframe_madng, tmp_path):
+        write_location = tmp_path / "test.tfs"
+        write_tfs(write_location, _dataframe_madng, validate="madng")  # booleans are MAD-NG feature
+        assert write_location.is_file()
+
+        new = read_tfs(write_location)
+        assert_frame_equal(_dataframe_madng, new, check_exact=False)  # float precision
+        assert_dict_equal(_dataframe_madng.headers, new.headers, compare_keys=True)
 
 
 class TestFailures:
