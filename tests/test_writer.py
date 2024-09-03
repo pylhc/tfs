@@ -20,7 +20,7 @@ from tfs.errors import (
     SpaceinColumnNameError,
 )
 
-CURRENT_DIR = pathlib.Path(__file__).parent
+INPUTS_DIR = pathlib.Path(__file__).parent / "inputs"
 
 
 class TestWrites:
@@ -180,14 +180,7 @@ class TestWrites:
         write_tfs(tmp_path / "temporary.tfs", df, validate=False)
         assert (tmp_path / "temporary.tfs").is_file()
 
-    def test_tfs_write_read_boolean_headers(self, _dataframe_boolean_headers: TfsDataFrame, tmp_path):
-        write_location = tmp_path / "test.tfs"
-        write_tfs(write_location, _dataframe_boolean_headers, validate="madng")  # booleans are MAD-NG feature
-        assert write_location.is_file()
 
-        new = read_tfs(write_location, validate="madng")  # booleans are MAD-NG feature
-        assert_frame_equal(_dataframe_boolean_headers, new, check_exact=False)  # float precision
-        assert_dict_equal(_dataframe_boolean_headers.headers, new.headers, compare_keys=True)
 
 
 class TestFailures:
@@ -353,13 +346,52 @@ def _dataframe_empty_headers() -> TfsDataFrame:
 
 
 @pytest.fixture
-def _dataframe_boolean_headers() -> TfsDataFrame:
-    return TfsDataFrame(
-        index=range(3),
+def _dataframe_booleans() -> TfsDataFrame:
+    """TfsDataFrame with boolean values in the headers and data (1 column)."""
+    df = TfsDataFrame(
+        index=range(15),
         columns="a b c d e".split(),
-        data=np.random.rand(3, 5),
-        headers={"Title": "Tfs Test", "Bool1": True, "Bool2": False, "Bool3": 1},
+        data=np.random.rand(15, 5),
+        headers={"Title": "Bool Test", "Bool1": True, "Bool2": False, "Bool3": 1},
     )
+    df["bools"] = np.random.rand(15) > 0.5  # random from 0 to 1 and then boolean check
+    return df
+
+
+@pytest.fixture
+def _dataframe_complex() -> TfsDataFrame:
+    """TfsDataFrame with complex values in the headers and data (1 column)."""
+    df = TfsDataFrame(
+        index=range(15),
+        columns="a b c d e".split(),
+        data=np.random.rand(15, 5),
+        headers={"Title": "Complex Test", "Complex1": 1 + 2j, "Complex2": -4 - 17.9j},
+    )
+    df["complex"] = np.random.rand(15) + np.random.rand(15) * 1j
+    return df
+
+
+@pytest.fixture
+def _dataframe_madng() -> TfsDataFrame:
+    """
+    TfsDataFrame with both booleans and complex
+    values in the headers and data (1 column each).
+    """
+    df = TfsDataFrame(
+        index=range(15),
+        columns="a b c d e".split(),
+        data=np.random.rand(15, 5),
+        headers={
+            "Title": "MADNG Test",
+            "Bool1": True,
+            "Bool2": False,
+            "Complex1": 19.3 + 39.4j,
+            "Complex2": -94.6 - 67.9j,
+        },
+    )
+    df["bools"] = np.random.rand(15) > 0.5  # random from 0 to 1 and then boolean check
+    df["complex"] = np.random.rand(15) + np.random.rand(15) * 1j
+    return df
 
 
 @pytest.fixture
