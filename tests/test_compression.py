@@ -131,15 +131,6 @@ def _path_with_added_extension(path: pathlib.Path, extension: str) -> pathlib.Pa
 # ------ Fixtures ------ #
 
 
-@pytest.fixture
-def _tfs_filex() -> pathlib.Path:
-    return CURRENT_DIR / "inputs" / "file_x.tfs"
-
-
-@pytest.fixture
-def _tfs_filey() -> pathlib.Path:
-    return CURRENT_DIR / "inputs" / "file_y.tfs"
-
 
 @pytest.fixture
 def _tfs_madng() -> pathlib.Path:
