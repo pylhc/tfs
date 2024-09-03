@@ -2,6 +2,7 @@ import pathlib
 
 import pytest
 from pandas._testing import assert_dict_equal
+from pandas.api import types as pdtypes
 from pandas.core.arrays.string_ import StringDtype
 from pandas.testing import assert_frame_equal
 
@@ -141,8 +142,10 @@ class TestRead:
         df_for_compare = read_tfs(_tfs_file_pathlib)
         assert_frame_equal(df, df_for_compare)
 
-    def test_real_file_with_boolean_headers(self, _booleans_tfs_file, _tfs_file_pathlib):
-        df = read_tfs(_booleans_tfs_file)  # MAD-X does not accept those
+    # ----- Below are tests for files with MAD-NG features ----- #
+
+    def test_tfs_read_file_with_booleans(self, _booleans_tfs_file):
+        df = read_tfs(_booleans_tfs_file)
         assert df.headers["BOOLTRUE1"] is True  # true resolves to True
         assert df.headers["BOOLTRUE2"] is True  # True resolves to True
         assert df.headers["BOOLTRUE3"] is True  # 1 resolves to True
@@ -150,14 +153,56 @@ class TestRead:
         assert df.headers["BOOLFALSE2"] is False  # False resolves to False
         assert df.headers["BOOLFALSE3"] is False  # 0 resolves to False
 
-    def test_tfs_read_write_read_boolean_headers(self, _booleans_tfs_file, tmp_path):
+        assert "boolean" in df.columns
+        assert pdtypes.is_bool_dtype(df["boolean"].dtype)
+
+    def test_tfs_read_write_read_with_booleans(self, _booleans_tfs_file, tmp_path):
         original = read_tfs(_booleans_tfs_file)
-        write_location = tmp_path / "bool_headers.tfs"
+        write_location = tmp_path / "boolean_headers_and_column.tfs"
         write_tfs(write_location, original, validate="madng")  # booleans are MAD-NG feature
+
         new = read_tfs(write_location)
         assert_frame_equal(original, new)
         assert_dict_equal(original.headers, new.headers, compare_keys=True)
 
+    def test_tfs_read_file_with_complex_values(self, _complex_values_tfs_file):
+        df = read_tfs(_complex_values_tfs_file)
+        assert "complex" in df.headers
+        assert pdtypes.is_complex_dtype(df.headers["complex"])
+        assert df.headers["complex"] == 1.3 + 1.2j
+
+        assert "complex" in df.columns
+        assert pdtypes.is_complex_dtype(df["complex"].dtype)
+
+    def test_tfs_read_write_read_with_complex(self, _complex_values_tfs_file, tmp_path):
+        original = read_tfs(_complex_values_tfs_file)
+        write_location = tmp_path / "complex_headers_and_column.tfs"
+        write_tfs(write_location, original, validate="madng")  # complex values are MAD-NG feature
+
+        new = read_tfs(write_location)
+        assert_frame_equal(original, new)
+        assert_dict_equal(original.headers, new.headers, compare_keys=True)
+
+    def test_tfs_read_write_madng_features(self, _tfs_madng_file):
+        df = read_tfs(_tfs_madng_file)
+        assert df.headers["BOOLEAN1"] is True  # true resolves to True
+        assert df.headers["BOOLEAN2"] is False  # false resolves to False
+        assert pdtypes.is_complex_dtype(df.headers["COMPLEX"])
+        assert df.headers["COMPLEX"] == 1.3 + 1.2j
+
+        assert "complex" in df.columns
+        assert "boolean" in df.columns
+        assert pdtypes.is_complex_dtype(df["complex"].dtype)
+        assert pdtypes.is_bool_dtype(df["boolean"].dtype)
+
+    def test_tfs_read_write_read_madng_features(self, _tfs_madng_file, tmp_path):
+        original = read_tfs(_tfs_madng_file)
+        write_location = tmp_path / "madng_headers_and_columns.tfs"
+        write_tfs(write_location, original, validate="madng")  # need madng validation for MAD-NG feature
+
+        new = read_tfs(write_location)
+        assert_frame_equal(original, new)
+        assert_dict_equal(original.headers, new.headers, compare_keys=True)
 
 class TestFailures:
     def test_absent_attributes_and_keys(self, _tfs_file_str: str):
@@ -192,8 +237,21 @@ class TestFailures:
 
 @pytest.fixture
 def _booleans_tfs_file() -> pathlib.Path:
-    """Copy of _tfs_file_pathlib with BOOL in headers and in a column."""
+    """A TFS file with BOOL in headers and in a column."""
     return INPUTS_DIR / "booleans.tfs"
+
+
+@pytest.fixture
+def _complex_values_tfs_file() -> pathlib.Path:
+    """A TFS file with complex values in headers and in a column."""
+    return INPUTS_DIR / "complex.tfs"
+
+
+@pytest.fixture()
+def _tfs_madng_file() -> pathlib.Path:
+    """A TFS file withboth complex values and booleans, in headers and columns."""
+    return INPUTS_DIR / "madng.tfs"
+
 
 @pytest.fixture
 def _tfs_file_pathlib() -> pathlib.Path:
