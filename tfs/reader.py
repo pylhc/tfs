@@ -167,8 +167,8 @@ def read_tfs(
                 del dtypes_dict[colname]  # remove to avoid ParserWarning saying we provided both
 
     LOGGER.debug("Parsing data part of the file")
-    # DO NOT use comment=COMMENTS in here, if you do and the symbol is in an element for some
-    # reason then the entire parsing will crash
+    # DO NOT use comment=COMMENTS in here, if you do and the symbol is
+    # in an element for some reason then the entire parsing will crash
     data_frame = pd.read_csv(
         tfs_file_path,
         engine="c",  # faster, and we do not need the features of the python engine
