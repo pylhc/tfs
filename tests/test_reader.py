@@ -141,8 +141,8 @@ class TestRead:
         df_for_compare = read_tfs(_tfs_file_pathlib)
         assert_frame_equal(df, df_for_compare)
 
-    def test_real_file_with_boolean_headers(self, _bool_in_header_tfs_file, _tfs_file_pathlib):
-        df = read_tfs(_bool_in_header_tfs_file)  # MAD-X does not accept those
+    def test_real_file_with_boolean_headers(self, _booleans_tfs_file, _tfs_file_pathlib):
+        df = read_tfs(_booleans_tfs_file)  # MAD-X does not accept those
         assert df.headers["BOOLTRUE1"] is True  # true resolves to True
         assert df.headers["BOOLTRUE2"] is True  # True resolves to True
         assert df.headers["BOOLTRUE3"] is True  # 1 resolves to True
@@ -153,8 +153,8 @@ class TestRead:
         df_for_compare = read_tfs(_tfs_file_pathlib)
         assert_frame_equal(df, df_for_compare)
 
-    def test_tfs_read_write_read_boolean_headers(self, _bool_in_header_tfs_file, tmp_path):
-        original = read_tfs(_bool_in_header_tfs_file)
+    def test_tfs_read_write_read_boolean_headers(self, _booleans_tfs_file, tmp_path):
+        original = read_tfs(_booleans_tfs_file)
         write_location = tmp_path / "bool_headers.tfs"
         write_tfs(write_location, original, validate="madng")  # booleans are MAD-NG feature
         new = read_tfs(write_location)
@@ -194,9 +194,9 @@ class TestFailures:
 
 
 @pytest.fixture
-def _bool_in_header_tfs_file() -> pathlib.Path:
-    """Copy of _tfs_file_pathlib with BOOL in header."""
-    return INPUTS_DIR / "bool_header.tfs"
+def _booleans_tfs_file() -> pathlib.Path:
+    """Copy of _tfs_file_pathlib with BOOL in headers and in a column."""
+    return INPUTS_DIR / "booleans.tfs"
 
 @pytest.fixture
 def _tfs_file_pathlib() -> pathlib.Path:
