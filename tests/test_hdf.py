@@ -1,4 +1,3 @@
-
 from pathlib import Path
 
 import numpy as np
@@ -6,7 +5,9 @@ import pytest
 from pandas._testing import assert_dict_equal
 from pandas.testing import assert_frame_equal
 
-from tfs import TfsDataFrame, read_hdf, write_hdf
+from tfs import TfsDataFrame, read_hdf, read_tfs, write_hdf
+
+INPUTS_DIR = Path(__file__).parent / "inputs"
 
 
 class TestHDF:
@@ -19,6 +20,19 @@ class TestHDF:
 
         df_read = read_hdf(out_file)
         assert_tfs_frame_equal(df_example, df_read)
+        assert_dict_equal(df_example.headers, df_read.headers, compare_keys=True)
+
+    def test_read_write_madng_features(self, _tfs_madng_file, tmp_path):
+        """Same as the above for a dataframe which includes MAD-NG features."""
+        original = read_tfs(_tfs_madng_file)
+        out_file = tmp_path / "data_frame.h5"
+        write_hdf(out_file, original)  # should work without error
+
+        assert out_file.is_file()
+
+        df_read = read_hdf(out_file)
+        assert_tfs_frame_equal(original, df_read)
+        assert_dict_equal(original.headers, df_read.headers, compare_keys=True)
 
     def test_write_empty_header(self, tmp_path: Path, df_example: TfsDataFrame):
         """Test writing a TfsDataFrame with empty headers."""
@@ -56,10 +70,7 @@ class TestHDF:
     def test_write_compression(self, tmp_path: Path):
         """Test that compression works and compressed files are readable."""
         n = 1000
-        df_example = TfsDataFrame(
-            data=np.zeros([n, n]),  # highly compressible data
-            headers={"Random": "Data"}
-        )
+        df_example = TfsDataFrame(data=np.zeros([n, n]), headers={"Random": "Data"})  # highly compressible data
 
         out_file = tmp_path / "data_frame.h5"
         write_hdf(out_file, df_example, complevel=0)
@@ -82,53 +93,53 @@ class TestHDF:
         out_file = tmp_path / "data_frame.h5"
         with pytest.raises(AttributeError) as e:
             write_hdf(out_file, df_example, key="something")
-        assert 'key' in str(e)
+        assert "key" in str(e)
 
-        write_hdf(out_file, df_example, mode='a')  # creates file
+        write_hdf(out_file, df_example, mode="a")  # creates file
         assert "mode" in caplog.text
         assert out_file.is_file()
 
         with pytest.raises(AttributeError) as e:
-            write_hdf(out_file, df_example, mode='a')  # tries to append to file
-        assert 'mode' in str(e)
+            write_hdf(out_file, df_example, mode="a")  # tries to append to file
+        assert "mode" in str(e)
 
 
 class TestImports:
     def test_tables_import_fail(self, tmp_path: Path, df_example: TfsDataFrame, monkeypatch):
         out_file = tmp_path / "data_frame.h5"
-        monkeypatch.setattr('tfs.hdf.tables', None)
+        monkeypatch.setattr("tfs.hdf.tables", None)
         with pytest.raises(ImportError) as e:
             write_hdf(out_file, df_example)
-        assert 'tables' in str(e)
+        assert "tables" in str(e)
 
         with pytest.raises(ImportError) as e:
             read_hdf(out_file)
-        assert 'tables' in str(e)
+        assert "tables" in str(e)
 
-    def test_h5py_import_fail(self, tmp_path: Path, df_example: TfsDataFrame,  monkeypatch):
+    def test_h5py_import_fail(self, tmp_path: Path, df_example: TfsDataFrame, monkeypatch):
         out_file = tmp_path / "data_frame.h5"
-        monkeypatch.setattr('tfs.hdf.h5py', None)
+        monkeypatch.setattr("tfs.hdf.h5py", None)
         with pytest.raises(ImportError) as e:
             write_hdf(out_file, df_example)
-        assert 'h5py' in str(e)
+        assert "h5py" in str(e)
 
         with pytest.raises(ImportError) as e:
             read_hdf(out_file)
-        assert 'h5py' in str(e)
+        assert "h5py" in str(e)
 
-    def test_full_import_fail(self, tmp_path: Path, df_example: TfsDataFrame,  monkeypatch):
+    def test_full_import_fail(self, tmp_path: Path, df_example: TfsDataFrame, monkeypatch):
         out_file = tmp_path / "data_frame.h5"
-        monkeypatch.setattr('tfs.hdf.h5py', None)
-        monkeypatch.setattr('tfs.hdf.tables', None)
+        monkeypatch.setattr("tfs.hdf.h5py", None)
+        monkeypatch.setattr("tfs.hdf.tables", None)
         with pytest.raises(ImportError) as e:
             write_hdf(out_file, df_example)
-        assert 'h5py' in str(e)
-        assert 'tables' in str(e)
+        assert "h5py" in str(e)
+        assert "tables" in str(e)
 
         with pytest.raises(ImportError) as e:
             read_hdf(out_file)
-        assert 'h5py' in str(e)
-        assert 'tables' in str(e)
+        assert "h5py" in str(e)
+        assert "tables" in str(e)
 
 
 # Helper -----------------------------------------------------------------------
@@ -142,8 +153,14 @@ def assert_tfs_frame_equal(df1, df2):
 @pytest.fixture
 def df_example():
     return TfsDataFrame(
-        data=[[1, "Aha", 4.], [2, "Blubb", 10]],
+        data=[[1, "Aha", 4.0], [2, "Blubb", 10]],
         index=["X", "Y"],
         columns=["Int", "String", "Float"],
-        headers={"Hello": "A String", "Number": 2382.2288, "AnInt": 10}
+        headers={"Hello": "A String", "Number": 2382.2288, "AnInt": 10},
     )
+
+
+@pytest.fixture()
+def _tfs_madng_file() -> Path:
+    """A TFS file withboth complex values and booleans, in headers and columns."""
+    return INPUTS_DIR / "madng.tfs"
