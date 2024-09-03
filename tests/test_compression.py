@@ -5,13 +5,11 @@ Here we only test that reading and writing with compression keeps the data intac
 import pathlib
 
 import pytest
-from pandas._testing import assert_dict_equal
-from pandas.testing import assert_frame_equal
 
 from tfs.reader import read_headers, read_tfs
 from tfs.writer import write_tfs
 
-from .conftest import INPUTS_DIR
+from .conftest import INPUTS_DIR, assert_tfs_frame_equal
 
 # ----- Compression tests with 'classic' TFS files (no MAD-NG features) ----- #
 
@@ -26,8 +24,7 @@ def test_read_compressed_is_same_data(_tfs_filex, _tfs_compressed_filex_no_suffi
     test_df = read_tfs(compressed_file, index="NAME")
 
     # Confirm the data is the same
-    assert_dict_equal(ref_df.headers, test_df.headers)
-    assert_frame_equal(ref_df, test_df)
+    assert_tfs_frame_equal(ref_df, test_df)
 
 
 @pytest.mark.parametrize("extension", ["gz", "bz2", "zip", "xz", "zst", "tar", "tar.gz"])
@@ -45,8 +42,7 @@ def test_write_read_compressed(_tfs_filey, tmp_path, extension):
 
     # Now we read it back and compare to initial data
     test_df = read_tfs(compressed_path, index="NAME")
-    assert_dict_equal(ref_df.headers, test_df.headers)
-    assert_frame_equal(ref_df, test_df)
+    assert_tfs_frame_equal(ref_df, test_df)
 
 
 @pytest.mark.parametrize("extension", ["gz", "bz2", "zip", "xz", "zst", "tar", "tar.gz"])
@@ -72,8 +68,7 @@ def test_read_madng_compressed_is_same_data(_tfs_madng_file, _tfs_compressed_mad
     test_df = read_tfs(compressed_file, index="NAME")
 
     # Confirm the data is the same
-    assert_dict_equal(ref_df.headers, test_df.headers)
-    assert_frame_equal(ref_df, test_df)
+    assert_tfs_frame_equal(ref_df, test_df)
 
 
 @pytest.mark.parametrize("extension", ["gz", "bz2", "zip", "xz", "zst", "tar", "tar.gz"])
@@ -91,8 +86,7 @@ def test_write_read_madng_compressed(_tfs_madng_file, tmp_path, extension):
 
     # Now we read it back and compare to initial data
     test_df = read_tfs(compressed_path, index="NAME")
-    assert_dict_equal(ref_df.headers, test_df.headers)
-    assert_frame_equal(ref_df, test_df)
+    assert_tfs_frame_equal(ref_df, test_df)
 
 
 @pytest.mark.parametrize("extension", ["gz", "bz2", "zip", "xz", "zst", "tar", "tar.gz"])
