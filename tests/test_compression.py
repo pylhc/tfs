@@ -11,7 +11,7 @@ from pandas.testing import assert_frame_equal
 from tfs.reader import read_headers, read_tfs
 from tfs.writer import write_tfs
 
-CURRENT_DIR = pathlib.Path(__file__).parent
+from .conftest import INPUTS_DIR
 
 
 # ----- Compression tests with 'classic' TFS files (no MAD-NG features) ----- #
@@ -64,9 +64,9 @@ def test_read_headers_compressed(_tfs_compressed_filex_no_suffix, extension):
 
 
 @pytest.mark.parametrize("extension", ["gz", "bz2", "zip", "xz", "zst", "tar", "tar.gz"])
-def test_read_madng_compressed_is_same_data(_tfs_madng, _tfs_compressed_madng_no_suffix, extension):
+def test_read_madng_compressed_is_same_data(_tfs_madng_file, _tfs_compressed_madng_no_suffix, extension):
     """Compare the data from a compressed file with the original one."""
-    ref_df = read_tfs(_tfs_madng, index="NAME")
+    ref_df = read_tfs(_tfs_madng_file, index="NAME")
 
     # Now read the compressed version, for a given extension in the parametrize
     compressed_file = _path_with_added_extension(_tfs_compressed_madng_no_suffix, extension)
@@ -78,16 +78,16 @@ def test_read_madng_compressed_is_same_data(_tfs_madng, _tfs_compressed_madng_no
 
 
 @pytest.mark.parametrize("extension", ["gz", "bz2", "zip", "xz", "zst", "tar", "tar.gz"])
-def test_write_read_madng_compressed(_tfs_madng, tmp_path, extension):
+def test_write_read_madng_compressed(_tfs_madng_file, tmp_path, extension):
     """Ensure that writing in compressed format preserves data."""
-    ref_df = read_tfs(_tfs_madng, index="NAME")
+    ref_df = read_tfs(_tfs_madng_file, index="NAME")
 
     # Now we write it in compressed form and check it's doing fine
     compressed_path = tmp_path.with_suffix(f".{extension}")
     write_tfs(compressed_path, ref_df, save_index="NAME", validate="madng")
     assert compressed_path.exists()
     assert compressed_path.stat().st_size > 0
-    assert compressed_path.stat().st_size != _tfs_madng.stat().st_size
+    assert compressed_path.stat().st_size != _tfs_madng_file.stat().st_size
     assert str(compressed_path).endswith(f".{extension}")
 
     # Now we read it back and compare to initial data
@@ -131,20 +131,13 @@ def _path_with_added_extension(path: pathlib.Path, extension: str) -> pathlib.Pa
 # ------ Fixtures ------ #
 
 
-
-@pytest.fixture
-def _tfs_madng() -> pathlib.Path:
-    """TFS file with MAD-NG features: bools and complex (headers and columns)."""
-    return CURRENT_DIR / "inputs" / "madng.tfs"
-
-
 @pytest.fixture
 def _tfs_compressed_filex_no_suffix() -> pathlib.Path:
     """Add the wanted compression suffix to this."""
-    return CURRENT_DIR / "inputs" / "compressed" / "file_x.tfs"
+    return INPUTS_DIR / "compressed" / "file_x.tfs"
 
 
 @pytest.fixture
 def _tfs_compressed_madng_no_suffix() -> pathlib.Path:
     """Add the wanted compression suffix to this."""
-    return CURRENT_DIR / "inputs" / "compressed" / "madng.tfs"
+    return INPUTS_DIR / "compressed" / "madng.tfs"

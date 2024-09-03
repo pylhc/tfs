@@ -8,7 +8,7 @@ from tfs.errors import AbsentTypeIdentifierError
 from tfs.reader import read_tfs
 from tfs.tools import remove_header_comments_from_files, remove_nan_from_files, significant_digits
 
-CURRENT_DIR = pathlib.Path(__file__).parent
+from .conftest import INPUTS_DIR
 
 
 def test_clean_file_pathlib_input(_bad_file_pathlib: pathlib.Path, tmp_path):
@@ -72,7 +72,7 @@ def test_significant_digits():
 
 @pytest.fixture
 def _bad_file_pathlib() -> pathlib.Path:
-    return CURRENT_DIR / "inputs" / "bad_file.tfs"
+    return INPUTS_DIR / "bad_file.tfs"
 
 
 @pytest.fixture

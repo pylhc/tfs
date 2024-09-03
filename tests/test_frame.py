@@ -9,7 +9,7 @@ from pandas.testing import assert_frame_equal
 import tfs
 from tfs.frame import TfsDataFrame, concat, merge_headers
 
-CURRENT_DIR = pathlib.Path(__file__).parent
+from .conftest import INPUTS_DIR
 
 
 class TestFailures:
@@ -183,9 +183,9 @@ class TestTfsDataFramesConcatenating:
 
 @pytest.fixture
 def _tfs_file_x_pathlib() -> pathlib.Path:
-    return CURRENT_DIR / "inputs" / "file_x.tfs"
+    return INPUTS_DIR / "file_x.tfs"
 
 
 @pytest.fixture
 def _tfs_file_y_pathlib() -> pathlib.Path:
-    return CURRENT_DIR / "inputs" / "file_x.tfs"
+    return INPUTS_DIR / "file_x.tfs"

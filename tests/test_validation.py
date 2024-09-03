@@ -6,7 +6,7 @@ from tfs.errors import InvalidBooleanHeaderError, SpaceinColumnNameError
 from tfs.frame import TfsDataFrame, validate
 from tfs.reader import read_tfs
 
-INPUTS_DIR = pathlib.Path(__file__).parent / "inputs"
+from .conftest import INPUTS_DIR
 
 
 class TestWarnings:

@@ -20,8 +20,6 @@ from tfs.errors import (
     SpaceinColumnNameError,
 )
 
-INPUTS_DIR = pathlib.Path(__file__).parent / "inputs"
-
 
 class TestWrites:
     def test_tfs_write_empty_columns_dataframe(self, tmp_path):

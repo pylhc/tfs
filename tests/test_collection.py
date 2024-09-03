@@ -7,7 +7,7 @@ from tfs import read_tfs
 from tfs.collection import Tfs, TfsCollection
 from tfs.frame import TfsDataFrame
 
-INPUT_DIR = pathlib.Path(__file__).parent / "inputs"
+from .conftest import INPUTS_DIR
 
 
 class CollectionTest(TfsCollection):
@@ -286,12 +286,12 @@ def _tfs_y(_tfs_filey) -> TfsDataFrame:
 
 @pytest.fixture
 def _input_dir_pathlib() -> pathlib.Path:
-    return INPUT_DIR
+    return INPUTS_DIR
 
 
 @pytest.fixture
 def _input_dir_str() -> str:
-    return str(INPUT_DIR)
+    return str(INPUTS_DIR)
 
 
 @pytest.fixture
