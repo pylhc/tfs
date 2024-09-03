@@ -38,12 +38,16 @@ class TestFailures:
             _ = read_tfs(_invalid_bool_in_header_tfs_file, validate=validation_mode)
 
 
+# TODO: validation tests for MAD-X and MAD-NG with different files,
+# especially ones that include MAD-NG features
+
 # ------ Fixtures ------ #
 
 
 @pytest.fixture
 def _space_in_colnames_tfs_path() -> pathlib.Path:
     return INPUTS_DIR / "space_in_colname.tfs"
+
 
 @pytest.fixture
 def _invalid_bool_in_header_tfs_file() -> pathlib.Path:
