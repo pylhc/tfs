@@ -384,13 +384,26 @@ class TfsStringFormatter(string.Formatter):
 
         return super().format_field(value, format_spec) 
 
-    def _format_boolean(self, value, format_spec):
+    #TODO: is this accepted by MAD-NG?
+    def _format_boolean(self, value, format_spec: str):
+        """
+        Special case for booleans, as from this package their
+        written version will always be 0s and 1s.
+        """
         return super().format_field(value, f"{format_spec[:-1]}d")
 
-    def _format_complex(self, value, format_spec):
+    def _format_complex(self, value, format_spec: str):
+        """
+        Special case for complex numbers, MAD-X and MAD-NG use 'i' for
+        the imaginary part and not 'j', so we have to replace that in.
+        """
         return super().format_field(value, f"{format_spec[:-1]}g").replace("j", "i")
     
     def _format_string(self, value, format_spec: str) -> str:
+        """
+        Special case as we need to ensure that strings are enclosed
+        in either " or ' quotes.
+        """
         try:
             if not value.startswith(('"', "'")):
                 value = f'"{value}"'
