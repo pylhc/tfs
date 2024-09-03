@@ -274,15 +274,15 @@ class TestFailures:
         write_tfs(write_location, list_col_tfs)
         assert write_location.is_file()
 
-    def test_dtype_to_format_fails_unexpected_dtypes(self):
+    def test_dtype_to_formatter_string_fails_unexpected_dtypes(self):
         unexpected_list = [1, 2, 3]
         with pytest.raises(TypeError):
-            _ = tfs.writer._dtype_to_formatter(unexpected_list, colsize=10)  # noqa: SLF001
+            _ = tfs.writer._dtype_to_formatter_string(unexpected_list, colsize=10)  # noqa: SLF001
 
-    def test_dtype_to_str_fails_unexpected_dtypes(self):
+    def test_dtype_to_tfs_format_id_fails_unexpected_dtypes(self):
         unexpected_list = [1, 2, 3]
         with pytest.raises(TypeError):
-            _ = tfs.writer._dtype_to_id_string(unexpected_list)  # noqa: SLF001
+            _ = tfs.writer._dtype_to_tfs_format_id(unexpected_list)  # noqa: SLF001
 
     def test_header_line_raises_on_non_strings(self):
         not_a_string = {}
