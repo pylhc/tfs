@@ -1,4 +1,3 @@
-import pathlib
 from functools import partial, reduce
 
 import pandas as pd
@@ -8,8 +7,6 @@ from pandas.testing import assert_frame_equal
 
 import tfs
 from tfs.frame import TfsDataFrame, concat, merge_headers
-
-from .conftest import INPUTS_DIR
 
 
 class TestFailures:
