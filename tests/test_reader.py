@@ -1,7 +1,6 @@
 import pathlib
 
 import pytest
-from pandas._testing import assert_dict_equal
 from pandas.api import types as pdtypes
 from pandas.core.arrays.string_ import StringDtype
 from pandas.testing import assert_frame_equal
@@ -12,7 +11,7 @@ from tfs.errors import AbsentColumnNameError, AbsentColumnTypeError, UnknownType
 from tfs.reader import read_headers, read_tfs
 from tfs.writer import write_tfs
 
-from .conftest import INPUTS_DIR
+from .conftest import INPUTS_DIR, assert_tfs_frame_equal
 
 
 class TestRead:
@@ -66,8 +65,7 @@ class TestRead:
         write_location = tmp_path / "test_file.tfs"
         write_tfs(write_location, original)
         new = read_tfs(write_location)
-        assert_frame_equal(original, new)
-        assert_dict_equal(original.headers, new.headers, compare_keys=True)
+        assert_tfs_frame_equal(original, new)
 
     def test_read_write_wise_header(self, _tfs_file_wise, tmp_path):
         original_text = _tfs_file_wise.read_text()
@@ -109,8 +107,7 @@ class TestRead:
         df = read_tfs(_tfs_file_empty_lines)
         assert df.headers
         df_for_compare = read_tfs(_tfs_filex)
-        assert_frame_equal(df, df_for_compare)
-        assert_dict_equal(df.headers, df_for_compare.headers)
+        assert_tfs_frame_equal(df, df_for_compare)
 
     def test_read_file_single_header_empty_line_in_header(self, _tfs_file_single_header_empty_line, _tfs_filex):
         """Very special, but this was a case that failed in the past."""
@@ -129,8 +126,7 @@ class TestRead:
         df = read_tfs(_tfs_file_with_whitespaces)
         assert df.headers
         df_for_compare = read_tfs(_tfs_filex)
-        assert_frame_equal(df, df_for_compare)
-        assert_dict_equal(df.headers, df_for_compare.headers)
+        assert_tfs_frame_equal(df, df_for_compare)
 
     def test_read_file_without_header(self, _tfs_file_without_header, _tfs_filex):
         df = read_tfs(_tfs_file_without_header)
@@ -158,8 +154,7 @@ class TestRead:
         write_tfs(write_location, original, validate="madng")  # booleans are MAD-NG feature
 
         new = read_tfs(write_location)
-        assert_frame_equal(original, new)
-        assert_dict_equal(original.headers, new.headers, compare_keys=True)
+        assert_tfs_frame_equal(original, new)
 
     def test_tfs_read_file_with_complex_values(self, _tfs_complex_file):
         df = read_tfs(_tfs_complex_file)
@@ -176,8 +171,7 @@ class TestRead:
         write_tfs(write_location, original, validate="madng")  # complex values are MAD-NG feature
 
         new = read_tfs(write_location)
-        assert_frame_equal(original, new)
-        assert_dict_equal(original.headers, new.headers, compare_keys=True)
+        assert_tfs_frame_equal(original, new)
 
     def test_tfs_read_write_madng_features(self, _tfs_madng_file):
         df = read_tfs(_tfs_madng_file)
@@ -197,8 +191,7 @@ class TestRead:
         write_tfs(write_location, original, validate="madng")  # need madng validation for MAD-NG feature
 
         new = read_tfs(write_location)
-        assert_frame_equal(original, new)
-        assert_dict_equal(original.headers, new.headers, compare_keys=True)
+        assert_tfs_frame_equal(original, new)
 
 
 class TestFailures:
