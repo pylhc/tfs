@@ -13,7 +13,6 @@ from tfs.writer import write_tfs
 
 from .conftest import INPUTS_DIR
 
-
 # ----- Compression tests with 'classic' TFS files (no MAD-NG features) ----- #
 
 
