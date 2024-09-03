@@ -110,7 +110,7 @@ class TestHeadersMerging:
         assert tfs.concat([dframe_y, dframe_x], new_headers={}).headers == {}
 
 
-class TestPrinting:
+class TestHeadersPrinting:
     def test_header_print(self):
         headers = {"param": 3, "other": "hello"}
         df = TfsDataFrame(headers=headers)
