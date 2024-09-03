@@ -42,7 +42,7 @@ class TestWrites:
 
     def test_tfs_write_series_like_dataframe(self, tmp_path):
         """Write-read a pandas.Series-like to disk and make sure all goes right."""
-        df = pd.Series([1,2,3,4,5])
+        df = pd.Series([1, 2, 3, 4, 5])
 
         write_location = tmp_path / "test.tfs"
         test_headers = {"test": 1, "test_string": "test_write_series_like"}
@@ -71,9 +71,7 @@ class TestWrites:
             # of numpy.array_equal to allow for (very) small relative numerical differences on loading
             for column in dframe.columns:
                 assert column in madx.table.test_table
-                assert_series_equal(
-                    pd.Series(madx.table.test_table[column]), dframe[column], check_names=False
-                )
+                assert_series_equal(pd.Series(madx.table.test_table[column]), dframe[column], check_names=False)
 
     def test_tfs_write_empty_index_dataframe(self, tmp_path):
         df = TfsDataFrame(
@@ -243,7 +241,9 @@ class TestFailures:
     def test_messed_up_dataframe_fails_writes(self, _messed_up_dataframe: TfsDataFrame):
         messed_tfs = _messed_up_dataframe
         # This df raises in validate because of list elements
-        with pytest.raises(IterableInDataFrameError, match="Lists or tuple elements are not accepted in a TfsDataFrame"):
+        with pytest.raises(
+            IterableInDataFrameError, match="Lists or tuple elements are not accepted in a TfsDataFrame"
+        ):
             write_tfs("", messed_tfs)
 
     def test_dict_column_dataframe_fails_writes(self, _dict_column_in_dataframe: TfsDataFrame, tmp_path):
@@ -260,7 +260,9 @@ class TestFailures:
         list_col_tfs = _list_column_in_dataframe
         write_location = tmp_path / "test.tfs"
         # This df raises in validate because of list colnames
-        with pytest.raises(IterableInDataFrameError, match="Lists or tuple elements are not accepted in a TfsDataFrame"):
+        with pytest.raises(
+            IterableInDataFrameError, match="Lists or tuple elements are not accepted in a TfsDataFrame"
+        ):
             write_tfs(write_location, list_col_tfs)
 
         for record in caplog.records:

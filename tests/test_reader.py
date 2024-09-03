@@ -116,8 +116,10 @@ class TestRead:
         assert_frame_equal(df, df_for_compare)
         assert_dict_equal(df.headers, df_for_compare.headers)
 
-    def test_read_file_single_header_empty_line_in_header(self, _tfs_file_single_header_empty_line, _tfs_file_pathlib):
-        """ Very special, but this was a case that failed in the past."""
+    def test_read_file_single_header_empty_line_in_header(
+        self, _tfs_file_single_header_empty_line, _tfs_file_pathlib
+    ):
+        """Very special, but this was a case that failed in the past."""
         df = read_tfs(_tfs_file_single_header_empty_line)
         assert len(df.headers) == 1
         df_for_compare = read_tfs(_tfs_file_pathlib)
@@ -203,6 +205,7 @@ class TestRead:
         new = read_tfs(write_location)
         assert_frame_equal(original, new)
         assert_dict_equal(original.headers, new.headers, compare_keys=True)
+
 
 class TestFailures:
     def test_absent_attributes_and_keys(self, _tfs_file_str: str):

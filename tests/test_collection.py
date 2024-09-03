@@ -120,7 +120,7 @@ class TestWrite:
         tfs_x_after_flush = read_tfs(c.get_path("file_x"), index=c.INDEX)
         tfs_y_after_flush = read_tfs(c.get_path("nofile_y"), index=c.INDEX)
         with pytest.raises(AssertionError):
-            assert_frame_equal(tfs_x, tfs_x_after_flush )
+            assert_frame_equal(tfs_x, tfs_x_after_flush)
 
         with pytest.raises(AssertionError):
             assert_frame_equal(tfs_y, tfs_y_after_flush)
@@ -265,7 +265,7 @@ class TestOther:
 
 
 def _read_tfs(path):
-    """ Reads tfs like in _load_tfs() of the collection (here we know we have NAME in tfs). """
+    """Reads tfs like in _load_tfs() of the collection (here we know we have NAME in tfs)."""
     return read_tfs(path).set_index("NAME", drop=False)
 
 
