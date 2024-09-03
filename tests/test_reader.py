@@ -235,8 +235,8 @@ class TestFailures:
 
 
 @pytest.fixture
-def _tfs_file_str() -> str:
-    return str((INPUTS_DIR / "file_x.tfs").absolute())
+def _tfs_file_str(_tfs_filex) -> str:
+    return str(_tfs_filex.absolute())
 
 
 @pytest.fixture
