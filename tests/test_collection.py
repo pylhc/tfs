@@ -22,7 +22,9 @@ class CollectionTest(TfsCollection):
 
 class TestRead:
 
-    def test_read_pathlib_input(self, _input_dir_pathlib: pathlib.Path, _tfs_x: TfsDataFrame, _tfs_y: TfsDataFrame):
+    def test_read_pathlib_input(
+        self, _input_dir_pathlib: pathlib.Path, _tfs_x: TfsDataFrame, _tfs_y: TfsDataFrame
+    ):
         c = CollectionTest(_input_dir_pathlib, allow_write=False)
         assert_frame_equal(_tfs_x, c.file_x)
         assert_frame_equal(_tfs_x, c.filex)

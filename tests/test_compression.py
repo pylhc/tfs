@@ -14,8 +14,8 @@ from tfs.writer import write_tfs
 CURRENT_DIR = pathlib.Path(__file__).parent
 
 
-
 # ----- Compression tests with 'classic' TFS files (no MAD-NG features) ----- #
+
 
 @pytest.mark.parametrize("extension", ["gz", "bz2", "zip", "xz", "zst", "tar", "tar.gz"])
 def test_read_compressed_is_same_data(_tfs_filex, _tfs_compressed_filex_no_suffix, extension):
@@ -29,6 +29,7 @@ def test_read_compressed_is_same_data(_tfs_filex, _tfs_compressed_filex_no_suffi
     # Confirm the data is the same
     assert_dict_equal(ref_df.headers, test_df.headers)
     assert_frame_equal(ref_df, test_df)
+
 
 @pytest.mark.parametrize("extension", ["gz", "bz2", "zip", "xz", "zst", "tar", "tar.gz"])
 def test_write_read_compressed(_tfs_filey, tmp_path, extension):
@@ -48,6 +49,7 @@ def test_write_read_compressed(_tfs_filey, tmp_path, extension):
     assert_dict_equal(ref_df.headers, test_df.headers)
     assert_frame_equal(ref_df, test_df)
 
+
 @pytest.mark.parametrize("extension", ["gz", "bz2", "zip", "xz", "zst", "tar", "tar.gz"])
 def test_read_headers_compressed(_tfs_compressed_filex_no_suffix, extension):
     compressed_file = _path_with_added_extension(_tfs_compressed_filex_no_suffix, extension)
@@ -59,6 +61,7 @@ def test_read_headers_compressed(_tfs_compressed_filex_no_suffix, extension):
 
 
 # ----- Compression tests with TFS files including MAD-NG features ----- #
+
 
 @pytest.mark.parametrize("extension", ["gz", "bz2", "zip", "xz", "zst", "tar", "tar.gz"])
 def test_read_madng_compressed_is_same_data(_tfs_madng, _tfs_compressed_madng_no_suffix, extension):
@@ -72,6 +75,7 @@ def test_read_madng_compressed_is_same_data(_tfs_madng, _tfs_compressed_madng_no
     # Confirm the data is the same
     assert_dict_equal(ref_df.headers, test_df.headers)
     assert_frame_equal(ref_df, test_df)
+
 
 @pytest.mark.parametrize("extension", ["gz", "bz2", "zip", "xz", "zst", "tar", "tar.gz"])
 def test_write_read_madng_compressed(_tfs_madng, tmp_path, extension):
@@ -90,6 +94,7 @@ def test_write_read_madng_compressed(_tfs_madng, tmp_path, extension):
     test_df = read_tfs(compressed_path, index="NAME")
     assert_dict_equal(ref_df.headers, test_df.headers)
     assert_frame_equal(ref_df, test_df)
+
 
 @pytest.mark.parametrize("extension", ["gz", "bz2", "zip", "xz", "zst", "tar", "tar.gz"])
 def test_read_headers_madng_compressed(_tfs_compressed_madng_no_suffix, extension):
