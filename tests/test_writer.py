@@ -179,32 +179,32 @@ class TestWrites:
 
     # ----- Below are tests for files with MAD-NG features ----- #
 
-    def test_tfs_write_read_with_booleans(self, _dataframe_booleans, tmp_path):
+    def test_tfs_write_read_with_booleans(self, _tfs_dataframe_booleans, tmp_path):
         write_location = tmp_path / "test.tfs"
-        write_tfs(write_location, _dataframe_booleans, validate="madng")  # booleans are MAD-NG feature
+        write_tfs(write_location, _tfs_dataframe_booleans, validate="madng")  # booleans are MAD-NG feature
         assert write_location.is_file()
 
         new = read_tfs(write_location)
-        assert_frame_equal(_dataframe_booleans, new, check_exact=False)  # float precision
-        assert_dict_equal(_dataframe_booleans.headers, new.headers, compare_keys=True)
+        assert_frame_equal(_tfs_dataframe_booleans, new, check_exact=False)  # float precision
+        assert_dict_equal(_tfs_dataframe_booleans.headers, new.headers, compare_keys=True)
 
-    def test_tfs_write_read_with_complex(self, _dataframe_complex, tmp_path):
+    def test_tfs_write_read_with_complex(self, _tfs_dataframe_complex, tmp_path):
         write_location = tmp_path / "test.tfs"
-        write_tfs(write_location, _dataframe_complex, validate="madng")  # booleans are MAD-NG feature
+        write_tfs(write_location, _tfs_dataframe_complex, validate="madng")  # booleans are MAD-NG feature
         assert write_location.is_file()
 
         new = read_tfs(write_location)
-        assert_frame_equal(_dataframe_complex, new, check_exact=False)  # float precision
-        assert_dict_equal(_dataframe_complex.headers, new.headers, compare_keys=True)
+        assert_frame_equal(_tfs_dataframe_complex, new, check_exact=False)  # float precision
+        assert_dict_equal(_tfs_dataframe_complex.headers, new.headers, compare_keys=True)
 
-    def test_tfs_write_read_madng_like(self, _dataframe_madng, tmp_path):
+    def test_tfs_write_read_madng_like(self, _tfs_dataframe_madng, tmp_path):
         write_location = tmp_path / "test.tfs"
-        write_tfs(write_location, _dataframe_madng, validate="madng")  # booleans are MAD-NG feature
+        write_tfs(write_location, _tfs_dataframe_madng, validate="madng")  # booleans are MAD-NG feature
         assert write_location.is_file()
 
         new = read_tfs(write_location)
-        assert_frame_equal(_dataframe_madng, new, check_exact=False)  # float precision
-        assert_dict_equal(_dataframe_madng.headers, new.headers, compare_keys=True)
+        assert_frame_equal(_tfs_dataframe_madng, new, check_exact=False)  # float precision
+        assert_dict_equal(_tfs_dataframe_madng.headers, new.headers, compare_keys=True)
 
 
 class TestFailures:
@@ -336,7 +336,7 @@ class TestWarnings:
         assert "Non-unique indices found" in caplog.text
 
 
-# ------ Fixtures ------ #
+# ----- Helpers & Fixtures ----- #
 
 
 @pytest.fixture
@@ -357,55 +357,6 @@ def _dataframe_empty_headers() -> TfsDataFrame:
         data=np.random.rand(3, 5),
         headers={},
     )
-
-
-@pytest.fixture
-def _dataframe_booleans() -> TfsDataFrame:
-    """TfsDataFrame with boolean values in the headers and data (1 column)."""
-    df = TfsDataFrame(
-        index=range(15),
-        columns="a b c d e".split(),
-        data=np.random.rand(15, 5),
-        headers={"Title": "Bool Test", "Bool1": True, "Bool2": False, "Bool3": 1},
-    )
-    df["bools"] = np.random.rand(15) > 0.5  # random from 0 to 1 and then boolean check
-    return df
-
-
-@pytest.fixture
-def _dataframe_complex() -> TfsDataFrame:
-    """TfsDataFrame with complex values in the headers and data (1 column)."""
-    df = TfsDataFrame(
-        index=range(15),
-        columns="a b c d e".split(),
-        data=np.random.rand(15, 5),
-        headers={"Title": "Complex Test", "Complex1": 1 + 2j, "Complex2": -4 - 17.9j},
-    )
-    df["complex"] = np.random.rand(15) + np.random.rand(15) * 1j
-    return df
-
-
-@pytest.fixture
-def _dataframe_madng() -> TfsDataFrame:
-    """
-    TfsDataFrame with both booleans and complex
-    values in the headers and data (1 column each).
-    """
-    df = TfsDataFrame(
-        index=range(15),
-        columns="a b c d e".split(),
-        data=np.random.rand(15, 5),
-        headers={
-            "Title": "MADNG Test",
-            "Bool1": True,
-            "Bool2": False,
-            "Complex1": 19.3 + 39.4j,
-            "Complex2": -94.6 - 67.9j,
-        },
-    )
-    df["bools"] = np.random.rand(15) > 0.5  # random from 0 to 1 and then boolean check
-    df["complex"] = np.random.rand(15) + np.random.rand(15) * 1j
-    return df
 
 
 @pytest.fixture
@@ -452,15 +403,6 @@ def _list_column_in_dataframe() -> TfsDataFrame:
         columns="a b c d".split(),
         data=data,
         headers={"Title": "Tfs Title", "Value": 3.3663},
-    )
-
-
-@pytest.fixture
-def _pd_dataframe() -> pd.DataFrame:
-    return pd.DataFrame(
-        index=range(3),
-        columns="a b c d e".split(),
-        data=np.random.rand(3, 5),
     )
 
 
