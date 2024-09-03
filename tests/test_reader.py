@@ -114,13 +114,13 @@ class TestRead:
         df = read_tfs(_tfs_file_single_header_empty_line)
         assert len(df.headers) == 1
         df_for_compare = read_tfs(_tfs_filex)
-        assert_frame_equal(df, df_for_compare)
+        assert_frame_equal(df, df_for_compare)  # no headers, just check dframe
 
     def test_read_file_without_header_empty_line(self, _tfs_file_without_header_but_empty_line, _tfs_filex):
         df = read_tfs(_tfs_file_without_header_but_empty_line)
         assert not df.headers
         df_for_compare = read_tfs(_tfs_filex)
-        assert_frame_equal(df, df_for_compare)
+        assert_frame_equal(df, df_for_compare)  # no headers, just check dframe
 
     def test_read_file_with_whitespaces_in_header(self, _tfs_file_with_whitespaces, _tfs_filex):
         df = read_tfs(_tfs_file_with_whitespaces)
@@ -132,7 +132,7 @@ class TestRead:
         df = read_tfs(_tfs_file_without_header)
         assert not df.headers
         df_for_compare = read_tfs(_tfs_filex)
-        assert_frame_equal(df, df_for_compare)
+        assert_frame_equal(df, df_for_compare)  # no headers, just check dframe
 
     # ----- Below are tests for files with MAD-NG features ----- #
 
