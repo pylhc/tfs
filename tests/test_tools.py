@@ -1,4 +1,3 @@
-import os
 import pathlib
 from shutil import copyfile
 
@@ -70,11 +69,14 @@ def test_significant_digits():
         s = significant_digits(0.0338577, 0.0)
 
 
+# ----- Helpers & Fixtures ----- #
+
+
 @pytest.fixture
 def _bad_file_pathlib() -> pathlib.Path:
     return INPUTS_DIR / "bad_file.tfs"
 
 
 @pytest.fixture
-def _bad_file_str() -> str:
-    return os.path.join(os.path.dirname(__file__), "inputs", "bad_file.tfs")
+def _bad_file_str(_bad_file_pathlib) -> str:
+    return str(_bad_file_pathlib.absolute())
