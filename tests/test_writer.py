@@ -1,5 +1,4 @@
 import logging
-import pathlib
 import random
 import string
 
@@ -338,16 +337,6 @@ class TestWarnings:
 
 
 # ------ Fixtures ------ #
-
-
-@pytest.fixture
-def _tfs_dataframe() -> TfsDataFrame:
-    return TfsDataFrame(
-        index=range(3),
-        columns="a b c d e".split(),
-        data=np.random.rand(3, 5),
-        headers={"Title": "Tfs Title", "Value": 3.3663},
-    )
 
 
 @pytest.fixture
