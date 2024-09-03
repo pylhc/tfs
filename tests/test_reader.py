@@ -112,9 +112,7 @@ class TestRead:
         assert_frame_equal(df, df_for_compare)
         assert_dict_equal(df.headers, df_for_compare.headers)
 
-    def test_read_file_single_header_empty_line_in_header(
-        self, _tfs_file_single_header_empty_line, _tfs_filex
-    ):
+    def test_read_file_single_header_empty_line_in_header(self, _tfs_file_single_header_empty_line, _tfs_filex):
         """Very special, but this was a case that failed in the past."""
         df = read_tfs(_tfs_file_single_header_empty_line)
         assert len(df.headers) == 1
@@ -231,7 +229,7 @@ class TestFailures:
             _ = tfs.reader._id_to_type(typoed_str_id)  # noqa: SLF001
 
 
-# ------ Fixtures ------ #
+# ----- Helpers & Fixtures ----- #
 
 
 @pytest.fixture
