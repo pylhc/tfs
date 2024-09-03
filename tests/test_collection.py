@@ -266,6 +266,9 @@ class TestOther:
             _ = _dummy_collection.absent_attribute
 
 
+# ----- Helpers & Fixtures ----- #
+
+
 def _read_tfs(path):
     """Reads tfs like in _load_tfs() of the collection (here we know we have NAME in tfs)."""
     return read_tfs(path).set_index("NAME", drop=False)
