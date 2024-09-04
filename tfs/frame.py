@@ -36,7 +36,7 @@ LOGGER = logging.getLogger(__name__)
 
 class TfsDataFrame(pd.DataFrame):
     """
-    Class to hold the information of the built an extended ``pandas`` ``DataFrame``, together with a way
+    Class to hold the information of the built an extended `pandas.DataFrame`, together with a way
     of getting the headers of the **TFS** file. The file headers are stored in a dictionary upon read.
     To get a header value use ``data_frame.headers["header_name"]``, or ``data_frame["header_name"]`` if
     it does not conflict with a column name in the dataframe.
