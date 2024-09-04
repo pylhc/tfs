@@ -83,7 +83,12 @@ class TestMADXFailures:
             validate(df, compatibility=validation_mode)
 
 
+class TestMADNGValidation:
+    """Tests validation step is all fine in MAD-NG mode, when df has MAD-NG features."""
 
+    @pytest.mark.parametrize("validation_mode", ["madng", "MAD-NG", "mAD-nG"])
+    def test_madng_validation_passes_on_madng_features(self, _tfs_madng_file, validation_mode):
+        read_tfs(_tfs_madng_file, validate=validation_mode)  # trigger validation here
 
 
 # ------ Fixtures ------ #
