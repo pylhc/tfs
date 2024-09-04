@@ -25,10 +25,10 @@ class TestCommonFailures:
     """Tests for common failures in validation, both in MAD-X and MAD-NG compatibility mode."""
 
     @pytest.mark.parametrize("validation_mode", ["madx", "mad-x", "madng", "MAD-NG"])
-    def test_validate_raises_on_wrong_unique_behavior(self):
+    def test_validate_raises_on_wrong_unique_behavior(self, validation_mode):
         df = TfsDataFrame(index=["A", "B", "A"], columns=["A", "B", "A"])
         with pytest.raises(ValueError):
-            validate(df, "", non_unique_behavior="invalid")
+            validate(df, "", non_unique_behavior="invalid", compatibility=validation_mode)
 
     @pytest.mark.parametrize("validation_mode", ["madx", "mad-x", "madng", "MAD-NG"])
     def test_validation_raises_space_in_colname(self, _space_in_colnames_tfs_path: pathlib.Path, validation_mode):
@@ -81,6 +81,9 @@ class TestMADXFailures:
             match="TFS-Dataframe can not contain complex dtype columns in MAD-X compatibility mode",
         ):
             validate(df, compatibility=validation_mode)
+
+
+
 
 
 # ------ Fixtures ------ #
