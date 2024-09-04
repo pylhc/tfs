@@ -11,3 +11,6 @@
 - [x] Remember to write complex values like MAD-NG, with an i for imaginary
 - [x] Implement tests for the above
 - [x] Probably extract all validation tests to a new file
+- [ ] Go over documentation and adapt to new default behaviours
+- [ ] Write a documentation page for the TFS format
+- [ ] Write a documentation page for the MAD-X vs MAD-NG validation compatibility modes
