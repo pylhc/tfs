@@ -2,7 +2,7 @@ import pathlib
 
 import pytest
 
-from tfs.errors import InvalidBooleanHeaderError, SpaceinColumnNameError
+from tfs.errors import InvalidBooleanHeaderError, MADXCompatibilityError, SpaceinColumnNameError
 from tfs.frame import TfsDataFrame, validate
 from tfs.reader import read_tfs
 
@@ -38,8 +38,45 @@ class TestFailures:
             _ = read_tfs(_invalid_bool_in_header_tfs_file, validate=validation_mode)
 
 
-# TODO: validation tests for MAD-X and MAD-NG with different files,
-# especially ones that include MAD-NG features
+class TestMADXFailures:
+    """Class for failures in MAD-X validation mode, when df has MAD-NG features."""
+
+    @pytest.mark.parametrize("validation_mode", ["madx", "mad-x", "mAd-X"])
+    def test_madx_validation_raises_on_boolean_headers(self, _tfs_booleans_file, validation_mode):
+        df = read_tfs(_tfs_booleans_file)
+        with pytest.raises(
+            MADXCompatibilityError, match="TFS-Headers can not contain boolean values in MAD-X compatibility mode"
+        ):
+            validate(df, compatibility=validation_mode)
+
+    @pytest.mark.parametrize("validation_mode", ["madx", "mad-x", "mAd-X"])
+    def test_madx_validation_raises_on_complex_headers(self, _tfs_complex_file, validation_mode):
+        df = read_tfs(_tfs_complex_file)
+        with pytest.raises(
+            MADXCompatibilityError, match="TFS-Headers can not contain complex values in MAD-X compatibility mode"
+        ):
+            validate(df, compatibility=validation_mode)
+
+    @pytest.mark.parametrize("validation_mode", ["madx", "mad-x", "mAd-X"])
+    def test_madx_validation_raises_on_boolean_columns(self, _tfs_booleans_file, validation_mode):
+        df = read_tfs(_tfs_booleans_file)
+        df.headers = {}  # or else the first validation check raises because of boolean headers
+        with pytest.raises(
+            MADXCompatibilityError,
+            match="TFS-Dataframe can not contain boolean dtype columns in MAD-X compatibility mode",
+        ):
+            validate(df, compatibility=validation_mode)
+
+    @pytest.mark.parametrize("validation_mode", ["madx", "mad-x", "mAd-X"])
+    def test_madx_validation_raises_on_complex_columns(self, _tfs_complex_file, validation_mode):
+        df = read_tfs(_tfs_complex_file)
+        df.headers = {}  # or else the first validation check raises because of complex headers
+        with pytest.raises(
+            MADXCompatibilityError,
+            match="TFS-Dataframe can not contain complex dtype columns in MAD-X compatibility mode",
+        ):
+            validate(df, compatibility=validation_mode)
+
 
 # ------ Fixtures ------ #
 
