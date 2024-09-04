@@ -19,7 +19,7 @@ class TestWarnings:
         assert "contains non-physical values at Index:" in caplog.text
 
 
-class TestFailures:
+class TestCommonFailures:
     def test_validate_raises_on_wrong_unique_behavior(self):
         df = TfsDataFrame(index=["A", "B", "A"], columns=["A", "B", "A"])
         with pytest.raises(ValueError):
