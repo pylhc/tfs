@@ -94,6 +94,7 @@ def read_hdf(path: Path | str) -> TfsDataFrame:
 
 def _check_imports():
     """Checks if required packages for HDF5 functionality are installed. Raises ImportError if not."""
+    # We try to import tables and h5py at top of file and set them to None if that fails
     not_imported = [name for name, package in (("tables", tables), ("h5py", h5py)) if package is None]
     if len(not_imported):
         names = ", ".join(f"`{name}`" for name in not_imported)
