@@ -237,24 +237,28 @@ def validate(
     compatibility: str = "madx",
 ) -> None:
     """
-    Check if a data frame contains finite values only, strings as column names and no empty headers
-    or column names.
+    Check if a dataframe contains finite values only, strings as column names and no empty headers
+    or column names. Additional checks are performed for compatibility with MAD-X and MAD-NG.
 
     .. admonition:: **Methodology**
 
         This function performs several different checks on the provided dataframe. The following
         checks are performed for all compatibility modes (``MAD-X`` and ``MAD-NG``):
-          1. Checking no single element is a `list` or `tuple`, which is done with a
-             custom vectorized function applied column-by-column on the dataframe.
-          2. Checking for non-physical values in the dataframe, which is done by
-             applying the ``isna`` function with the right option context.
+
+          1. Checking no single element in the data is a `list` or `tuple`.
+          2. Checking for non-physical values in the dataframe (uses `.isna()`
+             with the right option context).
           3. Checking for duplicates in either indices or columns.
           4. Checking for column names that are not strings.
           5. Checking for column names including spaces.
 
-        When checking for ``MAD-X`` compatibility, the following additional checks are performed:
-          1. Checking for no boolean values in the dataframe headers.
-          2. Checking for no complex dtype columns in the dataframe.
+        When checking for ``MAD-X`` compatibility, which is more restrictive than ``MAD-NG``,
+        the following additional checks are performed:
+
+          1. Checking no boolean values are in the dataframe headers.
+          2. Checking no complex values are in the dataframe headers.
+          3. Checking no boolean-dtype columns are in the dataframe.
+          2. Checking no complex-dtype columns are in the dataframe.
 
     Args:
         data_frame (TfsDataFrame | pd.DataFrame): the dataframe to check on.
@@ -295,7 +299,6 @@ def validate(
     # for object-dtype columns (which strings can be). Since .infer_objects() and .replace() return
     # (lazy for the former) copies we're not modifying the original dataframe during validation :)
     inf_or_nan_bool_df = data_frame.infer_objects().replace([np.inf, -np.inf], np.nan).isna()
-
     if inf_or_nan_bool_df.to_numpy().any():
         LOGGER.warning(
             f"DataFrame {info_str} contains non-physical values at Index: "
