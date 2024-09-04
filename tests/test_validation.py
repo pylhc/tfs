@@ -10,6 +10,8 @@ from .conftest import INPUTS_DIR
 
 
 class TestWarnings:
+    """Tests for common warnings in validation, both in MAD-X and MAD-NG compatibility mode."""
+
     @pytest.mark.parametrize("validation_mode", ["madx", "mad-x", "madng", "MAD-NG"])
     def test_warn_unphysical_values(self, validation_mode, caplog):
         nan_tfs_path = INPUTS_DIR / "has_nans.tfs"
@@ -20,6 +22,9 @@ class TestWarnings:
 
 
 class TestCommonFailures:
+    """Tests for common failures in validation, both in MAD-X and MAD-NG compatibility mode."""
+
+    @pytest.mark.parametrize("validation_mode", ["madx", "mad-x", "madng", "MAD-NG"])
     def test_validate_raises_on_wrong_unique_behavior(self):
         df = TfsDataFrame(index=["A", "B", "A"], columns=["A", "B", "A"])
         with pytest.raises(ValueError):
@@ -39,7 +44,7 @@ class TestCommonFailures:
 
 
 class TestMADXFailures:
-    """Class for failures in MAD-X validation mode, when df has MAD-NG features."""
+    """Tests for failures in MAD-X validation mode, when df has MAD-NG features."""
 
     @pytest.mark.parametrize("validation_mode", ["madx", "mad-x", "mAd-X"])
     def test_madx_validation_raises_on_boolean_headers(self, _tfs_booleans_file, validation_mode):
