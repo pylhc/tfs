@@ -40,7 +40,7 @@ Contents
    :maxdepth: 2
 
    quickstart
-   tfs
+   tfsformat
    compatibility
    modules/index
 
