@@ -32,18 +32,19 @@ LOGGER = logging.getLogger(__name__)
 
 
 def write_hdf(path: Path | str, df: TfsDataFrame, **kwargs) -> None:
-    """Write TfsDataFrame to hdf5 file. The dataframe will be written into
-    the group ``data``, the headers into the group ``headers``.
-    Only one dataframe per file is allowed.
+    """
+    Write the `TfsDataFrame` to **HDF** file. The dataframe will be written
+    into the group ``data``, the headers into the group ``headers``. Only one
+    dataframe per file is allowed.
 
     Args:
         path (Path, str): Path of the output file.
         df (TfsDataFrame): TfsDataFrame to write.
-        kwargs: kwargs to be passed to pandas ``DataFrame.to_hdf()``.
-                ``key`` is not allowed and ``mode`` needs to be ``w`` if the
-                output file already exists (``w`` will be used in any case,
-                even if the file does not exist, but only a warning is logged
-                in that case).
+        **kwargs: Any keyword argument is given to `pandas.DataFrame.to_hdf`.
+            Note that ``key`` is not allowed and ``mode`` *needs* to be ``w``
+            if the output file already exists (``w`` will be used in any case,
+            even if the file does not exist, but only a warning is logged in
+            that case).
     """
     _check_imports()
     # Check for `key` kwarg (forbidden) ---
