@@ -351,6 +351,15 @@ def validate(
             errmsg = "TFS-Headers can not contain complex values in MAD-X compatibility mode."
             raise MADXCompatibilityError(errmsg)
 
+        # Check that the dataframe contains no boolean dtype columns
+        if any(pdtypes.is_bool_dtype(type_) for type_ in data_frame.dtypes):
+            LOGGER.debug(
+                f"Boolean dtype column found in dataframe {info_str}, which is incompatible with MAD-X."
+                "Change the column dtypes to keep compatibility with MAD-X."
+            )
+            errmsg = "TFS-Dataframe can not contain boolean dtype columns in MAD-X compatibility mode."
+            raise MADXCompatibilityError(errmsg)
+
         # Check that the dataframe contains no complex dtype columns
         if any(pdtypes.is_complex_dtype(type_) for type_ in data_frame.dtypes):
             LOGGER.debug(
