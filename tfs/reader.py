@@ -98,13 +98,13 @@ def read_tfs(
 
         .. code-block:: python
 
-            >>> tfs.read("filename.tfs")
+            tfs.read("filename.tfs")
 
         One can also pass a `~pathlib.Path` object to the function:
 
         .. code-block:: python
 
-            >>> tfs.read(pathlib.Path("filename.tfs"))
+            tfs.read(pathlib.Path("filename.tfs"))
 
         It is possible to load compressed files if the compression format is supported by pandas.
         (see above). The compression format detection is handled automatically from the extension
@@ -112,35 +112,35 @@ def read_tfs(
 
         .. code-block:: python
 
-            >>> tfs.read("filename.tfs.gz")
-            >>> tfs.read("filename.tfs.bz2")
-            >>> tfs.read("filename.tfs.zip")
+            tfs.read("filename.tfs.gz")
+            tfs.read("filename.tfs.bz2")
+            tfs.read("filename.tfs.zip")
 
         If one wants to set a specific column as index, this is done as:
 
         .. code-block:: python
 
-            >>> tfs.read("filename.tfs", index="COLUMN_NAME")
+            tfs.read("filename.tfs", index="COLUMN_NAME")
 
         If one wants to, for instance, raise and error on non-unique indices or columns,
         one can do so as:
 
         .. code-block:: python
 
-            >>> tfs.read("filename.tfs", non_unique_behavior="raise")
+            tfs.read("filename.tfs", non_unique_behavior="raise")
 
         One can choose to skip dataframe validation **at one's own risk** after reading
         from file. This is done as:
 
         .. code-block:: python
 
-            >>> tfs.read("filename.tfs", validate=False)
+            tfs.read("filename.tfs", validate=False)
 
         To validate for compatibility with a certain code, provide a valid argument:
 
         .. code-block:: python
 
-            >>> tfs.read("filename.tfs", validate="MAD-NG")
+            tfs.read("filename.tfs", validate="MAD-NG")
     """
     tfs_file_path = pathlib.Path(tfs_file_path)
     LOGGER.debug(f"Reading path: {tfs_file_path.absolute()}")
@@ -223,7 +223,7 @@ def read_headers(tfs_file_path: pathlib.Path | str) -> dict:
 
         .. code-block:: python
 
-            >>> headers = read_headers("filename.tfs")
+            headers = read_headers("filename.tfs")
 
         Just as with the `read_tfs` function, it is possible to load from compressed
         files if the compression format is supported by `pandas`. The compression
@@ -232,7 +232,7 @@ def read_headers(tfs_file_path: pathlib.Path | str) -> dict:
 
         .. code-block:: python
 
-            >>> headers = read_headers("filename.tfs.gz")
+            headers = read_headers("filename.tfs.gz")
     """
     metadata: _TfsMetaData = _read_metadata(tfs_file_path)
     return metadata.headers

@@ -78,21 +78,21 @@ def write_tfs(
 
         .. code-block:: python
 
-            >>> tfs.write("filename.tfs", dataframe)
+            tfs.write("filename.tfs", dataframe)
 
         If one wants to, for instance, raise and error on non-unique indices or columns,
         one can do so as:
 
         .. code-block:: python
 
-            >>> tfs.write("filename.tfs", dataframe, non_unique_behavior="raise")
+            tfs.write("filename.tfs", dataframe, non_unique_behavior="raise")
 
         One can choose to skip dataframe validation **at one's own risk** before writing
         it to file. This is done as:
 
         .. code-block:: python
 
-            >>> tfs.write("filename.tfs", dataframe, validate=False)
+            tfs.write("filename.tfs", dataframe, validate=False)
 
         It is possible to directly have the output file be compressed, by specifying a
         valid compression extension as the **tfs_file_path** suffix. The detection
@@ -100,7 +100,7 @@ def write_tfs(
 
         .. code-block:: python
 
-            >>> tfs.write("filename.tfs.gz", dataframe)
+            tfs.write("filename.tfs.gz", dataframe)
     """
     left_align_first_column = False
     tfs_file_path = pathlib.Path(tfs_file_path)
