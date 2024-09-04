@@ -131,11 +131,10 @@ class TfsDataFrame(pd.DataFrame):
             new_headers (dict): If provided, will be used as headers for the merged ``TfsDataFrame``.
                 Otherwise these are determined by merging the headers from the caller and the other
                 ``TfsDataFrame`` according to the method defined by the **how_headers** argument.
-
-        Keyword Args:
-            Any keyword argument is given to ``pandas.DataFrame.merge()``. The default values for all these
-            parameters are left as set in the ``pandas`` codebase. To see these, refer to the pandas
-            [DataFrame.merge documentation](https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.merge.html).
+            **kwargs: Any keyword argument is given to `~pandas.DataFrame.merge()`. The default
+                values for all these parameters are left as set in the ``pandas`` codebase. To see
+                these, refer to the `pandas.DataFrame.merge` documentation (at 
+                https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.merge.html).
 
         Returns:
             A new ``TfsDataFrame`` with the merged data and merged headers.
