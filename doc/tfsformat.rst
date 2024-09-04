@@ -57,7 +57,30 @@ Traditionally, columns are separated by at least one blank space, and the column
 Type Identifiers
 ----------------
 
+The following type identifiers and their corresponding types are accepted by `tfs-pandas`:
 
+================  ===============
+Type Indentifier  Associated Type
+================  ===============
+%s                         string
+%bpm_s                     string
+%d                        integer
+%hd                       integer
+%f                          float
+%le                         float
+================  ===============
+
+The following types and their identifiers are specific to the MAD-NG code, and are accepted by `tfs-pandas`:
+Please see the :doc:`compatibility section <compatibility>` for more information.
+
+================  ===============
+Type Indentifier  Associated Type
+================  ===============
+%b                        boolean
+%lz                       complex
+================  ===============
+
+When reading a TFS file, `tfs-pandas` will use 64-bit integers and floats, and 128-bits complex numbers (meaning 64 bits for both the real and imaginary part).
 
 Caveats
 -------
