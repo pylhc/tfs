@@ -19,6 +19,7 @@ from tfs.errors import (
     SpaceinColumnNameError,
 )
 
+from .conftest import assert_tfs_frame_equal
 
 class TestWrites:
     def test_tfs_write_empty_columns_dataframe(self, tmp_path):
@@ -34,8 +35,7 @@ class TestWrites:
         assert write_location.is_file()
 
         new = read_tfs(write_location)
-        assert_frame_equal(df, new)
-        assert_dict_equal(df.headers, new.headers, compare_keys=True)
+        assert_tfs_frame_equal(df, new)
 
     def test_tfs_write_series_like_dataframe(self, tmp_path):
         """Write-read a pandas.Series-like to disk and make sure all goes right."""
@@ -84,8 +84,7 @@ class TestWrites:
 
         new = read_tfs(write_location)
         # with pandas 2.0 the index of new is empty but of type integer, which is fine
-        assert_frame_equal(df, new, check_index_type=False)
-        assert_dict_equal(df.headers, new.headers, compare_keys=True)
+        assert_tfs_frame_equal(df, new, check_index_type=False)
 
     def test_write_int_float_str_columns(self, tmp_path):
         """This test is more of an extension of the test below
@@ -97,7 +96,7 @@ class TestWrites:
         write_location = tmp_path / "test.tfs"
         write_tfs(write_location, df)
         new = read_tfs(write_location)
-        assert_frame_equal(df, new)
+        assert_tfs_frame_equal(df, new)
 
     def test_write_int_float_columns(self, tmp_path):
         """This test is here because of numeric conversion bug
@@ -106,25 +105,23 @@ class TestWrites:
         write_location = tmp_path / "test.tfs"
         write_tfs(write_location, df)
         new = read_tfs(write_location)
-        assert_frame_equal(df, new)
+        assert_tfs_frame_equal(df, new)
 
-    def test_tfs_write_read(self, _tfs_dataframe, tmp_path):
+    def test_tfs_write_read_with_validation(self, _tfs_dataframe, tmp_path):
         write_location = tmp_path / "test.tfs"
         write_tfs(write_location, _tfs_dataframe)
         assert write_location.is_file()
 
-        new = read_tfs(write_location)
-        assert_frame_equal(_tfs_dataframe, new, check_exact=False)  # float precision can be an issue
-        assert_dict_equal(_tfs_dataframe.headers, new.headers, compare_keys=True)
+        new = read_tfs(write_location, validate="madx")
+        assert_tfs_frame_equal(_tfs_dataframe, new, check_exact=False)  # float precision can be an issue
 
-    def test_tfs_write_read_no_validate(self, _tfs_dataframe, tmp_path):
+    def test_tfs_write_read_no_validation(self, _tfs_dataframe, tmp_path):
         write_location = tmp_path / "test.tfs"
         write_tfs(write_location, _tfs_dataframe, validate=False)
         assert write_location.is_file()
 
         new = read_tfs(write_location)
-        assert_frame_equal(_tfs_dataframe, new, check_exact=False)  # float precision can be an issue
-        assert_dict_equal(_tfs_dataframe.headers, new.headers, compare_keys=True)
+        assert_tfs_frame_equal(_tfs_dataframe, new, check_exact=False)  # float precision can be an issue
 
     def test_tfs_write_read_no_headers(self, _dataframe_empty_headers: TfsDataFrame, tmp_path):
         write_location = tmp_path / "test.tfs"
@@ -132,8 +129,7 @@ class TestWrites:
         assert write_location.is_file()
 
         new = read_tfs(write_location)
-        assert_frame_equal(_dataframe_empty_headers, new, check_exact=False)  # float precision
-        assert_dict_equal(_dataframe_empty_headers.headers, new.headers, compare_keys=True)
+        assert_tfs_frame_equal(_dataframe_empty_headers, new, check_exact=False)  # float precision can be an issue
 
     def test_tfs_write_read_pandasdf(self, _pd_dataframe, tmp_path):
         write_location = tmp_path / "test.tfs"
@@ -141,7 +137,7 @@ class TestWrites:
         assert write_location.is_file()
 
         new = read_tfs(write_location)
-        assert_frame_equal(
+        assert_frame_equal(  # no headers in this df
             _pd_dataframe,
             new,
             check_exact=False,  # float precision can be an issue
@@ -153,18 +149,17 @@ class TestWrites:
         write_location = tmp_path / "test.tfs"
         write_tfs(write_location, df)
         new = read_tfs(write_location)
-        assert_frame_equal(df, new)
+        assert_tfs_frame_equal(df, new)
 
     def test_tfs_write_read_autoindex(self, _tfs_dataframe, tmp_path):
         df = _tfs_dataframe.set_index("a")
         df1 = _tfs_dataframe.set_index("a")
+        assert_tfs_frame_equal(df, df1)
+
         write_location = tmp_path / "test.tfs"
         write_tfs(write_location, df, save_index=True)
-        assert_frame_equal(df, df1)
-
         df_read = read_tfs(write_location)
-        assert_index_equal(df.index, df_read.index, check_exact=False)
-        assert_dict_equal(_tfs_dataframe.headers, df_read.headers, compare_keys=True)
+        assert_tfs_frame_equal(df, df_read)  # checks (auto-)index and headers
 
     def test_no_warning_on_non_unique_columns_if_no_validate(self, tmp_path, caplog):
         df = TfsDataFrame(columns=["A", "B", "A"])
@@ -185,8 +180,7 @@ class TestWrites:
         assert write_location.is_file()
 
         new = read_tfs(write_location)
-        assert_frame_equal(_tfs_dataframe_booleans, new, check_exact=False)  # float precision
-        assert_dict_equal(_tfs_dataframe_booleans.headers, new.headers, compare_keys=True)
+        assert_tfs_frame_equal(_tfs_dataframe_booleans, new, check_exact=False)  # float precision can be an issue
 
     def test_tfs_write_read_with_complex(self, _tfs_dataframe_complex, tmp_path):
         write_location = tmp_path / "test.tfs"
@@ -194,8 +188,7 @@ class TestWrites:
         assert write_location.is_file()
 
         new = read_tfs(write_location)
-        assert_frame_equal(_tfs_dataframe_complex, new, check_exact=False)  # float precision
-        assert_dict_equal(_tfs_dataframe_complex.headers, new.headers, compare_keys=True)
+        assert_tfs_frame_equal(_tfs_dataframe_complex, new, check_exact=False)  # float precision can be an issue
 
     def test_tfs_write_read_madng_like(self, _tfs_dataframe_madng, tmp_path):
         write_location = tmp_path / "test.tfs"
@@ -203,8 +196,7 @@ class TestWrites:
         assert write_location.is_file()
 
         new = read_tfs(write_location)
-        assert_frame_equal(_tfs_dataframe_madng, new, check_exact=False)  # float precision
-        assert_dict_equal(_tfs_dataframe_madng.headers, new.headers, compare_keys=True)
+        assert_tfs_frame_equal(_tfs_dataframe_madng, new, check_exact=False)  # float precision can be an issue
 
 
 class TestFailures:
