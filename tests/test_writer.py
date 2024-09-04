@@ -7,7 +7,7 @@ import pandas as pd
 import pytest
 from cpymad.madx import Madx
 from pandas._testing import assert_dict_equal
-from pandas.testing import assert_frame_equal, assert_index_equal, assert_series_equal
+from pandas.testing import assert_frame_equal, assert_series_equal
 
 import tfs
 from tfs import TfsDataFrame, read_tfs, write_tfs
@@ -20,6 +20,7 @@ from tfs.errors import (
 )
 
 from .conftest import assert_tfs_frame_equal
+
 
 class TestWrites:
     def test_tfs_write_empty_columns_dataframe(self, tmp_path):
@@ -40,7 +41,6 @@ class TestWrites:
     def test_tfs_write_series_like_dataframe(self, tmp_path):
         """Write-read a pandas.Series-like to disk and make sure all goes right."""
         df = pd.Series([1, 2, 3, 4, 5])
-
         write_location = tmp_path / "test.tfs"
         test_headers = {"test": 1, "test_string": "test_write_series_like"}
         write_tfs(write_location, df, headers_dict=test_headers, save_index=True)
