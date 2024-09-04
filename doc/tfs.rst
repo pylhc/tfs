@@ -9,6 +9,24 @@ As such, this document aims to provide a comprehensive description of the TFS fo
 
 Written TFS files follow a structure in two parts: first the ``headers`` lines and then the ``table`` itself.
 
+Headers
+-------
+
+The first section of the TFS file contains `headers`, lines each containing a parameter, its type and its value.
+All headers lines start with the `@` character, and have the following structure:
+
+- The `@` character.
+- The name of the parameter.
+- The type identifier of the parameter (see below).
+- The value of the parameter.
+
+An example header line is:
+
+.. code-block::
+
+    @ NAME                   %le             0.269975
+
+
 
 .. rubric:: Footnotes
 
