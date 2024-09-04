@@ -1,13 +1,14 @@
 The Table File System Format
 ============================
 
-**TFS** is an acronym for the "Table File System", and the TFS format has been used at CERN since the LEP control system.
-The accelerator physics codes MAD-X and MAD-NG output tables in the TFS format, and accept TFS files as input for tables.
+**TFS** is an acronym for "Table File System", and the TFS format has been used at `CERN <https://home.cern/>`_ since the LEP control system.
+The accelerator physics codes `MAD-X <https://madx.web.cern.ch/>`_ and `MAD-NG <https://madx.web.cern.ch/releases/madng/html/>`_ output tables in the TFS format, and accept TFS files as input for tables.
 
-The origin of the TFS definition [#f1]_ seems difficult to find, and no official standard has been maintained.
-As such, this document aims to provide a comprehensive description of the TFS format, at the very least as it is parsed and written by the package.
+The origin of the TFS definition [#f1]_ seems more than difficult to find, and no official spec has been maintained since then.
+As such, this document aims to provide a comprehensive description of the TFS format, at the very least as it is parsed and written by `tfs-pandas`.
 
 Written TFS files follow a structure in two parts: first the ``headers`` lines and then the ``table`` itself.
+They are described below, including their specifics.
 
 Headers
 -------
@@ -17,7 +18,7 @@ All headers lines start with the `@` character, and have the following structure
 
 - The `@` character.
 - The name of the parameter.
-- The type identifier of the parameter (see below).
+- The type identifier of the parameter (see `Type Identifiers`_ below).
 - The value of the parameter.
 
 An example header line is:
@@ -33,7 +34,7 @@ Table
 
 After header lines follows the `table` section.
 A first line, starting with the `*` character, contains the names of the columns.
-Just below, a line starting with the `$` character contains the type identifier of the columns.
+Just below, a line starting with the `$` character contains the type identifiers of the columns' data (see `Type Identifiers`_ below).
 These two lines look like:
 
 .. code-block::
@@ -42,8 +43,8 @@ These two lines look like:
     $                   %d                   %s                  %le
 
 
-Afterwards, all contain the data of the table, right-aligned with the column names.
-Following the example above, a table line would look like:
+Afterwards all lines contain the data of the table, one row per line, right-aligned with the column names.
+Following the example above, a few table lines would look like:
 
 .. code-block::
 
@@ -57,37 +58,43 @@ Traditionally, columns are separated by at least one blank space, and the column
 Type Identifiers
 ----------------
 
-The following type identifiers and their corresponding types are accepted by `tfs-pandas`:
+Type identifiers are specific strings that indicate the type to interpret the relevant data as, whether it be a parameter in the `headers` or a column's data.
+The following type identifiers and their corresponding types are accepted and used by `tfs-pandas`:
 
-================  ===============
-Type Indentifier  Associated Type
-================  ===============
-%s                         string
-%bpm_s                     string
-%d                        integer
-%hd                       integer
-%f                          float
-%le                         float
-================  ===============
+================  ===============  ========================
+Type Indentifier  Associated Type               Accepted by
+================  ===============  ========================
+%s                         string  ``MAD-X`` and ``MAD-NG``
+%bpm_s                     string  ``MAD-X`` and ``MAD-NG``
+%d                 64-bit integer  ``MAD-X`` and ``MAD-NG``
+%hd                64-bit integer  ``MAD-X`` and ``MAD-NG``
+%f                   64-bit float  ``MAD-X`` and ``MAD-NG``
+%le                  64-bit float  ``MAD-X`` and ``MAD-NG``
+%b                        boolean           ``MAD-NG`` only
+%lz               128-bit complex           ``MAD-NG`` only
+================  ===============  ========================
 
-The following types and their identifiers are specific to the MAD-NG code, and are accepted by `tfs-pandas`:
+Both boolean and complex types are specific to the ``MAD-NG`` code, and would not be accepted by ``MAD-X``.
 Please see the :doc:`compatibility section <compatibility>` for more information.
-
-================  ===============
-Type Indentifier  Associated Type
-================  ===============
-%b                        boolean
-%lz                       complex
-================  ===============
-
-When reading a TFS file, `tfs-pandas` will use 64-bit integers and floats, and 128-bits complex numbers (meaning 64 bits for both the real and imaginary part).
 
 Caveats
 -------
 
-TODO.
-No spaces in column names.
-If spaces in strings, they should be enclosed in quotes or double quotes.
+The following caveats apply to the TFS format.
+
+- Column names should be strings.
+- No spaces should be present in column names.
+- If spaces are present in strings, they should be enclosed in either single or double quotes.
+- The table data should not contain nested structures (lists, tuples, etc.).
+
+Additionally, the following should be avoided if possible as the written file would not be read back by either ``MAD-X`` or ``MAD-NG``:
+
+- The table should not contain duplicate indices.
+- The table should not contain duplicate columns.
+- The table data should not contain non-physical values (``NaN``, ``Inf``, etc.).
+
+It is possible to perform validation of the `TfsDataFrame` both when reading and writing, and at any time using the `tfs.frame.validate` function.
+See the :doc:`API reference <modules/index>` for more information.
 
 Example
 -------
