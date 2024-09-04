@@ -26,11 +26,12 @@ An example header line is:
 
     @ NAME                   %le             0.269975
 
+There is no limit on the number of header lines in a TFS file, and there can be no header lines at all.
 
 Table
 -----
 
-After header lines, the `table` section follows.
+After header lines follows the `table` section.
 A first line, starting with the `*` character, contains the names of the columns.
 Just below, a line starting with the `$` character contains the type identifier of the columns.
 These two lines look like:
@@ -51,12 +52,17 @@ Following the example above, a table line would look like:
                          1            SOMETHING              4.51395
                      21345         "WITH SPACE"             123.4825
 
+Traditionally, columns are separated by at least one blank space, and the column width is chosen to accomodate the longest column name or value.
+
 Type Identifiers
 ----------------
+
+
 
 Caveats
 -------
 
+TODO.
 No spaces in column names.
 If spaces in strings, they should be enclosed in quotes or double quotes.
 
