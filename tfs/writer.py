@@ -148,7 +148,12 @@ def write_tfs(
         )
 
 
-def _insert_index_column(data_frame: TfsDataFrame | pd.DataFrame, save_index: str) -> None:
+def _insert_index_column(data_frame: TfsDataFrame | pd.DataFrame, save_index: str | None = None) -> None:
+    """
+    Inserts the index of the dataframe into it as a column, naming it according to
+    'save_index' if it was provided. Otherwise it tries to use the existing index's
+    name (if present) and falls back to a default.
+    """
     if isinstance(save_index, str):  # save index into column by name given
         idx_name = save_index
     else:  # save index into column, which can be found by INDEX_ID
