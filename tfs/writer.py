@@ -127,7 +127,8 @@ def write_tfs(
 
     # Let pandas try to infer the best dtypes for the data to write (only to write, the
     # actual dataframe provided by the user is not changed so this operation is fine).
-    data_frame = data_frame.convert_dtypes(convert_integer=False, convert_floating=False)  # would try and fail to convert complex to floats
+    # Options: don't convert float to ints, don't try (and fail) to convert complex to floats
+    data_frame = data_frame.convert_dtypes(convert_integer=False, convert_floating=False)
 
     if save_index:
         left_align_first_column = True
@@ -179,7 +180,7 @@ def _get_header_line(name: str, value, width: int) -> str:
     """
     Creates and returns the string value for a single header line, based
     on the name of the header parameter and its value.
-    
+
     For instance, calling this for 'param' header which is a float equal to
     1.792 and using the DEFAULT_COLUMN_WIDTH of the package would yield:
     "@ param                %le                1.792"
@@ -204,17 +205,13 @@ def _get_header_line(name: str, value, width: int) -> str:
     return f"@ {name:<{width}} {type_str} {value_str:>{width}}"
 
 
-def _get_colnames_string(
-    colnames: list[str], colwidth: int, left_align_first_column: bool  # noqa: FBT001
-) -> str:
+def _get_colnames_string(colnames: list[str], colwidth: int, left_align_first_column: bool) -> str:  # noqa: FBT001
     """Returns the string for the line with the column names."""
     format_string = _get_row_format_string([None] * len(colnames), colwidth, left_align_first_column)
     return "* " + format_string.format(*colnames)
 
 
-def _get_coltypes_string(
-    types: pd.Series, colwidth: int, left_align_first_column: bool  # noqa: FBT001
-) -> str:
+def _get_coltypes_string(types: pd.Series, colwidth: int, left_align_first_column: bool) -> str:  # noqa: FBT001
     """Returns the string for the line with the column type specifiers."""
     fmt = _get_row_format_string([str] * len(types), colwidth, left_align_first_column)
     return "$ " + fmt.format(*[_dtype_to_tfs_format_id(type_) for type_ in types])
@@ -314,7 +311,9 @@ def _dtype_to_tfs_format_id(type_: type) -> str:
         return "%b"
     if pdtypes.is_complex_dtype(type_):
         return "%lz"
-    errmsg = f"Provided type '{type_}' could not be identified as either a bool, int, float complex or string dtype"
+    errmsg = (
+        f"Provided type '{type_}' could not be identified as either a bool, int, float complex or string dtype"
+    )
     raise TypeError(errmsg)
 
 
@@ -334,7 +333,7 @@ def _dtype_to_formatter_string(type_: type, colsize: int) -> str:
     Returns:
         The formatter string for the provided dtype.
     """
-    type_id = _dtype_to_string_format_id(type_) 
+    type_id = _dtype_to_string_format_id(type_)
     if pdtypes.is_float_dtype(type_) or pdtypes.is_complex_dtype(type_):
         return f"{colsize}.{colsize - len('-0.e-000')}{type_id}"
     return f"{colsize}{type_id}"
@@ -350,11 +349,11 @@ def _dtype_to_string_format_id(type_: type) -> str:
             ``numpy`` or ``pandas`` types) to get the formatter for.
 
     Returns:
-        str: the formatter type-identifier. 
+        str: the formatter type-identifier.
     """
 
     if type_ is None:
-        return "" 
+        return ""
     if pdtypes.is_integer_dtype(type_):
         return "d"
     if pdtypes.is_bool_dtype(type_):
@@ -365,24 +364,27 @@ def _dtype_to_string_format_id(type_: type) -> str:
         return "s"
     if pdtypes.is_complex_dtype(type_):
         return "c"  # can only be used with TfsStringFormatter
-    
-    errmsg = f"Provided type '{type_}' could not be identified as either a bool, int, float, complex or string dtype"
+
+    errmsg = (
+        f"Provided type '{type_}' could not be identified as either a bool, int, float, complex or string dtype"
+    )
     raise TypeError(errmsg)
 
 
 class TfsStringFormatter(string.Formatter):
     """Formatter class to be called for proper formatting of TFS strings."""
+
     def format_field(self, value, format_spec):
         if format_spec.endswith("b"):
             return self._format_boolean(value, format_spec)
-        
+
         elif format_spec.endswith("c"):
             return self._format_complex(value, format_spec)
 
         if format_spec.endswith("s"):
             return self._format_string(value, format_spec)
 
-        return super().format_field(value, format_spec) 
+        return super().format_field(value, format_spec)
 
     def _format_boolean(self, value, format_spec: str):
         """
@@ -399,7 +401,7 @@ class TfsStringFormatter(string.Formatter):
         the imaginary part and not 'j', so we have to replace that in.
         """
         return super().format_field(value, f"{format_spec[:-1]}g").replace("j", "i")
-    
+
     def _format_string(self, value, format_spec: str) -> str:
         """
         Special case as we need to ensure that strings are enclosed

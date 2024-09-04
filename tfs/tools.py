@@ -52,9 +52,7 @@ def significant_digits(
     return res
 
 
-def remove_nan_from_files(
-    list_of_files: list[str | Path], replace: bool = False  # noqa: FBT001, FBT002
-) -> None:
+def remove_nan_from_files(list_of_files: list[str | Path], replace: bool = False) -> None:  # noqa: FBT001, FBT002
     """
     Remove ``NaN`` entries from files in `list_of_files`.
 

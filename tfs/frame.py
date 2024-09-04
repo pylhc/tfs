@@ -144,12 +144,14 @@ class TfsDataFrame(pd.DataFrame):
         dframe = super().merge(right, **kwargs)
 
         LOGGER.debug("Determining headers")
+        # fmt: off
         new_headers = (
             new_headers
             if new_headers is not None
             else merge_headers(self.headers, right.headers, how=how_headers)
         )
         return TfsDataFrame(data=dframe, headers=new_headers)
+        # fmt: on
 
 
 def merge_headers(headers_left: dict, headers_right: dict, how: str) -> dict:
