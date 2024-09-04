@@ -9,5 +9,5 @@
 - [x] Handle the reading of complex columns (no spaces pls)
 - [x] Handle the writing of complex columns (no spaces pls)
 - [x] Remember to write complex values like MAD-NG, with an i for imaginary
-- [ ] Implement tests for the above
-- [ ] Probably extract all validation tests to a new file
+- [x] Implement tests for the above
+- [x] Probably extract all validation tests to a new file
