@@ -35,7 +35,8 @@ def write_tfs(
 ) -> None:
     """
     Writes the provided `DataFrame` to disk at **tfs_file_path**, eventually with the
-    specifically provided `headers_dict` as headers dictionary.
+    specifically provided `headers_dict` as headers dictionary. Note that this function
+    is exported at the top-level of the package as `tfs.write`.
 
     .. note::
         Compression of the output file is possible, by simply providing a valid compression extension
