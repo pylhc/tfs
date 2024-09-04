@@ -51,7 +51,7 @@ def write_tfs(
         (such as for instance a sliced FCC lattice).
 
     Args:
-        tfs_file_path (pathlib.Path | str): Path object to the output **TFS** file. Can be
+        tfs_file_path (pathlib.Path | str): Path to the output **TFS** file. Can be
             a string, in which case it will be cast to a Path object.
         data_frame (TfsDataFrame | pd.DataFrame): ``TfsDataFrame`` or ``pandas.DataFrame`` to
             write to file.

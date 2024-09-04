@@ -78,7 +78,7 @@ def read_tfs(
         (optionally) set and the frame is optionally validated before being returned.
 
     Args:
-        tfs_file_path (pathlib.Path | str): Path object to the **TFS** file to read. Can be
+        tfs_file_path (pathlib.Path | str): Path to the **TFS** file to read. Can be
             a string, in which case it will be cast to a Path object.
         index (str): Name of the column to set as index. If not given, looks in **tfs_file_path**
             for a column starting with `INDEX&&&`.
@@ -264,7 +264,7 @@ def _read_metadata(tfs_file_path: pathlib.Path | str) -> _TfsMetaData:
         returned.
 
     Args:
-        tfs_file_path (pathlib.Path | str): Path object to the **TFS** file to read. Can be
+        tfs_file_path (pathlib.Path | str): Path to the **TFS** file to read. Can be
             a string, in which case it will be cast to a Path object.
 
     Returns:
