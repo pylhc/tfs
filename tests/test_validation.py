@@ -42,6 +42,11 @@ class TestCommonFailures:
         with pytest.raises(InvalidBooleanHeaderError, match="Invalid boolean header value parsed"):
             _ = read_tfs(_invalid_bool_in_header_tfs_file, validate=validation_mode)
 
+    @pytest.mark.parametrize("validation_mode", ["not ok", "ma-Dx", "nope", "madngg"])
+    def test_validation_raises_on_invalid_compatibility_mode(self, _tfs_dataframe, validation_mode):
+        with pytest.raises(ValueError, match="Invalid compatibility mode provided"):
+            validate(_tfs_dataframe, compatibility=validation_mode)
+
 
 class TestMADXFailures:
     """Tests for failures in MAD-X validation mode, when df has MAD-NG features."""
