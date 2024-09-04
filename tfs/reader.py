@@ -61,12 +61,12 @@ def read_tfs(
         ``.zst``, ``.tar``, ``.tar.gz``, ``.tar.xz`` or ``.tar.bz2``. See below for examples.
 
     .. warning::
-        Through the *validate* argument, one can skip dataframe validation after
-        loading it from a file. While this can speed-up the execution time of this
-        function, it is **not recommended** and is not the default behavior of this
+        Through the *validate* argument, one can activate dataframe validation after
+        loading it from a file, which can significantly slow the execution of this
         function. The option, however, is left for the user to use at their own risk
-        should they wish to avoid lengthy validation of large `TfsDataFrames` (such
-        as for instance a sliced FCC lattice).
+        (of potentially lengthy validation of large `TfsDataFrames` such as for instance
+        a sliced FCC lattice). Note that validation can be performed at any time by
+        using the `tfs.frame.validate` function.
 
     .. admonition:: **Methodology**
 
@@ -74,9 +74,8 @@ def read_tfs(
         from the file (headers content, column names & types, number of lines
         parsed). The rest of the file (dataframe part) is given to parse to
         ``pandas.read_csv`` with the right options to make use of its C engine's
-        speed. After this, conversion to ``TfsDataDrame`` is made, proper types
-        are applied to columns, the index is set and the frame is eventually
-        validated before being returned.
+        speed. After this, conversion to ``TfsDataDrame`` is made, the index is
+        (optionally) set and the frame is optionally validated before being returned.
 
     Args:
         tfs_file_path (pathlib.Path | str): Path object to the **TFS** file to read. Can be
