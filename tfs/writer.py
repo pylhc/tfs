@@ -34,8 +34,8 @@ def write_tfs(
     validate: str = "madx",
 ) -> None:
     """
-    Writes the provided ``DataFrame`` to disk at **tfs_file_path**, eventually with the `headers_dict` as
-    headers dictionary.
+    Writes the provided `DataFrame` to disk at **tfs_file_path**, eventually with the
+    specifically provided `headers_dict` as headers dictionary.
 
     .. note::
         Compression of the output file is possible, by simply providing a valid compression extension
@@ -45,7 +45,7 @@ def write_tfs(
 
     .. warning::
         Through the *validate* argument, one can skip dataframe validation before writing it to file.
-        While this can speed-up the execution time of this function , it is **not recommended** and
+        While this can speed-up the execution of this function , it is **not recommended** and
         is not the default behavior of this function. The option, however, is left for the user to
         use at their own risk should they wish to avoid lengthy validation of large `TfsDataFrames`
         (such as for instance a sliced FCC lattice).
@@ -53,9 +53,9 @@ def write_tfs(
     Args:
         tfs_file_path (pathlib.Path | str): Path to the output **TFS** file. Can be
             a string, in which case it will be cast to a Path object.
-        data_frame (TfsDataFrame | pd.DataFrame): ``TfsDataFrame`` or ``pandas.DataFrame`` to
-            write to file.
-        headers_dict (dict): Headers for the `data_frame`. If not provided, assumes a ``TfsDataFrame``
+        data_frame (TfsDataFrame | pd.DataFrame): The dataframe to write to file. If a Series-like
+            object is given, it will be converted to a `TfsDataFrame` first.
+        headers_dict (dict): Headers for the `data_frame`. If not provided, assumes a `TfsDataFrame`
             was given and tries to use ``data_frame.headers``.
         save_index (str | bool): bool or string. Default to ``False``. If ``True``, saves
             the index of `data_frame` to a column identifiable by `INDEX&&&`. If given as string,
@@ -67,10 +67,10 @@ def write_tfs(
             to respectively issue a warning or raise an error if non-unique elements are found.
         validate (str): If an accepted value is given, validation will be performed before writing.
             Defauts to `madx`, which will assert compatibility of the data with the ``MAD-X``code.
-            If  `madng` is given then compatibility with the ``MAD-NG`` code is checked, which has more
+            If `madng` is given then compatibility with the ``MAD-NG`` code is checked, which has more
             features. Accepted values are `madx`, `mad-x`, `madng` and `mad-ng`, case-insensitive. If
-            any other value is given, validation will be skipped. See the `validate` function for more
-            information on the validation steps.
+            any other value is given, validation will be skipped. See the `tfs.frame.validate` function
+            for more information on the validation steps.
 
     Examples:
         Writing to file is simple, as most arguments have sane default values.
@@ -87,8 +87,8 @@ def write_tfs(
 
             tfs.write("filename.tfs", dataframe, non_unique_behavior="raise")
 
-        One can choose to skip dataframe validation **at one's own risk** before writing
-        it to file. This is done as:
+        One can choose to skip dataframe validation at one's own risk before writing
+        it to file. This can be done as:
 
         .. code-block:: python
 
