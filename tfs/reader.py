@@ -54,6 +54,7 @@ def read_tfs(
 ) -> TfsDataFrame:
     """
     Parses the **TFS** table present in **tfs_file_path** and returns a ``TfsDataFrame``.
+    Note that this function is exported at the top-level of the package as `tfs.read`.
 
     .. note::
         Loading and reading compressed files is possible. Any compression format supported
@@ -87,7 +88,7 @@ def read_tfs(
             to respectively issue a warning or raise an error if non-unique elements are found.
         validate (str): If an accepted value is given, validation will be performed after loading.
             Defauts to `None`, which skips validation. Accepted values are `madx`, `mad-x`, `madng`
-            and `mad-ng`, case-insensitive. See the `validate` function for more information.
+            and `mad-ng`, case-insensitive. See the `tfs.frame.validate` function for more information.
 
     Returns:
         A ``TfsDataFrame`` object with the loaded data from the file.
@@ -106,7 +107,7 @@ def read_tfs(
 
             tfs.read(pathlib.Path("filename.tfs"))
 
-        It is possible to load compressed files if the compression format is supported by pandas.
+        It is possible to load compressed files if the compression format is supported by `pandas`.
         (see above). The compression format detection is handled automatically from the extension
         of the provided **tfs_file_path** suffix. For instance:
 
@@ -122,25 +123,19 @@ def read_tfs(
 
             tfs.read("filename.tfs", index="COLUMN_NAME")
 
-        If one wants to, for instance, raise and error on non-unique indices or columns,
-        one can do so as:
+        One can choose to perform dataframe validation after reading from file, for
+        compatibility with a certain code, by providing a valid argument:
+
+        .. code-block:: python
+
+            tfs.read("filename.tfs", validate="MAD-NG")  # or validate="MAD-X"
+
+        If one wants to, for instance, raise and error on non-unique indices or columns
+        when performing validation, one can do so as:
 
         .. code-block:: python
 
             tfs.read("filename.tfs", non_unique_behavior="raise")
-
-        One can choose to skip dataframe validation **at one's own risk** after reading
-        from file. This is done as:
-
-        .. code-block:: python
-
-            tfs.read("filename.tfs", validate=False)
-
-        To validate for compatibility with a certain code, provide a valid argument:
-
-        .. code-block:: python
-
-            tfs.read("filename.tfs", validate="MAD-NG")
     """
     tfs_file_path = pathlib.Path(tfs_file_path)
     LOGGER.debug(f"Reading path: {tfs_file_path.absolute()}")
