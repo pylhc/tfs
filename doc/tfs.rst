@@ -27,6 +27,31 @@ An example header line is:
     @ NAME                   %le             0.269975
 
 
+Table
+-----
+
+After header lines, the `table` section follows.
+A first line, starting with the `*` character, contains the names of the columns.
+Just below, a line starting with the `$` character contains the type identifier of the columns.
+These two lines look like:
+
+.. code-block::
+
+    *             INTEGERS              STRINGS               FLOATS
+    $                   %d                   %s                  %le
+
+
+Afterwards, all contain the data of the table, right-aligned with the column names.
+Following the example above, a table line would look like:
+
+.. code-block::
+
+    *             INTEGERS              STRINGS               FLOATS
+    $                   %d                   %s                  %le
+                         1            SOMETHING              4.51395
+                     21345         "WITH SPACE"             123.4825
+
+
 
 .. rubric:: Footnotes
 
