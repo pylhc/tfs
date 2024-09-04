@@ -125,16 +125,14 @@ class TfsDataFrame(pd.DataFrame):
         Args:
             right (TfsDataFrame | pd.DataFrame): The ``TfsDataFrame`` to merge with the caller.
             how_headers (str): Type of merge to be performed for the headers. Either **left** or **right**.
-                Refer to :func:`tfs.frame.merge_headers` for behavior. If ``None`` is provided and
+                Refer to `tfs.frame.merge_headers` for behavior. If ``None`` is provided and
                 **new_headers** is not provided, the final headers will be empty. Case insensitive,
                 defaults to ``None``.
             new_headers (dict): If provided, will be used as headers for the merged ``TfsDataFrame``.
                 Otherwise these are determined by merging the headers from the caller and the other
                 ``TfsDataFrame`` according to the method defined by the **how_headers** argument.
-            **kwargs: Any keyword argument is given to `~pandas.DataFrame.merge()`. The default
-                values for all these parameters are left as set in the ``pandas`` codebase. To see
-                these, refer to the `pandas.DataFrame.merge` documentation (at 
-                https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.merge.html).
+            **kwargs: Any keyword argument is given to `pandas.DataFrame.merge`. The default
+                values for all these parameters are left as set in the ``pandas`` codebase.
 
         Returns:
             A new ``TfsDataFrame`` with the merged data and merged headers.
@@ -199,7 +197,7 @@ def concat(
 ) -> TfsDataFrame:
     """
     Concatenate ``TfsDataFrame`` objects along a particular axis with optional set logic along the other
-    axes. Data manipulation is done by the ``pandas.concat`` function. Resulting headers are either
+    axes. Data manipulation is done by the `pandas.concat` function. Resulting headers are either
     merged according to the provided **how_headers** method or as given via **new_headers**.
 
     .. warning::
@@ -211,17 +209,12 @@ def concat(
     Args:
         objs (Sequence[TfsDataFrame | pd.DataFrame]): the ``TfsDataFrame`` objects to be concatenated.
         how_headers (str): Type of merge to be performed for the headers. Either **left** or **right**.
-            Refer to :func:`tfs.frame.merge_headers` for behavior. If ``None`` is provided and
-            **new_headers** is not provided, the final headers will be empty. Case insensitive, defaults to
-            ``None``.
+            Refer to `tfs.frame.merge_headers` for behavior. If ``None`` is provided and **new_headers**
+            is not provided, the final headers will be empty. Case insensitive, defaults to ``None``.
         new_headers (dict): If provided, will be used as headers for the merged ``TfsDataFrame``.
             Otherwise these are determined by successively merging the headers from all concatenated
             ``TfsDataFrames`` according to the method defined by the **how_headers** argument.
-
-    Keyword Args:
-        Any keyword argument is given to ``pandas.concat()``. The default values for all these parameters
-        are left as set in the ``pandas`` codebase. To see these, refer to the [pandas.concat
-        documentation](https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.concat.html).
+        **kwargs: Any keyword argument is given to `pandas.concat`.
 
     Returns:
         A new ``TfsDataFrame`` with the merged data and merged headers.
