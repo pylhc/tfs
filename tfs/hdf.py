@@ -47,7 +47,8 @@ def write_hdf(path: Path | str, df: TfsDataFrame, **kwargs) -> None:
             that case).
     """
     _check_imports()  # checks tables and h5py are imported, raises otherwise
-    # Check for `key` kwarg (forbidden) ---
+
+    # Check for `key` kwargs (forbidden) ---
     if "key" in kwargs:
         errmsg = "The argument 'key' is not allowed here, as only one TfsDataFrame per file is supported."
         raise AttributeError(errmsg)
