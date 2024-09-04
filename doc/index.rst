@@ -40,6 +40,8 @@ Contents
    :maxdepth: 2
 
    quickstart
+   tfs
+   compatibility
    modules/index
 
 
