@@ -96,8 +96,12 @@ The following caveats apply to the `tfs-pandas` package:
 - The table data should not contain nested structures (lists, tuples, etc.).
 - The table data should not contain non-physical values (``NaN``, ``Inf``, etc.) as they would not be read back by either ``MAD-X`` or ``MAD-NG``.
 
-It is possible to perform automatic validation of the `TfsDataFrame` both when reading and writing, or to validate them at any time using the `tfs.frame.validate` function.
-See the :doc:`API reference <modules/index>` for more information.
+.. admonition:: Note
+
+    It is possible to perform automatic validation of the `TfsDataFrame` both when reading and writing, or to validate them at any time using the `tfs.frame.validate` function.
+    See the :doc:`API reference <modules/index>` for more information.
+
+Not respecting the above does not necessarily lead to an issue when reading or writing a TFS file (without validation), but it might be an issue trying to get such a file accepted by `MAD-X` or `MAD-NG`.
 
 Example
 -------
