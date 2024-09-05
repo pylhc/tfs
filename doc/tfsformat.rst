@@ -18,7 +18,7 @@ All headers lines start with the `@` character, and have the following structure
 
 - The `@` character.
 - The name of the parameter.
-- The type identifier of the parameter (see `Type Identifiers`_ below).
+- The type identifier of the parameter (see `Types and Identifiers`_ below).
 - The value of the parameter.
 
 An example header line is:
@@ -34,7 +34,7 @@ Table
 
 After header lines follows the `table` section.
 A first line, starting with the `*` character, contains the names of the columns.
-Just below, a line starting with the `$` character contains the type identifiers of the columns' data (see `Type Identifiers`_ below).
+Just below, a line starting with the `$` character contains the type identifiers of the columns' data (see `Types and Identifiers`_ below).
 These two lines look like:
 
 .. code-block::
@@ -43,7 +43,8 @@ These two lines look like:
     $                   %d                   %s                  %le
 
 
-Afterwards all lines contain the data of the table, one row per line, right-aligned with the column names.
+Afterwards all lines contain the data of the table, one row per line.
+These lines are traditionally right-aligned with the column names for readability, which is not mandatory.
 Following the example above, a few table lines would look like:
 
 .. code-block::
@@ -53,47 +54,49 @@ Following the example above, a few table lines would look like:
                          1            SOMETHING              4.51395
                      21345         "WITH SPACE"             123.4825
 
-Traditionally, columns are separated by at least one blank space, and the column width is chosen to accomodate the longest column name or value.
+Columns are separated by at least one blank space, and the column width is chosen to accomodate the longest column name or value.
 
-Type Identifiers
-----------------
+Types and Identifiers
+---------------------
 
 Type identifiers are specific strings that indicate the type to interpret the relevant data as, whether it be a parameter in the `headers` or a column's data.
-The following type identifiers and their corresponding types are accepted and used by `tfs-pandas`:
+The following type identifiers and their corresponding Python types are accepted and used by `tfs-pandas`:
 
-================  ===============  ========================
-Type Indentifier  Associated Type               Accepted by
-================  ===============  ========================
-%s                         string  ``MAD-X`` and ``MAD-NG``
-%bpm_s                     string  ``MAD-X`` and ``MAD-NG``
-%d                 64-bit integer  ``MAD-X`` and ``MAD-NG``
-%hd                64-bit integer  ``MAD-X`` and ``MAD-NG``
-%f                   64-bit float  ``MAD-X`` and ``MAD-NG``
-%le                  64-bit float  ``MAD-X`` and ``MAD-NG``
-%b                        boolean           ``MAD-NG`` only
-%lz               128-bit complex           ``MAD-NG`` only
-================  ===============  ========================
+================  ======================  =============== =========================
+Type Indentifier  Associated Python Type          Example               Accepted by
+================  ======================  =============== =========================
+%s                                string        `%s name`  ``MAD-X`` and ``MAD-NG``
+%bpm_s                            string    `%bpm_s name` ``MAD-X`` and ``MAD-NG``
+%d                        64-bit integer         `%d 174`  ``MAD-X`` and ``MAD-NG``
+%hd                       64-bit integer        `%hd 174`  ``MAD-X`` and ``MAD-NG``
+%f                          64-bit float       `%f 0.946`  ``MAD-X`` and ``MAD-NG``
+%le                         64-bit float      `%hf 0.946`  ``MAD-X`` and ``MAD-NG``
+%b                               boolean        `%b true`           ``MAD-NG`` only
+%lz                      128-bit complex   `%lz 1.4+2.6i`           ``MAD-NG`` only
+================  ======================  =============== =========================
 
-Both boolean and complex types are specific to the ``MAD-NG`` code, and would not be accepted by ``MAD-X``.
-Please see the :doc:`compatibility section <compatibility>` for more information.
+It is also possible to include the length of the value into the type identifier, as in `%10s` for a string of length 10.
+It is rarely done in practice, but will be correctly parsed by `tfs-pandas`.
 
-Caveats
--------
+.. admonition:: Note
 
-The following caveats apply to the TFS format.
+    Both boolean and complex types are specific to the ``MAD-NG`` code, and would not be accepted by ``MAD-X``.
+    Please see the :doc:`compatibility section <compatibility>` for more information.
+
+TFS-Pandas Caveats
+------------------
+
+The following caveats apply to the `tfs-pandas` package:
 
 - Column names should be strings.
 - No spaces should be present in column names.
-- If spaces are present in strings, they should be enclosed in either single or double quotes.
-- The table data should not contain nested structures (lists, tuples, etc.).
-
-Additionally, the following should be avoided if possible as the written file would not be read back by either ``MAD-X`` or ``MAD-NG``:
-
 - The table should not contain duplicate indices.
 - The table should not contain duplicate columns.
-- The table data should not contain non-physical values (``NaN``, ``Inf``, etc.).
+- If spaces are present in strings, they should be enclosed in either single or double quotes.
+- The table data should not contain nested structures (lists, tuples, etc.).
+- The table data should not contain non-physical values (``NaN``, ``Inf``, etc.) as they would not be read back by either ``MAD-X`` or ``MAD-NG``.
 
-It is possible to perform validation of the `TfsDataFrame` both when reading and writing, and at any time using the `tfs.frame.validate` function.
+It is possible to perform automatic validation of the `TfsDataFrame` both when reading and writing, or to validate them at any time using the `tfs.frame.validate` function.
 See the :doc:`API reference <modules/index>` for more information.
 
 Example
@@ -103,24 +106,24 @@ Many examples of a TFS file can be found in the repository's tests files, and on
 
 .. code-block::
 
-    @ TITLE                %s         "Table title"
+    @ TITLE                %s        "Table title"
     @ DPP                  %le                    1
     @ Q1                   %le             0.269975
     @ Q1RMS                %le          1.75643e-07
     @ NATQ1                %le             0.280041
     @ NATQ1RMS             %le           0.00102479
-    @ BPMCOUNT             %d                     9
-    *                 NAME                    S               NUMBER                   CO                CORMS              BPM_RES
-    $                   %s                  %le                   %d                  %le                  %le                  %le
-            "BPMYB.5L2.B1"               28.288                    1      -0.280727353099     0.00404721900879       0.121264541395
-            "BPMYB.4L2.B1"               48.858                    2       0.601472827003     0.00301396244054       0.129738519811
-            "BPMWI.4L2.B1"              73.3255                    3      -0.610294990396      0.0039123010318      0.0952864848273
-            "BPMSX.4L2.B1"             123.4825           3472136972       0.778206651453     0.00542543379504      0.0578581425476
-            "BPMS.2L2.B1"               161.394             59055944       0.585105573645     0.00291016910226         0.1223625619
-            "BPMSW.1L2.B1"              171.328              9202215        2.50235465023     0.00275350035218       0.148603785488
-            "BPMSW.1R2.B1"              214.518                 3117        1.81036167087     0.00282138482457       0.164954082556
-            "BPMS.2R2.B1"               224.452          18943819309      0.0791371365672     0.00474290041487       0.122265653712
-            "BPMSX.4R2.B1"             262.3635                  105    -0.00665768479832     0.00350302654669       0.187320306406
+    @ BPMCOUNT             %d                    9
+    *                 NAME                    S                   CO                CORMS              BPM_RES
+    $                   %s                  %le                  %le                  %le                  %le
+            "BPMYB.5L2.B1"               28.288      -0.280727353099     0.00404721900879       0.121264541395
+            "BPMYB.4L2.B1"               48.858       0.601472827003     0.00301396244054       0.129738519811
+            "BPMWI.4L2.B1"              73.3255      -0.610294990396      0.0039123010318      0.0952864848273
+            "BPMSX.4L2.B1"             123.4825       0.778206651453     0.00542543379504      0.0578581425476
+            "BPMS.2L2.B1"               161.394       0.585105573645     0.00291016910226         0.1223625619
+            "BPMSW.1L2.B1"              171.328        2.50235465023     0.00275350035218       0.148603785488
+            "BPMSW.1R2.B1"              214.518        1.81036167087     0.00282138482457       0.164954082556
+            "BPMS.2R2.B1"               224.452      0.0791371365672     0.00474290041487       0.122265653712
+            "BPMSX.4R2.B1"             262.3635    -0.00665768479832     0.00350302654669       0.187320306406
 
 
 
