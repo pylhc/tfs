@@ -239,8 +239,9 @@ def validate(
     compatibility: str = "madx",
 ) -> None:
     """
-    Check if a dataframe contains finite values only, strings as column names and no empty headers
-    or column names. Additional checks are performed for compatibility with MAD-X and MAD-NG.
+    Enforce validity rules on a `TfsDataFrame` (see admonition below).
+    Additional checks are performed for compatibility with either ``MAD-X``
+    or ``MAD-NG`` as provided by the `compatibility` parameter.
 
     .. admonition:: Methodology
 
