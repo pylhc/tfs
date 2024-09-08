@@ -83,6 +83,8 @@ It is rarely done in practice, but will be correctly parsed by `tfs-pandas`.
     Both boolean and complex types are specific to the ``MAD-NG`` code, and would not be accepted by ``MAD-X``.
     Please see the :doc:`compatibility section <compatibility>` for more information.
 
+.. _tfs-pandas caveats:
+
 TFS-Pandas Caveats
 ------------------
 
