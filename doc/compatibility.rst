@@ -19,15 +19,32 @@ Validation enforces the rules described in the :ref:`caveats section <tfs-pandas
     It is by default turned off at read-time, and turned on at write-time.
     The default compability mode enforced before writing is ``MAD-X``, as this ensures the file would be accepted by both codes.
 
+Validation is done by providing a `TfsDataFrame` and a compatibility mode to `tfs.frame.validate` (see the :ref:`API reference <modules/index:frame>`).
+It goes as:
 
+.. code-block:: python
 
-MAD-X Compatibility
--------------------
+    import tfs
+    from tfs.frame import validate
+
+    df = tfs.read("path/to/file.tfs")
+
+    # To validate with MAD-X compatibility
+    validate(df, compability="mad-x")
+
+    # To validate with MAD-NG compability
+    validate(df, compability="mad-ng")
+
+In case of compability issue, an exception is raised which will point to the specific incompatible element.
+All exceptions inherit from the `TfsFormatError`, which one can `except` as a catch-all for this package.
+
+MAD-NG Compatibility
+--------------------
 
 Meh.
 
 
-MAD-NG Compatibility
---------------------
+MAD-X Compatibility
+-------------------
 
 Meh.

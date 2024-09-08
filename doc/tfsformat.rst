@@ -101,7 +101,7 @@ The following caveats apply to the `tfs-pandas` package:
 .. admonition:: DataFrame Validation
 
     It is possible to perform automatic validation of the `TfsDataFrame` both when reading and writing, or to validate them at any time using the `tfs.frame.validate` function.
-    See the :doc:`API reference <modules/index>` for more information.
+    See the :ref:`API reference <modules/index:frame>` for more information.
 
 Not respecting the above does not necessarily lead to an issue when reading or writing a TFS file (without validation), but it might be an issue trying to get such a file accepted by `MAD-X` or `MAD-NG`.
 
