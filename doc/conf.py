@@ -50,6 +50,7 @@ ABOUT_TFS = about_package(ABOUT_FILE)
 # ones.
 extensions = [
     "sphinx.ext.autodoc",  # Include documentation from docstrings
+    "sphinx.ext.autosectionlabel",  # Create explicit doc targets for each section
     "sphinx.ext.coverage",  # Collect doc coverage stats
     "sphinx.ext.doctest",  # Test snippets in the documentation
     "sphinx.ext.githubpages",  # Publish HTML docs in GitHub Pages
@@ -64,7 +65,7 @@ extensions = [
 ]
 
 # Config for autosectionlabel extension
-autosectionlabel_prefix_document = True
+autosectionlabel_prefix_document = True  # Make sure the target is unique
 autosectionlabel_maxdepth = 2
 
 # Config for the napoleon extension
