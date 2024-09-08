@@ -78,7 +78,7 @@ Type Indentifier  Associated Python Type          Example               Accepted
 It is also possible to include the length of the value into the type identifier, as in `%10s` for a string of length 10.
 It is rarely done in practice, but will be correctly parsed by `tfs-pandas`.
 
-.. admonition:: Note
+.. admonition:: MAD-NG Specific Types
 
     Both boolean and complex types are specific to the ``MAD-NG`` code, and would not be accepted by ``MAD-X``.
     Please see the :doc:`compatibility section <compatibility>` for more information.
@@ -98,7 +98,7 @@ The following caveats apply to the `tfs-pandas` package:
 - The table data should not contain nested structures (lists, tuples, etc.).
 - The table data should not contain non-physical values (``NaN``, ``Inf``, etc.) as they would not be read back by either ``MAD-X`` or ``MAD-NG``.
 
-.. admonition:: Note
+.. admonition:: DataFrame Validation
 
     It is possible to perform automatic validation of the `TfsDataFrame` both when reading and writing, or to validate them at any time using the `tfs.frame.validate` function.
     See the :doc:`API reference <modules/index>` for more information.
