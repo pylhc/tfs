@@ -248,8 +248,7 @@ def validate(
         checks are performed for all compatibility modes (``MAD-X`` and ``MAD-NG``):
 
           1. Checking no single element in the data is a `list` or `tuple`.
-          2. Checking for non-physical values in the dataframe (uses `.isna()`
-             with the right option context).
+          2. Checking for non-physical values in the dataframe (uses `.isna()` with the right option context).
           3. Checking for duplicates in either indices or columns.
           4. Checking for column names that are not strings.
           5. Checking for column names including spaces.
@@ -260,7 +259,7 @@ def validate(
           1. Checking no boolean values are in the dataframe headers.
           2. Checking no complex values are in the dataframe headers.
           3. Checking no boolean-dtype columns are in the dataframe.
-          2. Checking no complex-dtype columns are in the dataframe.
+          4. Checking no complex-dtype columns are in the dataframe.
 
     Args:
         data_frame (TfsDataFrame | pd.DataFrame): the dataframe to check on.
