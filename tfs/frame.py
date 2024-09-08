@@ -242,7 +242,7 @@ def validate(
     Check if a dataframe contains finite values only, strings as column names and no empty headers
     or column names. Additional checks are performed for compatibility with MAD-X and MAD-NG.
 
-    .. admonition:: **Methodology**
+    .. admonition:: Methodology
 
         This function performs several different checks on the provided dataframe. The following
         checks are performed for all compatibility modes (``MAD-X`` and ``MAD-NG``):
