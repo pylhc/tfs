@@ -1,10 +1,11 @@
 MAD-X and MAD-NG Compatibility
 ==============================
 
-As `tfs-pandas` offers functionality to write `TfsDataFrames` as files in the **TFS** format, compatibility of these files with simulation codes is crucial.
+As `tfs-pandas` allows one to write `TfsDataFrames` as files in the **TFS** format, compatibility of these files with simulation codes is crucial.
 Specifically, `tfs-pandas` aims to ensure the files it writes to disk are accepted as input for `MAD-X <https://madx.web.cern.ch/>`_ and `MAD-NG <https://madx.web.cern.ch/releases/madng/html/>`_.
+
 However, as ``MAD-NG`` is the successor to ``MAD-X``, it includes new features regarding the **TFS** format, and files including these features will not be accepted by ``MAD-X``.
-As such, 
+To circumvent this issue, `tfs-pandas` offers functionality - named validation - to ensure compatibility with either code.
 
 TfsDataFrame Validation
 -----------------------
