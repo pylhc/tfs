@@ -3,6 +3,7 @@
 ## Version 4.0.0
 
 Big release with compatibility for `MAD-NG`.
+No breaking changes per se, but enough behavioral changes to warrant a major version bump.
 
 - Added:
   - Handling of boolean headers values (`MAD-NG` feature).
