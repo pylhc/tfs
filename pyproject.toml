@@ -92,4 +92,7 @@ changelog = "https://github.com/pylhc/tfs/blob/master/CHANGELOG.md"
 target-version = "py39"  # Assume Python 3.9+
 
 [tool.coverage.report]
-# exclude_also = ["if TYPE_CHECKING:"]  # do not count type checking imports (ignored at runtime) for coverage
+exclude_also = [
+  "if TYPE_CHECKING:",  # do not count type checking imports (ignored at runtime) for coverage
+  "except ImportError:",  # do not count missing optional dependencies set to None, we monkeypatch and test that
+]  
