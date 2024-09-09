@@ -15,6 +15,11 @@ No breaking changes per se, but enough behavioral changes to warrant a major ver
   - By default, `TfsDataFrame` validation is now skipped on reading.
   - By default, `TfsDataFrame` validation is now done in `MAD-X` compatibility mode (more restrictive) before writing.
 
+- Documentation:
+  - The documentation has been updated to reflect the new features and changes.
+  - The documentation now includes a new page on the `TFS` format itself.
+  - The documentation now includes a new page on compatibility modes for `TfsDataFrame` validation.
+
 ## Version 3.8.2
 
 - Changed:
