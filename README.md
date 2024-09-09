@@ -45,7 +45,8 @@ data_frame.headers["NEW_KEY"] = some_variable
 # Manipulate data as you do with pandas DataFrames
 data_frame["NEWCOL"] = data_frame.COL_A * data_frame.COL_B
 
-# You can check the validity of a TfsDataFrame, compatibility mode & the behavior in case of errors
+# You can check the validity of a TfsDataFrame, speficying the compatibility
+# mode as well as the behavior in case of errors
 tfs.frame.validate(
     data_frame,
     non_unique_behavior="raise",  # or choose "warn"
