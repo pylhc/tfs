@@ -41,7 +41,8 @@ All exceptions inherit from the `TfsFormatError`, which one can `except` as a ca
 MAD-NG Compatibility
 --------------------
 
-Meh.
+Since ``MAD-NG`` implements and accepts more features into its **TFS** files, its compatibility mode is naturally less restrictive.
+
 
 
 MAD-X Compatibility
