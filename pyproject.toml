@@ -89,6 +89,7 @@ changelog = "https://github.com/pylhc/tfs/blob/master/CHANGELOG.md"
 
 
 [tool.ruff]
+target-version = "py39"  # Assume Python 3.9+
 
-# Assume Python 3.9+
-target-version = "py39"
+[tool.coverage.report]
+# exclude_also = ["if TYPE_CHECKING:"]  # do not count type checking imports (ignored at runtime) for coverage
