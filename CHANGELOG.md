@@ -2,7 +2,7 @@
 
 ## Version 4.0.0
 
-Big release with compatibility for `MAD-NG`.
+Version 4.0 is a major release bringing compatibility with `MAD-NG` features in **TFS** files and tables.
 No breaking changes per se, but enough behavioral changes to warrant a major version bump.
 
 - Added:
