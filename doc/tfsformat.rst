@@ -105,20 +105,20 @@ The following caveats apply to the `tfs-pandas` package:
 
 Not respecting the above does not necessarily lead to an issue when reading or writing a TFS file (without validation), but it might be an issue trying to get such a file accepted by `MAD-X` or `MAD-NG`.
 
-Example
--------
+TFS File Example
+----------------
 
-Many examples of a TFS file can be found in the repository's tests files, and one is included below:
+Many examples of TFS files can be found in the repository's tests files, and a simple one is included below:
 
 .. code-block::
 
-    @ TITLE                %s        "Table title"
+    @ TITLE                %s         "Table title"
     @ DPP                  %le                    1
     @ Q1                   %le             0.269975
     @ Q1RMS                %le          1.75643e-07
     @ NATQ1                %le             0.280041
     @ NATQ1RMS             %le           0.00102479
-    @ BPMCOUNT             %d                    9
+    @ BPMCOUNT             %d                     9
     *                 NAME                    S                   CO                CORMS              BPM_RES
     $                   %s                  %le                  %le                  %le                  %le
             "BPMYB.5L2.B1"               28.288      -0.280727353099     0.00404721900879       0.121264541395
