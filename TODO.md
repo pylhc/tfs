@@ -13,4 +13,4 @@
 - [x] Probably extract all validation tests to a new file
 - [x] Go over documentation and adapt to new default behaviours
 - [x] Write a documentation page for the TFS format
-- [ ] Write a documentation page for the MAD-X vs MAD-NG validation compatibility modes
+- [x] Write a documentation page for the MAD-X vs MAD-NG validation compatibility modes
