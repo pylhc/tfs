@@ -38,6 +38,20 @@ It goes as:
 In case of compability issue, an exception is raised which will point to the specific incompatible element.
 All exceptions inherit from the `TfsFormatError`, which one can `except` as a catch-all for this package.
 
+.. _common rules:
+
+Common Rules
+------------
+
+In either compatibility mode, some common rules are enforced.
+These rules are listed and described in the :ref:`API reference <modules/index:frame>` for the `tfs.frame.validate` function.
+
+When validating a `TfsDataFrame`, the behavior in case one of these rules is violated depends on the value of the `non_unique_behavior` parameter.
+These rules are *always* checked against when validating a `TfsDataFrame`.
+Additional checks can be performed by setting the `compability` parameter, as described in the :ref:`MAD-NG <madng mode>` and :ref:`MAD-X <madx mode>` below.
+
+.. _madng mode:
+
 MAD-NG Compatibility
 --------------------
 
@@ -53,7 +67,14 @@ Namely, the following are accepted by ``MAD-NG`` and ``MAD-NG`` only:
     When writing complex values to file, `tfs-pandas` will instead use the ``MAD-NG`` (read `Lua`) representation, which uses the letter ``i``, as in `1.4 + 2.6i`, so that ``MAD-NG`` can properly read such a file.
     Both of these representations will be correctly read by `tfs-pandas`.
 
+.. _madx mode:
+
 MAD-X Compatibility
 -------------------
 
-Meh.
+The ``MAD-X`` compability mode is more restrictive, and enforces that none of the features listed in the :ref:`MAD-NG section <madng mode>` do not appear in the `TfsDataFrame`.
+
+.. admonition:: Default mode
+
+    The default compability mode enforced before writing is ``MAD-X``.
+    This decision is to ensure the file would be accepted by both codes when using default values.
