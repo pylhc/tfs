@@ -23,7 +23,9 @@ write = write_tfs
 __all__ = [
     "concat",
     "read",
+    "read_tfs",
     "write",
+    "write_tfs",
     "read_hdf",
     "write_hdf",
     "TfsDataFrame",
