@@ -4,10 +4,6 @@
 Yes, 2 minutes.
 That's how little it takes!
 
-.. hint::
-
-   You can click the function names in the code examples below to go directly to their documentation.
-
 Basic Usage
 -----------
 
