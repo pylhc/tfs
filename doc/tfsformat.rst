@@ -76,7 +76,9 @@ Type Indentifier  Associated Python Type          Example               Accepted
 ================  ======================  =============== =========================
 
 It is also possible to include the length of the value into the type identifier, as in `%10s` for a string of length 10.
-It is rarely done in practice, but will be correctly parsed by `tfs-pandas`.
+`MAD-X` and `MAD-NG` inlcude the length in their output files, yet they are not mandatory to be able to read the files back into these programms. 
+`tfs-pandas` does not write length-values out and ignores any length-values when parsing files.
+It treats the identifier as if given without, meaning that the given data does not need to comply to the given length.
 
 .. admonition:: MAD-NG Specific Types
 
