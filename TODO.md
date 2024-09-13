@@ -14,3 +14,5 @@
 - [x] Go over documentation and adapt to new default behaviours
 - [x] Write a documentation page for the TFS format
 - [x] Write a documentation page for the MAD-X vs MAD-NG validation compatibility modes
+- [ ] Make sure there are headers in the df, potentially assign empty dict if none are there and log (does not write any lines)
+- [ ] Add a test for behaviour when a simple pd.DataFrame is passed (no headers)
