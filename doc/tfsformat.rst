@@ -16,7 +16,7 @@ Headers
 The first section of the TFS file contains `headers`, lines each containing a parameter, its type and its value.
 All headers lines start with the `@` character, and have the following structure:
 
-- The `@` character.
+- The `@` character, to identify the line as a header.
 - The name of the parameter.
 - The type identifier of the parameter (see `Types and Identifiers`_ below).
 - The value of the parameter.
@@ -43,8 +43,9 @@ These two lines look like:
     $                   %d                   %s                  %le
 
 
-Afterwards all lines contain the data of the table, one row per line.
-These lines are traditionally right-aligned with the column names for readability, which is not mandatory.
+Afterwards all lines contain the data of the table, one row per line and columns separated by at least one blank space.
+For readability the entries are traditionally right-aligned with their column names,
+and the column width is chosen to accomodate the longest column name or value, but neither is mandatory.
 Following the example above, a few table lines would look like:
 
 .. code-block::
@@ -54,12 +55,11 @@ Following the example above, a few table lines would look like:
                          1            SOMETHING              4.51395
                      21345         "WITH SPACE"             123.4825
 
-Columns are separated by at least one blank space, and the column width is chosen to accomodate the longest column name or value.
 
 Types and Identifiers
 ---------------------
 
-Type identifiers are specific strings that indicate the type to interpret the relevant data as, whether it be a parameter in the `headers` or a column's data.
+Type identifiers are specific strings that indicate as which type to interpret the given data as, in the individual entries of the `Headers`_ as well as for the columns of the `Table`_.
 The following type identifiers and their corresponding Python types are accepted and used by `tfs-pandas`:
 
 ================  ======================  =============== =========================
