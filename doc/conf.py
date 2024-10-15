@@ -139,7 +139,7 @@ html_theme = "sphinx_rtd_theme"
 
 html_theme_options = {
     "collapse_navigation": False,
-    "display_version": True,
+    "version_selector": True,  # replaces 'display_version' since sphinx-rtd-theme 3.0 but only works on ReadTheDocs
     "logo_only": True,
     "navigation_depth": 3,
 }
