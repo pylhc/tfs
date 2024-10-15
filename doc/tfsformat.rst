@@ -71,8 +71,8 @@ Type Indentifier  Associated Python Type          Example               Accepted
 %hd                       64-bit integer        `%hd 174`  ``MAD-X`` and ``MAD-NG``
 %f                          64-bit float       `%f 0.946`  ``MAD-X`` and ``MAD-NG``
 %le                         64-bit float      `%hf 0.946`  ``MAD-X`` and ``MAD-NG``
-%b                               boolean        `%b true`           ``MAD-NG`` only
-%lz                      128-bit complex   `%lz 1.4+2.6i`           ``MAD-NG`` only
+%b                               boolean        `%b true`           Only ``MAD-NG``
+%lz                      128-bit complex   `%lz 1.4+2.6i`           Only ``MAD-NG``
 ================  ======================  =============== =========================
 
 It is also possible to include the length of the value into the type identifier, as in `%10s` for a string of length 10.
