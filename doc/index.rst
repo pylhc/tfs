@@ -17,13 +17,14 @@ Functions are also exported that handle reading and writing of **TFS** files to 
 Installation
 ============
 
-Installation is easily done via `pip`:
+The package is published on `PyPI` and installation is easily done via `pip`:
 
 .. code-block:: bash
 
    python -m pip install tfs-pandas
 
-One can also install in a `conda`/`mamba` environment via the `conda-forge` channel with:
+There is also a maintained version of the package on `conda-forge`.
+One can install in a `conda`/`mamba` environment via the `conda-forge` channel with:
 
 .. code-block:: bash
 
