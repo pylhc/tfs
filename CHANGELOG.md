@@ -2,13 +2,13 @@
 
 ## Version 4.0.0
 
-Version 4.0 is a major release bringing compatibility with `MAD-NG` features in **TFS** files and tables.
-This release brings no breaking changes per se, but enough behavioral changes to warrant a major version bump.
+Version `4.0` is a major release bringing compatibility with `MAD-NG` features in **TFS** files and tables.
+This release brings no breaking changes per se, but enough behavioural changes to warrant a major version bump.
 
 - Added:
   - Handling of boolean and complex headers values (`MAD-NG` feature).
   - Handling of bolean-type and complex-type columns (`MAD-NG` feature).
-  - Compatibility modes for dataframe validation. The `tfs.frame.validate` function now expects this, and valid choices are either `MAD-X` or `MAD-NG` (case-insensitive, see API documentation).
+  - Compatibility modes for dataframe validation. The `tfs.frame.validate` function now expects this, and valid choices are `MADX`, `MAD-X`, `MADNG` and `MAD-NG` (case-insensitive, see API documentation).
   - Many new exceptions have been created to be more specific when raising errors, which will now be more specific. They all inherit from the previously raised `TfsFormatError`, so user code that was catching it will still work.
 
 - Changed:
