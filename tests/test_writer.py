@@ -172,6 +172,15 @@ class TestWrites:
         write_tfs(tmp_path / "temporary.tfs", df, validate=False)
         assert (tmp_path / "temporary.tfs").is_file()
 
+    def test_write_no_headers_dataframe(self, tmp_path, _pd_dataframe):
+        # We make sure providing a df without headers (a pd.DataFrame for
+        # instance) still writes a valid TFS file to disk. This is NOT
+        # the same as having empty headers (empty dict)!
+        df = _pd_dataframe
+        write_tfs(tmp_path / "temporary.tfs", df, validate=False)  # need to discard validation
+        new = read_tfs(tmp_path / "temporary.tfs")
+        assert_frame_equal(df, new, check_frame_type=False)  # since Dataframe and TfsDataFrame are different df types
+
     # ----- Below are tests for files with MAD-NG features ----- #
 
     def test_tfs_write_read_with_booleans(self, _tfs_dataframe_booleans, tmp_path):
