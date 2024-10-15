@@ -16,4 +16,4 @@
 - [x] Write a documentation page for the MAD-X vs MAD-NG validation compatibility modes
 - [x] Make sure there are headers in the df, potentially assign empty dict if none are there and log (does not write any lines)
 - [x] Add a test for behaviour when a simple pd.DataFrame is passed (no headers)
-- [ ] Specify we support comments! A line starting with a `#` is a comment
+- [x] Specify we support comments! A line starting with a `#` is a comment

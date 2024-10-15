@@ -27,6 +27,7 @@ An example header line is:
 
     @ NAME                   %le             0.269975
 
+Additionally, any headers line starting with the `#` character is considered a comment and is ignored by the parser.
 There is no limit on the number of header lines in a TFS file, and there can be no header lines at all.
 
 Table
@@ -121,6 +122,7 @@ Many examples of TFS files can be found in the repository's tests files, and a s
     @ NATQ1                %le             0.280041
     @ NATQ1RMS             %le           0.00102479
     @ BPMCOUNT             %d                     9
+    # This is a comment line and will be ignored
     *                 NAME                    S                   CO                CORMS              BPM_RES
     $                   %s                  %le                  %le                  %le                  %le
             "BPMYB.5L2.B1"               28.288      -0.280727353099     0.00404721900879       0.121264541395
