@@ -67,7 +67,7 @@ The following type identifiers and their corresponding Python types are accepted
 Type Indentifier  Associated Python Type          Example               Accepted by
 ================  ======================  =============== =========================
 %s                                string        `%s name`  ``MAD-X`` and ``MAD-NG``
-%bpm_s                            string    `%bpm_s name` ``MAD-X`` and ``MAD-NG``
+%bpm_s                            string    `%bpm_s name`  ``MAD-X`` and ``MAD-NG``
 %d                        64-bit integer         `%d 174`  ``MAD-X`` and ``MAD-NG``
 %hd                       64-bit integer        `%hd 174`  ``MAD-X`` and ``MAD-NG``
 %f                          64-bit float       `%f 0.946`  ``MAD-X`` and ``MAD-NG``
