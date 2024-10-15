@@ -120,11 +120,10 @@ def write_tfs(
             compatibility=validate,
         )
 
-    if headers_dict is None:  # tries to get headers from TfsDataFrame
-        try:
-            headers_dict = data_frame.headers
-        except AttributeError:
-            headers_dict = {}
+    # Check for provided headers. If None, try to get them from the df
+    # and default to empty dict (will not write any lines to file)
+    if headers_dict is None:
+        headers_dict = getattr(data_frame, "headers", {})
 
     # Let pandas try to infer the best dtypes for the data to write (only to write, the
     # actual dataframe provided by the user is not changed so this operation is fine).
