@@ -30,10 +30,10 @@ It goes as:
     df = tfs.read("path/to/file.tfs")
 
     # To validate with MAD-X compatibility
-    validate(df, compability="mad-x")
+    validate(df, compability="mad-x")  # or use "madx"
 
     # To validate with MAD-NG compability
-    validate(df, compability="mad-ng")
+    validate(df, compability="mad-ng")  # or use "madng"
 
 In case of compability issue, an exception is raised which will point to the specific incompatible element.
 All exceptions inherit from the `TfsFormatError`, which one can `except` as a catch-all for this package.
