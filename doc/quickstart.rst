@@ -75,7 +75,10 @@ Validation
 ----------
 
 As **TFS** files typically come from the output of simulations codes, validation modes are available to ensure compatibility with said codes.
-As this warrants its own documentation page, please refer to the :doc:`validation guide <compatibility>` for more information.
+This is done through the `tfs.frame.validate` function, or relevant arguments in both the reader and writer functions.
+
+As validation modes and compatibility details are complex, validation warrants its own documentation page.
+Please refer to the :doc:`compatibility and validation guide <compatibility>` for more information.
 
 Function Replacements
 ---------------------
