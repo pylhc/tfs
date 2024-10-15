@@ -71,6 +71,12 @@ Then, access the functionality from `tfs.hdf`.
    # Write a TfsDataFrame to an HDF5 file
    tfs.hdf.write("path_to_output.hdf5", df, key="key_in_hdf5_file")
 
+Validation
+----------
+
+As **TFS** files typically come from the output of simulations codes, validation modes are available to ensure compatibility with said codes.
+As this warrants its own documentation page, please refer to the :doc:`validation guide <compatibility>` for more information.
+
 Function Replacements
 ---------------------
 
