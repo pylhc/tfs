@@ -148,18 +148,25 @@ def read_tfs(
     if metadata.column_types is None:
         raise AbsentColumnTypeError(tfs_file_path)
 
-    # The pandas engines do NOT support reading complex numbers, so we take note of which columns are
-    # complex-dtyped and will provide a specific converter function for pandas to use
-    dtypes_dict = dict(zip(metadata.column_names, metadata.column_types))
-    converters: dict[str, Callable] = {}
+    # The pandas engines do NOT support reading complex numbers, we have to provide a function
+    # We first create a dict from the metadata with column names and the associated types
+    dtypes_dict: dict[str, type] = dict(zip(metadata.column_names, metadata.column_types))
+    converters: dict[str, Callable] = {}  # will be explained in a later comment
 
+    # If we have complex-dtyped columns, they are popped from the first dict and added
+    # to a converters dict as key, with as value our function to parse complex numbers
     if np.complex128 in metadata.column_types:
         LOGGER.debug("Complex columns detected, reading as strings and casting later")
         for colname, dtype in zip(metadata.column_names, metadata.column_types):
             if dtype is np.complex128:
-                converters[colname] = _parse_complex  # will a special converter
+                converters[colname] = _parse_complex  # register it with our converter
                 del dtypes_dict[colname]  # remove to avoid ParserWarning saying we provided both
 
+    # By this point we have built the following two dictionaries:
+    # - 'dtypes_dict' with all non-complex columns (key, value are: name, type)
+    # - 'converters' with all complex columns (key, value are: name, function to parse)
+    # And we will provide both of these to the pandas reader which uses either its own
+    # API for the loading or our custom converters for the complex columns.
     LOGGER.debug("Parsing data part of the file")
     # DO NOT use comment=COMMENTS in here, if you do and the symbol is
     # in an element for some reason then the entire parsing will crash
