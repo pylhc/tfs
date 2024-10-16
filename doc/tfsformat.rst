@@ -68,7 +68,7 @@ Type Indentifier  Associated Python Type          Example               Accepted
 ================  ======================  =============== =========================
 %s                                string        `%s name`  ``MAD-X`` and ``MAD-NG``
 %bpm_s                            string    `%bpm_s name`  ``MAD-X`` and ``MAD-NG``
-%d                        64-bit integer         `%d 174`  ``MAD-X`` and ``MAD-NG``
+%d                        64-bit integer         `%d 174`            Only ``MAD-X``
 %hd                       64-bit integer        `%hd 174`  ``MAD-X`` and ``MAD-NG``
 %f                          64-bit float       `%f 0.946`  ``MAD-X`` and ``MAD-NG``
 %le                         64-bit float      `%hf 0.946`  ``MAD-X`` and ``MAD-NG``
@@ -115,13 +115,13 @@ Many examples of TFS files can be found in the repository's tests files, and a s
 
 .. code-block::
 
-    @ TITLE                %s         "Table title"
-    @ DPP                  %le                    1
-    @ Q1                   %le             0.269975
-    @ Q1RMS                %le          1.75643e-07
-    @ NATQ1                %le             0.280041
-    @ NATQ1RMS             %le           0.00102479
-    @ BPMCOUNT             %d                     9
+    @ TITLE                %11s         "Table title"
+    @ DPP                  %le                      1
+    @ Q1                   %le               0.269975
+    @ Q1RMS                %le            1.75643e-07
+    @ NATQ1                %le               0.280041
+    @ NATQ1RMS             %le             0.00102479
+    @ BPMCOUNT             %d                       9
     # This is a comment line and will be ignored
     *                 NAME                    S                   CO                CORMS              BPM_RES
     $                   %s                  %le                  %le                  %le                  %le
