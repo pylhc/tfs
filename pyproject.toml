@@ -53,7 +53,7 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-# TODO: when we drop python 3.9, require pytables 3.10.1 minimum and stop caring about numpy 2 compability
+# TODO: when we drop python 3.9, require pytables 3.10.1 minimum and stop caring about numpy 2 compatibility
 hdf5 = [
   "numpy >= 1.24, < 2.0; python_version < '3.10'",  # first pytables compatible with numpy 2 is 3.10 but does not support python 3.9
   "numpy >= 1.24; python_version >= '3.10'",  # otherwise we can use numpy 2 as on python 3.10 there is a pytables which is ok with it

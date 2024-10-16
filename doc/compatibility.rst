@@ -17,7 +17,7 @@ Validation enforces the rules described in the :ref:`caveats section <tfs-pandas
 
     Validation is optional.
     It is by default turned off at read-time, and turned on at write-time.
-    The default compability mode enforced before writing is ``MAD-X``, as this ensures the file would be accepted by both codes.
+    The default compatibility mode enforced before writing is ``MAD-X``, as this ensures the file would be accepted by both codes.
 
 Validation is done by providing a `TfsDataFrame` and a compatibility mode to `tfs.frame.validate` (see the :ref:`API reference <modules/index:frame>`).
 It goes as:
@@ -30,12 +30,12 @@ It goes as:
     df = tfs.read("path/to/file.tfs")
 
     # To validate with MAD-X compatibility
-    validate(df, compability="mad-x")  # or use "madx"
+    validate(df, compatibility="mad-x")  # or use "madx"
 
-    # To validate with MAD-NG compability
-    validate(df, compability="mad-ng")  # or use "madng"
+    # To validate with MAD-NG compatibility
+    validate(df, compatibility="mad-ng")  # or use "madng"
 
-In case of compability issue, an exception is raised which will point to the specific incompatible element.
+In case of compatibility issue, an exception is raised which will point to the specific incompatible element.
 All exceptions inherit from the `TfsFormatError`, which one can `except` as a catch-all for this package.
 
 .. _common rules:
@@ -48,7 +48,7 @@ These rules are listed and described in the :ref:`API reference <modules/index:f
 
 When validating a `TfsDataFrame`, the behavior in case one of these rules is violated depends on the value of the `non_unique_behavior` parameter.
 These rules are *always* checked against when validating a `TfsDataFrame`.
-Additional checks can be performed by setting the `compability` parameter, as described in the :ref:`MAD-NG <madng mode>` and :ref:`MAD-X <madx mode>` below.
+Additional checks can be performed by setting the `compatibility` parameter, as described in the :ref:`MAD-NG <madng mode>` and :ref:`MAD-X <madx mode>` below.
 
 .. _madng mode:
 
@@ -77,9 +77,9 @@ Namely, the following are accepted by ``MAD-NG`` and ``MAD-NG`` only:
 MAD-X Compatibility
 -------------------
 
-The ``MAD-X`` compability mode is more restrictive, and enforces that none of the features listed in the :ref:`MAD-NG section <madng mode>` do not appear in the `TfsDataFrame`.
+The ``MAD-X`` compatibility mode is more restrictive, and enforces that none of the features listed in the :ref:`MAD-NG section <madng mode>` do not appear in the `TfsDataFrame`.
 
 .. admonition:: Default mode
 
-    The default compability mode enforced before writing is ``MAD-X``.
+    The default compatibility mode enforced before writing is ``MAD-X``.
     This decision is to ensure the file would be accepted by both codes when using default values.
