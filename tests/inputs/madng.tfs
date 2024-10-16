@@ -7,7 +7,7 @@
 @ BPMCOUNT             %le                     9
 @ BOOLEAN1             %b                   true
 @ BOOLEAN2             %b                  false
-@ COMPLEX              %lz              1.3+1.2i
+@ COMPLEX              %lz              1.3+1.2I
 *                 NAME                    S               NUMBER                   CO                CORMS              BPM_RES              complex              boolean
 $                   %s                  %le                   %d                  %le                  %le                  %le                  %lz                   %b
         "BPMYB.5L2.B1"               28.288                    1      -0.280727353099     0.00404721900879       0.121264541395                 1+2i                 true
