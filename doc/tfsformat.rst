@@ -76,14 +76,17 @@ Type Indentifier  Associated Python Type          Example               Accepted
 %lz                      128-bit complex   `%lz 1.4+2.6i`           Only ``MAD-NG``
 ================  ======================  =============== =========================
 
-It is also possible to include the length of the value into the type identifier, as in `%10s` for a string of length 10.
-`MAD-X` and `MAD-NG` inlcude the length in their output files, yet they are not mandatory to be able to read the files back into these programms. 
-`tfs-pandas` does not write length-values out and ignores any length-values when parsing files.
-It treats the identifier as if given without, meaning that the given data does not need to comply to the given length.
+It is also possible to include the length of the value into the type identifier, for instance `%10s` for a string of length 10.
+``MAD-X`` and ``MAD-NG`` inlcude the length in their output files, however only ``MAD-NG`` expects this information, for string-dtype headers.
+
+.. TODO: Check this sentence below after deciding implementation: do we always write for string headers or only in MAD-NG compatibility mode?
+By default `tfs-pandas` ignores any length-values when parsing files, meaning that the given data does not need to comply to the given length.
+However, it writes this information in ``MAD-NG`` compatibility mode (see the :doc:`compatibility section <compatibility>`).
 
 .. admonition:: MAD-NG Specific Types
 
     Both boolean and complex types are specific to the ``MAD-NG`` code, and would not be accepted by ``MAD-X``.
+    Similarly, ``MAD-NG`` (via Lua 5.2) does not have an integer dtype and refuses the `%d` identifier.
     Please see the :doc:`compatibility section <compatibility>` for more information.
 
 .. _tfs-pandas caveats:
