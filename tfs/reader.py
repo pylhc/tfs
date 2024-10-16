@@ -349,8 +349,8 @@ def _parse_header(str_list: list[str]) -> tuple[str, bool | str | int | float]:
 
     if value_type is bool:  # special handling for boolean values
         return name, _string_to_bool(value_string)
-    elif value_type is np.complex128:  # MAD-NG uses i for imaginary but Python needs j
-        value_string = value_string.replace("i", "j")
+    elif value_type is np.complex128:  # MAD-NG uses i or I for imaginary but Python needs j
+        value_string = value_string.replace("i", "j").replace("I", "j")
     return name, value_type(value_string)
 
 
@@ -435,4 +435,6 @@ def _parse_complex(complex_string: str) -> np.complex128:
     Returns:
         The (potentially adapted) value as a numpy.complex128.
     """
-    return np.complex128(complex_string.replace("i", "j"))
+    # We replace both 'i' and 'I' as each can happen in the MAD-NG output
+    # (the second one is a special case, if there is no real part - said Laurent)
+    return np.complex128(complex_string.replace("i", "j").replace("I", "j"))
