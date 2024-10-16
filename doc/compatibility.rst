@@ -67,6 +67,11 @@ Namely, the following are accepted by ``MAD-NG`` and ``MAD-NG`` only:
     When writing complex values to file, `tfs-pandas` will instead use the ``MAD-NG`` (read `Lua`) representation, which uses the letter ``i``, as in `1.4 + 2.6i`, so that ``MAD-NG`` can properly read such a file.
     Both of these representations will be correctly read by `tfs-pandas`.
 
+.. attention::
+
+    The exotic "features" of ``MAD-NG`` such as the ``Lua`` operator overloading for ranges and their inclusion in **TFS** files are not supported by `tfs-pandas`.
+    Should one need to use these features, it is recommended to go through the `pymadng <https://pymadng.readthedocs.io/en/latest/>`_ package to handle them in-memory.
+
 .. _madx mode:
 
 MAD-X Compatibility
