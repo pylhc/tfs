@@ -425,12 +425,12 @@ def _is_madx_string_col_identifier(type_str: str) -> bool:
 def _parse_complex(complex_string: str) -> np.complex128:
     """
     Helper for pandas (as a converter) to handles complex columns. Assumes the file
-    might be from MAD-NG, in which case it uses 'i' for the imaginary part and we
-    need to convert it to 'j' for Python.
+    might be from MAD-NG, in which case it uses 'i' (or 'I') for the imaginary part
+    and we need to convert it to 'j' for Python.
 
     Args:
         complex_string (str): the string representation of the complex number, for
-        instance '1.0+2.0i' or '7.5342+164j'.
+            instance '1.0+2.0i' or '7.5342+164j'.
 
     Returns:
         The (potentially adapted) value as a numpy.complex128.

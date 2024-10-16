@@ -64,8 +64,8 @@ Namely, the following are accepted by ``MAD-NG`` and ``MAD-NG`` only:
 .. admonition:: Complex Number Representation
 
     In Python, the imaginary part of a complex number is represented by the letter ``j``, as in `1.4 + 2.6j`.
-    When writing complex values to file, `tfs-pandas` will instead use the ``MAD-NG`` (read `Lua`) representation, which uses the letter ``i``, as in `1.4 + 2.6i`, so that ``MAD-NG`` can properly read such a file.
-    Both of these representations will be correctly read by `tfs-pandas`.
+    When writing complex values to file, `tfs-pandas` will instead use the ``MAD-NG`` (read `Lua`) representation, and uses the letter ``i``, as in `1.4 + 2.6i`, so that ``MAD-NG`` can properly read such a file.
+    Both of these representations will be correctly read by `tfs-pandas` (including when ``MAD-NG`` uses ``I`` for special complex numbers cases).
 
 .. attention::
 
