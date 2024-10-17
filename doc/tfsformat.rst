@@ -81,6 +81,7 @@ This was meant for older codes to know how much memory to allocate.
 While ``MAD-X`` and ``MAD-NG`` inlcude this information in their output **TFS** files, they do not require it when reading.
 For these reasons, by default `tfs-pandas` ignores the information when parsing files, and does not include it when writing them.
 
+.. TODO: The integer info is not correct, let's convince Laurent to accept %d in MAD-NG?
 .. admonition:: MAD-NG Specific Types
 
     Both boolean and complex types are specific to the ``MAD-NG`` code, and would not be accepted by ``MAD-X``.
