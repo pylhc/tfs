@@ -77,7 +77,7 @@ Namely, the following are accepted by ``MAD-NG`` and ``MAD-NG`` only:
 MAD-X Compatibility
 -------------------
 
-The ``MAD-X`` compatibility mode is more restrictive, and enforces that none of the features listed in the :ref:`MAD-NG section <madng mode>` do not appear in the `TfsDataFrame`.
+The ``MAD-X`` compatibility mode is more restrictive, and enforces that none of the features listed in the :ref:`MAD-NG section <madng mode>` appear in the `TfsDataFrame`.
 
 .. admonition:: Default mode
 
