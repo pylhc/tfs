@@ -338,7 +338,7 @@ def _dtype_to_formatter_string(type_: type, colsize: int) -> str:
     Returns:
         The formatter string for the provided dtype.
     """
-    type_id = _dtype_to_string_format_id(type_)
+    type_id = _dtype_to_string_format_id(type_)  # for Python: 'd' or 'g' or 's' etc
     if pdtypes.is_float_dtype(type_) or pdtypes.is_complex_dtype(type_):
         return f"{colsize}.{colsize - len('-0.e-000')}{type_id}"
     return f"{colsize}{type_id}"
