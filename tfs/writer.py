@@ -177,7 +177,7 @@ def _get_headers_string(headers_dict: dict, width: int) -> str:
         A full string representation for the headers dictionary, TFS compliant.
     """
     if headers_dict:
-        return "\n".join(_get_header_line(name, headers_dict[name], width) for name in headers_dict)
+        return "\n".join(_get_header_line(name, value, width) for name, value in headers_dict.items())
     return ""
 
 
