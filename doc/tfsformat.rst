@@ -76,12 +76,10 @@ Type Indentifier  Associated Python Type          Example               Accepted
 %lz                      128-bit complex   `%lz 1.4+2.6i`           Only ``MAD-NG``
 ================  ======================  =============== =========================
 
-It is also possible to include the length of the value into the type identifier, for instance `%10s` for a string of length 10.
-``MAD-X`` and ``MAD-NG`` inlcude the length in their output files, however only ``MAD-NG`` expects this information, for string-dtype headers.
-
-.. TODO: Check this sentence below after deciding implementation: do we always write for string headers or only in MAD-NG compatibility mode?
-By default `tfs-pandas` ignores any length-values when parsing files, meaning that the given data does not need to comply to the given length.
-However, it writes this information in ``MAD-NG`` compatibility mode (see the :doc:`compatibility section <compatibility>`).
+It is also possible to include the length of the value into the type identifier, for instance `%10s` for a string of 10 characters.
+This was meant for older codes to know how much memory to allocate.
+While ``MAD-X`` and ``MAD-NG`` inlcude this information in their output **TFS** files, they do not require it when reading.
+For these reasons, by default `tfs-pandas` ignores the information when parsing files, and does not include it when writing them.
 
 .. admonition:: MAD-NG Specific Types
 
