@@ -15,6 +15,6 @@ env:
 
 jobs:
   tests:
-    uses: pylhc/.github/.github/workflows/tests.yml@uv
+    uses: pylhc/.github/.github/workflows/tests.yml@master
     with:
       extra-dependencies: test  # test includes hdf5 dependency specifier
