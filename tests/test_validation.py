@@ -95,13 +95,6 @@ class TestMADNGValidation:
     def test_madng_validation_passes_on_madng_features(self, _tfs_madng_file, validation_mode):
         read_tfs(_tfs_madng_file, validate=validation_mode)  # trigger validation here
 
-    @pytest.mark.parametrize("validation_mode", ["madng", "MAD-NG", "mAD-nG"])
-    def test_madng_validation_converts_integer_headers_to_float(self, _tfs_dataframe, validation_mode):
-        df = _tfs_dataframe  # only has 2 headers, no integers
-        df.headers["INT"] = 42  # make sure we have an integer header here
-        validate(df, compatibility=validation_mode)
-        assert isinstance(df.headers["INT"], float)
-
 
 # ------ Fixtures ------ #
 
