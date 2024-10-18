@@ -179,7 +179,12 @@ class TestWrites:
         df = _pd_dataframe
         write_tfs(tmp_path / "temporary.tfs", df, validate=False)  # need to discard validation
         new = read_tfs(tmp_path / "temporary.tfs")
-        assert_frame_equal(df, new, check_frame_type=False)  # since Dataframe and TfsDataFrame are different df types
+        # I use assert_frame_equal here and not our helper assert_tfs_frame_equal
+        # since Dataframe and TfsDataFrame are different df types and with no
+        # headers present in the former the check would fail
+        assert_frame_equal(
+            df, new, check_frame_type=False
+        )  
 
     # ----- Below are tests for files with MAD-NG features ----- #
 
