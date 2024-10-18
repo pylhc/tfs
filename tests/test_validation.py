@@ -20,6 +20,34 @@ class TestWarnings:
             assert record.levelname == "WARNING"
         assert "contains non-physical values at Index:" in caplog.text
 
+    def test_warning_on_non_unique_columns(self, caplog):
+        df = TfsDataFrame(columns=["A", "B", "A"])
+        # validate in most restrictive (MADX) mode but this is in common checks
+        validate(df, compatibility="madx")
+
+        for record in caplog.records:
+            assert record.levelname == "WARNING"
+        assert "Non-unique column names found" in caplog.text
+
+    def test_warning_on_non_unique_index(self, caplog):
+        df = TfsDataFrame(index=["A", "B", "A"])
+        # validate in most restrictive (MADX) mode but this is in common checks
+        validate(df, compatibility="madx")
+
+        for record in caplog.records:
+            assert record.levelname == "WARNING"
+        assert "Non-unique indices found" in caplog.text
+
+    def test_warning_on_non_unique_both(self, tmp_path, caplog):
+        df = TfsDataFrame(index=["A", "B", "A"], columns=["A", "B", "A"])
+        # validate in most restrictive (MADX) mode but this is in common checks
+        validate(df, compatibility="madx")
+
+        for record in caplog.records:
+            assert record.levelname == "WARNING"
+        assert "Non-unique column names found" in caplog.text
+        assert "Non-unique indices found" in caplog.text
+
 
 class TestCommonFailures:
     """Tests for common failures in validation, both in MAD-X and MAD-NG compatibility mode."""

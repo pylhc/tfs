@@ -315,33 +315,6 @@ class TestFailures:
             _ = tfs.writer._get_header_line(not_a_string, 10, 10)  # noqa: SLF001
 
 
-# TODO: move these tests to test_validation?
-class TestWarnings:
-    def test_warning_on_non_unique_columns(self, tmp_path, caplog):
-        df = TfsDataFrame(columns=["A", "B", "A"])
-        write_tfs(tmp_path / "temporary.tfs", df)
-
-        for record in caplog.records:
-            assert record.levelname == "WARNING"
-        assert "Non-unique column names found" in caplog.text
-
-    def test_warning_on_non_unique_index(self, tmp_path, caplog):
-        df = TfsDataFrame(index=["A", "B", "A"])
-        write_tfs(tmp_path / "temporary.tfs", df)
-
-        for record in caplog.records:
-            assert record.levelname == "WARNING"
-        assert "Non-unique indices found" in caplog.text
-
-    def test_warning_on_non_unique_both(self, tmp_path, caplog):
-        df = TfsDataFrame(index=["A", "B", "A"], columns=["A", "B", "A"])
-        write_tfs(tmp_path / "temporary.tfs", df)
-
-        for record in caplog.records:
-            assert record.levelname == "WARNING"
-        assert "Non-unique column names found" in caplog.text
-        assert "Non-unique indices found" in caplog.text
-
 
 # ----- Helpers & Fixtures ----- #
 
