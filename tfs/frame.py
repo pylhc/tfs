@@ -328,15 +328,6 @@ def validate(
         LOGGER.debug(f"Space(s) found in TFS columns, dataframe {info_str} is invalid")
         raise SpaceinColumnNameError
 
-    # ----- Additional checks for MAD-NG compatibility mode ----- #
-    if compatibility.lower() in ("madng", "mad-ng"):
-        # We go through the headers and make sure there is no integer-dtyped value
-        # Considering MAD-NG (via Lua 5.2) does not support it, and expects floats instead
-        for header_name, header_value in data_frame.headers.items():
-            if isinstance(header_value, int):
-                LOGGER.debug("Integer header value will be converted to float (MAD-NG compatibility mode).")
-                data_frame.headers[header_name] = float(header_value)
-
     # ----- Additional checks for MAD-X compatibility mode ----- #
     if compatibility.lower() in ("madx", "mad-x"):
         # Check that no boolean values are in the headers
