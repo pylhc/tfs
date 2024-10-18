@@ -28,6 +28,7 @@ ID_TO_TYPE: dict[str, type] = {
     "%f": np.float64,
     "%hd": np.int64,
     "%d": np.int64,
+    "%i": np.int64,  # TODO: I believe MAD-NG uses this, we can simply accept it when reading and still use %d when writing (soon to be accepted by MAD-NG)
     "%lz": np.complex128,
 }
 
