@@ -14,6 +14,9 @@ from tfs.writer import write_tfs
 from .conftest import INPUTS_DIR, assert_tfs_frame_equal
 
 
+
+# TODO: Add a test file with an %i header / column for integer (or add to existing file)
+
 class TestRead:
     def test_tfs_read_pathlib_input(self, _tfs_filex: pathlib.Path):
         test_file = read_tfs(_tfs_filex, index="NAME")
