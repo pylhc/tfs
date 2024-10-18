@@ -11,7 +11,7 @@ on:  # Runs on any push event to any branch except master (the coverage workflow
       - 'master'
 
 env:
-  UV_SYSTEM_PYTHON: 1  # lets uv pip install in the python installed by uv (no need for venv step)
+  UV_SYSTEM_PYTHON: 1  # lets uv pip use the python installed by actions/setup-python
 
 jobs:
   tests:
