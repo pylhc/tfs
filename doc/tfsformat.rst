@@ -85,7 +85,6 @@ For these reasons, by default `tfs-pandas` ignores the information when parsing 
 .. admonition:: MAD-NG Specific Types
 
     Both boolean and complex types are specific to the ``MAD-NG`` code, and would not be accepted by ``MAD-X``.
-    Similarly, ``MAD-NG`` (via Lua 5.2) does not have an integer dtype and refuses the `%d` identifier.
     Please see the :doc:`compatibility section <compatibility>` for more information.
 
 .. _tfs-pandas caveats:
