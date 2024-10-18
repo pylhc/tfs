@@ -1,5 +1,30 @@
 # TFS-Pandas Changelog
 
+## Version 4.0.0
+
+TODO: Add information here about the target MAD-NG (and pymadng) version with which we are compatible.
+
+Version `4.0` is a major release bringing compatibility with `MAD-NG` features in **TFS** files and tables.
+This release brings no breaking changes per se, but enough behavioural changes to warrant a major version bump.
+
+- Added:
+  - Handling of boolean and complex headers values (`MAD-NG` feature).
+  - Handling of bolean-type and complex-type columns (`MAD-NG` feature).
+  - Compatibility modes for dataframe validation. The `tfs.frame.validate` function now expects this, and valid choices are `MADX`, `MAD-X`, `MADNG` and `MAD-NG` (case-insensitive, see API documentation).
+  - Many new exceptions have been created to be more specific when raising errors, which will now be more specific. They all inherit from the previously raised `TfsFormatError`, so user code that was catching it will still work.
+
+- Changed:
+  - By default, `TfsDataFrame` validation is now skipped on reading.
+  - By default, `TfsDataFrame` validation is now done in `MAD-X` compatibility mode (more restrictive) before writing.
+
+- Fixed:
+  - Writing a dataframe with no headers (not empty headers) - e.g. a `pandas.DataFrame` - now works correctly.
+
+- Documentation:
+  - The documentation has been updated to reflect the new features and changes.
+  - The documentation now includes a new page on the `TFS` format itself.
+  - The documentation now includes a new page on compatibility modes for `TfsDataFrame` validation.
+
 ## Version 3.8.2
 
 - Changed:
@@ -88,7 +113,7 @@ Minor API changes to the `TFSCollections`:
 ## Version 3.5.2
 
 - Changed:
-  - The dependency on `pandas` has been pinned to `<2.0` to guarantee the proper functionning of the compability `append` and `join` methods in `TfsDataFrames`. These will be removed with the next release of `tfs-pandas` and users should use the `tfs.frame.concat` compatibility function instead.
+  - The dependency on `pandas` has been pinned to `<2.0` to guarantee the proper functionning of the compatibility `append` and `join` methods in `TfsDataFrames`. These will be removed with the next release of `tfs-pandas` and users should use the `tfs.frame.concat` compatibility function instead.
 
 ## Version 3.5.1
 
