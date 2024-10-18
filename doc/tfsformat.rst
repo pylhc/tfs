@@ -68,7 +68,7 @@ Type Indentifier  Associated Python Type          Example               Accepted
 ================  ======================  =============== =========================
 %s                                string        `%s name`  ``MAD-X`` and ``MAD-NG``
 %bpm_s                            string    `%bpm_s name`  ``MAD-X`` and ``MAD-NG``
-%d                        64-bit integer         `%d 174`            Only ``MAD-X``
+%d                        64-bit integer         `%d 174`  ``MAD-X`` and ``MAD-NG``
 %hd                       64-bit integer        `%hd 174`  ``MAD-X`` and ``MAD-NG``
 %f                          64-bit float       `%f 0.946`  ``MAD-X`` and ``MAD-NG``
 %le                         64-bit float      `%hf 0.946`  ``MAD-X`` and ``MAD-NG``
