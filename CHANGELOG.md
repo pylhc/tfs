@@ -2,6 +2,8 @@
 
 ## Version 4.0.0
 
+TODO: Add information here about the target MAD-NG (and pymadng) version with which we are compatible.
+
 Version `4.0` is a major release bringing compatibility with `MAD-NG` features in **TFS** files and tables.
 This release brings no breaking changes per se, but enough behavioural changes to warrant a major version bump.
 
