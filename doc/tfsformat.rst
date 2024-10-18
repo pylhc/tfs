@@ -63,15 +63,11 @@ Types and Identifiers
 Type identifiers are specific strings that indicate as which type to interpret the given data as, in the individual entries of the `Headers`_ as well as for the columns of the `Table`_.
 The following type identifiers and their corresponding Python types are accepted and used by `tfs-pandas`:
 
-.. TODO: Check back here about the %i for integers (used by MADNG)
-.. TODO: Check that MADX accepts %i or not?
-
 ================  ======================  =============== =========================
 Type Indentifier  Associated Python Type          Example               Accepted by
 ================  ======================  =============== =========================
 %s                                string        `%s name`  ``MAD-X`` and ``MAD-NG``
 %bpm_s                            string    `%bpm_s name`  ``MAD-X`` and ``MAD-NG``
-%i                        64-bit integer         `%d 174`                     ?????
 %d                        64-bit integer         `%d 174`  ``MAD-X`` and ``MAD-NG``
 %hd                       64-bit integer        `%hd 174`  ``MAD-X`` and ``MAD-NG``
 %f                          64-bit float       `%f 0.946`  ``MAD-X`` and ``MAD-NG``
@@ -85,7 +81,6 @@ This was meant for older codes to know how much memory to allocate.
 While ``MAD-X`` and ``MAD-NG`` inlcude this information in their output **TFS** files, they do not require it when reading.
 For these reasons, by default `tfs-pandas` ignores the information when parsing files, and does not include it when writing them.
 
-.. TODO: The integer info is not correct, let's convince Laurent to accept %d in MAD-NG?
 .. admonition:: MAD-NG Specific Types
 
     Both boolean and complex types are specific to the ``MAD-NG`` code, and would not be accepted by ``MAD-X``.
