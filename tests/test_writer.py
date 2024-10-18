@@ -182,9 +182,7 @@ class TestWrites:
         # I use assert_frame_equal here and not our helper assert_tfs_frame_equal
         # since Dataframe and TfsDataFrame are different df types and with no
         # headers present in the former the check would fail
-        assert_frame_equal(
-            df, new, check_frame_type=False
-        )  
+        assert_frame_equal(df, new, check_frame_type=False)
 
     # ----- Below are tests for files with MAD-NG features ----- #
 
@@ -313,7 +311,6 @@ class TestFailures:
         not_a_string = {}
         with pytest.raises(TypeError):
             _ = tfs.writer._get_header_line(not_a_string, 10, 10)  # noqa: SLF001
-
 
 
 # ----- Helpers & Fixtures ----- #
