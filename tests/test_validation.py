@@ -22,8 +22,7 @@ class TestWarnings:
 
     def test_warning_on_non_unique_columns(self, caplog):
         df = TfsDataFrame(columns=["A", "B", "A"])
-        # validate in most restrictive (MADX) mode but this is in common checks
-        validate(df, compatibility="madx")
+        validate(df)
 
         for record in caplog.records:
             assert record.levelname == "WARNING"
@@ -31,8 +30,7 @@ class TestWarnings:
 
     def test_warning_on_non_unique_index(self, caplog):
         df = TfsDataFrame(index=["A", "B", "A"])
-        # validate in most restrictive (MADX) mode but this is in common checks
-        validate(df, compatibility="madx")
+        validate(df)
 
         for record in caplog.records:
             assert record.levelname == "WARNING"
@@ -40,8 +38,7 @@ class TestWarnings:
 
     def test_warning_on_non_unique_both(self, tmp_path, caplog):
         df = TfsDataFrame(index=["A", "B", "A"], columns=["A", "B", "A"])
-        # validate in most restrictive (MADX) mode but this is in common checks
-        validate(df, compatibility="madx")
+        validate(df)
 
         for record in caplog.records:
             assert record.levelname == "WARNING"
