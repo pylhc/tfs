@@ -315,6 +315,7 @@ class TestFailures:
             _ = tfs.writer._get_header_line(not_a_string, 10, 10)  # noqa: SLF001
 
 
+# TODO: move these tests to test_validation?
 class TestWarnings:
     def test_warning_on_non_unique_columns(self, tmp_path, caplog):
         df = TfsDataFrame(columns=["A", "B", "A"])
