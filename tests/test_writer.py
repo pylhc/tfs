@@ -8,6 +8,7 @@ import pytest
 from cpymad.madx import Madx
 from pandas._testing import assert_dict_equal
 from pandas.testing import assert_frame_equal, assert_series_equal
+from pymadng import MAD
 
 import tfs
 from tfs import TfsDataFrame, read_tfs, write_tfs
@@ -209,6 +210,19 @@ class TestWrites:
 
         new = read_tfs(write_location)
         assert_tfs_frame_equal(_tfs_dataframe_madng, new, check_exact=False)  # float precision can be an issue
+
+    def test_tfs_write_madng_compatible_is_read_by_madng(self, _tfs_dataframe_madng, tmp_path, capsys):
+        write_location = tmp_path / "test.tfs"
+        write_tfs(write_location, _tfs_dataframe_madng, validate="madng")  # booleans are MAD-NG feature
+        assert write_location.is_file()
+
+        # TODO: now read the file with pymadng and check there is not error from MADNG in the sys output
+        # madng = MAD()  # might need to chmod the executable shipped with the package first
+        # madng.send(f"local mtbl = mtable:read('{str(write_location.absolute())}')")
+
+        # captured = capsys.readouterr()
+        # assert "Error" not in captured.out  # TODO: correct message to check for
+        # assert "Error" not in captured.err  # TODO: correct message to check for
 
 
 class TestFailures:
