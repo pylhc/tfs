@@ -245,7 +245,9 @@ def _get_data_string(
     format_strings = "  " + _get_row_format_string(data_frame.dtypes, colwidth, left_align_first_column)
     data_frame = data_frame.astype(object)  # overrides pandas auto-conversion (lead to format bug)
     string_formatter = ValueToStringFormatter()
-    return "\n".join(data_frame.apply(lambda series: string_formatter.format(format_strings, *series), axis=1))
+    return "\n".join(
+        data_frame.apply(lambda series: string_formatter.format(format_strings, *series), axis=1)
+    )
 
 
 def _get_row_format_string(
@@ -289,7 +291,7 @@ def _value_to_string_format_id(value) -> str:
     instance, for a float it returns 'g', for a complex 'c'.
     """
     dtype_ = np.array(value).dtype
-    return _dtype_to_string_format_id(dtype_)
+    return _dtype_to_python_string_formatter(dtype_)
 
 
 def _dtype_to_tfs_format_identifier(type_: type) -> str:
@@ -319,9 +321,7 @@ def _dtype_to_tfs_format_identifier(type_: type) -> str:
         return "%b"
     if pdtypes.is_complex_dtype(type_):
         return "%lz"
-    errmsg = (
-        f"Provided type '{type_}' could not be identified as either a bool, int, float complex or string dtype"
-    )
+    errmsg = f"Provided type '{type_}' could not be identified as either a bool, int, float complex or string dtype"
     raise TypeError(errmsg)
 
 
@@ -341,16 +341,20 @@ def _dtype_to_formatter_string(type_: type, colsize: int) -> str:
     Returns:
         The formatter string for the provided dtype.
     """
-    type_id = _dtype_to_string_format_id(type_)  # for Python: 'd' or 'g' or 's' etc
+    type_id = _dtype_to_python_string_formatter(type_)  # for Python: 'd' or 'g' or 's' etc
     if pdtypes.is_float_dtype(type_) or pdtypes.is_complex_dtype(type_):
         return f"{colsize}.{colsize - len('-0.e-000')}{type_id}"
     return f"{colsize}{type_id}"
 
 
-def _dtype_to_string_format_id(type_: type) -> str:
+def _dtype_to_python_string_formatter(type_: type) -> str:
     """
-    Return the string-formatter type-identifier for the provided dtype.
-    Of special note are here "b" for boolean and "c" for complex numbers.
+    Return the (Python) string-formatter for the provided dtype,
+    a.k.a the formatter passed to f-strings ('d' for integers for
+    instance).
+
+    Of special note are here "b" for boolean and "c" for complex
+    numbers, but those are only for our own internal formatter.
 
     Args:
         type_ (type): an instance of the built-in type (in this package, one of
@@ -358,6 +362,9 @@ def _dtype_to_string_format_id(type_: type) -> str:
 
     Returns:
         str: the formatter type-identifier.
+
+    Raises:
+        TypeError: if the provided type could not be identified as a valid dtype.
     """
 
     if type_ is None:
@@ -373,10 +380,11 @@ def _dtype_to_string_format_id(type_: type) -> str:
     if pdtypes.is_complex_dtype(type_):
         return "c"  # can only be used with TfsStringFormatter
 
-    errmsg = (
-        f"Provided type '{type_}' could not be identified as either a bool, int, float, complex or string dtype"
-    )
+    errmsg = f"Provided type '{type_}' could not be identified as either a bool, int, float, complex or string dtype"
     raise TypeError(errmsg)
+
+
+# ----- Formatter Class ----- #
 
 
 class ValueToStringFormatter(string.Formatter):
