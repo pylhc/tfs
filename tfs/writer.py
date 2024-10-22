@@ -112,8 +112,8 @@ def write_tfs(
         data_frame = TfsDataFrame(data_frame)
         data_frame.columns = data_frame.columns.astype(str)  # need column names to be strings
 
-    # Only perform validation if a valid mode is given (MAD-X or MAD-NG compatibility)
-    if isinstance(validate, str) and validate.lower() in VALIDATION_MODES:
+    # Only perform validation if asked ('validate' defaults MAD-X compatibility)
+    if validate is not None:  # validation function checks for valid values
         validate_frame(
             data_frame,
             info_str=f"to be written in {tfs_file_path.absolute()}",
