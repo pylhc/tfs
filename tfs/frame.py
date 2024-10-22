@@ -367,7 +367,7 @@ def validate(
             raise MADXCompatibilityError(errmsg)
 
         # MAD-X will not accept back in a TFS file with no 'TYPE' entry in the headers (as string)
-        if not "TYPE" in data_frame.headers:
+        if "TYPE" not in data_frame.headers:
             LOGGER.warning("MAD-X expects a 'TYPE' header in the TFS file, which is missing. Adding it.")
             data_frame.headers["TYPE"] = "Added by tfs-pandas for MAD-X compatibility"
 
