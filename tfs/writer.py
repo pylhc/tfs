@@ -25,7 +25,7 @@ LOGGER = logging.getLogger(__name__)
 
 def write_tfs(
     tfs_file_path: pathlib.Path | str,
-    data_frame: TfsDataFrame | pd.DataFrame,
+    data_frame: TfsDataFrame | pd.DataFrame | pd.Series,
     headers_dict: dict | None = None,
     save_index: str | bool = False,  # noqa: FBT002
     colwidth: int = DEFAULT_COLUMN_WIDTH,
@@ -54,8 +54,9 @@ def write_tfs(
 
     Args:
         tfs_file_path (pathlib.Path | str): Path to the output **TFS** file.
-        data_frame (TfsDataFrame | pd.DataFrame): The dataframe to write to file. If a Series-like
-            object is given, it will be converted to a `TfsDataFrame` first.
+        data_frame (TfsDataFrame | pd.DataFrame | pd.Series): The dataframe to write to file. If
+            a Series-like object is given, it will be converted to a `TfsDataFrame` first and
+            written with a single column.
         headers_dict (dict): Headers for the `data_frame`. If not provided, assumes a `TfsDataFrame`
             was given and tries to use ``data_frame.headers``.
         save_index (str | bool): bool or string. Default to ``False``. If ``True``, saves
