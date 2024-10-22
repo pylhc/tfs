@@ -1,6 +1,7 @@
 import pathlib
 
 import pytest
+import numpy as np
 from pandas.api import types as pdtypes
 from pandas.core.arrays.string_ import StringDtype
 from pandas.testing import assert_frame_equal
@@ -137,6 +138,22 @@ class TestRead:
         assert_frame_equal(df, df_for_compare)  # no headers, just check dframe
 
     # ----- Below are tests for files with MAD-NG features ----- #
+
+    def test_tfs_read_file_with_nil_headers(self):
+        # This is kind of "MAD-NG feature" as 'nil' is specific ot it
+        nil_tfs_path = pathlib.Path(__file__).parent / "inputs" / "has_nils.tfs"
+        headers = tfs.reader.read_headers(nil_tfs_path)  # no validation in here
+
+        assert np.isnan(headers["NANVALUE"])  # A NaN is read correctly
+        assert np.isnan(headers["NILVALUE"])  # A NaN is read correctly
+
+    def test_tfs_read_file_with_nil_values(self):
+        # This is kind of "MAD-NG feature" as 'nil' is specific ot it
+        nil_tfs_path = pathlib.Path(__file__).parent / "inputs" / "has_nils.tfs"
+        df = tfs.read(nil_tfs_path)  # no validation in here
+
+        # There is a nil in BPM_RES column and we want to make sure its now a NaN
+        assert df.BPM_RES.isna().any()
 
     def test_tfs_read_file_with_booleans(self, _tfs_booleans_file):
         df = read_tfs(_tfs_booleans_file)
