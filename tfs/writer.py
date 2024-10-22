@@ -286,6 +286,12 @@ def _value_to_type_identifier(value) -> str:
     Returns the **TFS** dtype identifier for the provided value,
     as a string. For instance for a float, it would return "%le".
     """
+    # First intercept for NaN values (MAD-NG writes nil) to return %n
+    # (as the inferred dtype is float and that would give back %le)
+    if pd.isna(value):
+        return "%n"
+
+    # Otherwise we infer the dtype and return the corresponding identifier
     dtype_ = np.array(value).dtype  # let numpy handle conversion to it dtypes
     return _dtype_to_tfs_format_identifier(dtype_)
 
