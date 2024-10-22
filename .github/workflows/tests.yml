@@ -10,9 +10,6 @@ on:  # Runs on any push event to any branch except master (the coverage workflow
     branches-ignore:
       - 'master'
 
-env:
-  UV_SYSTEM_PYTHON: 1  # lets uv pip use the python installed by actions/setup-python
-
 jobs:
   tests:
     uses: pylhc/.github/.github/workflows/tests.yml@master
