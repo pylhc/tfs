@@ -154,12 +154,14 @@ def read_tfs(
 
     # If we have complex-dtyped columns, they are popped from the first dict and added
     # to a converters dict as key, with as value our function to parse complex numbers
+    # We also remove the column from the dtypes_dict: if we provide the column in both
+    # dicts (for dtype AND converter), the pandas reader raises emits a ParserWarning
     if np.complex128 in metadata.column_types:
         LOGGER.debug("Complex columns detected, adding converter.")
         for colname, dtype in zip(metadata.column_names, metadata.column_types):
             if dtype is np.complex128:
-                converters[colname] = _parse_complex  # register it with our converter
-                del dtypes_dict[colname]  # remove to avoid ParserWarning saying we provided both
+                converters[colname] = _parse_complex  # register our converter for it
+                del dtypes_dict[colname]
 
     # By this point we have built the following two dictionaries:
     # - 'dtypes_dict' with all non-complex columns (key, value are: name, type)
