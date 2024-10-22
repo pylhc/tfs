@@ -416,7 +416,7 @@ class TfsStringFormatter(string.Formatter):
         # First a check so that passing a Path works (i.e. if we
         # have a Path in the headers it will be written as a string)
         if isinstance(value, pathlib.Path):
-            value = str(value.absolute())  # convert its expanded form
+            value = str(value)  # convert its current form (can be relative)
 
         # Now we go on with the formatting
         try:
