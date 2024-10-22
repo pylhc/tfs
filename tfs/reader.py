@@ -11,7 +11,6 @@ import logging
 import pathlib
 import shlex
 from dataclasses import dataclass
-from types import NoneType
 from typing import Callable
 
 import numpy as np
@@ -350,7 +349,8 @@ def _parse_header(str_list: list[str]) -> tuple[str, bool | str | int | float, n
     value_string: str = value_string.strip('"')
     value_type: type = _id_to_type(str_list[type_index])
 
-    if value_type is NoneType:  # special handling for 'nil's
+    # TODO: import NoneType from types and use it here when we drop Python 3.9
+    if value_type is type(None):  # special handling for 'nil's
         return name, None
     if value_type is bool:  # special handling for boolean values
         return name, _string_to_bool(value_string)
