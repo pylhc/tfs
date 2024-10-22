@@ -14,12 +14,21 @@ class TestWarnings:
     """Tests for common warnings in validation, both in MAD-X and MAD-NG compatibility mode."""
 
     @pytest.mark.parametrize("validation_mode", ["madx", "mad-x", "madng", "MAD-NG"])
-    def test_warn_unphysical_values(self, validation_mode, caplog):
+    def test_warn_unphysical_values_in_data(self, validation_mode, caplog):
         nan_tfs_path = INPUTS_DIR / "has_nans.tfs"
         _ = read_tfs(nan_tfs_path, index="NAME", validate=validation_mode)
         for record in caplog.records:
             assert record.levelname == "WARNING"
         assert "contains non-physical values at Index:" in caplog.text
+
+    @pytest.mark.parametrize("validation_mode", ["madx", "mad-x", "madng", "MAD-NG"])
+    def test_warn_unphysical_values_in_headers(self, validation_mode, caplog):
+        # This file has nil / NaN in the headers too, which is what we care about
+        nan_tfs_path = INPUTS_DIR / "has_nils.tfs"
+        _ = read_tfs(nan_tfs_path, index="NAME", validate=validation_mode)
+        for record in caplog.records:
+            assert record.levelname == "WARNING"
+        assert "contains non-physical values in headers" in caplog.text
 
     def test_warning_on_non_unique_columns(self, caplog):
         df = TfsDataFrame(columns=["A", "B", "A"])
