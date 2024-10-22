@@ -74,16 +74,21 @@ Type Indentifier  Associated Python Type          Example               Accepted
 %le                         64-bit float      `%hf 0.946`  ``MAD-X`` and ``MAD-NG``
 %b                               boolean        `%b true`           Only ``MAD-NG``
 %lz                      128-bit complex   `%lz 1.4+2.6i`           Only ``MAD-NG``
+%n                              NaN-type         `%n nil`           Only ``MAD-NG``
 ================  ======================  =============== =========================
 
-It is also possible to include the length of the value into the type identifier, for instance `%10s` for a string of 10 characters.
+It is also possible to include the length of a string into its type identifier, for instance `%10s` for a string of 10 characters.
 This was meant for older codes to know how much memory to allocate.
 While ``MAD-X`` and ``MAD-NG`` inlcude this information in their output **TFS** files, they do not require it when reading.
 For these reasons, by default `tfs-pandas` ignores the information when parsing files, and does not include it when writing them.
 
 .. admonition:: MAD-NG Specific Types
 
-    Both boolean and complex types are specific to the ``MAD-NG`` code, and would not be accepted by ``MAD-X``.
+    As can be seen in the table above, some types are specific to the ``MAD-NG`` code, such as boolean and complex types, and would not be accepted by ``MAD-X``.
+
+    Regarding the nullable-types, both `nil` and `NaN` (case-insensitive) are accepted by `tfs-pandas`.
+    When writing these out, `tfs-pandas` uses the string `nan` which is accepted by ``MAD-NG`` but also read back by ``MAD-X``, as a string.
+
     Please see the :doc:`compatibility section <compatibility>` for more information.
 
 .. _tfs-pandas caveats:
