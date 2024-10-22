@@ -6,7 +6,6 @@ General constants used throughout ``tfs-pandas``, relating to the standard of **
 """
 
 from __future__ import annotations
-from types import NoneType
 
 import numpy as np
 
@@ -30,7 +29,8 @@ ID_TO_TYPE: dict[str, type] = {
     "%hd": np.int64,
     "%d": np.int64,
     "%lz": np.complex128,
-    "%n": NoneType,
+    # TODO: import NoneType from types and use it here when we drop Python 3.9
+    "%n": type(None),  # this is 'NoneType' but it is 3.10+ only (in types module)
 }
 
 # ----- Specific Accepted Values ----- #
