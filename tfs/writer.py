@@ -45,11 +45,12 @@ def write_tfs(
         ``.tar.xz`` or ``.tar.bz2``. See below for examples.
 
     .. warning::
-        Through the *validate* argument, one can skip dataframe validation before writing it to file.
-        While this can speed-up the execution of this function , it is **not recommended** and
-        is not the default behavior of this function. The option, however, is left for the user to
-        use at their own risk should they wish to avoid lengthy validation of large `TfsDataFrames`
-        (such as for instance a sliced FCC lattice).
+        Through the *validate* argument, one can skip dataframe validation before writing
+        to file which can improve performance. This is **not recommended** if the file needs
+        to be read by ``MAD-X`` or ``MAD-NG``. The default behaviour is to check for ``MAD-X``
+        compatibility. The option to skip validation is left for the user to use (at their own
+        risk) should they wish to avoid lengthy validation of large `TfsDataFrames` (such as
+        for instance a sliced FCC lattice).
 
     Args:
         tfs_file_path (pathlib.Path | str): Path to the output **TFS** file. Can be
