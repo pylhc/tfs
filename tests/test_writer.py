@@ -319,7 +319,7 @@ class TestFailures:
     def test_dtype_to_tfs_format_id_fails_unexpected_dtypes(self):
         unexpected_list = [1, 2, 3]
         with pytest.raises(TypeError):
-            _ = tfs.writer._dtype_to_tfs_format_id(unexpected_list)  # noqa: SLF001
+            _ = tfs.writer._dtype_to_tfs_format_identifier(unexpected_list)  # noqa: SLF001
 
     def test_header_line_raises_on_non_strings(self):
         not_a_string = {}
