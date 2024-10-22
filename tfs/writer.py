@@ -242,9 +242,12 @@ def _get_data_string(
     """
     if len(data_frame.index) == 0 or len(data_frame.columns) == 0:
         return "\n"
+
     format_strings = "  " + _get_row_format_string(data_frame.dtypes, colwidth, left_align_first_column)
     data_frame = data_frame.astype(object)  # overrides pandas auto-conversion (lead to format bug)
     string_formatter = ValueToStringFormatter()
+
+    # A bit ugly but we go line per line and determine the string on the fly
     return "\n".join(
         data_frame.apply(lambda series: string_formatter.format(format_strings, *series), axis=1)
     )
