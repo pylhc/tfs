@@ -205,9 +205,9 @@ def _get_header_line(name: str, value, width: int) -> str:
     if not isinstance(name, str):
         errmsg = f"{name} is not a string"
         raise TypeError(errmsg)
-    type_str = _value_to_type_string(value)
+    type_identifier = _value_to_type_identifier(value)
     value_str = ValueToStringFormatter().format_field(value, _value_to_string_format_id(value))
-    return f"@ {name:<{width}} {type_str} {value_str:>{width}}"
+    return f"@ {name:<{width}} {type_identifier} {value_str:>{width}}"
 
 
 def _get_colnames_string(colnames: list[str], colwidth: int, left_align_first_column: bool) -> str:  # noqa: FBT001
@@ -273,9 +273,9 @@ def _get_row_format_string(
     )
 
 
-def _value_to_type_string(value) -> str:
+def _value_to_type_identifier(value) -> str:
     """
-    Returns the **TFS** dtype specifier for the provided value,
+    Returns the **TFS** dtype identifier for the provided value,
     as a string. For instance for a float, it would return "%le".
     """
     dtype_ = np.array(value).dtype  # let numpy handle conversion to it dtypes
