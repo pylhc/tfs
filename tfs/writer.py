@@ -423,11 +423,6 @@ class ValueToStringFormatter(string.Formatter):
         elif format_spec.endswith("s"):
             return self._format_string(value, format_spec)
 
-        # elif format_spec.endswith("n"):
-        #     # Special case for None values which we always write as 'nil'
-        #     # This triggers for None values in the headers
-        #     return "nil"
-
         return super().format_field(value, format_spec)
 
     def _format_boolean(self, value, format_spec: str):
