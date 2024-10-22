@@ -128,8 +128,12 @@ def write_tfs(
 
     # Let pandas try to infer the best dtypes for the data to write (only to write, the
     # actual dataframe provided by the user is not changed so this operation is fine).
-    # Options: don't convert float to ints, don't try (and fail) to convert complex to floats
-    data_frame = data_frame.convert_dtypes(convert_integer=False, convert_floating=False)
+    # Passed options: don't convert float to ints, don't try (and fail) to convert complex
+    # to floats, and don't try to convert strings to its special StringDtype (as then 'None'
+    # would be transformed into <pd.NA> and if we write this to file we are very much cooked.)
+    # Overall we do not care to infer specialized dtypes, just that it makes the best inference
+    # to valid dtypes (i.e. an object column should be inferred as strings if that makes sense). 
+    data_frame = data_frame.convert_dtypes(convert_integer=False, convert_floating=False, convert_string=None)
 
     if save_index:
         left_align_first_column = True
@@ -422,6 +426,7 @@ class ValueToStringFormatter(string.Formatter):
 
         elif format_spec.endswith("n"):
             # Special case for None values which we always write as 'nil'
+            # This triggers for None values in the headers
             return "nil"
 
         return super().format_field(value, format_spec)
@@ -452,6 +457,12 @@ class ValueToStringFormatter(string.Formatter):
         # have a Path in the headers it will be written as a string)
         if isinstance(value, pathlib.Path):
             value = str(value)  # convert its current form (can be relative)
+
+        # Special case for None values which we always write as 'nil'. It is
+        # possible to get a None here if the value shows up in a string-dtype
+        # column in the data part of the file. We still want to write it 'nil'
+        if value is None:
+            return "nil"
 
         # Now we go on with the formatting
         try:
