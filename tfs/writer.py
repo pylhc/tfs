@@ -288,6 +288,7 @@ def _value_to_type_identifier(value) -> str:
     """
     # First intercept for NaN values (MAD-NG writes nil) to return %n
     # (as the inferred dtype is float and that would give back %le)
+    # This is only use when we write the headers
     if pd.isna(value):
         return "%n"
 
