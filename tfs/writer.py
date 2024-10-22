@@ -193,8 +193,7 @@ def _get_header_line(name: str, value, width: int) -> str:
 
 
     Args:
-        name (str): name of the header parameter, as its entry in the headers
-            dictionary.
+        name (str): name of the header parameter.
         value: value of the header parameter. Any valid type is accepted here
             (int, float, str, potentially bool, complex etc.) and the type
             of this value is used to infer the formatting.
