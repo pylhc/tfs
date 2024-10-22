@@ -407,11 +407,13 @@ class TfsStringFormatter(string.Formatter):
         """
         return super().format_field(value, f"{format_spec[:-1]}g").replace("j", "i")
 
-    def _format_string(self, value, format_spec: str) -> str:
+    def _format_string(self, value: str | pathlib.Path, format_spec: str) -> str:
         """
         Special case as we need to ensure that strings are enclosed
-        in either " or ' quotes.
+        in either " or ' quotes. This also handles `pathlib.Path`
+        objects and makes sure they are converted to strings first.
         """
+        value = str(value)  # so that passing Path works
         try:
             if not value.startswith(('"', "'")):
                 value = f'"{value}"'
