@@ -117,7 +117,8 @@ def read_tfs(
             tfs.read("filename.tfs.bz2")
             tfs.read("filename.tfs.zip")
 
-        If one wants to set a specific column as index, this is done as:
+        If one wants to set a specific column as index (and drop it from the data),
+        this is done as:
 
         .. code-block:: python
 
