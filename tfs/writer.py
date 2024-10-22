@@ -219,7 +219,7 @@ def _get_colnames_string(colnames: list[str], colwidth: int, left_align_first_co
 def _get_coltypes_string(types: pd.Series, colwidth: int, left_align_first_column: bool) -> str:  # noqa: FBT001
     """Returns the string for the line with the column type specifiers."""
     fmt = _get_row_format_string([str] * len(types), colwidth, left_align_first_column)
-    return "$ " + fmt.format(*[_dtype_to_tfs_format_id(type_) for type_ in types])
+    return "$ " + fmt.format(*[_dtype_to_tfs_format_identifier(type_) for type_ in types])
 
 
 def _get_data_string(
@@ -279,7 +279,7 @@ def _value_to_type_identifier(value) -> str:
     as a string. For instance for a float, it would return "%le".
     """
     dtype_ = np.array(value).dtype  # let numpy handle conversion to it dtypes
-    return _dtype_to_tfs_format_id(dtype_)
+    return _dtype_to_tfs_format_identifier(dtype_)
 
 
 def _value_to_string_format_id(value) -> str:
@@ -292,12 +292,12 @@ def _value_to_string_format_id(value) -> str:
     return _dtype_to_string_format_id(dtype_)
 
 
-def _dtype_to_tfs_format_id(type_: type) -> str:
+def _dtype_to_tfs_format_identifier(type_: type) -> str:
     """
-    Return the proper **TFS** identifier for the provided dtype. This
-    is the function called behind the scenes by `_value_to_type_string`,
+    Return the proper **TFS** identifier for the provided dtype. This is
+    the function called behind the scenes by `_value_to_type_identifier`,
     but it takes the inferred dtype as argument. For a float dtype it
-    would return "%le", for a string '%s' etc.
+    would return '%le', for a string '%s' etc.
 
     Args:
         type_ (type): an instance of the built-in type (in this package, one of ``numpy`` or ``pandas``
