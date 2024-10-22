@@ -60,12 +60,20 @@ Namely, the following are accepted by ``MAD-NG`` and ``MAD-NG`` only:
 
 - Boolean dtype for header parameters and table columns.
 - Complex dtype for header parameters and table columns.
+- Nullable dtype for header parameters and table columns (value `nil`).
 
 .. admonition:: Complex Number Representation
 
     In Python, the imaginary part of a complex number is represented by the letter ``j``, as in `1.4 + 2.6j`.
     When writing complex values to file, `tfs-pandas` will instead use the ``MAD-NG`` (read `Lua`) representation, and uses the letter ``i``, as in `1.4 + 2.6i`, so that ``MAD-NG`` can properly read such a file.
     Both of these representations will be correctly read by `tfs-pandas` (including when ``MAD-NG`` uses ``I`` for special complex numbers cases).
+
+.. admonition:: Handling of Nullable Types
+
+    ``MAD-NG`` uses the nullable `nil`, which is accepted by `tfs-pandas` with the following caveats:
+    
+        - When reading from file, `nil` values in the headers are converted to `None` while those in the dataframe are cast to `NaN`.
+        - When writing to file, `None` values anywhere are written as `nil` and `NaN` values in the dataframe are written as `NaN`.
 
 .. attention::
 
