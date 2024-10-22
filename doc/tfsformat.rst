@@ -4,7 +4,7 @@ The Table File System Format
 **TFS** is an acronym for "Table File System", and the TFS format has been used at `CERN <https://home.cern/>`_ since the LEP control system.
 The accelerator physics codes `MAD-X <https://madx.web.cern.ch/>`_ and `MAD-NG <https://madx.web.cern.ch/releases/madng/html/>`_ output tables in the TFS format, and accept TFS files as input for tables.
 
-The origin of the TFS definition [#f1]_ seems more than difficult to find, and no official spec has been maintained since then.
+The origin of the TFS definition [#f1]_ [#f2]_ seems more than difficult to find, and no official spec has been maintained since then.
 As such, this document aims to provide a comprehensive description of the TFS format, at the very least as it is parsed and written by `tfs-pandas`.
 
 Written TFS files follow a structure in two parts: first the ``headers`` lines and then the ``table`` itself.
@@ -140,3 +140,4 @@ Many examples of TFS files can be found in the repository's tests files, and a s
 .. rubric:: Footnotes
 
 .. [#f1] Ph. Defert, Ph. Hofmann, and R. Keyser. *The Table File System, the C Interfaces*. LAW Note 9, CERN, 1989.
+.. [#f2] A. Belk, P. Defert, P. Hofmann, and P. Keyser. *Table File System Reference Guide*. SL/CO Note 91-32, CERN 1991, https://cds.cern.ch/record/703204/.
