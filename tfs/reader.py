@@ -130,9 +130,9 @@ def read_tfs(
         .. code-block:: python
 
             tfs.read("filename.tfs", validate="MAD-NG")  # or validate="MAD-X"
-
-        If one wants to, for instance, raise and error on non-unique indices or columns
-        when performing validation, one can do so as:
+        If one wants to raise an error on non-unique indices or columns
+        If one wants to, for instance, raise and error on non-unique indices or
+        columns when performing validation, one can do so as:
 
         .. code-block:: python
 
