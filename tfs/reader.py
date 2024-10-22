@@ -170,7 +170,7 @@ def read_tfs(
     # API for the loading or our custom converters for the complex columns.
     LOGGER.debug("Parsing data part of the file")
 
-    # DO NOT use comment=COMMENTS in this call: if the '#' symbol is in an element (a
+    # DO NOT use `comment=COMMENTS` in this call: if the '#' symbol is in an element (a
     # string header or some value in the dataframe) then the entire parsing will crash
     data_frame = pd.read_csv(
         tfs_file_path,
