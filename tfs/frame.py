@@ -271,7 +271,7 @@ def validate(
             dataframe. Accepts `warn` and `raise` as values, case-insensitively, which dictates
             to respectively issue a warning or raise an error if non-unique elements are found.
     """
-    if compatibility.lower() not in VALIDATION_MODES:
+    if not isinstance(compatibility, str) and compatibility.lower() not in VALIDATION_MODES:
         errmsg = f"Invalid compatibility mode provided: '{compatibility}'."
         raise ValueError(errmsg)
 
