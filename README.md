@@ -9,7 +9,7 @@
 [![Conda-forge Version](https://img.shields.io/conda/vn/conda-forge/tfs-pandas?color=orange&logo=anaconda)](https://anaconda.org/conda-forge/tfs-pandas)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.5070986.svg)](https://doi.org/10.5281/zenodo.5070986)
 
-This package provides reading and writing functionality for **Table Format System (TFS)** files.
+This package provides reading and writing functionality for [**Table Format System (TFS)**](https://pylhc.github.io/tfs/tfsformat.html) files.
 Files are read into a `TfsDataFrame`, a class built on top of the `pandas.DataFrame`, which in addition to the normal behavior attaches a dictionary of headers to the `DataFrame`.
 
 See the [API documentation](https://pylhc.github.io/tfs/) for details.
