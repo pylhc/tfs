@@ -413,7 +413,12 @@ class TfsStringFormatter(string.Formatter):
         in either " or ' quotes. This also handles `pathlib.Path`
         objects and makes sure they are converted to strings first.
         """
-        value = str(value)  # so that passing Path works
+        # First a check so that passing a Path works (i.e. if we
+        # have a Path in the headers it will be written as a string)
+        if isinstance(value, pathlib.Path):
+            value = str(value.absolute())  # convert its expanded form
+
+        # Now we go on with the formatting
         try:
             if not value.startswith(('"', "'")):
                 value = f'"{value}"'
