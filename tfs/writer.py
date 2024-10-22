@@ -67,11 +67,11 @@ def write_tfs(
         non_unique_behavior (str): behavior to adopt if non-unique indices or columns are found in the
             dataframe. Accepts `warn` and `raise` as values, case-insensitively, which dictates
             to respectively issue a warning or raise an error if non-unique elements are found.
-        validate (str): If an accepted value is given, validation will be performed before writing.
+        validate (str): Determines if and which validation will be performed before writing.
             Defauts to `madx`, which will assert compatibility of the data with the ``MAD-X`` code.
             If `madng` is given then compatibility with the ``MAD-NG`` code is checked, which has more
             features. Accepted values are `madx`, `mad-x`, `madng` and `mad-ng`, case-insensitive. If
-            any other value is given, validation will be skipped. See the `tfs.frame.validate` function
+            set to `None`, validation will be skipped. See the `tfs.frame.validate` function
             for more information on the validation steps.
 
     Examples:
