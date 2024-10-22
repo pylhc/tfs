@@ -6,8 +6,7 @@
 @ NATQ1RMS %le 0.00102479265802
 @ BPMCOUNT %d 9
 @ NILVALUE %n nil
-# This should only complain about the unphysical NaN values but can read and write
-# There are also some 'nil' values in here, which MAD-NG uses, and we accept as well
+# There are some 'nil' values in this file, which MAD-NG uses, and we read as None in headers and NaN in data
 *            NAME                 S            NUMBER                CO             CORMS           BPM_RES
 $              %s               %le                %d               %le               %le               %le
      BPMYB.5L2.B1            28.288                 1   -0.280727353099  0.00404721900879  "0.121264541395"
