@@ -169,8 +169,9 @@ def read_tfs(
     # And we will provide both of these to the pandas reader which uses either its own
     # API for the loading or our custom converters for the complex columns.
     LOGGER.debug("Parsing data part of the file")
-    # DO NOT use comment=COMMENTS in here, if you do and the symbol is
-    # in an element for some reason then the entire parsing will crash
+
+    # DO NOT use comment=COMMENTS in here: if the '#' symbol is in an element (a string
+    # header or some value in the dataframe) then the entire parsing will crash!
     data_frame = pd.read_csv(
         tfs_file_path,
         engine="c",  # faster, and we do not need the features of the python engine
