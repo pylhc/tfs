@@ -302,6 +302,11 @@ def _value_to_string_format_id(value) -> str:
     provided value. It will be used for format strings later on. For
     instance, for a float it returns 'g', for a complex 'c'.
     """
+    # Special case for None values, which will be written as 'nil'
+    # anyway
+    if value is None:
+        return "n"  # not used by anything else | handled later on
+
     dtype_ = np.array(value).dtype
     return _dtype_to_python_string_formatter(dtype_)
 
@@ -412,8 +417,12 @@ class ValueToStringFormatter(string.Formatter):
         elif format_spec.endswith("c"):
             return self._format_complex(value, format_spec)
 
-        if format_spec.endswith("s"):
+        elif format_spec.endswith("s"):
             return self._format_string(value, format_spec)
+
+        elif format_spec.endswith("n"):
+            # Special case for None values which we always write as 'nil'
+            return "nil"
 
         return super().format_field(value, format_spec)
 
