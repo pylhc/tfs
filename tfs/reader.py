@@ -215,8 +215,7 @@ def read_headers(tfs_file_path: pathlib.Path | str) -> dict:
 
     Args:
         tfs_file_path (pathlib.Path | str): Path to the **TFS** file
-            to read. Can be a string, in which case it will be cast to
-            a `Path` object.
+            to read.
 
     Returns:
         An dictionary with the headers read from the file.
