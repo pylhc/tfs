@@ -5,6 +5,7 @@ import pytest
 from tfs.errors import InvalidBooleanHeaderError, MADXCompatibilityError, SpaceinColumnNameError
 from tfs.frame import TfsDataFrame, validate
 from tfs.reader import read_tfs
+from tfs.writer import write_tfs
 
 from .conftest import INPUTS_DIR
 
@@ -36,7 +37,7 @@ class TestWarnings:
             assert record.levelname == "WARNING"
         assert "Non-unique indices found" in caplog.text
 
-    def test_warning_on_non_unique_both(self, tmp_path, caplog):
+    def test_warning_on_non_unique_both(self, caplog):
         df = TfsDataFrame(index=["A", "B", "A"], columns=["A", "B", "A"])
         validate(df)
 
@@ -71,6 +72,21 @@ class TestCommonFailures:
     def test_validation_raises_on_invalid_compatibility_mode(self, _tfs_dataframe, validation_mode):
         with pytest.raises(ValueError, match="Invalid compatibility mode provided"):
             validate(_tfs_dataframe, compatibility=validation_mode)
+
+    @pytest.mark.parametrize("validation_mode", ["not ok", "ma-Dx", "nope", "madngg"])
+    def test_reader_raises_on_invalid_compatibility_mode(self, _tfs_filex: pathlib.Path, validation_mode):
+        # Same as above but we check that it triggers validation and raises from the reader
+        # function (since we do not give a None value)
+        with pytest.raises(ValueError, match="Invalid compatibility mode provided"):
+            _ = read_tfs(_tfs_filex, validate=validation_mode)
+
+    @pytest.mark.parametrize("validation_mode", ["not ok", "ma-Dx", "nope", "madngg"])
+    def test_writer_raises_on_invalid_compatibility_mode(self, tmp_path, _tfs_dataframe, validation_mode):
+        # Same as above but we check that it triggers validation and raises from the reader
+        # function (since we do not give a None value)
+        location = tmp_path / "test.tfs"  # if we mess up and it writes, it's a temp file anyway
+        with pytest.raises(ValueError, match="Invalid compatibility mode provided"):
+            _ = write_tfs(location, _tfs_dataframe, validate=validation_mode)
 
 
 class TestMADXFailures:
