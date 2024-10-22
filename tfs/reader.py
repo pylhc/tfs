@@ -179,7 +179,7 @@ def read_tfs(
         quotechar='"',  # elements surrounded by " are one entry -> correct parsing of strings with spaces
         names=metadata.column_names,  # column names we have determined, avoids using first read row for columns
         dtype=dtypes_dict,  # assign types at read-time to avoid conversions later
-        converters=converters,  # special handling for complex columns
+        converters=converters,  # more involved dtype conversion, e.g. for complex columns
     )
 
     LOGGER.debug("Converting to TfsDataFrame")
