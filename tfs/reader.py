@@ -54,7 +54,7 @@ def read_tfs(
 ) -> TfsDataFrame:
     """
     Parses the **TFS** table present in **tfs_file_path** and returns a ``TfsDataFrame``.
-    Note that this function is exported at the top-level of the package as `tfs.read`.
+    Note that this function is also exported at the top-level of the package as `tfs.read`.
 
     .. note::
         Loading and reading compressed files is possible. Any compression format supported
