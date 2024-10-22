@@ -11,7 +11,7 @@ This release brings no breaking changes per se, but enough behavioural changes t
   - Handling of boolean and complex headers values (`MAD-NG` feature).
   - Handling of bolean-type and complex-type columns (`MAD-NG` feature).
   - Compatibility modes for dataframe validation. The `tfs.frame.validate` function now expects this, and valid choices are `MADX`, `MAD-X`, `MADNG` and `MAD-NG` (case-insensitive, see API documentation).
-  - Many new exceptions have been created to be more specific when raising errors, which will now be more specific. They all inherit from the previously raised `TfsFormatError`, so user code that was catching it will still work.
+  - Many new exceptions have been created for raised errors, which will be more specific. They all inherit from the previously raised `TfsFormatError`, so user code that was catching it will still work.
 
 - Changed:
   - By default, `TfsDataFrame` validation is now skipped on reading.
