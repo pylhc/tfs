@@ -305,6 +305,9 @@ def _dtype_to_tfs_format_identifier(type_: type) -> str:
 
     Returns:
         The ID string.
+
+    Raises:
+        TypeError: if the provided type could not be identified as a valid dtype.
     """
     if pdtypes.is_integer_dtype(type_):
         return "%d"
