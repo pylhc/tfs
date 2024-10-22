@@ -64,10 +64,9 @@ def read_tfs(
     .. warning::
         Through the *validate* argument, one can activate dataframe validation after
         loading it from a file, which can significantly slow the execution of this
-        function. The option, however, is left for the user to use at their own risk
-        (of potentially lengthy validation of large `TfsDataFrames` such as for instance
-        a sliced FCC lattice). Note that validation can be performed at any time by
-        using the `tfs.frame.validate` function.
+        function, e.g. in case of large `TfsDataFrames` such as a sliced FCC lattice. 
+        Note that validation can be performed at any time by using the `tfs.frame.validate` 
+        function.
 
     .. admonition:: **Methodology**
 
@@ -75,8 +74,8 @@ def read_tfs(
         from the file (headers content, column names & types, number of lines
         parsed). The rest of the file (dataframe part) is given to parse to
         ``pandas.read_csv`` with the right options to make use of its C engine's
-        speed. After this, conversion to ``TfsDataDrame`` is made, the index is
-        (optionally) set and the frame is optionally validated before being returned.
+        speed. After this, conversion to ``TfsDataDrame`` is made and, if requested,
+        the index is set and validation performed, before the frame is being returned.
 
     Args:
         tfs_file_path (pathlib.Path | str): Path to the **TFS** file to read. Can be
@@ -87,8 +86,9 @@ def read_tfs(
             the dataframe. Accepts `warn` and `raise` as values, case-insensitively, which dictates
             to respectively issue a warning or raise an error if non-unique elements are found.
         validate (str): If an accepted value is given, validation will be performed after loading.
-            Defauts to `None`, which skips validation. Accepted values are `madx`, `mad-x`, `madng`
-            and `mad-ng`, case-insensitive. See the `tfs.frame.validate` function for more information.
+            Defauts to `None`, which skips validation. Accepted validation modes are `madx`, `mad-x`,
+            `madng` and `mad-ng`, case-insensitive. See the `tfs.frame.validate` function for more
+            information on validation.
 
     Returns:
         A ``TfsDataFrame`` object with the loaded data from the file.
