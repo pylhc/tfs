@@ -306,12 +306,9 @@ def _value_to_string_format_id(value) -> str:
     provided value. It will be used for format strings later on. For
     instance, for a float it returns 'g', for a complex 'c'.
     """
-    # Special case for None values, which will be written as 'nil'
-    # anyway
-    if value is None:
-        return "n"  # not used by anything else | handled later on
-
-    dtype_ = np.array(value).dtype
+    # We have a special case for None values, otherwise we just
+    # let numpy infer the dtype for us
+    dtype_ = type(None) if value is None else np.array(value).dtype
     return _dtype_to_python_string_formatter(dtype_)
 
 
@@ -388,8 +385,10 @@ def _dtype_to_python_string_formatter(type_: type) -> str:
         TypeError: if the provided type could not be identified as a valid dtype.
     """
 
-    if type_ is None:
+    if type_ is None:  # don't know when that triggers
         return ""
+    if type_ is type(None):  # this means the value was None
+        return "s"  # formatted as string since we will write 'nil'
     if pdtypes.is_integer_dtype(type_):
         return "d"
     if pdtypes.is_bool_dtype(type_):
@@ -424,10 +423,10 @@ class ValueToStringFormatter(string.Formatter):
         elif format_spec.endswith("s"):
             return self._format_string(value, format_spec)
 
-        elif format_spec.endswith("n"):
-            # Special case for None values which we always write as 'nil'
-            # This triggers for None values in the headers
-            return "nil"
+        # elif format_spec.endswith("n"):
+        #     # Special case for None values which we always write as 'nil'
+        #     # This triggers for None values in the headers
+        #     return "nil"
 
         return super().format_field(value, format_spec)
 
@@ -458,16 +457,17 @@ class ValueToStringFormatter(string.Formatter):
         if isinstance(value, pathlib.Path):
             value = str(value)  # convert its current form (can be relative)
 
-        # Special case for None values which we always write as 'nil'. It is
-        # possible to get a None here if the value shows up in a string-dtype
-        # column in the data part of the file. We still want to write it 'nil'
-        if value is None:
-            return "nil"
-
         # Now we go on with the formatting
         try:
             if not value.startswith(('"', "'")):
                 value = f'"{value}"'
         except AttributeError:
             pass
+
+        # Special case for None values which we always write as 'nil'. In case
+        # value is None we end up here as we want 'nil' and format it as string
+        # We do this here as we want to write nil and not "nil"
+        if value is None:
+            value = "nil"
+
         return super().format_field(value, format_spec)
