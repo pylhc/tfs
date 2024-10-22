@@ -293,7 +293,7 @@ def validate(
         )
         raise IterableInDataFrameError
 
-    # -----  Check that no element is non-physical value in the dataframe ----- #
+    # -----  Check that no element is non-physical value in the data and headers ----- #
     # The pd.option_context('mode.use_inf_as_na', True) context manager raises FutureWarning
     # and will likely disappear in pandas 3.0 so we replace 'inf' values by NaNs before calling
     # .isna(). Additionally, the downcasting behaviour of .replace() is deprecated and raises a
@@ -306,6 +306,9 @@ def validate(
             f"DataFrame {info_str} contains non-physical values at Index: "
             f"{inf_or_nan_bool_df.index[inf_or_nan_bool_df.any(axis='columns')].tolist()}"
         )
+
+    if pd.Series(data_frame.headers.values()).isna().any():
+        LOGGER.warning(f"DataFrame {info_str} contains non-physical values in headers.")
 
     # ----- Other sanity checks ----- #
     if data_frame.index.has_duplicates:
