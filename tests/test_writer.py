@@ -118,7 +118,7 @@ class TestWrites:
 
     def test_tfs_write_read_no_validation(self, _tfs_dataframe, tmp_path):
         write_location = tmp_path / "test.tfs"
-        write_tfs(write_location, _tfs_dataframe, validate=False)
+        write_tfs(write_location, _tfs_dataframe, validate=None)
         assert write_location.is_file()
 
         new = read_tfs(write_location)
@@ -134,7 +134,7 @@ class TestWrites:
 
     def test_tfs_write_read_pandasdf(self, _pd_dataframe, tmp_path):
         write_location = tmp_path / "test.tfs"
-        write_tfs(write_location, _pd_dataframe, validate=False)  # validation would complain 'no headers'
+        write_tfs(write_location, _pd_dataframe, validate=None)  # validation would complain 'no headers'
         assert write_location.is_file()
 
         new = read_tfs(write_location)
@@ -164,13 +164,13 @@ class TestWrites:
 
     def test_no_warning_on_non_unique_columns_if_no_validate(self, tmp_path, caplog):
         df = TfsDataFrame(columns=["A", "B", "A"])
-        write_tfs(tmp_path / "temporary.tfs", df, validate=False)
+        write_tfs(tmp_path / "temporary.tfs", df, validate=None)
         assert "Non-unique column names found" not in caplog.text
 
     def test_no_validation_non_unique_columns(self, tmp_path):
         # Making sure this goes through if we skip validation
         df = TfsDataFrame(columns=["A", "B", "A"])
-        write_tfs(tmp_path / "temporary.tfs", df, validate=False)
+        write_tfs(tmp_path / "temporary.tfs", df, validate=None)
         assert (tmp_path / "temporary.tfs").is_file()
 
     def test_write_no_headers_dataframe(self, tmp_path, _pd_dataframe):
@@ -178,7 +178,7 @@ class TestWrites:
         # instance) still writes a valid TFS file to disk. This is NOT
         # the same as having empty headers (empty dict)!
         df = _pd_dataframe
-        write_tfs(tmp_path / "temporary.tfs", df, validate=False)  # need to discard validation
+        write_tfs(tmp_path / "temporary.tfs", df, validate=None)  # need to discard validation
         new = read_tfs(tmp_path / "temporary.tfs")
         # I use assert_frame_equal here and not our helper assert_tfs_frame_equal
         # since Dataframe and TfsDataFrame are different df types and with no
@@ -305,7 +305,7 @@ class TestFailures:
         assert "contains list/tuple values at Index:" in caplog.text
 
         with pytest.raises(TypeError):  # this time crashes on writing
-            write_tfs(write_location, list_col_tfs, validate=False)
+            write_tfs(write_location, list_col_tfs, validate=None)
 
         del list_col_tfs["d"]  # should work now without the column of lists
         write_tfs(write_location, list_col_tfs)
