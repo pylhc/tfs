@@ -144,14 +144,15 @@ class TestRead:
         nil_tfs_path = pathlib.Path(__file__).parent / "inputs" / "has_nils.tfs"
         headers = tfs.reader.read_headers(nil_tfs_path)  # no validation in here
 
-        assert np.isnan(headers["NANVALUE"])  # A NaN is read correctly
-        assert np.isnan(headers["NILVALUE"])  # A NaN is read correctly
+        # In the headers, we read a 'nil' as None
+        assert headers["NILVALUE"] is None  # Make sure it is read correctly
 
-    def test_tfs_read_file_with_nil_values(self):
+    def test_tfs_read_file_with_nil_values_in_data(self):
         # This is kind of "MAD-NG feature" as 'nil' is specific ot it
         nil_tfs_path = pathlib.Path(__file__).parent / "inputs" / "has_nils.tfs"
         df = tfs.read(nil_tfs_path)  # no validation in here
 
+        # In the data part of the file, we read a 'nil' as NaN
         # There is a nil in BPM_RES column and we want to make sure its now a NaN
         assert df.BPM_RES.isna().any()
 
