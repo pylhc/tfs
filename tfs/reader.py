@@ -317,7 +317,7 @@ def _read_metadata(tfs_file_path: pathlib.Path | str) -> _TfsMetaData:
     )
 
 
-def _parse_header(str_list: list[str]) -> tuple[str, bool | str | int | float]:
+def _parse_header(str_list: list[str]) -> tuple[str, bool | str | int | float, np.complex128]:
     """
     Parses the data in the provided header line. Expects a valid header
     line starting with the '@' identifier, and parses the content that
@@ -349,8 +349,9 @@ def _parse_header(str_list: list[str]) -> tuple[str, bool | str | int | float]:
 
     if value_type is bool:  # special handling for boolean values
         return name, _string_to_bool(value_string)
-    elif value_type is np.complex128:  # MAD-NG uses i or I for imaginary but Python needs j
-        value_string = value_string.replace("i", "j").replace("I", "j")
+    elif value_type is np.complex128:  # special handling for complex values
+        return name, _parse_complex(value_string)
+    # Otherwise we just cast to the determined type (no special handling)
     return name, value_type(value_string)
 
 
