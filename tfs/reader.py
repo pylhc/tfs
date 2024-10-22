@@ -157,7 +157,7 @@ def read_tfs(
     # If we have complex-dtyped columns, they are popped from the first dict and added
     # to a converters dict as key, with as value our function to parse complex numbers
     if np.complex128 in metadata.column_types:
-        LOGGER.debug("Complex columns detected, reading as strings and casting later")
+        LOGGER.debug("Complex columns detected, adding converter.")
         for colname, dtype in zip(metadata.column_names, metadata.column_types):
             if dtype is np.complex128:
                 converters[colname] = _parse_complex  # register it with our converter
