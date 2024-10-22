@@ -1,5 +1,6 @@
 import pathlib
 
+import numpy as np
 import pytest
 
 from tfs.errors import InvalidBooleanHeaderError, MADXCompatibilityError, SpaceinColumnNameError
@@ -22,10 +23,11 @@ class TestWarnings:
         assert "contains non-physical values at Index:" in caplog.text
 
     @pytest.mark.parametrize("validation_mode", ["madx", "mad-x", "madng", "MAD-NG"])
-    def test_warn_unphysical_values_in_headers(self, validation_mode, caplog):
-        # This file has nil / NaN in the headers too, which is what we care about
-        nan_tfs_path = INPUTS_DIR / "has_nils.tfs"
-        _ = read_tfs(nan_tfs_path, index="NAME", validate=validation_mode)
+    def test_warn_unphysical_values_in_headers(self, _tfs_dataframe, validation_mode, caplog):
+        df = _tfs_dataframe
+        df.headers["NANVALUE"] = np.nan  # make sure there is a NaN in there
+        validate(df, compatibility=validation_mode)
+        
         for record in caplog.records:
             assert record.levelname == "WARNING"
         assert "contains non-physical values in headers" in caplog.text
