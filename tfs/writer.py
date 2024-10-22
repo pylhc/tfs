@@ -53,8 +53,7 @@ def write_tfs(
         for instance a sliced FCC lattice).
 
     Args:
-        tfs_file_path (pathlib.Path | str): Path to the output **TFS** file. Can be
-            a string, in which case it will be cast to a Path object.
+        tfs_file_path (pathlib.Path | str): Path to the output **TFS** file.
         data_frame (TfsDataFrame | pd.DataFrame): The dataframe to write to file. If a Series-like
             object is given, it will be converted to a `TfsDataFrame` first.
         headers_dict (dict): Headers for the `data_frame`. If not provided, assumes a `TfsDataFrame`
