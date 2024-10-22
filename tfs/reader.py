@@ -197,9 +197,8 @@ def read_tfs(
         LOGGER.debug("Attempting to find index identifier in columns")
         tfs_data_frame = _find_and_set_index(tfs_data_frame)
 
-    # Only perform validation if a valid mode is given (MAD-X or MAD-NG compatibility)
-    # By default 'validate' is None which will skip this step
-    if isinstance(validate, str) and validate.lower() in VALIDATION_MODES:
+    # Only perform validation if asked ('validate' defaults to None which skips this step)
+    if validate is not None:  # validation function checks for valid values
         validate_frame(
             tfs_data_frame,
             info_str=f"from file {tfs_file_path.absolute()}",
