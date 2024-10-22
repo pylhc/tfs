@@ -149,7 +149,7 @@ def write_tfs(
         )
 
 
-def _insert_index_column(data_frame: TfsDataFrame | pd.DataFrame, save_index: str | None = None) -> None:
+def _insert_index_column(data_frame: TfsDataFrame | pd.DataFrame, save_index: str | bool | None = None) -> None:
     """
     Inserts the index of the dataframe into it as a column, naming it according to
     'save_index' if it was provided. Otherwise it tries to use the existing index's
