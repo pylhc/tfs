@@ -275,8 +275,8 @@ def _read_metadata(tfs_file_path: pathlib.Path | str) -> _TfsMetaData:
     """
     LOGGER.debug("Reading headers and metadata from file")
     tfs_file_path = pathlib.Path(tfs_file_path)
-    headers = {}
     column_names = column_types = None
+    headers = {}
 
     # Read the headers, chunk by chunk (line by line) with pandas.read_csv as a
     # context manager. Very important: the value of 'sep' here should not be a
@@ -347,6 +347,13 @@ def _parse_header(str_list: list[str]) -> tuple[str, bool | str | int | float, n
     name: str = " ".join(str_list[0:type_index])
     value_string: str = " ".join(str_list[(type_index + 1) :])
     value_string: str = value_string.strip('"')
+
+    # First we handle the NaN values (MAD-NG writes nil)
+    # This is because they do not have an associated type
+    if value_string.lower() in ("nil", "nan"):
+        return name, np.nan
+
+    # Otherwise we infer the type and will cast the value
     value_type: type = _id_to_type(str_list[type_index])
 
     if value_type is bool:  # special handling for boolean values
@@ -406,9 +413,9 @@ def _id_to_type(type_identifier: str) -> type:
 
 def _is_madx_string_col_identifier(type_str: str) -> bool:
     """
-    ``MAD-X`` likes to return the string columns by also indicating their width, so trying to parse
-    `%s` identifiers only we might miss those looking like `%20s` specifying (here) a 20-character
-     wide column for strings.
+    ``MAD-X`` likes to return the string columns by also indicating their width, so
+    by trying to parse `%s` identifiers only we might miss those looking like `%20s`
+    specifying (here) a 20-character wide column for strings.
 
     Args:
         type_str (str): the suspicious identifier.
