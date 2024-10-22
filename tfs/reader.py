@@ -11,6 +11,7 @@ import logging
 import pathlib
 import shlex
 from dataclasses import dataclass
+from types import NoneType
 from typing import Callable
 
 import numpy as np
@@ -347,15 +348,10 @@ def _parse_header(str_list: list[str]) -> tuple[str, bool | str | int | float, n
     name: str = " ".join(str_list[0:type_index])
     value_string: str = " ".join(str_list[(type_index + 1) :])
     value_string: str = value_string.strip('"')
-
-    # First we handle the NaN values (MAD-NG writes nil)
-    # This is because they do not have an associated type
-    if value_string.lower() in ("nil", "nan"):
-        return name, np.nan
-
-    # Otherwise we infer the type and will cast the value
     value_type: type = _id_to_type(str_list[type_index])
 
+    if value_type is NoneType:  # special handling for 'nil's
+        return name, None
     if value_type is bool:  # special handling for boolean values
         return name, _string_to_bool(value_string)
     elif value_type is np.complex128:  # special handling for complex values
