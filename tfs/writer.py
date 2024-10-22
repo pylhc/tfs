@@ -149,6 +149,9 @@ def write_tfs(
         )
 
 
+# ----- Helpers ----- #
+
+
 def _insert_index_column(data_frame: TfsDataFrame | pd.DataFrame, save_index: str | bool | None = None) -> None:
     """
     Inserts the index of the dataframe into it as a column, naming it according to
