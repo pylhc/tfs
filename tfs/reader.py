@@ -25,7 +25,6 @@ from tfs.constants import (
     TYPES,
     VALID_BOOLEANS_HEADERS,
     VALID_TRUE_BOOLEANS,
-    VALIDATION_MODES,
 )
 from tfs.errors import (
     AbsentColumnNameError,

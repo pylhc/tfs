@@ -16,7 +16,7 @@ import pandas as pd
 from pandas.api import types as pdtypes
 from pandas.io.common import get_handle
 
-from tfs.constants import DEFAULT_COLUMN_WIDTH, INDEX_ID, MIN_COLUMN_WIDTH, VALIDATION_MODES
+from tfs.constants import DEFAULT_COLUMN_WIDTH, INDEX_ID, MIN_COLUMN_WIDTH
 from tfs.frame import TfsDataFrame
 from tfs.frame import validate as validate_frame
 
