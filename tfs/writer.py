@@ -206,7 +206,7 @@ def _get_header_line(name: str, value, width: int) -> str:
         errmsg = f"{name} is not a string"
         raise TypeError(errmsg)
     type_str = _value_to_type_string(value)
-    value_str = TfsStringFormatter().format_field(value, _value_to_string_format_id(value))
+    value_str = ValueToStringFormatter().format_field(value, _value_to_string_format_id(value))
     return f"@ {name:<{width}} {type_str} {value_str:>{width}}"
 
 
@@ -244,7 +244,7 @@ def _get_data_string(
         return "\n"
     format_strings = "  " + _get_row_format_string(data_frame.dtypes, colwidth, left_align_first_column)
     data_frame = data_frame.astype(object)  # overrides pandas auto-conversion (lead to format bug)
-    string_formatter = TfsStringFormatter()
+    string_formatter = ValueToStringFormatter()
     return "\n".join(data_frame.apply(lambda series: string_formatter.format(format_strings, *series), axis=1))
 
 
@@ -376,8 +376,11 @@ def _dtype_to_string_format_id(type_: type) -> str:
     raise TypeError(errmsg)
 
 
-class TfsStringFormatter(string.Formatter):
-    """Formatter class to be called for proper formatting of TFS strings."""
+class ValueToStringFormatter(string.Formatter):
+    """
+    Formatter class to be called for proper formatting of values
+    (headers, dataframe data) into strings to write to file.
+    """
 
     def format_field(self, value, format_spec):
         if format_spec.endswith("b"):
