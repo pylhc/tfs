@@ -1,4 +1,4 @@
-@ TITLE %s "Tfs file with mixed types and NaN written in columns"
+@ TITLE %s "Tfs file with mixed types and nil values written in both headers and columns"
 @ DPP %le 0.0
 @ Q1 %le 0.269974877952
 @ Q1RMS %le 1.75642567736e-07
