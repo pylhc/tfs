@@ -53,8 +53,7 @@ class TestRead:
         assert "BPM RES" in df.columns
 
     def test_tfs_read_no_validation_doesnt_warn(self, caplog):
-        # The loaded file has both NaN and nil (MAD-NG) inside, so
-        # this also tests that we load both correctly
+        # The loaded file has NaNs inside, which should emit a warning on validation
         nan_tfs_path = pathlib.Path(__file__).parent / "inputs" / "has_nans.tfs"
         _ = read_tfs(nan_tfs_path, index="NAME")
         assert "contains non-physical values at Index:" not in caplog.text
