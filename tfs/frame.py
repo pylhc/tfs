@@ -353,6 +353,15 @@ def validate(
             errmsg = "TFS-Headers can not contain complex values in MAD-X compatibility mode."
             raise MADXCompatibilityError(errmsg)
 
+        # Check that no 'None' values are in the headers
+        if any(header is None for header in data_frame.headers.values()):
+            LOGGER.debug(
+                f"'None' values found in headers of dataframe {info_str}, which is incompatible with MAD-X."
+                "Remove them or assign a value in order to keep compatibility with MAD-X."
+            )
+            errmsg = "TFS-Headers can not contain 'None' values in MAD-X compatibility mode."
+            raise MADXCompatibilityError(errmsg)
+
         # Check that the dataframe contains no boolean dtype columns
         if any(pdtypes.is_bool_dtype(type_) for type_ in data_frame.dtypes):
             LOGGER.debug(
