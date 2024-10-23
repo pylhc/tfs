@@ -72,8 +72,8 @@ Namely, the following are accepted by ``MAD-NG`` and ``MAD-NG`` only:
 
     ``MAD-NG`` uses the nullable `nil`, which is accepted by `tfs-pandas` with the following caveats:
 
-        - When reading from file, `nil` values in the headers are converted to `None` while those in the dataframe are cast to `NaN`.
-        - When writing to file, `None` values anywhere are written as `nil` and `NaN` values in the dataframe are written as `NaN` (remember that setting a `None` in a numeric `pandas.DataFrame` column automatically casts it as `NaN`).
+        - When reading from file, `nil` values in the headers are converted to `None` while those in the dataframe are cast to `NaN`, except in string-dtyped columns where they are converted to `None`.
+        - When writing to file, `None` values anywhere are written as `nil`, and `NaN` values in the dataframe are written as `NaN` (remember that setting a `None` in a numeric `pandas.DataFrame` column automatically casts it as `NaN`).
 
 .. attention::
 
