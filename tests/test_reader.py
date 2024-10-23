@@ -159,6 +159,11 @@ class TestRead:
         assert df.CO.isna().any()
         assert df.BPM_RES.isna().any()
 
+        # If the 'nil' is in a string-dtyped column we read it as None
+        # This is the case in the first element of the NAME columns,
+        # so we make sure that one is indeed None
+        assert df.loc[0, "NAME"] is None
+
     def test_tfs_read_file_with_booleans(self, _tfs_booleans_file):
         df = read_tfs(_tfs_booleans_file)
         assert df.headers["BOOLTRUE1"] is True  # true resolves to True

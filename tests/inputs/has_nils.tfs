@@ -9,7 +9,7 @@
 # There are some 'nil' values in this file, which MAD-NG uses, and we read as None in headers and NaN in data
 *            NAME                 S            NUMBER                CO             CORMS           BPM_RES
 $              %s               %le                %d               %le               %le               %le
-     BPMYB.5L2.B1            28.288                 1   -0.280727353099  0.00404721900879  "0.121264541395"
+              nil            28.288                 1   -0.280727353099  0.00404721900879  "0.121264541395"
      BPMYB.4L2.B1            48.858                 2    0.601472827003  0.00301396244054    0.129738519811
      BPMWI.4L2.B1           73.3255                 3   -0.610294990396   0.0039123010318   0.0952864848273
      BPMSX.4L2.B1          123.4825        3472136972    0.778206651453  0.00542543379504   0.0578581425476
