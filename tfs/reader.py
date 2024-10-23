@@ -15,6 +15,7 @@ from typing import Callable
 
 import numpy as np
 import pandas as pd
+from pandas._libs.parsers import STR_NA_VALUES
 
 from tfs.constants import (
     COMMENTS,
@@ -38,12 +39,18 @@ from tfs.frame import validate as validate_frame
 
 LOGGER = logging.getLogger(__name__)
 
-# A string not expected to be found in the headers
-# I generated this randomly with: "".join(random.choice(string.ascii_letters) for _ in range(100))
+# A string not expected to be found in the headers (hopefully!)
+# I generated this with: "".join(random.choice(string.ascii_letters) for _ in range(100))
 _UNEXPECTED_SEP: str = (
     "baBfHIhwOdMnuBVHDDZcysbmwRgWaBnukQPIWNHpFVqjrIcOryhvyJwIRRHfqOQLGKhtZPLJhziZKomfVhXsoqfoGkvyFKuNhhst"
 )
 
+# Here we take the default NA values for pandas readers, and make a copy from which we
+# remove "" (we want empty strings to stay empty strings) and adding "nil"
+_NA_VALUES: list[str] = list(STR_NA_VALUES) + ["nil"]
+_NA_VALUES.remove("")
+
+# ----- Main Functionality ----- #
 
 def read_tfs(
     tfs_file_path: pathlib.Path | str,
@@ -182,17 +189,18 @@ def read_tfs(
         names=metadata.column_names,  # column names we have determined, avoids using first read row for columns
         dtype=dtypes_dict,  # assign types at read-time to avoid conversions later
         converters=converters,  # more involved dtype conversion, e.g. for complex columns
-        na_values="nil",  # MAD-NG can write 'nil' which we cast to NaN in the data
+        na_values=_NA_VALUES,  # includes MAD-NG's 'nil' which we cast to NaN in the data
+        keep_default_na=False,  # we provided the list ourselves so it does not include ""
     )
 
     LOGGER.debug("Converting to TfsDataFrame")
     tfs_data_frame = TfsDataFrame(data_frame, headers=metadata.headers)
 
-    # In pandas.read_csv an empty string ("") will be read a NaN, but we want to preserve them
-    # Note: a 'nil' in a string column will also be read as NaN and then cast to ""
-    LOGGER.debug("Ensuring preservation of empty strings")
+    # In pandas.read_csv we read a 'nil' as NaN in columns, so we have to convert it back
+    # to 'None' in the string-dtyped columns. For numeric columns we keep NaN
+    LOGGER.debug("Ensuring preservation of None values in string columns")
     for column in tfs_data_frame.select_dtypes(include=["string", "object"]):
-        tfs_data_frame[column] = tfs_data_frame[column].fillna("")
+        tfs_data_frame[column] = tfs_data_frame[column].replace([np.nan], [None])
 
     if index:
         LOGGER.debug(f"Setting '{index}' column as index")
