@@ -145,7 +145,7 @@ class TestWrites:
             check_frame_type=False,  # read df is TfsDF
         )
 
-    def test_write_read_spaces_in_strings(self, tmp_path):
+    def test_tfs_write_read_spaces_in_strings(self, tmp_path):
         df = TfsDataFrame(data=["This is", "a test", "with spaces"], columns=["A"])
         write_location = tmp_path / "test.tfs"
         write_tfs(write_location, df)
@@ -165,13 +165,8 @@ class TestWrites:
     def test_no_warning_on_non_unique_columns_if_no_validate(self, tmp_path, caplog):
         df = TfsDataFrame(columns=["A", "B", "A"])
         write_tfs(tmp_path / "temporary.tfs", df, validate=None)
-        assert "Non-unique column names found" not in caplog.text
-
-    def test_no_validation_non_unique_columns(self, tmp_path):
-        # Making sure this goes through if we skip validation
-        df = TfsDataFrame(columns=["A", "B", "A"])
-        write_tfs(tmp_path / "temporary.tfs", df, validate=None)
         assert (tmp_path / "temporary.tfs").is_file()
+        assert "Non-unique column names found" not in caplog.text
 
     def test_write_no_headers_dataframe(self, tmp_path, _pd_dataframe):
         # We make sure providing a df without headers (a pd.DataFrame for
