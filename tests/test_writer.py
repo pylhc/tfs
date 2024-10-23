@@ -1,4 +1,5 @@
 import logging
+import pathlib
 import random
 import string
 
@@ -168,7 +169,7 @@ class TestWrites:
         assert (tmp_path / "temporary.tfs").is_file()
         assert "Non-unique column names found" not in caplog.text
 
-    def test_write_no_headers_dataframe(self, tmp_path, _pd_dataframe):
+    def test_tfs_write_no_headers_dataframe(self, tmp_path, _pd_dataframe):
         # We make sure providing a df without headers (a pd.DataFrame for
         # instance) still writes a valid TFS file to disk. This is NOT
         # the same as having empty headers (empty dict)!
@@ -179,6 +180,20 @@ class TestWrites:
         # since Dataframe and TfsDataFrame are different df types and with no
         # headers present in the former the check would fail
         assert_frame_equal(df, new, check_frame_type=False)
+
+    def test_tfs_write_read_with_path_in_headers(self, tmp_path, _tfs_dataframe):
+        # We will insert a pathlib.Path in the headers and ensure it is
+        # written as a string, in its current (relative in this case) form
+        df = _tfs_dataframe
+        df.headers["PATH"] = tmp_path  # this is a pathlib i
+
+        write_location = tmp_path / "test.tfs"
+        write_tfs(write_location, df, validate=None)  # don't care to validate
+        assert write_location.is_file()
+
+        written = write_location.read_text()
+        assert "PATH" in written
+        assert str(tmp_path) in written  # should be in its .__str__ form here
 
     # ----- Below are tests for files with MAD-NG features ----- #
 
