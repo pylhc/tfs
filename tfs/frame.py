@@ -311,6 +311,8 @@ def validate(
         LOGGER.warning(f"DataFrame {info_str} contains non-physical values in headers.")
 
     # ----- Other sanity checks ----- #
+    # These are not deal-breakers but might raise
+    # issues being read back by some other codes
     if data_frame.index.has_duplicates:
         LOGGER.warning("Non-unique indices found.")
         if non_unique_behavior.lower() == "raise":
@@ -321,7 +323,7 @@ def validate(
         if non_unique_behavior.lower() == "raise":
             raise DuplicateColumnsError
 
-    # The following are deal-breakers for the TFS format and would not,
+    # The following are deal-breakers for the TFS format, but might be
     # for instance, be accepted by MAD-X or MAD-NG
     if any(not isinstance(c, str) for c in data_frame.columns):
         LOGGER.debug(f"Some column-names are not of string-type, dataframe {info_str} is invalid.")
