@@ -120,6 +120,15 @@ class TestMADXFailures:
             validate(df, compatibility=validation_mode)
 
     @pytest.mark.parametrize("validation_mode", ["madx", "mad-x", "mAd-X"])
+    def test_madx_validation_raises_on_none_headers(self, _tfs_dataframe, validation_mode):
+        df = _tfs_dataframe
+        df.headers["NONEVALUE"] = None
+        with pytest.raises(
+            MADXCompatibilityError, match="TFS-Headers can not contain 'None' values in MAD-X compatibility mode"
+        ):
+            validate(df, compatibility="madx")
+
+    @pytest.mark.parametrize("validation_mode", ["madx", "mad-x", "mAd-X"])
     def test_madx_validation_raises_on_boolean_columns(self, _tfs_booleans_file, validation_mode):
         df = read_tfs(_tfs_booleans_file)
         df.headers = {}  # or else the first validation check raises because of boolean headers
