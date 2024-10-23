@@ -203,6 +203,18 @@ class TestWrites:
         new = read_tfs(write_location)
         assert_tfs_frame_equal(_tfs_dataframe_complex, new, check_exact=False)  # float precision can be an issue
 
+    def test_tfs_write_with_nil_in_headers(self, _tfs_dataframe, tmp_path):
+        df = _tfs_dataframe
+        df.headers["WRITETONIL"] = None
+        
+        write_location = tmp_path / "test.tfs"
+        write_tfs(write_location, df, validate="madng")
+
+        written = write_location.read_text()
+        assert "WRITETONIL" in written
+        assert "%n" in written
+        assert "nil" in written
+
     def test_tfs_write_read_madng_like(self, _tfs_dataframe_madng, tmp_path):
         write_location = tmp_path / "test.tfs"
         write_tfs(write_location, _tfs_dataframe_madng, validate="madng")  # booleans are MAD-NG feature
