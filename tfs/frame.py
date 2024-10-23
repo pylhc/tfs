@@ -335,7 +335,7 @@ def validate(
 
     # ----- Additional checks for MAD-X compatibility mode ----- #
     if compatibility.lower() in ("madx", "mad-x"):
-        # Check that no boolean values are in the headers
+        # Check that no boolean values are in the headers - MAD-X does not accept them
         if any(isinstance(header, bool) for header in data_frame.headers.values()):
             LOGGER.debug(
                 f"Boolean values found in headers of dataframe {info_str}, which is incompatible with MAD-X."
@@ -344,7 +344,7 @@ def validate(
             errmsg = "TFS-Headers can not contain boolean values in MAD-X compatibility mode."
             raise MADXCompatibilityError(errmsg)
 
-        # Check that no complex values are in the headers
+        # Check that no complex values are in the headers - MAD-X does not accept them
         if any(isinstance(header, complex) for header in data_frame.headers.values()):
             LOGGER.debug(
                 f"Complex values found in headers of dataframe {info_str}, which is incompatible with MAD-X."
@@ -353,7 +353,8 @@ def validate(
             errmsg = "TFS-Headers can not contain complex values in MAD-X compatibility mode."
             raise MADXCompatibilityError(errmsg)
 
-        # Check that no 'None' values are in the headers
+        # Check that no 'None' values are in the headers - it would
+        # write as 'nil' which MAD-X does not accept
         if any(header is None for header in data_frame.headers.values()):
             LOGGER.debug(
                 f"'None' values found in headers of dataframe {info_str}, which is incompatible with MAD-X."
