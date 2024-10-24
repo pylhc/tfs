@@ -1,0 +1,6 @@
+@ TITLE %s "Title of your tfs file"
+@ BADBOOL %b drue
+# Some comment line here
+*            NAME                 S            NUMBER                CO             CORMS           BPM_RES
+$              %s               %le                %d               %le               %le               %le
+     BPMYB.5L2.B1            28.288                 1   -0.280727353099  0.00404721900879    0.121264541395

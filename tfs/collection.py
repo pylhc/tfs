@@ -66,31 +66,31 @@ class TfsCollection(metaclass=_MetaTfsCollection):
 
     .. code-block:: python
 
-        >>> # All TFS attributes must be marked with the Tfs(...) class,
-        ... # and generated attribute names will be appended with _x / _y
-        ... # depending on files found in "./example"
-        ... class ExampleCollection(TfsCollection):
-        ...     beta = Tfs("beta_phase_{}.tfs")  # A TFS attribute
-        ...     other_value = 7  # A traditional attribute.
+        # All TFS attributes must be marked with the Tfs(...) class,
+        # and generated attribute names will be appended with _x / _y
+        # depending on files found in "./example"
+        class ExampleCollection(TfsCollection):
+            beta = Tfs("beta_phase_{}.tfs")  # A TFS attribute
+            other_value = 7  # A traditional attribute.
 
-        ...     def get_filename(template: str, plane: str) -> str:
-        ...         return template.format(plane)
+            def get_filename(template: str, plane: str) -> str:
+                return template.format(plane)
 
-        >>> example = ExampleCollection("./example")
+        example = ExampleCollection("./example")
 
-        >>> # Get the BETX / BETY column from "beta_phase_x.tfs":
-        >>> beta_x_column = example.beta_x.BETX  # / example.beta_x.BETY
+        # Get the BETX / BETY column from "beta_phase_x.tfs":
+        beta_x_column = example.beta_x.BETX  # / example.beta_x.BETY
 
-        >>> # Get the BETY column from "beta_phase_y.tfs":
-        >>> beta_y_column = example.beta_y.BETY
+        # Get the BETY column from "beta_phase_y.tfs":
+        beta_y_column = example.beta_y.BETY
 
-        >>> # The planes can also be accessed as items (both examples below work):
-        >>> beta_y_column = example.beta["y"].BETY
-        >>> beta_y_column = example.beta["Y"].BETY
+        # The planes can also be accessed as items (both examples below work):
+        beta_y_column = example.beta["y"].BETY
+        beta_y_column = example.beta["Y"].BETY
 
-        >>> # This will write an empty DataFrame to "beta_phase_y.tfs":
-        >>> example.allow_write = True
-        >>> example.beta["y"] = DataFrame()
+        # This will write an empty DataFrame to "beta_phase_y.tfs":
+        example.allow_write = True
+        example.beta["y"] = DataFrame()
 
 
     If the file to be loaded is not defined for two planes then the attribute can be declared
@@ -98,8 +98,8 @@ class TfsCollection(metaclass=_MetaTfsCollection):
 
     .. code-block:: python
 
-        >>> coupling = Tfs("getcouple.tfs", two_planes=False)  # declaration
-        >>> f1001w_column = example.coupling.F1001W  # access
+        coupling = Tfs("getcouple.tfs", two_planes=False)  # declaration
+        f1001w_column = example.coupling.F1001W  # access
 
     No file will be loaded until the corresponding attribute is accessed and the loaded
     `~tfs.TfsDataFrame` will be buffered, thus the user should expect an ``IOError`` if the requested

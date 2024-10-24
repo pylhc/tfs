@@ -1,4 +1,3 @@
-import pathlib
 from functools import partial, reduce
 
 import pandas as pd
@@ -7,17 +6,10 @@ from pandas._testing import assert_dict_equal
 from pandas.testing import assert_frame_equal
 
 import tfs
-from tfs.frame import TfsDataFrame, concat, merge_headers, validate
-
-CURRENT_DIR = pathlib.Path(__file__).parent
+from tfs.frame import TfsDataFrame, concat, merge_headers
 
 
 class TestFailures:
-    def test_validate_raises_on_wrong_unique_behavior(self):
-        df = TfsDataFrame(index=["A", "B", "A"], columns=["A", "B", "A"])
-        with pytest.raises(KeyError):
-            validate(df, "", non_unique_behavior="invalid")
-
     @pytest.mark.parametrize("how", ["invalid", "not_left", "not_right"])
     def test_merge_headers_raises_on_invalid_how_key(self, how):
         headers_left = {}
@@ -42,9 +34,9 @@ class TestTfsDataFrameMerging:
     @pytest.mark.parametrize("how_headers", [None, "left", "right"])
     @pytest.mark.parametrize("how", ["left", "right", "outer", "inner"])
     @pytest.mark.parametrize("on", ["NAME", "S", "NUMBER", "CO", "CORMS", "BPM_RES"])
-    def test_correct_merging(self, _tfs_file_x_pathlib, _tfs_file_y_pathlib, how_headers, how, on):
-        dframe_x = tfs.read(_tfs_file_x_pathlib)
-        dframe_y = tfs.read(_tfs_file_y_pathlib)
+    def test_correct_merging(self, _tfs_filex, _tfs_filey, how_headers, how, on):
+        dframe_x = tfs.read(_tfs_filex)
+        dframe_y = tfs.read(_tfs_filey)
         result = dframe_x.merge(dframe_y, how_headers=how_headers, how=how, on=on)
 
         assert isinstance(result, TfsDataFrame)
@@ -55,11 +47,9 @@ class TestTfsDataFrameMerging:
     @pytest.mark.parametrize("how_headers", [None, "left", "right"])
     @pytest.mark.parametrize("how", ["left", "right", "outer", "inner"])
     @pytest.mark.parametrize("on", ["NAME", "S", "NUMBER", "CO", "CORMS", "BPM_RES"])
-    def test_merging_accepts_pandas_dataframe(
-        self, _tfs_file_x_pathlib, _tfs_file_y_pathlib, how_headers, how, on
-    ):
-        dframe_x = tfs.read(_tfs_file_x_pathlib)
-        dframe_y = pd.DataFrame(tfs.read(_tfs_file_y_pathlib))  # for test, loses headers here
+    def test_merging_accepts_pandas_dataframe(self, _tfs_filex, _tfs_filey, how_headers, how, on):
+        dframe_x = tfs.read(_tfs_filex)
+        dframe_y = pd.DataFrame(tfs.read(_tfs_filey))  # for test, loses headers here
         result = dframe_x.merge(dframe_y, how_headers=how_headers, how=how, on=on)
 
         assert isinstance(result, TfsDataFrame)
@@ -72,9 +62,9 @@ class TestTfsDataFrameMerging:
 
 class TestHeadersMerging:
     @pytest.mark.parametrize("how", ["left", "LEFT", "Left", "lEfT"])  # we're case-insensitive
-    def test_headers_merging_left(self, _tfs_file_x_pathlib, _tfs_file_y_pathlib, how):
-        headers_left = tfs.read(_tfs_file_x_pathlib).headers
-        headers_right = tfs.read(_tfs_file_y_pathlib).headers
+    def test_headers_merging_left(self, _tfs_filex, _tfs_filey, how):
+        headers_left = tfs.read(_tfs_filex).headers
+        headers_right = tfs.read(_tfs_filey).headers
         result = merge_headers(headers_left, headers_right, how=how)
 
         assert isinstance(result, dict)
@@ -85,9 +75,9 @@ class TestHeadersMerging:
                 assert result[key] == headers_left[key]
 
     @pytest.mark.parametrize("how", ["right", "RIGHT", "Right", "RigHt"])  # we're case-insensitive
-    def test_headers_merging_right(self, _tfs_file_x_pathlib, _tfs_file_y_pathlib, how):
-        headers_left = tfs.read(_tfs_file_x_pathlib).headers
-        headers_right = tfs.read(_tfs_file_y_pathlib).headers
+    def test_headers_merging_right(self, _tfs_filex, _tfs_filey, how):
+        headers_left = tfs.read(_tfs_filex).headers
+        headers_right = tfs.read(_tfs_filey).headers
         result = merge_headers(headers_left, headers_right, how=how)
 
         assert isinstance(result, dict)
@@ -98,15 +88,15 @@ class TestHeadersMerging:
                 assert result[key] == headers_right[key]
 
     @pytest.mark.parametrize("how", [None, "none", "None", "nOnE"])  # we're case-insensitive
-    def test_headers_merging_none_returns_empty_dict(self, _tfs_file_x_pathlib, _tfs_file_y_pathlib, how):
-        headers_left = tfs.read(_tfs_file_x_pathlib).headers
-        headers_right = tfs.read(_tfs_file_y_pathlib).headers
+    def test_headers_merging_none_returns_empty_dict(self, _tfs_filex, _tfs_filey, how):
+        headers_left = tfs.read(_tfs_filex).headers
+        headers_right = tfs.read(_tfs_filey).headers
         result = merge_headers(headers_left, headers_right, how=how)
         assert result == {}  # giving None returns empty headers
 
-    def test_providing_new_headers_overrides_merging(self, _tfs_file_x_pathlib, _tfs_file_y_pathlib):
-        dframe_x = tfs.read(_tfs_file_x_pathlib)
-        dframe_y = tfs.read(_tfs_file_y_pathlib)
+    def test_providing_new_headers_overrides_merging(self, _tfs_filex, _tfs_filey):
+        dframe_x = tfs.read(_tfs_filex)
+        dframe_y = tfs.read(_tfs_filey)
 
         assert dframe_x.merge(right=dframe_y, new_headers={}).headers == {}
         assert dframe_y.merge(right=dframe_x, new_headers={}).headers == {}
@@ -115,7 +105,7 @@ class TestHeadersMerging:
         assert tfs.concat([dframe_y, dframe_x], new_headers={}).headers == {}
 
 
-class TestPrinting:
+class TestHeadersPrinting:
     def test_header_print(self):
         headers = {"param": 3, "other": "hello"}
         df = TfsDataFrame(headers=headers)
@@ -147,9 +137,9 @@ class TestTfsDataFramesConcatenating:
     @pytest.mark.parametrize("how_headers", [None, "left", "right"])
     @pytest.mark.parametrize("axis", [0, 1])
     @pytest.mark.parametrize("join", ["inner", "outer"])
-    def test_correct_concatenating(self, _tfs_file_x_pathlib, _tfs_file_y_pathlib, how_headers, axis, join):
-        dframe_x = tfs.read(_tfs_file_x_pathlib)
-        dframe_y = tfs.read(_tfs_file_y_pathlib)
+    def test_correct_concatenating(self, _tfs_filex, _tfs_filey, how_headers, axis, join):
+        dframe_x = tfs.read(_tfs_filex)
+        dframe_y = tfs.read(_tfs_filey)
         objs = [dframe_x] * 4 + [dframe_y] * 4
         result = concat(objs, how_headers=how_headers, axis=axis, join=join)
 
@@ -163,11 +153,9 @@ class TestTfsDataFramesConcatenating:
     @pytest.mark.parametrize("how_headers", [None, "left", "right"])
     @pytest.mark.parametrize("axis", [0, 1])
     @pytest.mark.parametrize("join", ["inner", "outer"])
-    def test_concatenating_accepts_pandas_dataframes(
-        self, _tfs_file_x_pathlib, _tfs_file_y_pathlib, how_headers, axis, join
-    ):
-        dframe_x = tfs.read(_tfs_file_x_pathlib)
-        dframe_y = pd.DataFrame(tfs.read(_tfs_file_y_pathlib))  # for test, loses headers here
+    def test_concatenating_accepts_pandas_dataframes(self, _tfs_filex, _tfs_filey, how_headers, axis, join):
+        dframe_x = tfs.read(_tfs_filex)
+        dframe_y = pd.DataFrame(tfs.read(_tfs_filey))  # for test, loses headers here
         objs = [dframe_x] * 4 + [dframe_y] * 4  # now has a mix of TfsDataFrames and pandas.DataFrames
         result = concat(objs, how_headers=how_headers, axis=axis, join=join)
 
@@ -181,16 +169,3 @@ class TestTfsDataFramesConcatenating:
         ]
         assert_dict_equal(result.headers, reduce(merger, all_headers))
         assert_frame_equal(result, pd.concat(objs, axis=axis, join=join))
-
-
-# ------ Fixtures ------ #
-
-
-@pytest.fixture
-def _tfs_file_x_pathlib() -> pathlib.Path:
-    return CURRENT_DIR / "inputs" / "file_x.tfs"
-
-
-@pytest.fixture
-def _tfs_file_y_pathlib() -> pathlib.Path:
-    return CURRENT_DIR / "inputs" / "file_x.tfs"

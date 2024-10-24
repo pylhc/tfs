@@ -1,21 +1,20 @@
-import os
 import pathlib
 from shutil import copyfile
 
 import pytest
 
-from tfs.errors import TfsFormatError
+from tfs.errors import AbsentTypeIdentifierError
 from tfs.reader import read_tfs
 from tfs.tools import remove_header_comments_from_files, remove_nan_from_files, significant_digits
 
-CURRENT_DIR = pathlib.Path(__file__).parent
+from .conftest import INPUTS_DIR
 
 
 def test_clean_file_pathlib_input(_bad_file_pathlib: pathlib.Path, tmp_path):
     clean_location = tmp_path / "clean_file.tfs"
     copyfile(_bad_file_pathlib, clean_location)
-    with pytest.raises(TfsFormatError):
-        read_tfs(_bad_file_pathlib)
+    with pytest.raises(AbsentTypeIdentifierError):
+        _ = read_tfs(_bad_file_pathlib)
 
     remove_header_comments_from_files([clean_location])
     df = read_tfs(clean_location)
@@ -30,7 +29,7 @@ def test_clean_file_pathlib_input(_bad_file_pathlib: pathlib.Path, tmp_path):
 def test_clean_file_str_input(_bad_file_str: str, tmp_path):
     clean_location = tmp_path / "clean_file.tfs"
     copyfile(_bad_file_str, clean_location)
-    with pytest.raises(TfsFormatError):
+    with pytest.raises(AbsentTypeIdentifierError):
         read_tfs(_bad_file_str)
 
     remove_header_comments_from_files([clean_location])
@@ -70,11 +69,14 @@ def test_significant_digits():
         s = significant_digits(0.0338577, 0.0)
 
 
+# ----- Helpers & Fixtures ----- #
+
+
 @pytest.fixture
 def _bad_file_pathlib() -> pathlib.Path:
-    return CURRENT_DIR / "inputs" / "bad_file.tfs"
+    return INPUTS_DIR / "bad_file.tfs"
 
 
 @pytest.fixture
-def _bad_file_str() -> str:
-    return os.path.join(os.path.dirname(__file__), "inputs", "bad_file.tfs")
+def _bad_file_str(_bad_file_pathlib) -> str:
+    return str(_bad_file_pathlib.absolute())
