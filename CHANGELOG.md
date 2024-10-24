@@ -5,6 +5,9 @@
 TODO: Add information here about the target MAD-NG (and pymadng) version with which we are compatible.
 
 Version `4.0` is a major release bringing compatibility with `MAD-NG` features in **TFS** files and tables, apart from the more exotic ones.
+We also bring new documentation pages regarding the **TFS** format, code compatibilities, and the new features.
+Please have a look at the documentation should you intent to use `tfs-pandas` 4.0, as there are a few (now documented) caveats.
+
 This release brings no breaking changes per se, but enough behavioural changes to warrant a major version bump.
 
 - Added:
