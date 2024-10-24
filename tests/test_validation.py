@@ -64,7 +64,7 @@ class TestCommonFailures:
     @pytest.mark.parametrize("validation_mode", ["madx", "mad-x", "madng", "MAD-NG"])
     def test_validate_raises_on_wrong_unique_behavior(self, validation_mode):
         df = TfsDataFrame(index=["A", "B", "A"], columns=["A", "B", "A"])
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError, match="Invalid value for parameter 'non_unique_behavior'"):
             validate(df, "", non_unique_behavior="invalid", compatibility=validation_mode)
 
     @pytest.mark.parametrize("validation_mode", ["madx", "mad-x", "madng", "MAD-NG"])
@@ -126,7 +126,7 @@ class TestMADXFailures:
         with pytest.raises(
             MADXCompatibilityError, match="TFS-Headers can not contain 'None' values in MAD-X compatibility mode"
         ):
-            validate(df, compatibility="madx")
+            validate(df, compatibility=validation_mode)
 
     @pytest.mark.parametrize("validation_mode", ["madx", "mad-x", "mAd-X"])
     def test_madx_validation_raises_on_boolean_columns(self, _tfs_booleans_file, validation_mode):
