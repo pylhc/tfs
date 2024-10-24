@@ -47,7 +47,7 @@ _UNEXPECTED_SEP: str = (
 
 # Here we take the default NA values for pandas readers, and make a copy from which we
 # remove "" (we want empty strings to stay empty strings) and adding "nil"
-_NA_VALUES: list[str] = list(STR_NA_VALUES) + ["nil"]
+_NA_VALUES: list[str] = [*list(STR_NA_VALUES), "nil"]
 _NA_VALUES.remove("")
 
 # ----- Main Functionality ----- #
@@ -70,8 +70,8 @@ def read_tfs(
     .. warning::
         Through the *validate* argument, one can activate dataframe validation after
         loading it from a file, which can significantly slow the execution of this
-        function, e.g. in case of large `TfsDataFrames` such as a sliced FCC lattice. 
-        Note that validation can be performed at any time by using the `tfs.frame.validate` 
+        function, e.g. in case of large `TfsDataFrames` such as a sliced FCC lattice.
+        Note that validation can be performed at any time by using the `tfs.frame.validate`
         function.
 
     .. admonition:: **Methodology**
@@ -364,7 +364,7 @@ def _parse_header(str_list: list[str]) -> tuple[str, bool | str | int | float, n
         return name, None
     if value_type is bool:  # special handling for boolean values
         return name, _string_to_bool(value_string)
-    elif value_type is np.complex128:  # special handling for complex values
+    if value_type is np.complex128:  # special handling for complex values
         return name, _parse_complex(value_string)
     # Otherwise we just cast to the determined type (no special handling)
     return name, value_type(value_string)
@@ -433,9 +433,10 @@ def _is_madx_string_col_identifier(type_str: str) -> bool:
         return False
     try:
         _ = int(type_str[1:-1])
-        return True
     except ValueError:
         return False
+    else:
+        return True
 
 
 def _parse_complex(complex_string: str) -> np.complex128:
