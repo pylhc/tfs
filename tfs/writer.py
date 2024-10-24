@@ -417,10 +417,10 @@ class ValueToStringFormatter(string.Formatter):
         if format_spec.endswith("b"):
             return self._format_boolean(value, format_spec)
 
-        elif format_spec.endswith("c"):
+        if format_spec.endswith("c"):
             return self._format_complex(value, format_spec)
 
-        elif format_spec.endswith("s"):
+        if format_spec.endswith("s"):
             return self._format_string(value, format_spec)
 
         return super().format_field(value, format_spec)
