@@ -1,7 +1,6 @@
 import pathlib
 
 import pytest
-import numpy as np
 from pandas.api import types as pdtypes
 from pandas.core.arrays.string_ import StringDtype
 from pandas.testing import assert_frame_equal

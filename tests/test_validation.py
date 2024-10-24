@@ -27,7 +27,7 @@ class TestWarnings:
         df = _tfs_dataframe
         df.headers["NANVALUE"] = np.nan  # make sure there is a NaN in there
         validate(df, compatibility=validation_mode)
-        
+
         for record in caplog.records:
             assert record.levelname == "WARNING"
         assert "contains non-physical values in headers" in caplog.text

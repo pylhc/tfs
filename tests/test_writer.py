@@ -1,5 +1,4 @@
 import logging
-import pathlib
 import random
 import string
 
@@ -9,7 +8,6 @@ import pytest
 from cpymad.madx import Madx
 from pandas._testing import assert_dict_equal
 from pandas.testing import assert_frame_equal, assert_series_equal
-from pymadng import MAD
 
 import tfs
 from tfs import TfsDataFrame, read_tfs, write_tfs
@@ -216,7 +214,7 @@ class TestWrites:
     def test_tfs_write_with_nil_in_headers(self, _tfs_dataframe, tmp_path):
         df = _tfs_dataframe
         df.headers["WRITETONIL"] = None
-        
+
         write_location = tmp_path / "test.tfs"
         write_tfs(write_location, df, validate="madng")
 

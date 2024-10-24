@@ -44,7 +44,7 @@ def _tfs_complex_file() -> pathlib.Path:
     return INPUTS_DIR / "complex.tfs"
 
 
-@pytest.fixture()
+@pytest.fixture
 def _tfs_madng_file() -> pathlib.Path:
     """A TFS file withboth complex values and booleans, in headers and columns."""
     return INPUTS_DIR / "madng.tfs"
