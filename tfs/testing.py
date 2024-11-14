@@ -40,7 +40,7 @@ def assert_tfs_frame_equal(
         In the case of this helper function, all keys present in
         `df1`'s headers will be checked for in `df2`'s headers and
         their corresponding values compared. If given as `True`,
-        the both headers should be the exact same dictionary.
+        then both headers should be the exact same dictionary.
 
     Args:
         df1 (TfsDataFrame): The first `TfsDataFrame` to compare.
