@@ -3,20 +3,10 @@ import pathlib
 import numpy as np
 import pandas as pd
 import pytest
-from pandas._testing import assert_dict_equal
-from pandas.testing import assert_frame_equal
 
 from tfs import TfsDataFrame
 
 INPUTS_DIR = pathlib.Path(__file__).parent / "inputs"
-
-
-# ----- Helpers ----- #
-
-
-def assert_tfs_frame_equal(df1, df2, **kwargs):
-    assert_frame_equal(df1, df2, **kwargs)
-    assert_dict_equal(df1.headers, df2.headers, compare_keys=True)
 
 
 # ----- Fixtures ----- #
