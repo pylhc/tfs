@@ -29,6 +29,11 @@ This release brings no breaking changes per se, but enough behavioural changes t
   - The documentation now includes a new page on the `TFS` format itself.
   - The documentation now includes a new page on compatibility modes for `TfsDataFrame` validation.
 
+## Version 3.9.0
+
+- Added:
+  - A module, `tfs.testing`, has been added and made publicly available. It provides an assert function to compare `TfsDataFrame` similar to that provided by `pandas`, destined for unit tests.
+
 ## Version 3.8.2
 
 - Changed:
