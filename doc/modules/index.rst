@@ -31,6 +31,11 @@ API Reference
     :noindex:
 
 
+.. automodule:: tfs.testing
+    :members:
+    :noindex:
+
+
 .. automodule:: tfs.tools
     :members:
     :noindex:
