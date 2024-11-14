@@ -4,8 +4,7 @@ import numpy as np
 import pytest
 
 from tfs import TfsDataFrame, read_hdf, read_tfs, write_hdf
-
-from .conftest import assert_tfs_frame_equal
+from tfs.testing import assert_tfs_frame_equal
 
 
 class TestHDF:

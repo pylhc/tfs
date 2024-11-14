@@ -18,8 +18,7 @@ from tfs.errors import (
     NonStringColumnNameError,
     SpaceinColumnNameError,
 )
-
-from .conftest import assert_tfs_frame_equal
+from tfs.testing import assert_tfs_frame_equal
 
 
 class TestWrites:

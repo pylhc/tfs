@@ -9,9 +9,10 @@ import tfs
 from tfs.constants import HEADER
 from tfs.errors import AbsentColumnNameError, AbsentColumnTypeError, UnknownTypeIdentifierError
 from tfs.reader import read_headers, read_tfs
+from tfs.testing import assert_tfs_frame_equal
 from tfs.writer import write_tfs
 
-from .conftest import INPUTS_DIR, assert_tfs_frame_equal
+from .conftest import INPUTS_DIR
 
 
 class TestRead:

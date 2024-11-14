@@ -5,8 +5,9 @@ import pytest
 from tfs import read_tfs
 from tfs.collection import Tfs, TfsCollection
 from tfs.frame import TfsDataFrame
+from tfs.testing import assert_tfs_frame_equal
 
-from .conftest import INPUTS_DIR, assert_tfs_frame_equal
+from .conftest import INPUTS_DIR
 
 
 class CollectionTest(TfsCollection):

@@ -7,9 +7,10 @@ import pathlib
 import pytest
 
 from tfs.reader import read_headers, read_tfs
+from tfs.testing import assert_tfs_frame_equal
 from tfs.writer import write_tfs
 
-from .conftest import INPUTS_DIR, assert_tfs_frame_equal
+from .conftest import INPUTS_DIR
 
 SUPPORTED_EXTENSIONS: tuple[str] = ["gz", "bz2", "zip", "xz", "zst", "tar", "tar.gz"]  # through pandas
 
