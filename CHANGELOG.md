@@ -1,5 +1,10 @@
 # TFS-Pandas Changelog
 
+## Version 3.9.0
+
+- Added:
+  - A module, `tfs.testing`, has been added and made publicly available. It provides an assert function to compare `TfsDataFrame` similar to that provided by `pandas`.
+
 ## Version 3.8.2
 
 - Changed:
