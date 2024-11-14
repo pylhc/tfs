@@ -160,6 +160,24 @@
       "doc_lineno": 80
     },
     {
+      "source": "reference_df = tfs.read(\"path/to/file.tfs\")\nnew_df = some_function(*args, **kwargs)\nassert_tfs_frame_equal(reference_df, new_df)",
+      "names": [],
+      "example": {
+        "document": "modules/index",
+        "ref_id": "testing",
+        "headings": [
+          "API Reference",
+          "Example",
+          "Methodology",
+          "Examples",
+          "Methodology",
+          "Examples",
+          "Example"
+        ]
+      },
+      "doc_lineno": 34
+    },
+    {
       "source": ">>> tfs.write(\"filename.tfs\", dataframe)",
       "names": [],
       "example": {
@@ -172,6 +190,7 @@
           "Examples",
           "Methodology",
           "Examples",
+          "Example",
           "Examples"
         ]
       },
@@ -190,6 +209,7 @@
           "Examples",
           "Methodology",
           "Examples",
+          "Example",
           "Examples"
         ]
       },
@@ -208,6 +228,7 @@
           "Examples",
           "Methodology",
           "Examples",
+          "Example",
           "Examples"
         ]
       },
@@ -226,6 +247,7 @@
           "Examples",
           "Methodology",
           "Examples",
+          "Example",
           "Examples"
         ]
       },
