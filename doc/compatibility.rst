@@ -55,6 +55,11 @@ Additional checks can be performed by setting the `compatibility` parameter, as 
 MAD-NG Compatibility
 --------------------
 
+.. admonition:: Supported Versions
+
+    The compatibility with ``MAD-NG`` is guaranteed starting with version `1.0.0`.
+    See below for details and caveats.
+
 Since ``MAD-NG`` implements and accepts more features into its **TFS** files, its compatibility mode is naturally less restrictive.
 Namely, the following are accepted by ``MAD-NG`` and ``MAD-NG`` only:
 
