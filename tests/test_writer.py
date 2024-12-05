@@ -1,6 +1,7 @@
 import logging
 import random
 import string
+import sys
 
 import numpy as np
 import pandas as pd
@@ -67,7 +68,9 @@ class TestWrites:
             # of numpy.array_equal to allow for (very) small relative numerical differences on loading
             for column in dframe.columns:
                 assert column in madx.table.test_table
-                assert_series_equal(pd.Series(madx.table.test_table[column]), dframe[column], check_names=False)
+                assert_series_equal(
+                    pd.Series(madx.table.test_table[column]), dframe[column], check_names=False
+                )
 
     def test_tfs_write_empty_index_dataframe(self, tmp_path):
         df = TfsDataFrame(
@@ -230,8 +233,10 @@ class TestWrites:
         new = read_tfs(write_location)
         assert_tfs_frame_equal(_tfs_dataframe_madng, new, check_exact=False)  # float precision can be an issue
 
+    @pytest.mark.skipif(sys.platform == "win32", reason="MAD-NG not available on Windows")
     def test_tfs_write_madng_compatible_is_read_by_madng(self, _tfs_dataframe_madng, tmp_path):
         from pymadng import MAD
+
         write_location = tmp_path / "test.tfs"
         write_tfs(write_location, _tfs_dataframe_madng, validate="madng")  # has all MAD-NG features
         assert write_location.is_file()
@@ -323,7 +328,8 @@ class TestFailures:
         write_location = tmp_path / "test.tfs"
         # This df raises in validate because of list colnames
         with pytest.raises(
-            IterableInDataFrameError, match="Lists or tuple elements are not accepted in a TfsDataFrame"
+            IterableInDataFrameError,
+            match="Lists or tuple elements are not accepted in a TfsDataFrame",
         ):
             write_tfs(write_location, list_col_tfs)
 
