@@ -230,18 +230,26 @@ class TestWrites:
         new = read_tfs(write_location)
         assert_tfs_frame_equal(_tfs_dataframe_madng, new, check_exact=False)  # float precision can be an issue
 
-    def test_tfs_write_madng_compatible_is_read_by_madng(self, _tfs_dataframe_madng, tmp_path, capsys):
+    def test_tfs_write_madng_compatible_is_read_by_madng(self, _tfs_dataframe_madng, tmp_path):
+        from pymadng import MAD
         write_location = tmp_path / "test.tfs"
-        write_tfs(write_location, _tfs_dataframe_madng, validate="madng")  # booleans are MAD-NG feature
+        write_tfs(write_location, _tfs_dataframe_madng, validate="madng")  # has all MAD-NG features
         assert write_location.is_file()
 
-        # TODO: now read the file with pymadng and check there is not error from MADNG in the sys output
-        # madng = MAD()  # might need to chmod the executable shipped with the package first
-        # madng.send(f"local mtbl = mtable:read('{str(write_location.absolute())}')")
+        # Now we read the file with pymadng and check there is not error from MADNG
+        # In case of error, pymadng will print the output to stdout/stderr. We need
+        # to ask to receive back from MAD-NG which would raise (and fail the test)
+        # if the loading did not go properly (our file is not accepted by MAD-NG).
+        madng = MAD(debug=True)
+        # TODO: change for: madng.protected_send(...) when it is publicly exposed by @jgray-19
+        madng._MAD__process.protected_send(f"mtbl = mtable:read('{str(write_location.absolute())}')")
 
-        # captured = capsys.readouterr()
-        # assert "Error" not in captured.out  # TODO: correct message to check for
-        # assert "Error" not in captured.err  # TODO: correct message to check for
+        # If the loading went fine and we `.recv()` since we haven't sent anything it would
+        # just hang. So we first send some dummy and then call `.recv()`. Now if there was an
+        # error loading it raises a `RuntimeError` and the test fails, otherwise it returns a
+        # np.int32(1) which we don't care about, and the test concludes successfully.
+        madng.send("py:send(1)")
+        madng.recv()
 
 
 class TestFailures:
