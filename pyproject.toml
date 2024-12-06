@@ -65,7 +65,7 @@ test = [
   "pytest >= 7.0",
   "pytest-cov >= 2.9",
   "cpymad >= 1.8.1",  # to check MAD-X can read our files
-  "pymadng >= 0.5.0",  # to check MAD-NG can read our files
+  "pymadng >= 0.6.0",  # to check MAD-NG can read our files
 ]
 doc = [
   "sphinx >= 7.0",

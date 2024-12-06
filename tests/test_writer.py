@@ -246,8 +246,7 @@ class TestWrites:
         # to ask to receive back from MAD-NG which would raise (and fail the test)
         # if the loading did not go properly (our file is not accepted by MAD-NG).
         madng = MAD(debug=True)
-        # TODO: change for: madng.protected_send(...) when it is publicly exposed by @jgray-19
-        madng._MAD__process.protected_send(f"mtbl = mtable:read('{str(write_location.absolute())}')")
+        madng.protected_send(f"mtbl = mtable:read('{str(write_location.absolute())}')")
 
         # If the loading went fine and we `.recv()` since we haven't sent anything it would
         # just hang. So we first send some dummy and then call `.recv()`. Now if there was an
