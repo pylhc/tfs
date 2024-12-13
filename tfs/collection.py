@@ -45,7 +45,7 @@ class _MetaTfsCollection(type):
             else:
                 new_dict.pop(key)
                 new_dict["_two_plane_names"].append(key)
-                for plane, prop in zip("xy", (prop_x, prop_y)):
+                for plane, prop in zip("xy", (prop_x, prop_y), strict=False):
                     new_key = f"{key}_{plane}"
                     new_dict[new_key] = prop
                     new_dict["_stored_definitions"][new_key] = value.get_planed_copy(plane)

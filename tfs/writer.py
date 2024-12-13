@@ -109,7 +109,7 @@ def write_tfs(
     tfs_file_path = pathlib.Path(tfs_file_path)
 
     # Force a conversion from pd.Series-like to TfsDataFrame to avoid empty columns issues
-    if not isinstance(data_frame, (TfsDataFrame, pd.DataFrame)):
+    if not isinstance(data_frame, TfsDataFrame | pd.DataFrame):
         data_frame = TfsDataFrame(data_frame)
         data_frame.columns = data_frame.columns.astype(str)  # need column names to be strings
 

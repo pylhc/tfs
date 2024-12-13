@@ -281,7 +281,7 @@ def validate(
 
     # ----- Check that no element is a list / tuple in the dataframe ----- #
     def _element_is_list(element):
-        return isinstance(element, (list, tuple))
+        return isinstance(element, list | tuple)
 
     _element_is_list = np.vectorize(_element_is_list)
 

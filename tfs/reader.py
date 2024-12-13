@@ -13,7 +13,7 @@ import shlex
 from contextlib import contextmanager
 from dataclasses import dataclass
 from types import NoneType
-from typing import Callable, TYPE_CHECKING
+from typing import TYPE_CHECKING
 
 import numpy as np
 import pandas as pd
@@ -41,6 +41,7 @@ from tfs.frame import TfsDataFrame
 from tfs.frame import validate as validate_frame
 
 if TYPE_CHECKING:
+    from collections.abc import Callable
     from io import TextIOWrapper
 
 
@@ -158,7 +159,7 @@ def read_tfs(
 
     # The pandas engines do NOT support reading complex numbers, we have to provide a function
     # We first create a dict from the metadata with column names and the associated types
-    dtypes_dict: dict[str, type] = dict(zip(metadata.column_names, metadata.column_types))
+    dtypes_dict: dict[str, type] = dict(zip(metadata.column_names, metadata.column_types, strict=False))
     converters: dict[str, Callable] = {}  # will be explained in a later comment
 
     # If we have complex-dtyped columns, they are popped from the first dict and added
@@ -167,7 +168,7 @@ def read_tfs(
     # dicts (for dtype AND converter), the pandas reader emits a ParserWarning
     if np.complex128 in metadata.column_types:
         LOGGER.debug("Complex columns detected, adding converter.")
-        for colname, dtype in zip(metadata.column_names, metadata.column_types):
+        for colname, dtype in zip(metadata.column_names, metadata.column_types, strict=False):
             if dtype is np.complex128:
                 converters[colname] = _parse_complex
                 del dtypes_dict[colname]
@@ -317,10 +318,10 @@ def _read_metadata(tfs_file_path: pathlib.Path | str) -> _TfsMetaData:
     # and provides and handle to iterate through, line by line
     with _metadata_handle(tfs_file_path) as file_reader:
         for line_number, line in enumerate(file_reader.readlines()):
-            line = line.strip()
-            if not line:
+            stripped_line = line.strip()
+            if not stripped_line:
                 continue  # empty line
-            line_components = shlex.split(line)
+            line_components = shlex.split(stripped_line)
             if line_components[0] == HEADER:
                 name, value = _parse_header_line(line_components[1:])
                 headers[name] = value
