@@ -34,9 +34,9 @@ def write_tfs(
     validate: str = "madx",
 ) -> None:
     """
-    Writes the provided `DataFrame` to disk at **tfs_file_path**, eventually with
-    the specifically provided `headers_dict` as headers dictionary. Note that this
-    function is exported also at the top-level of the package as `tfs.write`.
+    Writes the provided `DataFrame` to disk at **tfs_file_path**. If `headers_dict`
+    is provided it is written to dist as the headers. Note that this function is
+    exported also at the top-level of the package as `tfs.write`.
 
     .. note::
         Compression of the output file is possible, by simply providing a valid compression extension
@@ -57,8 +57,9 @@ def write_tfs(
         data_frame (TfsDataFrame | pd.DataFrame | pd.Series): The dataframe to write to file. If
             a Series-like object is given, it will be converted to a `TfsDataFrame` first and
             written with a single column.
-        headers_dict (dict): Headers for the `data_frame`. If not provided, assumes a `TfsDataFrame`
-            was given and tries to use ``data_frame.headers``.
+        headers_dict (dict): Headers for the `data_frame`. If not provided, assumes a
+            `TfsDataFrame` was given and tries to use ``data_frame.headers``. Writes with
+            empty headers is those are not found either.
         save_index (str | bool): bool or string. Default to ``False``. If ``True``, saves
             the index of `data_frame` to a column identifiable by `INDEX&&&`. If given as string,
             saves the index of `data_frame` to a column named by the provided value.
@@ -112,7 +113,7 @@ def write_tfs(
         data_frame = TfsDataFrame(data_frame)
         data_frame.columns = data_frame.columns.astype(str)  # need column names to be strings
 
-    # Only perform validation if asked ('validate' defaults MAD-X compatibility)
+    # Only perform validation if asked ('validate' defaults to MAD-X compatibility)
     if validate is not None:  # validation function checks for valid values
         validate_frame(
             data_frame,
