@@ -2,16 +2,18 @@
 
 ## Version 4.0.0
 
-TODO: Add information here about the target MAD-NG (and pymadng) version with which we are compatible.
-
 Version `4.0` is a major release bringing compatibility with `MAD-NG` features in **TFS** files and tables, apart from the more exotic ones.
 We also bring new documentation pages regarding the **TFS** format, code compatibilities, and the new features.
 Please have a look at the documentation should you intent to use `tfs-pandas` 4.0, as there are a few (now documented) caveats.
 
-This release brings no breaking changes per se, but enough behavioural changes to warrant a major version bump.
+**This release brings no breaking changes per se**, but enough behavioural changes to warrant a major version bump.
+
+- Important:
+  - Support for `Python 3.9` has been dropped. The minimum required Python version is now `3.10`.
+  - Minimum supported `MAD-NG` version is `1.0.0`, due to synchronized development of some feature details. The corresponding `pymadng` version is `0.6.0`.
 
 - Added:
-  - Handling of boolean and complex headers values (`MAD-NG` feature).
+  - Handling of boolean-type and complex-type header values (`MAD-NG` feature).
   - Handling of bolean-type and complex-type columns (`MAD-NG` feature).
   - Handling of nullable-type `nil` values in headers and columns (`MAD-NG` feature).
   - Compatibility modes for dataframe validation. The `tfs.frame.validate` function now expects this, and valid choices are `MADX`, `MAD-X`, `MADNG` and `MAD-NG` (case-insensitive, see API documentation).
@@ -22,7 +24,7 @@ This release brings no breaking changes per se, but enough behavioural changes t
   - By default, `TfsDataFrame` validation is now done in `MAD-X` compatibility mode (more restrictive) before writing.
 
 - Fixed:
-  - Writing a dataframe with no headers (not empty headers) - e.g. a `pandas.DataFrame` - now works correctly.
+  - Writing a dataframe with no headers (not empty headers), e.g. a `pandas.DataFrame` - now works correctly.
 
 - Documentation:
   - The documentation has been updated to reflect the new features and changes.
