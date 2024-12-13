@@ -243,17 +243,12 @@ class TestWrites:
 
         # Now we read the file with pymadng and check there is not error from MADNG
         # In case of error, pymadng will print the output to stdout/stderr. We need
-        # to ask to receive back from MAD-NG which would raise (and fail the test)
-        # if the loading did not go properly (our file is not accepted by MAD-NG).
+        # to ask to receive back from MAD-NG  or just communicate data with it which
+        # would raise (and fail the test) if the loading did not go properly (a.k.a
+        # our file is not accepted by MAD-NG). We will communicate later to get back
+        # loaded data to test it.
         madng = MAD(debug=True)
         madng.send(f"mtbl = mtable:read('{str(write_location.absolute())}')")
-
-        # If the loading went fine and we `.recv()` since we haven't sent anything it would
-        # just hang. So we first send some dummy and then call `.recv()`. Now if there was an
-        # error loading it raises a `RuntimeError` and the test fails, otherwise it returns a
-        # np.int32(1) which we don't care about, and the test concludes successfully.
-        madng.send("py:send(1)")
-        madng.recv()
 
         # Now we get it back from MAD-NG (via pymadng) and check the contents are correct
         df = madng.mtbl.to_df()  # since we have tfs-pandas (duh) it's a TfsDataFrame
