@@ -255,6 +255,10 @@ class TestWrites:
         madng.send("py:send(1)")
         madng.recv()
 
+        # Now we get it back from MAD-NG (via pymadng) and check the contents are correct
+        df = madng.mtbl.to_df()  # since we have tfs-pandas (duh) it's a TfsDataFrame
+        assert_tfs_frame_equal(_tfs_dataframe_madng, df, check_exact=False)  # float precision can be an issue
+
 
 class TestFailures:
     def test_raising_on_non_unique_columns(self, caplog):
