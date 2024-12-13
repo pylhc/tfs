@@ -289,6 +289,7 @@ def _read_metadata(tfs_file_path: pathlib.Path | str) -> _TfsMetaData:
     column_names = column_types = None
     headers = {}
 
+    # Note: using pandas.read_csv handles file compression, we need it :)
     # Read the headers, chunk by chunk (line by line) with pandas.read_csv as a
     # context manager. Very important: the value of 'sep' here should not be a
     # value that can be found in headers (key or value)
