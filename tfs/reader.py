@@ -266,6 +266,7 @@ class _TfsMetaData:
     column_names: np.ndarray
     column_types: np.ndarray
 
+
 @contextmanager
 def _quick_reader(file_path):
     """Testing idea from Josch."""
@@ -274,6 +275,7 @@ def _quick_reader(file_path):
         yield handles.handle
     finally:
         handles.close()
+
 
 def _read_metadata(tfs_file_path: pathlib.Path | str) -> _TfsMetaData:
     """
@@ -309,7 +311,7 @@ def _read_metadata(tfs_file_path: pathlib.Path | str) -> _TfsMetaData:
                 continue  # empty line
             line_components = shlex.split(line)
             if line_components[0] == HEADER:
-                name, value = _parse_header(line_components[1:])
+                name, value = _parse_header_line(line_components[1:])
                 headers[name] = value
             elif line_components[0] == NAMES:
                 LOGGER.debug("Parsing column names.")
@@ -331,7 +333,7 @@ def _read_metadata(tfs_file_path: pathlib.Path | str) -> _TfsMetaData:
 
 
 
-def _parse_header(str_list: list[str]) -> tuple[str, bool | str | int | float, np.complex128]:
+def _parse_header_line(str_list: list[str]) -> tuple[str, bool | str | int | float, np.complex128]:
     """
     Parses the data in the provided header line. Expects a valid header
     line starting with the '@' identifier, and parses the content that
