@@ -10,4 +10,4 @@
 - [x] Disallow `None` in headers for `MAD-X` mode?
 - [x] Add tests for `MAD-X` mode?
 - [x] Adapt the `has_nils` file
-- [ ] Add pymadng tests to check `MAD-NG` reads our written files
+- [x] Add pymadng tests to check `MAD-NG` reads our written files
