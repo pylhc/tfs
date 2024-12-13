@@ -350,12 +350,10 @@ def _read_metadata(tfs_file_path: pathlib.Path | str) -> _TfsMetaData:
     LOGGER.debug("Reading headers and metadata from file")
     tfs_file_path = pathlib.Path(tfs_file_path)
     column_names = column_types = None
-    non_data_lines: int = 0
     headers = {}
 
     with _quick_reader(tfs_file_path) as file_reader:
-        for line in file_reader.readlines():
-            non_data_lines += 1
+        for line_number, line in enumerate(file_reader.readlines()):
             line = line.strip()
             if not line:
                 continue  # empty line
@@ -376,7 +374,7 @@ def _read_metadata(tfs_file_path: pathlib.Path | str) -> _TfsMetaData:
 
     return _TfsMetaData(
         headers=headers,
-        non_data_lines=non_data_lines - 1,  # skip these lines (-1 since we've moved on to the first data line)
+        non_data_lines=line_number,  # skip these lines
         column_names=column_names,
         column_types=column_types,
     )
