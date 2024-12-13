@@ -46,12 +46,6 @@ if TYPE_CHECKING:
 
 LOGGER = logging.getLogger(__name__)
 
-# A string not expected to be found in the headers (hopefully!)
-# I generated this with: "".join(random.choice(string.ascii_letters) for _ in range(100))
-_UNEXPECTED_SEP: str = (
-    "baBfHIhwOdMnuBVHDDZcysbmwRgWaBnukQPIWNHpFVqjrIcOryhvyJwIRRHfqOQLGKhtZPLJhziZKomfVhXsoqfoGkvyFKuNhhst"
-)
-
 # Here we take the default NA values for pandas readers, and make a copy from which we
 # remove "" (we want empty strings to stay empty strings) and adding "nil"
 _NA_VALUES: list[str] = [*list(STR_NA_VALUES), "nil"]
