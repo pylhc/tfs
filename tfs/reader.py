@@ -13,7 +13,7 @@ import shlex
 from contextlib import contextmanager
 from dataclasses import dataclass
 from types import NoneType
-from typing import Callable
+from typing import Callable, TYPE_CHECKING
 
 import numpy as np
 import pandas as pd
@@ -39,6 +39,10 @@ from tfs.errors import (
 )
 from tfs.frame import TfsDataFrame
 from tfs.frame import validate as validate_frame
+
+if TYPE_CHECKING:
+    from io import TextIOWrapper
+
 
 LOGGER = logging.getLogger(__name__)
 
@@ -268,8 +272,20 @@ class _TfsMetaData:
 
 
 @contextmanager
-def _quick_reader(file_path):
-    """Testing idea from Josch."""
+def _metadata_handle(file_path: pathlib.Path | str) -> TextIOWrapper:  # type: ignore
+    """
+    A contextmanager to provide a handle for the file, to iterate through.
+    The handle is obtained via a pandas function which handles the potential
+    file compression for us. Whatever happens after yielding, the handle is
+    closed when the context exits.
+
+    Args:
+        tfs_file_path (pathlib.Path | str): Path to the **TFS** file to read. Can be
+            a string, in which case it will be cast to a Path object.
+
+    Yields:
+        A ``TextIOWrapper`` as the handle of the file.
+    """
     handles = get_handle(file_path, mode="r", is_text=True, errors="strict", compression="infer")
     try:
         yield handles.handle
@@ -284,11 +300,12 @@ def _read_metadata(tfs_file_path: pathlib.Path | str) -> _TfsMetaData:
 
     .. admonition:: **Methodology**
 
-        This function parses the first lines of the file until it gets to the `types` line.
-        While parsed, the appropriate information is gathered (headers content, column names
-        and types, number of lines parsed). After reaching the `types` line, the loop is
-        broken to avoid reading the whole file. The gathered metadata is assembled in a
-        single ``_TfsMetaData`` object and returned.
+        This function parses the first lines of the file until it gets to
+        the `types` line. While parsed, all the appropriate information is
+        gathered (headers content, column names and types, number of lines
+        parsed). After reaching the `types` line, the loop is broken to avoid
+        reading the whole file. The gathered metadata is assembled in a single
+        ``_TfsMetaData`` object and returned.
 
     Args:
         tfs_file_path (pathlib.Path | str): Path to the **TFS** file to read. Can be
@@ -304,7 +321,7 @@ def _read_metadata(tfs_file_path: pathlib.Path | str) -> _TfsMetaData:
 
     # Note: the helper contextmanager handles compression for us
     # and provides and handle to iterate through, line by line
-    with _quick_reader(tfs_file_path) as file_reader:
+    with _metadata_handle(tfs_file_path) as file_reader:
         for line_number, line in enumerate(file_reader.readlines()):
             line = line.strip()
             if not line:
