@@ -25,7 +25,7 @@ An example header line is:
 
 .. code-block::
 
-    @ NAME                   %le             0.269975
+    @ NAME                   %s             "EFIELD"
 
 Additionally, any headers line starting with the `#` character is considered a comment and is ignored by the parser.
 There is no limit on the number of header lines in a TFS file, and there can be no header lines at all.
