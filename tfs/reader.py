@@ -10,13 +10,15 @@ from __future__ import annotations
 import logging
 import pathlib
 import shlex
+from contextlib import contextmanager
 from dataclasses import dataclass
-from typing import Callable
 from types import NoneType
+from typing import Callable
 
 import numpy as np
 import pandas as pd
 from pandas._libs.parsers import STR_NA_VALUES
+from pandas.io.common import get_handle
 
 from tfs.constants import (
     COMMENTS,
@@ -264,77 +266,6 @@ class _TfsMetaData:
     column_names: np.ndarray
     column_types: np.ndarray
 
-
-# def _read_metadata(tfs_file_path: pathlib.Path | str) -> _TfsMetaData:
-#     """
-#     Parses the beginning of the **tfs_file_path** to extract metadata (all non dataframe lines).
-
-#     .. admonition:: **Methodology**
-
-#         This function parses the first lines of the file until it gets to the `types` line.
-#         While parsed, the appropriate information is gathered (headers content, column names & types,
-#         number of lines parsed). After reaching the `types` line, the loop is broken to avoid reading
-#         the whole file. The gathered metadata is assembled in a single ``_TfsMetaData`` object and
-#         returned.
-
-#     Args:
-#         tfs_file_path (pathlib.Path | str): Path to the **TFS** file to read. Can be
-#             a string, in which case it will be cast to a Path object.
-
-#     Returns:
-#         A ``_TfsMetaData`` object with the metadata read from the file.
-#     """
-#     LOGGER.debug("Reading headers and metadata from file")
-#     tfs_file_path = pathlib.Path(tfs_file_path)
-#     column_names = column_types = None
-#     headers = {}
-
-#     # Note: using pandas.read_csv handles file compression, we need it :)
-#     # Read the headers, chunk by chunk (line by line) with pandas.read_csv as a
-#     # context manager. Very important: the value of 'sep' here should not be a
-#     # value that can be found in headers (key or value)
-#     with pd.read_csv(
-#         tfs_file_path,
-#         header=None,  # don't look for a line with column names
-#         chunksize=1,  # read one chunk at a time (each is a line)
-#         skip_blank_lines=False,  # do not skip blank lines, so they count as header lines
-#         na_filter=False,  # Do not convert empty lines to NA
-#         sep=_UNEXPECTED_SEP,  # a string not expected to be found in the headers
-#         engine="python",  # only engine that supports this sep argument
-#         dtype=str,  # we are reading the headers so we only expect and want strings, they are parsed afterwards
-#     ) as file_reader:
-#         # Now each read chunk / line is made into a DataFrame, colname 0 and value is the read line
-#         for line_record in file_reader:
-#             line = line_record.loc[:, 0].values[0]  # this is the value of the line as a string
-#             if not line:
-#                 continue  # empty line
-#             line_components = shlex.split(line)
-#             if line_components[0] == HEADER:
-#                 name, value = _parse_header(line_components[1:])
-#                 headers[name] = value
-#             elif line_components[0] == NAMES:
-#                 LOGGER.debug("Parsing column names.")
-#                 column_names = np.array(line_components[1:])
-#             elif line_components[0] == TYPES:
-#                 LOGGER.debug("Parsing column types.")
-#                 column_types = _compute_types(line_components[1:])
-#             elif line_components[0] == COMMENTS:
-#                 continue
-#             else:  # After all previous cases should only be data lines. If not, file is fucked.
-#                 break  # Break to not go over all lines, saves a lot of time on big files
-
-#     return _TfsMetaData(
-#         headers=headers,
-#         non_data_lines=line_record.index[0],  # skip these lines
-#         column_names=column_names,
-#         column_types=column_types,
-#     )
-
-# ----- TESTING JOSCH IDEA ----- #
-
-from contextlib import contextmanager
-from pandas.io.common import get_handle
-
 @contextmanager
 def _quick_reader(file_path):
     """Testing idea from Josch."""
@@ -344,14 +275,33 @@ def _quick_reader(file_path):
     finally:
         handles.close()
 
-
 def _read_metadata(tfs_file_path: pathlib.Path | str) -> _TfsMetaData:
-    """Same as before but we use the handle manager from above."""
+    """
+    Parses the beginning of the **tfs_file_path** to extract metadata
+    (all non dataframe lines).
+
+    .. admonition:: **Methodology**
+
+        This function parses the first lines of the file until it gets to the `types` line.
+        While parsed, the appropriate information is gathered (headers content, column names
+        and types, number of lines parsed). After reaching the `types` line, the loop is
+        broken to avoid reading the whole file. The gathered metadata is assembled in a
+        single ``_TfsMetaData`` object and returned.
+
+    Args:
+        tfs_file_path (pathlib.Path | str): Path to the **TFS** file to read. Can be
+            a string, in which case it will be cast to a Path object.
+
+    Returns:
+        A ``_TfsMetaData`` object with the metadata read from the file.
+    """
     LOGGER.debug("Reading headers and metadata from file")
     tfs_file_path = pathlib.Path(tfs_file_path)
     column_names = column_types = None
     headers = {}
 
+    # Note: the helper contextmanager handles compression for us
+    # and provides and handle to iterate through, line by line
     with _quick_reader(tfs_file_path) as file_reader:
         for line_number, line in enumerate(file_reader.readlines()):
             line = line.strip()
@@ -388,8 +338,8 @@ def _parse_header(str_list: list[str]) -> tuple[str, bool | str | int | float, n
     follows.
 
     Args:
-        str_list (list[str]): list of parsed elements from the header line
-            (we use parse in reader with 'shlex.split`).
+        str_list (list[str]): list of parsed elements from the header
+            line (we get these with 'shlex.split`).
 
     Returns:
         A tuple with the name of the header parameter for this line, as
