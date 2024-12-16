@@ -133,8 +133,12 @@ class TestWrites:
         new = read_tfs(write_location)
         assert_tfs_frame_equal(_dataframe_empty_headers, new, check_exact=False)  # float precision can be an issue
 
-    @pytest.mark.parametrize("validation_mode", ["madx", None, "madng"])
-    def test_tfs_write_read_no_headers(self, _pd_dataframe, validation_mode, tmp_path):
+    @pytest.mark.parametrize("validation_mode", [None, "madng"])
+    def test_tfs_write_read_no_headers_compatible_modes(self, _pd_dataframe, validation_mode, tmp_path):
+        """
+        Check writing with no (not empty) headers is ok in MAD-NG validation mode and no validation.
+        In MAD-X mode validation raises and error but we test this in 'test_validation'.
+        """
         write_location = tmp_path / "test.tfs"
         write_tfs(write_location, _pd_dataframe, validate=validation_mode)  # validation should be irrelevant
         assert write_location.is_file()
