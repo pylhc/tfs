@@ -22,6 +22,7 @@ Please have a look at the documentation should you intent to use `tfs-pandas` 4.
 - Changed:
   - By default, `TfsDataFrame` validation is now skipped on reading.
   - By default, `TfsDataFrame` validation is now done in `MAD-X` compatibility mode (more restrictive) before writing.
+  - By default, `TfsDataFrame` validation in `MAD-X` requires headers to be present in the dataframe.
 
 - Fixed:
   - Writing a dataframe with no headers (not empty headers), e.g. a `pandas.DataFrame` - now works correctly.
