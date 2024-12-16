@@ -257,10 +257,12 @@ def validate(
         When checking for ``MAD-X`` compatibility, which is more restrictive than ``MAD-NG``,
         the following additional checks are performed:
 
-          1. Checking no boolean values are in the dataframe headers.
-          2. Checking no complex values are in the dataframe headers.
-          3. Checking no boolean-dtype columns are in the dataframe.
-          4. Checking no complex-dtype columns are in the dataframe.
+          1. Checking the dataframe has headers.
+          2. Checking no boolean values are in the dataframe headers.
+          3. Checking no complex values are in the dataframe headers.
+          4. Checking for a 'TYPE' entry is in the dataframe headers.
+          5. Checking no boolean-dtype columns are in the dataframe.
+          6. Checking no complex-dtype columns are in the dataframe.
 
     Args:
         data_frame (TfsDataFrame | pd.DataFrame): the dataframe to check on.
