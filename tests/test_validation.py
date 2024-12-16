@@ -1,6 +1,7 @@
 import pathlib
 
 import numpy as np
+from pymadng import MAD
 import pytest
 
 from tfs.errors import InvalidBooleanHeaderError, MADXCompatibilityError, SpaceinColumnNameError
@@ -102,6 +103,13 @@ class TestCommonFailures:
 
 class TestMADXFailures:
     """Tests for failures in MAD-X validation mode, when df has MAD-NG features."""
+
+    @pytest.mark.parametrize("validation_mode", ["madx", "mad-x", "mAd-X"])
+    def test_madx_validation_raises_if_no_headers(self, _pd_dataframe, validation_mode):
+        """MAD-X expects at least a 'TYPE' header. If there are no headers, we raise."""
+        df = _pd_dataframe
+        with pytest.raises(MADXCompatibilityError, match="Headers should be present in MAD-X compatibility mode"):
+            validate(df, compatibility=validation_mode)
 
     @pytest.mark.parametrize("validation_mode", ["madx", "mad-x", "mAd-X"])
     def test_madx_validation_raises_on_boolean_headers(self, _tfs_booleans_file, validation_mode):
