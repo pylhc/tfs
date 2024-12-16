@@ -1,7 +1,6 @@
 import pathlib
 
 import numpy as np
-from pymadng import MAD
 import pytest
 
 from tfs.errors import InvalidBooleanHeaderError, MADXCompatibilityError, SpaceinColumnNameError
