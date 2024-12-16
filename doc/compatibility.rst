@@ -93,7 +93,10 @@ MAD-X Compatibility
 The ``MAD-X`` compatibility mode is more restrictive, and enforces that none of the features listed in the :ref:`MAD-NG section <madng mode>` appear in the `TfsDataFrame`.
 
 Additionally, ``MAD-X`` will refuse to read into a table any **TFS** file that does not include a `TYPE` entry in the headers (which should be a string).
-As part of checking for compatibility with ``MAD-X``, if such an entry is not found in the dataframe headers `tfs-pandas` will log a warning and add one with the value `"Added by tfs-pandas for MAD-X compatibility"`
+As such, when checking for compatibility with ``MAD-X``:
+
+ - If the dataframe has no headers, an error will be raised indicating the dataframe should have headers.
+ - If the dataframe has headers but no `TYPE` entry is not found, `tfs-pandas` will log a warning and add one with the value `"Added by tfs-pandas for MAD-X compatibility"`
 
 .. admonition:: Default mode
 
