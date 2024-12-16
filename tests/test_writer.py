@@ -125,7 +125,7 @@ class TestWrites:
         new = read_tfs(write_location)
         assert_tfs_frame_equal(_tfs_dataframe, new, check_exact=False)  # float precision can be an issue
 
-    def test_tfs_write_read_no_headers(self, _dataframe_empty_headers: TfsDataFrame, tmp_path):
+    def test_tfs_write_read_empty_headers(self, _dataframe_empty_headers: TfsDataFrame, tmp_path):
         write_location = tmp_path / "test.tfs"
         write_tfs(write_location, _dataframe_empty_headers)
         assert write_location.is_file()
@@ -133,9 +133,10 @@ class TestWrites:
         new = read_tfs(write_location)
         assert_tfs_frame_equal(_dataframe_empty_headers, new, check_exact=False)  # float precision can be an issue
 
-    def test_tfs_write_read_pandasdf(self, _pd_dataframe, tmp_path):
+    @pytest.mark.parametrize("validation_mode", ["madx", None, "madng"])
+    def test_tfs_write_read_no_headers(self, _pd_dataframe, validation_mode, tmp_path):
         write_location = tmp_path / "test.tfs"
-        write_tfs(write_location, _pd_dataframe, validate=None)  # validation would complain 'no headers'
+        write_tfs(write_location, _pd_dataframe, validate=validation_mode)  # validation should be irrelevant
         assert write_location.is_file()
 
         new = read_tfs(write_location)
