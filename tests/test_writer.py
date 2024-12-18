@@ -111,7 +111,7 @@ class TestWrites:
 
     def test_tfs_write_read_with_validation(self, _tfs_dataframe, tmp_path):
         write_location = tmp_path / "test.tfs"
-        write_tfs(write_location, _tfs_dataframe)
+        write_tfs(write_location, _tfs_dataframe, validate="madx")  # strictest
         assert write_location.is_file()
 
         new = read_tfs(write_location, validate="madx")
@@ -261,62 +261,60 @@ class TestWrites:
 
 
 class TestFailures:
-    def test_raising_on_non_unique_columns(self, caplog):
+    def test_raising_on_non_unique_columns_when_validating(self, caplog):
         df = TfsDataFrame(columns=["A", "B", "A"])
         with pytest.raises(DuplicateColumnsError, match="The dataframe contains non-unique columns."):
-            write_tfs("", df, non_unique_behavior="raise")
+            write_tfs("", df, non_unique_behavior="raise", validate="madx")  # strictest
 
         for record in caplog.records:
             assert record.levelname == "WARNING"
         assert "Non-unique column names found" in caplog.text
 
-    def test_raising_on_non_unique_index(self, caplog):
+    def test_raising_on_non_unique_index_when_validating(self, caplog):
         df = TfsDataFrame(index=["A", "B", "A"])
         with pytest.raises(DuplicateIndicesError, match="The dataframe contains non-unique indices."):
-            write_tfs("", df, non_unique_behavior="raise")
+            write_tfs("", df, non_unique_behavior="raise", validate="madx")  # strictest
 
         for record in caplog.records:
             assert record.levelname == "WARNING"
         assert "Non-unique indices found" in caplog.text
 
-    def test_raising_on_non_unique_both(self, caplog):
+    def test_raising_on_non_unique_both_when_validating(self, caplog):
         df = TfsDataFrame(index=["A", "B", "A"], columns=["A", "B", "A"])
         with pytest.raises(DuplicateIndicesError, match="The dataframe contains non-unique indices."):
-            write_tfs("", df, non_unique_behavior="raise")
+            write_tfs("", df, non_unique_behavior="raise", validate="madx")  # strictest
 
         for record in caplog.records:
             assert record.levelname == "WARNING"
         assert "Non-unique indices found" in caplog.text  # first checked and raised
 
-    def test_fail_on_spaces_columns(self, caplog):
+    def test_fail_on_spaces_columns_when_validating(self, caplog):
         caplog.set_level(logging.DEBUG)
         df = TfsDataFrame(columns=["allowed", "not allowed"])
         with pytest.raises(SpaceinColumnNameError, match="TFS-Columns can not contain spaces."):
-            write_tfs("", df)
+            write_tfs("", df, validate="madx")  # strictest
 
         for record in caplog.records:
             assert record.levelname == "DEBUG"
         assert "Space(s) found in TFS columns" in caplog.text
 
-    def test_messed_up_dataframe_fails_writes(self, _messed_up_dataframe: TfsDataFrame):
+    def test_messed_up_dataframe_fails_writes_when_validating(self, _messed_up_dataframe: TfsDataFrame):
         messed_tfs = _messed_up_dataframe
         # This df raises in validate because of list elements
-        with pytest.raises(
-            IterableInDataFrameError, match="Lists or tuple elements are not accepted in a TfsDataFrame"
-        ):
-            write_tfs("", messed_tfs)
+        with pytest.raises(IterableInDataFrameError, match="Lists or tuple elements are not accepted in a TfsDataFrame"):
+            write_tfs("", messed_tfs, validate="madx")  # strictest
 
-    def test_dict_column_dataframe_fails_writes(self, _dict_column_in_dataframe: TfsDataFrame, tmp_path):
+    def test_dict_column_dataframe_fails_writes_when_validating(self, _dict_column_in_dataframe: TfsDataFrame, tmp_path):
         dict_col_tfs = _dict_column_in_dataframe
         with pytest.raises(TypeError):  # tries to format dict.__dict__, can't get a % formatter
-            write_tfs("", dict_col_tfs)
+            write_tfs("", dict_col_tfs, validate="madx")  # strictest
 
         del dict_col_tfs["d"]  # should work without the column of dicts
         write_location = tmp_path / "test.tfs"
         write_tfs(write_location, dict_col_tfs)
         assert write_location.is_file()
 
-    def test_list_column_dataframe_fails_writes(self, _list_column_in_dataframe: TfsDataFrame, tmp_path, caplog):
+    def test_list_column_dataframe_fails_writes_when_validating(self, _list_column_in_dataframe: TfsDataFrame, tmp_path, caplog):
         list_col_tfs = _list_column_in_dataframe
         write_location = tmp_path / "test.tfs"
         # This df raises in validate because of list colnames
@@ -324,7 +322,7 @@ class TestFailures:
             IterableInDataFrameError,
             match="Lists or tuple elements are not accepted in a TfsDataFrame",
         ):
-            write_tfs(write_location, list_col_tfs)
+            write_tfs(write_location, list_col_tfs, validate="madx")  # strictest
 
         for record in caplog.records:
             assert record.levelname == "ERROR"
