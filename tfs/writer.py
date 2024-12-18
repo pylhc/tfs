@@ -10,6 +10,7 @@ from __future__ import annotations
 import logging
 import pathlib
 import string
+from types import NoneType
 
 import numpy as np
 import pandas as pd
@@ -315,7 +316,7 @@ def _value_to_string_format_id(value) -> str:
     """
     # We have a special case for None values, otherwise we just
     # let numpy infer the dtype for us
-    dtype_ = type(None) if value is None else np.array(value).dtype
+    dtype_ = NoneType if value is None else np.array(value).dtype
     return _dtype_to_python_string_formatter(dtype_)
 
 
@@ -394,7 +395,7 @@ def _dtype_to_python_string_formatter(type_: type) -> str:
 
     if type_ is None:  # don't know when that triggers
         return ""
-    if type_ is type(None):  # this means the value was None
+    if type_ is NoneType:  # this means the value was None
         return "s"  # formatted as string since we will write 'nil'
     if pdtypes.is_integer_dtype(type_):
         return "d"
