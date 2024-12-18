@@ -31,7 +31,7 @@ def write_tfs(
     colwidth: int = DEFAULT_COLUMN_WIDTH,
     headerswidth: int = DEFAULT_COLUMN_WIDTH,
     non_unique_behavior: str = "warn",
-    validate: str = "madx",
+    validate: str | None = None,
 ) -> None:
     """
     Writes the provided `DataFrame` to disk at **tfs_file_path**. If `headers_dict`
