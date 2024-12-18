@@ -6,10 +6,9 @@ Version `4.0` is a major release bringing compatibility with `MAD-NG` features i
 We also bring new documentation pages regarding the **TFS** format, code compatibilities, and the new features.
 Please have a look at the documentation should you intent to use `tfs-pandas` 4.0, as there are a few (now documented) caveats.
 
-**This release brings no breaking changes per se**, but enough behavioural changes to warrant a major version bump.
-
 - Important:
   - Support for `Python 3.9` has been dropped. The minimum required Python version is now `3.10`.
+  - DataFrame validation is now OFF by default, both when reading from and writing to file. It is up to the user to ask for a given validation mode.
   - Minimum supported `MAD-NG` version is `1.0.0`, due to synchronized development of some feature details. The corresponding `pymadng` version is `0.6.0`.
 
 - Added:
@@ -21,7 +20,7 @@ Please have a look at the documentation should you intent to use `tfs-pandas` 4.
 
 - Changed:
   - By default, `TfsDataFrame` validation is now skipped on reading.
-  - By default, `TfsDataFrame` validation is now done in `MAD-X` compatibility mode (more restrictive) before writing.
+  - By default, `TfsDataFrame` validation is now skipped on writing.
   - By default, `TfsDataFrame` validation in `MAD-X` requires headers to be present in the dataframe.
 
 - Fixed:
