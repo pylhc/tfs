@@ -341,13 +341,14 @@ def validate(
         # enforce if there are no headers in the df (we can't add, we don't modify
         # and return the df in this function). In this case we error.
         if getattr(data_frame, "headers", None) is None:
-            raise MADXCompatibilityError("Headers should be present in MAD-X compatibility mode.")
+            errmsg = "Headers should be present in MAD-X compatibility mode."
+            raise MADXCompatibilityError(errmsg)
 
         # ----- Otherwise we can check the existing headers
         # Check that no boolean values are in the headers - MAD-X does not accept them
         if any(isinstance(header, bool) for header in data_frame.headers.values()):
             LOGGER.debug(
-                f"Boolean values found in headers of dataframe {info_str}, which is incompatible with MAD-X."
+                f"Boolean values found in headers of dataframe {info_str}, which is incompatible with MAD-X. "
                 "Change their types in order to keep compatibility with MAD-X."
             )
             errmsg = "TFS-Headers can not contain boolean values in MAD-X compatibility mode."
@@ -356,7 +357,7 @@ def validate(
         # Check that no complex values are in the headers - MAD-X does not accept them
         if any(isinstance(header, complex) for header in data_frame.headers.values()):
             LOGGER.debug(
-                f"Complex values found in headers of dataframe {info_str}, which is incompatible with MAD-X."
+                f"Complex values found in headers of dataframe {info_str}, which is incompatible with MAD-X. "
                 "Change their types in order to keep compatibility with MAD-X."
             )
             errmsg = "TFS-Headers can not contain complex values in MAD-X compatibility mode."
@@ -366,7 +367,7 @@ def validate(
         # write as 'nil' which MAD-X does not accept
         if any(header is None for header in data_frame.headers.values()):
             LOGGER.debug(
-                f"'None' values found in headers of dataframe {info_str}, which is incompatible with MAD-X."
+                f"'None' values found in headers of dataframe {info_str}, which is incompatible with MAD-X. "
                 "Remove them or assign a value in order to keep compatibility with MAD-X."
             )
             errmsg = "TFS-Headers can not contain 'None' values in MAD-X compatibility mode."
@@ -381,7 +382,7 @@ def validate(
         # Check that the dataframe contains no boolean dtype columns
         if any(pdtypes.is_bool_dtype(type_) for type_ in data_frame.dtypes):
             LOGGER.debug(
-                f"Boolean dtype column found in dataframe {info_str}, which is incompatible with MAD-X."
+                f"Boolean dtype column found in dataframe {info_str}, which is incompatible with MAD-X. "
                 "Change the column dtypes to keep compatibility with MAD-X."
             )
             errmsg = "TFS-Dataframe can not contain boolean dtype columns in MAD-X compatibility mode."
@@ -390,7 +391,7 @@ def validate(
         # Check that the dataframe contains no complex dtype columns
         if any(pdtypes.is_complex_dtype(type_) for type_ in data_frame.dtypes):
             LOGGER.debug(
-                f"Complex dtype column found in dataframe {info_str}, which is incompatible with MAD-X."
+                f"Complex dtype column found in dataframe {info_str}, which is incompatible with MAD-X. "
                 "Change the column dtypes or split it into real and imaginary values to keep compatibility with MAD-X."
             )
             errmsg = "TFS-Dataframe can not contain complex dtype columns in MAD-X compatibility mode."
