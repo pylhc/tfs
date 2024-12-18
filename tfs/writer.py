@@ -422,13 +422,13 @@ class ValueToStringFormatter(string.Formatter):
     """
 
     def format_field(self, value, format_spec):
-        if format_spec.endswith("b"):
+        if format_spec.endswith("b"):  # value is a boolean
             return self._format_boolean(value, format_spec)
 
-        if format_spec.endswith("c"):
+        if format_spec.endswith("c"):  # value is a complex number
             return self._format_complex(value, format_spec)
 
-        if format_spec.endswith("s"):
+        if format_spec.endswith("s"):  # value is a string or None
             return self._format_string(value, format_spec)
 
         return super().format_field(value, format_spec)
