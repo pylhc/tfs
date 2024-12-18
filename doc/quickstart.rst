@@ -97,5 +97,6 @@ Finally, some replacement functions are provided for some `pandas` operations wh
    # Instead, use our own wrapper
    result = tfs.frame.concat([df1, df2])  # you can choose how to merge headers too
    assert isinstance(result, tfs.TfsDataFrame)  # that's ok!
+   assert getattr(result, "headers", None) is not None  # headers are not lost
 
 That's it!
