@@ -108,10 +108,21 @@ def write_tfs(
     left_align_first_column = False
     tfs_file_path = pathlib.Path(tfs_file_path)
 
+    # Check for provided headers. If None, try to get them from the df
+    # and default to empty dict (will not write any lines to file)
+    if headers_dict is None:
+        headers_dict = getattr(data_frame, "headers", {})
+
+    # We case to a TfsDataFrame anyway for validation and writing
+    # We ensure column names as strings in case it was a pd.Series-like (and colname is 0)
+    data_frame = TfsDataFrame(data_frame, headers=headers_dict)
+    data_frame.columns = data_frame.columns.astype(str)  
+
+    # TODO: remove this block if we agree on the above
     # Force a conversion from pd.Series-like to TfsDataFrame to avoid empty columns issues
-    if not isinstance(data_frame, TfsDataFrame | pd.DataFrame):
-        data_frame = TfsDataFrame(data_frame)
-        data_frame.columns = data_frame.columns.astype(str)  # need column names to be strings
+    # if not isinstance(data_frame, TfsDataFrame | pd.DataFrame):
+    #     data_frame = TfsDataFrame(data_frame)
+    #     data_frame.columns = data_frame.columns.astype(str)  # need column names to be strings
 
     # Only perform validation if asked ('validate' defaults to MAD-X compatibility)
     if validate is not None:  # validation function checks for valid values
@@ -121,11 +132,6 @@ def write_tfs(
             non_unique_behavior=non_unique_behavior,
             compatibility=validate,
         )
-
-    # Check for provided headers. If None, try to get them from the df
-    # and default to empty dict (will not write any lines to file)
-    if headers_dict is None:
-        headers_dict = getattr(data_frame, "headers", {})
 
     # Let pandas try to infer the best dtypes for the data to write (only to write, the
     # actual dataframe provided by the user is not changed so this operation is fine).
