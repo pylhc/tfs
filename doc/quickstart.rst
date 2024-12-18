@@ -99,4 +99,3 @@ Finally, some replacement functions are provided for some `pandas` operations wh
    assert isinstance(result, tfs.TfsDataFrame)  # that's ok!
 
 That's it!
-Happy using :)
