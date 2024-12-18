@@ -95,3 +95,7 @@ As such, when checking for compatibility with ``MAD-X``:
 
  - If the dataframe has no headers, an error will be raised indicating the dataframe should have headers.
  - If the dataframe has headers but no `TYPE` entry is not found, `tfs-pandas` will log a warning and add one with the value `"Added by tfs-pandas for MAD-X compatibility"`
+
+.. admonition:: Default mode
+
+    The default compatibility mode enforced by the `tfs.frame.validate` function is ``MAD-X``.
