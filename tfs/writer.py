@@ -215,7 +215,8 @@ def _get_header_line(name: str, value, width: int) -> str:
         errmsg = f"{name} is not a string"
         raise TypeError(errmsg)
     type_identifier = _value_to_type_identifier(value)
-    value_str = ValueToStringFormatter().format_field(value, _value_to_string_format_id(value))
+    dtype_ = np.array(value).dtype
+    value_str = ValueToStringFormatter().format_field(value, _dtype_to_formatter_string(dtype_, width))
     return f"@ {name:<{width}} {type_identifier} {value_str:>{width}}"
 
 
