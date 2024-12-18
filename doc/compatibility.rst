@@ -15,9 +15,7 @@ Validation enforces the rules described in the :ref:`caveats section <tfs-pandas
 
 .. admonition:: When Does Validation Happen?
 
-    Validation is optional.
-    It is by default turned off at read-time, and turned on at write-time.
-    The default compatibility mode enforced before writing is ``MAD-X``, as this ensures the file would be accepted by both codes.
+    Validation is **optional**, and is by default turned off at both read-time and write-time.
 
 Validation is done by providing a `TfsDataFrame` and a compatibility mode to `tfs.frame.validate` (see the :ref:`API reference <modules/index:frame>`).
 It goes as:
@@ -97,8 +95,3 @@ As such, when checking for compatibility with ``MAD-X``:
 
  - If the dataframe has no headers, an error will be raised indicating the dataframe should have headers.
  - If the dataframe has headers but no `TYPE` entry is not found, `tfs-pandas` will log a warning and add one with the value `"Added by tfs-pandas for MAD-X compatibility"`
-
-.. admonition:: Default mode
-
-    The default compatibility mode enforced before writing is ``MAD-X``.
-    This decision is to ensure the file would be accepted by both codes when using default values.
