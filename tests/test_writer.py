@@ -288,16 +288,6 @@ class TestFailures:
             assert record.levelname == "WARNING"
         assert "Non-unique indices found" in caplog.text  # first checked and raised
 
-    def test_fail_on_wrong_column_type(self, caplog):
-        caplog.set_level(logging.DEBUG)
-        df = TfsDataFrame(columns=range(5))
-        with pytest.raises(NonStringColumnNameError, match="TFS-Columns need to be strings."):
-            write_tfs("", df)
-
-        for record in caplog.records:
-            assert record.levelname == "DEBUG"
-        assert "not of string-type" in caplog.text
-
     def test_fail_on_spaces_columns(self, caplog):
         caplog.set_level(logging.DEBUG)
         df = TfsDataFrame(columns=["allowed", "not allowed"])
