@@ -66,10 +66,10 @@ Then, access the functionality from `tfs.hdf`.
    from tfs.hdf import read_hdf, write_hdf
    
    # Read a TfsDataFrame from an HDF5 file
-   df = tfs.hdf.read("path_to_input.hdf5", key="key_in_hdf5_file")
+   df = tfs.hdf.read_hdf("path_to_input.hdf5", key="key_in_hdf5_file")
 
    # Write a TfsDataFrame to an HDF5 file
-   tfs.hdf.write("path_to_output.hdf5", df, key="key_in_hdf5_file")
+   tfs.hdf.write_hdf("path_to_output.hdf5", df, key="key_in_hdf5_file")
 
 Validation
 ----------

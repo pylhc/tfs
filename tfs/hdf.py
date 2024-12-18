@@ -82,7 +82,8 @@ def read_hdf(path: Path | str) -> TfsDataFrame:
     Returns:
         A ``TfsDataFrame`` object with the loaded data from the file.
     """
-    _check_imports()
+    _check_imports()  # checks tables and h5py are imported, raises otherwise
+
     df = pd.read_hdf(path, key="data")
     with h5py.File(path, mode="r") as hf:
         headers = hf.get("headers")
