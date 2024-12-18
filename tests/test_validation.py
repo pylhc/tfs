@@ -1,9 +1,15 @@
+import logging
 import pathlib
 
 import numpy as np
 import pytest
 
-from tfs.errors import InvalidBooleanHeaderError, MADXCompatibilityError, SpaceinColumnNameError
+from tfs.errors import (
+    InvalidBooleanHeaderError,
+    MADXCompatibilityError,
+    NonStringColumnNameError,
+    SpaceinColumnNameError,
+)
 from tfs.frame import TfsDataFrame, validate
 from tfs.reader import read_tfs
 from tfs.writer import write_tfs
@@ -78,6 +84,17 @@ class TestCommonFailures:
         # The file header has a boolean value that is not accepted
         with pytest.raises(InvalidBooleanHeaderError, match="Invalid boolean header value parsed"):
             _ = read_tfs(_invalid_bool_in_header_tfs_file, validate=validation_mode)
+
+    def test_validation_raises_on_wrong_column_name_type(self, caplog):
+        # Catch a column name not being str typed
+        caplog.set_level(logging.DEBUG)
+        df = TfsDataFrame(columns=range(5))
+        with pytest.raises(NonStringColumnNameError, match="TFS-Columns need to be strings."):
+            validate(df)
+
+        for record in caplog.records:
+            assert record.levelname == "DEBUG"
+        assert "not of string-type" in caplog.text
 
     @pytest.mark.parametrize("validation_mode", ["not ok", "ma-Dx", "nope", "madngg"])
     def test_validation_raises_on_invalid_compatibility_mode(self, _tfs_dataframe, validation_mode):
