@@ -31,6 +31,7 @@ Please have a look at the documentation should you intent to use `tfs-pandas` 4.
   - The documentation has been updated to reflect the new features and changes.
   - The documentation now includes a new page on the `TFS` format itself.
   - The documentation now includes a new page on compatibility modes for `TfsDataFrame` validation.
+  - A great deal of internal documentation has been added to the codebase.
 
 ## Version 3.9.0
 
