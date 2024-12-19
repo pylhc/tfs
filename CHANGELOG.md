@@ -1,5 +1,37 @@
 # TFS-Pandas Changelog
 
+## Version 4.0.0
+
+Version `4.0` is a major release bringing compatibility with `MAD-NG` features in **TFS** files and tables, apart from the more exotic ones.
+We also bring new documentation pages regarding the **TFS** format, code compatibilities, and the new features.
+Please have a look at the documentation should you intent to use `tfs-pandas` 4.0, as there are a few (now documented) caveats.
+
+- Important:
+  - Support for `Python 3.9` has been dropped. The minimum required Python version is now `3.10`.
+  - DataFrame validation is now OFF by default, both when reading from and writing to file. It is up to the user to ask for a given validation mode.
+  - Minimum supported `MAD-NG` version is `1.0.0`, due to synchronized development of some feature details. The corresponding `pymadng` version is `0.6.0`.
+
+- Added:
+  - Handling of boolean-type and complex-type header values (`MAD-NG` feature).
+  - Handling of bolean-type and complex-type columns (`MAD-NG` feature).
+  - Handling of nullable-type `nil` values in headers and columns (`MAD-NG` feature).
+  - Compatibility modes for dataframe validation. The `tfs.frame.validate` function now expects this, and valid choices are `MADX`, `MAD-X`, `MADNG` and `MAD-NG` (case-insensitive, see API documentation).
+  - Many new exceptions have been created for raised errors, which will be more specific. They all inherit from the previously raised `TfsFormatError`, so user code that was catching it will still work.
+
+- Changed:
+  - By default, `TfsDataFrame` validation is now skipped on reading.
+  - By default, `TfsDataFrame` validation is now skipped on writing.
+  - By default, `TfsDataFrame` validation in `MAD-X` requires headers to be present in the dataframe.
+
+- Fixed:
+  - Writing a dataframe with no headers (not empty headers), e.g. a `pandas.DataFrame` - now works correctly.
+
+- Documentation:
+  - The documentation has been updated to reflect the new features and changes.
+  - The documentation now includes a new page on the `TFS` format itself.
+  - The documentation now includes a new page on compatibility modes for `TfsDataFrame` validation.
+  - A great deal of internal documentation has been added to the codebase.
+
 ## Version 3.9.0
 
 - Added:
@@ -93,7 +125,7 @@ Minor API changes to the `TFSCollections`:
 ## Version 3.5.2
 
 - Changed:
-  - The dependency on `pandas` has been pinned to `<2.0` to guarantee the proper functionning of the compability `append` and `join` methods in `TfsDataFrames`. These will be removed with the next release of `tfs-pandas` and users should use the `tfs.frame.concat` compatibility function instead.
+  - The dependency on `pandas` has been pinned to `<2.0` to guarantee the proper functionning of the compatibility `append` and `join` methods in `TfsDataFrames`. These will be removed with the next release of `tfs-pandas` and users should use the `tfs.frame.concat` compatibility function instead.
 
 ## Version 3.5.1
 

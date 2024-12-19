@@ -24,7 +24,7 @@ authors = [
 ]
 license = "MIT"
 dynamic = ["version"]
-requires-python = ">=3.9"
+requires-python = ">=3.10"
 
 keywords = [
   "MAD-X",
@@ -37,10 +37,10 @@ classifiers = [
     "Natural Language :: English",
     "Operating System :: OS Independent",
     "Programming Language :: Python :: 3 :: Only",
-    "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
     "Programming Language :: Python :: Implementation :: CPython",
     "Topic :: Scientific/Engineering",
     "Topic :: Software Development :: Libraries :: Python Modules",
@@ -49,23 +49,22 @@ classifiers = [
 
 dependencies = [
   "numpy >= 1.24",
-  "pandas >= 2.1",
+  "pandas[compression] >= 2.1",  # includes zstandard too, so users get compression out-of-the-box
 ]
 
 [project.optional-dependencies]
-# TODO: when we drop python 3.9, require pytables 3.10.1 minimum and stop caring about numpy 2 compability
 hdf5 = [
-  "numpy >= 1.24, < 2.0; python_version < '3.10'",  # first pytables compatible with numpy 2 is 3.10 but does not support python 3.9
-  "numpy >= 1.24; python_version >= '3.10'",  # otherwise we can use numpy 2 as on python 3.10 there is a pytables which is ok with it
+  "numpy >= 1.24",
+  "numpy >= 1.24; python_version >= '3.10'",
   "h5py >= 3.0",
-  "tables >= 3.9",  # TODO: require 3.10.1 minimum when it's out and we drop python 3.9 support
+  "tables >= 3.10.1",
 ]
 test = [
   "tfs-pandas[hdf5]",
   "pytest >= 7.0",
   "pytest-cov >= 2.9",
-  "cpymad >= 1.8.1",
-  "zstandard >= 0.15.2",
+  "cpymad >= 1.8.1",  # to check MAD-X can read our files
+  "pymadng >= 0.6.0",  # to check MAD-NG can read our files
 ]
 doc = [
   "sphinx >= 7.0",
@@ -89,6 +88,14 @@ changelog = "https://github.com/pylhc/tfs/blob/master/CHANGELOG.md"
 
 
 [tool.ruff]
+target-version = "py310"  # Assume Python 3.10+
 
-# Assume Python 3.9+
-target-version = "py39"
+[tool.pytest.ini_options]
+addopts = "--cov-report=xml --cov-report term-missing --cov-config=pyproject.toml --cov=tfs"
+testpaths = ["tests"]
+
+[tool.coverage.report]
+exclude_also = [
+  "if TYPE_CHECKING:",  # do not count type checking imports (ignored at runtime) for coverage
+  "except ImportError:",  # do not count missing optional dependencies set to None, we monkeypatch and test that
+]  
