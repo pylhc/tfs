@@ -217,7 +217,8 @@ def _get_header_line(name: str, value, width: int) -> str:
     type_identifier = _value_to_type_identifier(value)
     dtype_ = np.array(value).dtype
     value_str = ValueToStringFormatter().format_field(value, _dtype_to_formatter_string(dtype_, width))
-    return f"@ {name:<{width}} {type_identifier} {value_str:>{width}}"
+    print(f"Determined value string is {value_str}")
+    return f"@ {name:<{width}} {type_identifier} {value_str:>{width}}".strip()
 
 
 def _get_colnames_string(colnames: list[str], colwidth: int, left_align_first_column: bool) -> str:  # noqa: FBT001
@@ -301,18 +302,6 @@ def _value_to_type_identifier(value) -> str:
     # Otherwise we infer the dtype and return the corresponding identifier
     dtype_ = np.array(value).dtype  # let numpy handle conversion to it dtypes
     return _dtype_to_tfs_format_identifier(dtype_)
-
-
-def _value_to_string_format_id(value) -> str:
-    """
-    Returns the formatter string (for fstrings for instance) for the
-    provided value. It will be used for format strings later on. For
-    instance, for a float it returns 'g', for a complex 'c'.
-    """
-    # We have a special case for None values, otherwise we just
-    # let numpy infer the dtype for us
-    dtype_ = NoneType if value is None else np.array(value).dtype
-    return _dtype_to_python_string_formatter(dtype_)
 
 
 def _dtype_to_tfs_format_identifier(type_: type) -> str:
