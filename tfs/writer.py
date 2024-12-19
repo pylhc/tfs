@@ -353,7 +353,7 @@ def _dtype_to_formatter_string(type_: type, colsize: int) -> str:
     """
     type_id = _dtype_to_python_string_formatter(type_)  # for Python: 'd' or 'g' or 's' etc
     if pdtypes.is_float_dtype(type_) or pdtypes.is_complex_dtype(type_):
-        return f"{colsize}.{colsize - len('-0.e-000')}{type_id}"
+        return f"{colsize}.{colsize - len('-0.e-000')}{type_id}"  # make sure we don't round and lose info
     return f"{colsize}{type_id}"
 
 
