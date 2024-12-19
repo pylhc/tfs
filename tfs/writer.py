@@ -214,7 +214,7 @@ def _get_header_line(name: str, value, width: int) -> str:
     if not isinstance(name, str):
         errmsg = f"{name} is not a string"
         raise TypeError(errmsg)
-    type_identifier = _value_to_type_identifier(value)
+    type_identifier = _value_to_tfs_type_identifier(value)
     dtype_ = NoneType if value is None else np.array(value).dtype  # otherwise numpy gives 'Object' for 'None's
     # Strip the following as it might have trailing spaces and we leave that to the alignment formatting below
     value_str = ValueToStringFormatter().format_field(value, _dtype_to_formatter_string(dtype_, width)).strip()
@@ -289,7 +289,7 @@ def _get_row_format_string(
     )
 
 
-def _value_to_type_identifier(value) -> str:
+def _value_to_tfs_type_identifier(value) -> str:
     """
     Returns the **TFS** dtype identifier for the provided value,
     as a string. For instance for a float, it would return "%le".
