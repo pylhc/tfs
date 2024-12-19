@@ -104,6 +104,7 @@ def _tfs_dataframe_madng() -> TfsDataFrame:
             "Title": "MADNG Test",
             "Bool1": True,
             "Bool2": False,
+            "A_NIL": None,
             "Complex1": 19.3 + 39.4j,
             "Complex2": -94.6 - 67.9j,
         },

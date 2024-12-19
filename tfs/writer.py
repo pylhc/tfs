@@ -215,10 +215,10 @@ def _get_header_line(name: str, value, width: int) -> str:
         errmsg = f"{name} is not a string"
         raise TypeError(errmsg)
     type_identifier = _value_to_type_identifier(value)
-    dtype_ = np.array(value).dtype
-    value_str = ValueToStringFormatter().format_field(value, _dtype_to_formatter_string(dtype_, width))
-    print(f"Determined value string is {value_str}")
-    return f"@ {name:<{width}} {type_identifier} {value_str:>{width}}".strip()
+    dtype_ = NoneType if value is None else np.array(value).dtype  # otherwise numpy gives 'Object' for 'None's
+    # Strip the following as it might have trailing spaces and we leave that to the alignment formatting below
+    value_str = ValueToStringFormatter().format_field(value, _dtype_to_formatter_string(dtype_, width)).strip()
+    return f"@ {name:<{width}} {type_identifier} {value_str.strip():>{width}}"
 
 
 def _get_colnames_string(colnames: list[str], colwidth: int, left_align_first_column: bool) -> str:  # noqa: FBT001
