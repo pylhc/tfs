@@ -174,7 +174,7 @@ class TestWrites:
         assert (tmp_path / "temporary.tfs").is_file()
         assert "Non-unique column names found" not in caplog.text
 
-    def test_tfs_write_no_headers_dataframe(self, tmp_path, _pd_dataframe):
+    def test_tfs_write_read_no_headers_dataframe(self, tmp_path, _pd_dataframe):
         # We make sure providing a df without headers (a pd.DataFrame for
         # instance) still writes a valid TFS file to disk. This is NOT
         # the same as having empty headers (empty dict)!
@@ -186,7 +186,7 @@ class TestWrites:
         # headers present in the former the check would fail
         assert_frame_equal(df, new, check_frame_type=False)
 
-    def test_tfs_write_validate_with_pandas_and_headers_dict(self, tmp_path, _pd_dataframe):
+    def test_tfs_write_read_validate_with_pandas_and_headers_dict(self, tmp_path, _pd_dataframe):
         # We make sure that if provided with a pandas.DataFrame and a headers_dict
         # the validation and writing go as expected.
         df = _pd_dataframe
