@@ -186,13 +186,28 @@ class TestWrites:
         # headers present in the former the check would fail
         assert_frame_equal(df, new, check_frame_type=False)
 
-    def test_tfs_write_read_validate_with_pandas_and_headers_dict(self, tmp_path, _pd_dataframe):
+    @pytest.mark.parametrize("validation_mode", ["madx", "madng"])
+    def test_tfs_write_read_validate_with_pandas_and_headers_dict(self, tmp_path, _pd_dataframe, validation_mode):
         # We make sure that if provided with a pandas.DataFrame and a headers_dict
         # the validation and writing go as expected.
         df = _pd_dataframe
-        headers = {"Title": "Tfs Title", "Value": 3.3663}
-        write_tfs(tmp_path / "temporary.tfs", df, headers_dict=headers, validate="madx")
-        new = read_tfs(tmp_path / "temporary.tfs", validate="madx")
+        headers = {"Title": "Yada Yada", "Value": 3.4123, "Int": 17}
+        write_tfs(tmp_path / "temporary.tfs", df, headers_dict=headers, validate=validation_mode)
+        new = read_tfs(tmp_path / "temporary.tfs")
+        # Here we use the asserts from pandas as we need to check individually for
+        # the dataframe itself and then the headers
+        assert_frame_equal(df, new, check_frame_type=False)
+        assert_dict_equal(headers, new.headers, compare_keys=True)
+
+    @pytest.mark.parametrize("validation_mode", ["madx", "madng"])
+    def test_tfs_write_read_dataframe_empty_headers_provided_headers(self, tmp_path, _tfs_dataframe, validation_mode):
+        # We make sure that providing a TfsDataFrame with empty headers, but providing
+        # actual headers to write_tfs actually validates and writes with the provided headers
+        df = _tfs_dataframe
+        df.headers = {}
+        headers = {"Title": "Yada Yada", "Value": 3.4123, "Int": 17}
+        write_tfs(tmp_path / "temporary.tfs", df, headers_dict=headers, validate=validation_mode)
+        new = read_tfs(tmp_path / "temporary.tfs")
         # Here we use the asserts from pandas as we need to check individually for
         # the dataframe itself and then the headers
         assert_frame_equal(df, new, check_frame_type=False)
