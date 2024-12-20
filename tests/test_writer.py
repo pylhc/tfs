@@ -186,6 +186,18 @@ class TestWrites:
         # headers present in the former the check would fail
         assert_frame_equal(df, new, check_frame_type=False)
 
+    def test_tfs_write_validate_with_pandas_and_headers_dict(self, tmp_path, _pd_dataframe):
+        # We make sure that if provided with a pandas.DataFrame and a headers_dict
+        # the validation and writing go as expected.
+        df = _pd_dataframe
+        headers = {"Title": "Tfs Title", "Value": 3.3663}
+        write_tfs(tmp_path / "temporary.tfs", df, headers_dict=headers, validate="madx")
+        new = read_tfs(tmp_path / "temporary.tfs", validate="madx")
+        # Here we use the asserts from pandas as we need to check individually for
+        # the dataframe itself and then the headers
+        assert_frame_equal(df, new, check_frame_type=False)
+        assert_dict_equal(headers, new.headers, compare_keys=True)
+
     def test_tfs_write_read_with_path_in_headers(self, tmp_path, _tfs_dataframe):
         # We will insert a pathlib.Path in the headers and ensure it is
         # written as a string, in its current (relative in this case) form
