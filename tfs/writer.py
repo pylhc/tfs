@@ -84,19 +84,22 @@ def write_tfs(
 
             tfs.write("filename.tfs", dataframe)
 
-        If one wants to, for instance, raise and error on non-unique indices or columns,
-        one can do so as:
+        One can choose to perform dataframe validation before writing
+        it to file. This can be done by providing an accepted compatibility
+        mode to check for (either `madx` or `madng`), as:
 
         .. code-block:: python
 
-            tfs.write("filename.tfs", dataframe, non_unique_behavior="raise")
+            tfs.write("filename.tfs", dataframe, validate="madx")
 
-        One can choose to skip dataframe validation at one's own risk before writing
-        it to file. This can be done as:
+        If one wants to, for instance, raise and error on non-unique indices or
+        columns when validating the dataframe, one can do so as:
 
         .. code-block:: python
 
-            tfs.write("filename.tfs", dataframe, validate=False)
+            tfs.write(
+                "filename.tfs", dataframe, non_unique_behavior="raise", validate="madng"
+            )
 
         It is possible to directly have the output file be compressed, by specifying a
         valid compression extension as the **tfs_file_path** suffix. The detection
