@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>tfs.reader &mdash; tfs-pandas 3.9.0 documentation</title>
+  <title>tfs.reader &mdash; tfs-pandas 4.0.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
@@ -15,7 +15,7 @@
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=e55a5be6"></script>
+      <script src="../../_static/documentation_options.js?v=3304f9e4"></script>
       <script src="../../_static/doctools.js?v=9bcbadda"></script>
       <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -49,7 +49,23 @@
 <li class="toctree-l1"><a class="reference internal" href="../../quickstart.html">2 Minutes to tfs-pandas</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../quickstart.html#basic-usage">Basic Usage</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../quickstart.html#compression">Compression</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../quickstart.html#compatibility">Compatibility</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../quickstart.html#validation">Validation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../quickstart.html#function-replacements">Function Replacements</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../tfsformat.html">The Table File System Format</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../tfsformat.html#headers">Headers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../tfsformat.html#table">Table</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../tfsformat.html#types-and-identifiers">Types and Identifiers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../tfsformat.html#tfs-pandas-caveats">TFS-Pandas Caveats</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../tfsformat.html#tfs-file-example">TFS File Example</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../compatibility.html">MAD-X and MAD-NG Compatibility</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../compatibility.html#tfsdataframe-validation">TfsDataFrame Validation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../compatibility.html#common-validation-rules">Common Validation Rules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../compatibility.html#mad-ng-compatibility">MAD-NG Compatibility</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../compatibility.html#mad-x-compatibility">MAD-X Compatibility</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../modules/index.html">API Reference</a><ul>
@@ -103,24 +119,49 @@
 <span class="kn">import</span> <span class="nn">logging</span>
 <span class="kn">import</span> <span class="nn">pathlib</span>
 <span class="kn">import</span> <span class="nn">shlex</span>
+<span class="kn">from</span> <span class="nn">contextlib</span> <span class="kn">import</span> <span class="n">contextmanager</span>
 <span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
+<span class="kn">from</span> <span class="nn">types</span> <span class="kn">import</span> <span class="n">NoneType</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">TYPE_CHECKING</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">pandas._libs.parsers</span> <span class="kn">import</span> <span class="n">STR_NA_VALUES</span>
+<span class="kn">from</span> <span class="nn">pandas.io.common</span> <span class="kn">import</span> <span class="n">get_handle</span>
 
-<span class="kn">from</span> <span class="nn">tfs.constants</span> <span class="kn">import</span> <span class="n">COMMENTS</span><span class="p">,</span> <span class="n">HEADER</span><span class="p">,</span> <span class="n">ID_TO_TYPE</span><span class="p">,</span> <span class="n">INDEX_ID</span><span class="p">,</span> <span class="n">NAMES</span><span class="p">,</span> <span class="n">TYPES</span>
-<span class="kn">from</span> <span class="nn">tfs.errors</span> <span class="kn">import</span> <span class="n">TfsFormatError</span>
+<span class="kn">from</span> <span class="nn">tfs.constants</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">COMMENTS</span><span class="p">,</span>
+    <span class="n">HEADER</span><span class="p">,</span>
+    <span class="n">ID_TO_TYPE</span><span class="p">,</span>
+    <span class="n">INDEX_ID</span><span class="p">,</span>
+    <span class="n">NAMES</span><span class="p">,</span>
+    <span class="n">TYPES</span><span class="p">,</span>
+    <span class="n">VALID_BOOLEANS_HEADERS</span><span class="p">,</span>
+    <span class="n">VALID_TRUE_BOOLEANS</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">tfs.errors</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">AbsentColumnNameError</span><span class="p">,</span>
+    <span class="n">AbsentColumnTypeError</span><span class="p">,</span>
+    <span class="n">AbsentTypeIdentifierError</span><span class="p">,</span>
+    <span class="n">InvalidBooleanHeaderError</span><span class="p">,</span>
+    <span class="n">UnknownTypeIdentifierError</span><span class="p">,</span>
+<span class="p">)</span>
 <span class="kn">from</span> <span class="nn">tfs.frame</span> <span class="kn">import</span> <span class="n">TfsDataFrame</span>
 <span class="kn">from</span> <span class="nn">tfs.frame</span> <span class="kn">import</span> <span class="n">validate</span> <span class="k">as</span> <span class="n">validate_frame</span>
 
+<span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">collections.abc</span> <span class="kn">import</span> <span class="n">Callable</span>
+    <span class="kn">from</span> <span class="nn">io</span> <span class="kn">import</span> <span class="n">TextIOWrapper</span>
+
+
 <span class="n">LOGGER</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
-<span class="c1"># A string not expected to be found in the headers</span>
-<span class="c1"># I generated this randomly with: &quot;&quot;.join(random.choice(string.ascii_letters) for _ in range(100))</span>
-<span class="n">_UNEXPECTED_SEP</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="p">(</span>
-    <span class="s2">&quot;baBfHIhwOdMnuBVHDDZcysbmwRgWaBnukQPIWNHpFVqjrIcOryhvyJwIRRHfqOQLGKhtZPLJhziZKomfVhXsoqfoGkvyFKuNhhst&quot;</span>
-<span class="p">)</span>
+<span class="c1"># Here we take the default NA values for pandas readers, and make a copy from which we</span>
+<span class="c1"># remove &quot;&quot; (we want empty strings to stay empty strings) and adding &quot;nil&quot;</span>
+<span class="n">_NA_VALUES</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="o">*</span><span class="nb">list</span><span class="p">(</span><span class="n">STR_NA_VALUES</span><span class="p">),</span> <span class="s2">&quot;nil&quot;</span><span class="p">]</span>
+<span class="n">_NA_VALUES</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
 
+<span class="c1"># ----- Main Functionality ----- #</span>
 
 <div class="viewcode-block" id="read_tfs">
 <a class="viewcode-back" href="../../modules/index.html#tfs.reader.read_tfs">[docs]</a>
@@ -128,10 +169,11 @@
     <span class="n">tfs_file_path</span><span class="p">:</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span> <span class="o">|</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">index</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">non_unique_behavior</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;warn&quot;</span><span class="p">,</span>
-    <span class="n">validate</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>  <span class="c1"># noqa: FBT001, FBT002</span>
+    <span class="n">validate</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TfsDataFrame</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Parses the **TFS** table present in **tfs_file_path** and returns a ``TfsDataFrame``.</span>
+<span class="sd">    Note that this function is also exported at the top-level of the package as `tfs.read`.</span>
 
 <span class="sd">    .. note::</span>
 <span class="sd">        Loading and reading compressed files is possible. Any compression format supported</span>
@@ -139,12 +181,11 @@
 <span class="sd">        ``.zst``, ``.tar``, ``.tar.gz``, ``.tar.xz`` or ``.tar.bz2``. See below for examples.</span>
 
 <span class="sd">    .. warning::</span>
-<span class="sd">        Through the *validate* argument, one can skip dataframe validation after</span>
-<span class="sd">        loading it from a file. While this can speed-up the execution time of this</span>
-<span class="sd">        function, it is **not recommended** and is not the default behavior of this</span>
-<span class="sd">        function. The option, however, is left for the user to use at their own risk</span>
-<span class="sd">        should they wish to avoid lengthy validation of large `TfsDataFrames` (such</span>
-<span class="sd">        as for instance a sliced FCC lattice).</span>
+<span class="sd">        Through the *validate* argument, one can activate dataframe validation after</span>
+<span class="sd">        loading it from a file, which can significantly slow the execution of this</span>
+<span class="sd">        function, e.g. in case of large `TfsDataFrames` such as a sliced FCC lattice.</span>
+<span class="sd">        Note that validation can be performed at any time by using the `tfs.frame.validate`</span>
+<span class="sd">        function.</span>
 
 <span class="sd">    .. admonition:: **Methodology**</span>
 
@@ -152,19 +193,21 @@
 <span class="sd">        from the file (headers content, column names &amp; types, number of lines</span>
 <span class="sd">        parsed). The rest of the file (dataframe part) is given to parse to</span>
 <span class="sd">        ``pandas.read_csv`` with the right options to make use of its C engine&#39;s</span>
-<span class="sd">        speed. After this, conversion to ``TfsDataDrame`` is made, proper types</span>
-<span class="sd">        are applied to columns, the index is set and the frame is eventually</span>
-<span class="sd">        validated before being returned.</span>
+<span class="sd">        speed. After this, conversion to ``TfsDataDrame`` is made and, if requested,</span>
+<span class="sd">        the index is set and validation performed, before the frame is being returned.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        tfs_file_path (pathlib.Path | str): Path object to the **TFS** file to read. Can be</span>
+<span class="sd">        tfs_file_path (pathlib.Path | str): Path to the **TFS** file to read. Can be</span>
 <span class="sd">            a string, in which case it will be cast to a Path object.</span>
 <span class="sd">        index (str): Name of the column to set as index. If not given, looks in **tfs_file_path**</span>
 <span class="sd">            for a column starting with `INDEX&amp;&amp;&amp;`.</span>
-<span class="sd">        non_unique_behavior (str): behavior to adopt if non-unique indices or columns are found in the</span>
-<span class="sd">            dataframe. Accepts `warn` and `raise` as values, case-insensitively, which dictates</span>
+<span class="sd">        non_unique_behavior (str): behavior to adopt if non-unique indices or columns are found in</span>
+<span class="sd">            the dataframe. Accepts `warn` and `raise` as values, case-insensitively, which dictates</span>
 <span class="sd">            to respectively issue a warning or raise an error if non-unique elements are found.</span>
-<span class="sd">        validate (bool): Whether to validate the dataframe after reading it. Defaults to ``False``.</span>
+<span class="sd">        validate (str): If an accepted value is given, validation will be performed after loading.</span>
+<span class="sd">            Defauts to `None`, which skips validation. Accepted validation modes are `madx`, `mad-x`,</span>
+<span class="sd">            `madng` and `mad-ng`, case-insensitive. See the `tfs.frame.validate` function for more</span>
+<span class="sd">            information on validation.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        A ``TfsDataFrame`` object with the loaded data from the file.</span>
@@ -175,43 +218,44 @@
 
 <span class="sd">        .. code-block:: python</span>
 
-<span class="sd">            &gt;&gt;&gt; tfs.read(&quot;filename.tfs&quot;)</span>
+<span class="sd">            tfs.read(&quot;filename.tfs&quot;)</span>
 
 <span class="sd">        One can also pass a `~pathlib.Path` object to the function:</span>
 
 <span class="sd">        .. code-block:: python</span>
 
-<span class="sd">            &gt;&gt;&gt; tfs.read(pathlib.Path(&quot;filename.tfs&quot;))</span>
+<span class="sd">            tfs.read(pathlib.Path(&quot;filename.tfs&quot;))</span>
 
-<span class="sd">        If one wants to set a specific column as index, this is done as:</span>
-
-<span class="sd">        .. code-block:: python</span>
-
-<span class="sd">            &gt;&gt;&gt; tfs.read(&quot;filename.tfs&quot;, index=&quot;COLUMN_NAME&quot;)</span>
-
-<span class="sd">        If one wants to, for instance, raise and error on non-unique indices or columns,</span>
-<span class="sd">        one can do so as:</span>
-
-<span class="sd">        .. code-block:: python</span>
-
-<span class="sd">            &gt;&gt;&gt; tfs.read(&quot;filename.tfs&quot;, non_unique_behavior=&quot;raise&quot;)</span>
-
-<span class="sd">        One can choose to skip dataframe validation **at one&#39;s own risk** after reading</span>
-<span class="sd">        from file. This is done as:</span>
-
-<span class="sd">        .. code-block:: python</span>
-
-<span class="sd">            &gt;&gt;&gt; tfs.read(&quot;filename.tfs&quot;, validate=False)</span>
-
-<span class="sd">        It is possible to load compressed files if the compression format is supported by pandas.</span>
+<span class="sd">        It is possible to load compressed files if the compression format is supported by `pandas`.</span>
 <span class="sd">        (see above). The compression format detection is handled automatically from the extension</span>
 <span class="sd">        of the provided **tfs_file_path** suffix. For instance:</span>
 
 <span class="sd">        .. code-block:: python</span>
 
-<span class="sd">            &gt;&gt;&gt; tfs.read(&quot;filename.tfs.gz&quot;)</span>
-<span class="sd">            &gt;&gt;&gt; tfs.read(&quot;filename.tfs.bz2&quot;)</span>
-<span class="sd">            &gt;&gt;&gt; tfs.read(&quot;filename.tfs.zip&quot;)</span>
+<span class="sd">            tfs.read(&quot;filename.tfs.gz&quot;)</span>
+<span class="sd">            tfs.read(&quot;filename.tfs.bz2&quot;)</span>
+<span class="sd">            tfs.read(&quot;filename.tfs.zip&quot;)</span>
+
+<span class="sd">        If one wants to set a specific column as index (and drop it from the data),</span>
+<span class="sd">        this is done as:</span>
+
+<span class="sd">        .. code-block:: python</span>
+
+<span class="sd">            tfs.read(&quot;filename.tfs&quot;, index=&quot;COLUMN_NAME&quot;)</span>
+
+<span class="sd">        One can choose to perform dataframe validation after reading from file, for</span>
+<span class="sd">        compatibility with a certain code, by providing a valid argument:</span>
+
+<span class="sd">        .. code-block:: python</span>
+
+<span class="sd">            tfs.read(&quot;filename.tfs&quot;, validate=&quot;MAD-NG&quot;)  # or validate=&quot;MAD-X&quot;</span>
+
+<span class="sd">        If one wants to raise an error on non-unique indices or columns when</span>
+<span class="sd">        performing validation, one can do so as:</span>
+
+<span class="sd">        .. code-block:: python</span>
+
+<span class="sd">            tfs.read(&quot;filename.tfs&quot;, non_unique_behavior=&quot;raise&quot;)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">tfs_file_path</span> <span class="o">=</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="n">tfs_file_path</span><span class="p">)</span>
     <span class="n">LOGGER</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Reading path: </span><span class="si">{</span><span class="n">tfs_file_path</span><span class="o">.</span><span class="n">absolute</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
@@ -220,15 +264,35 @@
     <span class="n">metadata</span><span class="p">:</span> <span class="n">_TfsMetaData</span> <span class="o">=</span> <span class="n">_read_metadata</span><span class="p">(</span><span class="n">tfs_file_path</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">metadata</span><span class="o">.</span><span class="n">column_names</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">errmsg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;No column names in file </span><span class="si">{</span><span class="n">tfs_file_path</span><span class="o">.</span><span class="n">absolute</span><span class="p">()</span><span class="si">}</span><span class="s2">. File not read.&quot;</span>
-        <span class="k">raise</span> <span class="n">TfsFormatError</span><span class="p">(</span><span class="n">errmsg</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="n">AbsentColumnNameError</span><span class="p">(</span><span class="n">tfs_file_path</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">metadata</span><span class="o">.</span><span class="n">column_types</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">errmsg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;No column types in file </span><span class="si">{</span><span class="n">tfs_file_path</span><span class="o">.</span><span class="n">absolute</span><span class="p">()</span><span class="si">}</span><span class="s2">. File not read.&quot;</span>
-        <span class="k">raise</span> <span class="n">TfsFormatError</span><span class="p">(</span><span class="n">errmsg</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="n">AbsentColumnTypeError</span><span class="p">(</span><span class="n">tfs_file_path</span><span class="p">)</span>
 
+    <span class="c1"># The pandas engines do NOT support reading complex numbers, we have to provide a function</span>
+    <span class="c1"># We first create a dict from the metadata with column names and the associated types</span>
+    <span class="n">dtypes_dict</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">type</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">metadata</span><span class="o">.</span><span class="n">column_names</span><span class="p">,</span> <span class="n">metadata</span><span class="o">.</span><span class="n">column_types</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
+    <span class="n">converters</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Callable</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>  <span class="c1"># will be explained in a later comment</span>
+
+    <span class="c1"># If we have complex-dtyped columns, they are popped from the first dict and added</span>
+    <span class="c1"># to a converters dict as key, with as value our function to parse complex numbers</span>
+    <span class="c1"># We also remove the column from the dtypes_dict: if we provide the column in both</span>
+    <span class="c1"># dicts (for dtype AND converter), the pandas reader emits a ParserWarning</span>
+    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">complex128</span> <span class="ow">in</span> <span class="n">metadata</span><span class="o">.</span><span class="n">column_types</span><span class="p">:</span>
+        <span class="n">LOGGER</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Complex columns detected, adding converter.&quot;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">colname</span><span class="p">,</span> <span class="n">dtype</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">metadata</span><span class="o">.</span><span class="n">column_names</span><span class="p">,</span> <span class="n">metadata</span><span class="o">.</span><span class="n">column_types</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">dtype</span> <span class="ow">is</span> <span class="n">np</span><span class="o">.</span><span class="n">complex128</span><span class="p">:</span>
+                <span class="n">converters</span><span class="p">[</span><span class="n">colname</span><span class="p">]</span> <span class="o">=</span> <span class="n">_parse_complex</span>
+                <span class="k">del</span> <span class="n">dtypes_dict</span><span class="p">[</span><span class="n">colname</span><span class="p">]</span>
+
+    <span class="c1"># By this point we have built the following two dictionaries:</span>
+    <span class="c1"># - &#39;dtypes_dict&#39; with all non-complex columns (key, value are: name, type)</span>
+    <span class="c1"># - &#39;converters&#39; with all complex columns (key, value are: name, function to parse)</span>
+    <span class="c1"># And we will provide both of these to the pandas reader which uses either its own</span>
+    <span class="c1"># API for the loading or our custom converters for the complex columns.</span>
     <span class="n">LOGGER</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Parsing data part of the file&quot;</span><span class="p">)</span>
-    <span class="c1"># DO NOT use comment=COMMENTS in here, if you do and the symbol is in an element for some</span>
-    <span class="c1"># reason then the entire parsing will crash</span>
+
+    <span class="c1"># DO NOT use `comment=COMMENTS` in this call: if the &#39;#&#39; symbol is in an element (a</span>
+    <span class="c1"># string header or some value in the dataframe) then the entire parsing will crash</span>
     <span class="n">data_frame</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span>
         <span class="n">tfs_file_path</span><span class="p">,</span>
         <span class="n">engine</span><span class="o">=</span><span class="s2">&quot;c&quot;</span><span class="p">,</span>  <span class="c1"># faster, and we do not need the features of the python engine</span>
@@ -236,18 +300,20 @@
         <span class="n">sep</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;\s+&quot;</span><span class="p">,</span>  <span class="c1"># understands &#39; &#39; as delimiter | replaced deprecated &#39;delim_whitespace&#39; in tfs-pandas 3.8.0</span>
         <span class="n">quotechar</span><span class="o">=</span><span class="s1">&#39;&quot;&#39;</span><span class="p">,</span>  <span class="c1"># elements surrounded by &quot; are one entry -&gt; correct parsing of strings with spaces</span>
         <span class="n">names</span><span class="o">=</span><span class="n">metadata</span><span class="o">.</span><span class="n">column_names</span><span class="p">,</span>  <span class="c1"># column names we have determined, avoids using first read row for columns</span>
-        <span class="n">dtype</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span>
-            <span class="nb">zip</span><span class="p">(</span><span class="n">metadata</span><span class="o">.</span><span class="n">column_names</span><span class="p">,</span> <span class="n">metadata</span><span class="o">.</span><span class="n">column_types</span><span class="p">)</span>
-        <span class="p">),</span>  <span class="c1"># assign types at read-time to avoid re-assigning later</span>
+        <span class="n">dtype</span><span class="o">=</span><span class="n">dtypes_dict</span><span class="p">,</span>  <span class="c1"># assign types at read-time to avoid conversions later</span>
+        <span class="n">converters</span><span class="o">=</span><span class="n">converters</span><span class="p">,</span>  <span class="c1"># more involved dtype conversion, e.g. for complex columns</span>
+        <span class="n">na_values</span><span class="o">=</span><span class="n">_NA_VALUES</span><span class="p">,</span>  <span class="c1"># includes MAD-NG&#39;s &#39;nil&#39; which we cast to NaN in the data</span>
+        <span class="n">keep_default_na</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>  <span class="c1"># we provided the list ourselves so it does not include &quot;&quot;</span>
     <span class="p">)</span>
 
     <span class="n">LOGGER</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Converting to TfsDataFrame&quot;</span><span class="p">)</span>
     <span class="n">tfs_data_frame</span> <span class="o">=</span> <span class="n">TfsDataFrame</span><span class="p">(</span><span class="n">data_frame</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">metadata</span><span class="o">.</span><span class="n">headers</span><span class="p">)</span>
 
-    <span class="c1"># In pandas.read_csv an empty string (&quot;&quot;) will be read a NaN, but we want to preserve them</span>
-    <span class="n">LOGGER</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Ensuring preservation of empty strings&quot;</span><span class="p">)</span>
+    <span class="c1"># In pandas.read_csv we read a &#39;nil&#39; as NaN in columns, so we have to convert it back</span>
+    <span class="c1"># to &#39;None&#39; in the string-dtyped columns. For numeric columns we keep NaN</span>
+    <span class="n">LOGGER</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Ensuring preservation of None values in string columns&quot;</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">column</span> <span class="ow">in</span> <span class="n">tfs_data_frame</span><span class="o">.</span><span class="n">select_dtypes</span><span class="p">(</span><span class="n">include</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;string&quot;</span><span class="p">,</span> <span class="s2">&quot;object&quot;</span><span class="p">]):</span>
-        <span class="n">tfs_data_frame</span><span class="p">[</span><span class="n">column</span><span class="p">]</span> <span class="o">=</span> <span class="n">tfs_data_frame</span><span class="p">[</span><span class="n">column</span><span class="p">]</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+        <span class="n">tfs_data_frame</span><span class="p">[</span><span class="n">column</span><span class="p">]</span> <span class="o">=</span> <span class="n">tfs_data_frame</span><span class="p">[</span><span class="n">column</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">],</span> <span class="p">[</span><span class="kc">None</span><span class="p">])</span>
 
     <span class="k">if</span> <span class="n">index</span><span class="p">:</span>
         <span class="n">LOGGER</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Setting &#39;</span><span class="si">{</span><span class="n">index</span><span class="si">}</span><span class="s2">&#39; column as index&quot;</span><span class="p">)</span>
@@ -256,8 +322,14 @@
         <span class="n">LOGGER</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Attempting to find index identifier in columns&quot;</span><span class="p">)</span>
         <span class="n">tfs_data_frame</span> <span class="o">=</span> <span class="n">_find_and_set_index</span><span class="p">(</span><span class="n">tfs_data_frame</span><span class="p">)</span>
 
-    <span class="k">if</span> <span class="n">validate</span><span class="p">:</span>
-        <span class="n">validate_frame</span><span class="p">(</span><span class="n">tfs_data_frame</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;from file </span><span class="si">{</span><span class="n">tfs_file_path</span><span class="o">.</span><span class="n">absolute</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">non_unique_behavior</span><span class="p">)</span>
+    <span class="c1"># Only perform validation if asked (&#39;validate&#39; defaults to None which skips this step)</span>
+    <span class="k">if</span> <span class="n">validate</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># validation function checks for valid values</span>
+        <span class="n">validate_frame</span><span class="p">(</span>
+            <span class="n">tfs_data_frame</span><span class="p">,</span>
+            <span class="n">info_str</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;from file </span><span class="si">{</span><span class="n">tfs_file_path</span><span class="o">.</span><span class="n">absolute</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="n">non_unique_behavior</span><span class="o">=</span><span class="n">non_unique_behavior</span><span class="p">,</span>
+            <span class="n">compatibility</span><span class="o">=</span><span class="n">validate</span><span class="p">,</span>
+        <span class="p">)</span>
 
     <span class="k">return</span> <span class="n">tfs_data_frame</span></div>
 
@@ -270,19 +342,17 @@
 <span class="sd">    Parses the top of the **tfs_file_path** and returns the headers.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        tfs_file_path (pathlib.Path | str): Path object to the **TFS**</span>
-<span class="sd">            file to read. Can be a string, in which case it will be cast to</span>
-<span class="sd">            a Path object.</span>
+<span class="sd">        tfs_file_path (pathlib.Path | str): Path to the **TFS** file</span>
+<span class="sd">            to read.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        An dictionary with the headers read from the file.</span>
-
 
 <span class="sd">    Examples:</span>
 
 <span class="sd">        .. code-block:: python</span>
 
-<span class="sd">            &gt;&gt;&gt; headers = read_headers(&quot;filename.tfs&quot;)</span>
+<span class="sd">            headers = read_headers(&quot;filename.tfs&quot;)</span>
 
 <span class="sd">        Just as with the `read_tfs` function, it is possible to load from compressed</span>
 <span class="sd">        files if the compression format is supported by `pandas`. The compression</span>
@@ -291,7 +361,7 @@
 
 <span class="sd">        .. code-block:: python</span>
 
-<span class="sd">            &gt;&gt;&gt; headers = read_headers(&quot;filename.tfs.gz&quot;)</span>
+<span class="sd">            headers = read_headers(&quot;filename.tfs.gz&quot;)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">metadata</span><span class="p">:</span> <span class="n">_TfsMetaData</span> <span class="o">=</span> <span class="n">_read_metadata</span><span class="p">(</span><span class="n">tfs_file_path</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">metadata</span><span class="o">.</span><span class="n">headers</span></div>
@@ -311,20 +381,44 @@
     <span class="n">column_types</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
 
 
+<span class="nd">@contextmanager</span>
+<span class="k">def</span> <span class="nf">_metadata_handle</span><span class="p">(</span><span class="n">file_path</span><span class="p">:</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span> <span class="o">|</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TextIOWrapper</span><span class="p">:</span>  <span class="c1"># type: ignore</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A contextmanager to provide a handle for the file, to iterate through.</span>
+<span class="sd">    The handle is obtained via a pandas function which handles the potential</span>
+<span class="sd">    file compression for us. Whatever happens after yielding, the handle is</span>
+<span class="sd">    closed when the context exits.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        tfs_file_path (pathlib.Path | str): Path to the **TFS** file to read. Can be</span>
+<span class="sd">            a string, in which case it will be cast to a Path object.</span>
+
+<span class="sd">    Yields:</span>
+<span class="sd">        A ``TextIOWrapper`` as the handle of the file.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">handles</span> <span class="o">=</span> <span class="n">get_handle</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="n">is_text</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">errors</span><span class="o">=</span><span class="s2">&quot;strict&quot;</span><span class="p">,</span> <span class="n">compression</span><span class="o">=</span><span class="s2">&quot;infer&quot;</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">yield</span> <span class="n">handles</span><span class="o">.</span><span class="n">handle</span>
+    <span class="k">finally</span><span class="p">:</span>
+        <span class="n">handles</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+
 <span class="k">def</span> <span class="nf">_read_metadata</span><span class="p">(</span><span class="n">tfs_file_path</span><span class="p">:</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span> <span class="o">|</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_TfsMetaData</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Parses the beginning of the **tfs_file_path** to extract metadata (all non dataframe lines).</span>
+<span class="sd">    Parses the beginning of the **tfs_file_path** to extract metadata</span>
+<span class="sd">    (all non dataframe lines).</span>
 
 <span class="sd">    .. admonition:: **Methodology**</span>
 
-<span class="sd">        This function parses the first lines of the file until it gets to the `types` line.</span>
-<span class="sd">        While parsed, the appropriate information is gathered (headers content, column names &amp; types,</span>
-<span class="sd">        number of lines parsed). After reaching the `types` line, the loop is broken to avoid reading</span>
-<span class="sd">        the whole file. The gathered metadata is assembled in a single ``_TfsMetaData`` object and</span>
-<span class="sd">        returned.</span>
+<span class="sd">        This function parses the first lines of the file until it gets to</span>
+<span class="sd">        the `types` line. While parsed, all the appropriate information is</span>
+<span class="sd">        gathered (headers content, column names and types, number of lines</span>
+<span class="sd">        parsed). After reaching the `types` line, the loop is broken to avoid</span>
+<span class="sd">        reading the whole file. The gathered metadata is assembled in a single</span>
+<span class="sd">        ``_TfsMetaData`` object and returned.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        tfs_file_path (pathlib.Path | str): Path object to the **TFS** file to read. Can be</span>
+<span class="sd">        tfs_file_path (pathlib.Path | str): Path to the **TFS** file to read. Can be</span>
 <span class="sd">            a string, in which case it will be cast to a Path object.</span>
 
 <span class="sd">    Returns:</span>
@@ -332,30 +426,19 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">LOGGER</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Reading headers and metadata from file&quot;</span><span class="p">)</span>
     <span class="n">tfs_file_path</span> <span class="o">=</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="n">tfs_file_path</span><span class="p">)</span>
-    <span class="n">headers</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="n">column_names</span> <span class="o">=</span> <span class="n">column_types</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">headers</span> <span class="o">=</span> <span class="p">{}</span>
 
-    <span class="c1"># Read the headers, chunk by chunk (line by line) with pandas.read_csv as a</span>
-    <span class="c1"># context manager. Very important: the value of &#39;sep&#39; here should not be a</span>
-    <span class="c1"># value that can be found in headers (key or value)</span>
-    <span class="k">with</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span>
-        <span class="n">tfs_file_path</span><span class="p">,</span>
-        <span class="n">header</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>  <span class="c1"># don&#39;t look for a line with column names</span>
-        <span class="n">chunksize</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>  <span class="c1"># read one chunk at a time (each is a line)</span>
-        <span class="n">skip_blank_lines</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>  <span class="c1"># do not skip blank lines, so they count as header lines</span>
-        <span class="n">na_filter</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>  <span class="c1"># Do not convert empty lines to NA</span>
-        <span class="n">sep</span><span class="o">=</span><span class="n">_UNEXPECTED_SEP</span><span class="p">,</span>  <span class="c1"># a string not expected to be found in the headers</span>
-        <span class="n">engine</span><span class="o">=</span><span class="s2">&quot;python&quot;</span><span class="p">,</span>  <span class="c1"># only engine that supports this sep argument</span>
-        <span class="n">dtype</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>  <span class="c1"># we are reading the headers so we only expect and want strings, they are parsed afterwards</span>
-    <span class="p">)</span> <span class="k">as</span> <span class="n">file_reader</span><span class="p">:</span>
-        <span class="c1"># Now each read chunk / line is made into a DataFrame, colname 0 and value is the read line</span>
-        <span class="k">for</span> <span class="n">line_record</span> <span class="ow">in</span> <span class="n">file_reader</span><span class="p">:</span>
-            <span class="n">line</span> <span class="o">=</span> <span class="n">line_record</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>  <span class="c1"># this is the value of the line as a string</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="n">line</span><span class="p">:</span>
+    <span class="c1"># Note: the helper contextmanager handles compression for us</span>
+    <span class="c1"># and provides and handle to iterate through, line by line</span>
+    <span class="k">with</span> <span class="n">_metadata_handle</span><span class="p">(</span><span class="n">tfs_file_path</span><span class="p">)</span> <span class="k">as</span> <span class="n">file_reader</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">line_number</span><span class="p">,</span> <span class="n">line</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">file_reader</span><span class="o">.</span><span class="n">readlines</span><span class="p">()):</span>
+            <span class="n">stripped_line</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">stripped_line</span><span class="p">:</span>
                 <span class="k">continue</span>  <span class="c1"># empty line</span>
-            <span class="n">line_components</span> <span class="o">=</span> <span class="n">shlex</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+            <span class="n">line_components</span> <span class="o">=</span> <span class="n">shlex</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">stripped_line</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">line_components</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">HEADER</span><span class="p">:</span>
-                <span class="n">name</span><span class="p">,</span> <span class="n">value</span> <span class="o">=</span> <span class="n">_parse_header</span><span class="p">(</span><span class="n">line_components</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span>
+                <span class="n">name</span><span class="p">,</span> <span class="n">value</span> <span class="o">=</span> <span class="n">_parse_header_line</span><span class="p">(</span><span class="n">line_components</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span>
                 <span class="n">headers</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
             <span class="k">elif</span> <span class="n">line_components</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">NAMES</span><span class="p">:</span>
                 <span class="n">LOGGER</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Parsing column names.&quot;</span><span class="p">)</span>
@@ -370,21 +453,52 @@
 
     <span class="k">return</span> <span class="n">_TfsMetaData</span><span class="p">(</span>
         <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">,</span>
-        <span class="n">non_data_lines</span><span class="o">=</span><span class="n">line_record</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>  <span class="c1"># skip these lines</span>
+        <span class="n">non_data_lines</span><span class="o">=</span><span class="n">line_number</span><span class="p">,</span>  <span class="c1"># skip these lines</span>
         <span class="n">column_names</span><span class="o">=</span><span class="n">column_names</span><span class="p">,</span>
         <span class="n">column_types</span><span class="o">=</span><span class="n">column_types</span><span class="p">,</span>
     <span class="p">)</span>
 
 
-<span class="k">def</span> <span class="nf">_parse_header</span><span class="p">(</span><span class="n">str_list</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">:</span>
+
+<span class="k">def</span> <span class="nf">_parse_header_line</span><span class="p">(</span><span class="n">str_list</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bool</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">complex128</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Parses the data in the provided header line. Expects a valid header</span>
+<span class="sd">    line starting with the &#39;@&#39; identifier, and parses the content that</span>
+<span class="sd">    follows.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        str_list (list[str]): list of parsed elements from the header</span>
+<span class="sd">            line (we get these with &#39;shlex.split`).</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        A tuple with the name of the header parameter for this line, as</span>
+<span class="sd">        well as its value cast to the proper type (as determined by the</span>
+<span class="sd">        type identifier).</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        AbsentTypeIdentifierError: if no type identifier is found in the header line.</span>
+<span class="sd">        InvalidBooleanHeaderError: if the identifier type indicates a boolean</span>
+<span class="sd">            but the corresponding value is not an accepted boolean.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">type_index</span> <span class="o">=</span> <span class="nb">next</span><span class="p">((</span><span class="n">index</span> <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">part</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">str_list</span><span class="p">)</span> <span class="k">if</span> <span class="n">part</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;%&quot;</span><span class="p">)),</span> <span class="kc">None</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">type_index</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">errmsg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;No data type found in header: &#39;</span><span class="si">{</span><span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">str_list</span><span class="p">)</span><span class="si">}</span><span class="s2">&#39;&quot;</span>
-        <span class="k">raise</span> <span class="n">TfsFormatError</span><span class="p">(</span><span class="n">errmsg</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="n">AbsentTypeIdentifierError</span><span class="p">(</span><span class="n">str_list</span><span class="p">)</span>
 
-    <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">str_list</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">type_index</span><span class="p">])</span>
-    <span class="n">value_string</span> <span class="o">=</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">str_list</span><span class="p">[(</span><span class="n">type_index</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="p">:])</span>
-    <span class="k">return</span> <span class="n">name</span><span class="p">,</span> <span class="n">_id_to_type</span><span class="p">(</span><span class="n">str_list</span><span class="p">[</span><span class="n">type_index</span><span class="p">])(</span><span class="n">value_string</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s1">&#39;&quot;&#39;</span><span class="p">))</span>
+    <span class="c1"># Get name and string of the header, and determine its type</span>
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">str_list</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">type_index</span><span class="p">])</span>
+    <span class="n">value_string</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">str_list</span><span class="p">[(</span><span class="n">type_index</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="p">:])</span>
+    <span class="n">value_string</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">value_string</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s1">&#39;&quot;&#39;</span><span class="p">)</span>
+    <span class="n">value_type</span><span class="p">:</span> <span class="nb">type</span> <span class="o">=</span> <span class="n">_id_to_type</span><span class="p">(</span><span class="n">str_list</span><span class="p">[</span><span class="n">type_index</span><span class="p">])</span>
+
+    <span class="c1"># Some special cases we handle first</span>
+    <span class="k">if</span> <span class="n">value_type</span> <span class="ow">is</span> <span class="n">NoneType</span><span class="p">:</span>  <span class="c1"># special handling for &#39;nil&#39;s</span>
+        <span class="k">return</span> <span class="n">name</span><span class="p">,</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="n">value_type</span> <span class="ow">is</span> <span class="nb">bool</span><span class="p">:</span>  <span class="c1"># special handling for boolean values</span>
+        <span class="k">return</span> <span class="n">name</span><span class="p">,</span> <span class="n">_string_to_bool</span><span class="p">(</span><span class="n">value_string</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">value_type</span> <span class="ow">is</span> <span class="n">np</span><span class="o">.</span><span class="n">complex128</span><span class="p">:</span>  <span class="c1"># special handling for complex values</span>
+        <span class="k">return</span> <span class="n">name</span><span class="p">,</span> <span class="n">_parse_complex</span><span class="p">(</span><span class="n">value_string</span><span class="p">)</span>
+    <span class="c1"># Otherwise we just cast to the determined type (no special handling)</span>
+    <span class="k">return</span> <span class="n">name</span><span class="p">,</span> <span class="n">value_type</span><span class="p">(</span><span class="n">value_string</span><span class="p">)</span>
 
 
 <span class="k">def</span> <span class="nf">_find_and_set_index</span><span class="p">(</span><span class="n">data_frame</span><span class="p">:</span> <span class="n">TfsDataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TfsDataFrame</span><span class="p">:</span>
@@ -412,21 +526,33 @@
     <span class="k">return</span> <span class="p">[</span><span class="n">_id_to_type</span><span class="p">(</span><span class="n">string</span><span class="p">)</span> <span class="k">for</span> <span class="n">string</span> <span class="ow">in</span> <span class="n">str_list</span><span class="p">]</span>
 
 
-<span class="k">def</span> <span class="nf">_id_to_type</span><span class="p">(</span><span class="n">type_str</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">type</span><span class="p">:</span>
+<span class="k">def</span> <span class="nf">_string_to_bool</span><span class="p">(</span><span class="n">val_str</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Infers the boolean value from a string value in the headers.</span>
+<span class="sd">    Raises ``InvalidBooleanHeaderError`` when encountering invalid value.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">val_str</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">capitalize</span><span class="p">()</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">VALID_BOOLEANS_HEADERS</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">InvalidBooleanHeaderError</span><span class="p">(</span><span class="n">val_str</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">val_str</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">capitalize</span><span class="p">()</span> <span class="ow">in</span> <span class="n">VALID_TRUE_BOOLEANS</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">return</span> <span class="kc">False</span>
+
+
+<span class="k">def</span> <span class="nf">_id_to_type</span><span class="p">(</span><span class="n">type_identifier</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">type</span><span class="p">:</span>
     <span class="k">try</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">ID_TO_TYPE</span><span class="p">[</span><span class="n">type_str</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">ID_TO_TYPE</span><span class="p">[</span><span class="n">type_identifier</span><span class="p">]</span>
     <span class="k">except</span> <span class="ne">KeyError</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>  <span class="c1"># could be a &quot;%[num]s&quot; that MAD-X likes to output</span>
-        <span class="k">if</span> <span class="n">_is_madx_string_col_identifier</span><span class="p">(</span><span class="n">type_str</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">_is_madx_string_col_identifier</span><span class="p">(</span><span class="n">type_identifier</span><span class="p">):</span>
             <span class="k">return</span> <span class="nb">str</span>
-        <span class="n">errmsg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Unknown data type: </span><span class="si">{</span><span class="n">type_str</span><span class="si">}</span><span class="s2">&quot;</span>
-        <span class="k">raise</span> <span class="n">TfsFormatError</span><span class="p">(</span><span class="n">errmsg</span><span class="p">)</span> <span class="kn">from</span> <span class="nn">err</span>
+        <span class="k">raise</span> <span class="n">UnknownTypeIdentifierError</span><span class="p">(</span><span class="n">type_identifier</span><span class="p">)</span> <span class="kn">from</span> <span class="nn">err</span>
 
 
 <span class="k">def</span> <span class="nf">_is_madx_string_col_identifier</span><span class="p">(</span><span class="n">type_str</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    ``MAD-X`` likes to return the string columns by also indicating their width, so trying to parse</span>
-<span class="sd">    `%s` identifiers only we might miss those looking like `%20s` specifying (here) a 20-character</span>
-<span class="sd">     wide column for strings.</span>
+<span class="sd">    ``MAD-X`` likes to return the string columns by also indicating their width, so</span>
+<span class="sd">    by trying to parse `%s` identifiers only we might miss those looking like `%20s`</span>
+<span class="sd">    specifying (here) a 20-character wide column for strings.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        type_str (str): the suspicious identifier.</span>
@@ -438,9 +564,28 @@
         <span class="k">return</span> <span class="kc">False</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="n">_</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">type_str</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
-        <span class="k">return</span> <span class="kc">True</span>
     <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
         <span class="k">return</span> <span class="kc">False</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">True</span>
+
+
+<span class="k">def</span> <span class="nf">_parse_complex</span><span class="p">(</span><span class="n">complex_string</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">complex128</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Helper for pandas (as a converter) to handles complex columns. Assumes the file</span>
+<span class="sd">    might be from MAD-NG, in which case it uses &#39;i&#39; (or &#39;I&#39;) for the imaginary part</span>
+<span class="sd">    and we need to convert it to &#39;j&#39; for Python.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        complex_string (str): the string representation of the complex number, for</span>
+<span class="sd">            instance &#39;1.0+2.0i&#39; or &#39;7.5342+164j&#39;.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        The (potentially adapted) value as a numpy.complex128.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># We replace both &#39;i&#39; and &#39;I&#39; as each can happen in the MAD-NG output</span>
+    <span class="c1"># (the second one is a special case, if there is no real part - said Laurent)</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">complex128</span><span class="p">(</span><span class="n">complex_string</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;i&quot;</span><span class="p">,</span> <span class="s2">&quot;j&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;I&quot;</span><span class="p">,</span> <span class="s2">&quot;j&quot;</span><span class="p">))</span>
 </pre></div>
 
            </div>

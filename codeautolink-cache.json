@@ -1,9 +1,56 @@
 {
+  "compatibility": [
+    {
+      "source": "import tfs\nfrom tfs.frame import validate\n\ndf = tfs.read(\"path/to/file.tfs\")\n\n# To validate with MAD-X compatibility\nvalidate(df, compatibility=\"mad-x\")  # or use \"madx\"\n\n# To validate with MAD-NG compatibility\nvalidate(df, compatibility=\"mad-ng\")  # or use \"madng\"",
+      "names": [],
+      "example": {
+        "document": "compatibility",
+        "ref_id": "tfsdataframe-validation",
+        "headings": [
+          "MAD-X and MAD-NG Compatibility",
+          "TfsDataFrame Validation",
+          "When Does Validation Happen?"
+        ]
+      },
+      "doc_lineno": 23
+    }
+  ],
   "index": [],
   "modules/index": [
     {
-      "source": ">>> # All TFS attributes must be marked with the Tfs(...) class,\n... # and generated attribute names will be appended with _x / _y\n... # depending on files found in \"./example\"\n... class ExampleCollection(TfsCollection):\n...     beta = Tfs(\"beta_phase_{}.tfs\")  # A TFS attribute\n...     other_value = 7  # A traditional attribute.\n\n...     def get_filename(template: str, plane: str) -> str:\n...         return template.format(plane)\n\n>>> example = ExampleCollection(\"./example\")\n\n>>> # Get the BETX / BETY column from \"beta_phase_x.tfs\":\n>>> beta_x_column = example.beta_x.BETX  # / example.beta_x.BETY\n\n>>> # Get the BETY column from \"beta_phase_y.tfs\":\n>>> beta_y_column = example.beta_y.BETY\n\n>>> # The planes can also be accessed as items (both examples below work):\n>>> beta_y_column = example.beta[\"y\"].BETY\n>>> beta_y_column = example.beta[\"Y\"].BETY\n\n>>> # This will write an empty DataFrame to \"beta_phase_y.tfs\":\n>>> example.allow_write = True\n>>> example.beta[\"y\"] = DataFrame()",
-      "names": [],
+      "source": "# All TFS attributes must be marked with the Tfs(...) class,\n# and generated attribute names will be appended with _x / _y\n# depending on files found in \"./example\"\nclass ExampleCollection(TfsCollection):\n    beta = Tfs(\"beta_phase_{}.tfs\")  # A TFS attribute\n    other_value = 7  # A traditional attribute.\n\n    def get_filename(template: str, plane: str) -> str:\n        return template.format(plane)\n\nexample = ExampleCollection(\"./example\")\n\n# Get the BETX / BETY column from \"beta_phase_x.tfs\":\nbeta_x_column = example.beta_x.BETX  # / example.beta_x.BETY\n\n# Get the BETY column from \"beta_phase_y.tfs\":\nbeta_y_column = example.beta_y.BETY\n\n# The planes can also be accessed as items (both examples below work):\nbeta_y_column = example.beta[\"y\"].BETY\nbeta_y_column = example.beta[\"Y\"].BETY\n\n# This will write an empty DataFrame to \"beta_phase_y.tfs\":\nexample.allow_write = True\nexample.beta[\"y\"] = DataFrame()",
+      "names": [
+        {
+          "import_components": [
+            "str"
+          ],
+          "code_str": "str",
+          "lineno": 8,
+          "end_lineno": 8,
+          "context": "none",
+          "resolved_location": "str"
+        },
+        {
+          "import_components": [
+            "str"
+          ],
+          "code_str": "str",
+          "lineno": 8,
+          "end_lineno": 8,
+          "context": "none",
+          "resolved_location": "str"
+        },
+        {
+          "import_components": [
+            "str"
+          ],
+          "code_str": "str",
+          "lineno": 8,
+          "end_lineno": 8,
+          "context": "none",
+          "resolved_location": "str"
+        }
+      ],
       "example": {
         "document": "modules/index",
         "ref_id": "collection",
@@ -15,7 +62,7 @@
       "doc_lineno": 12
     },
     {
-      "source": ">>> coupling = Tfs(\"getcouple.tfs\", two_planes=False)  # declaration\n>>> f1001w_column = example.coupling.F1001W  # access",
+      "source": "coupling = Tfs(\"getcouple.tfs\", two_planes=False)  # declaration\nf1001w_column = example.coupling.F1001W  # access",
       "names": [],
       "example": {
         "document": "modules/index",
@@ -28,7 +75,7 @@
       "doc_lineno": 44
     },
     {
-      "source": ">>> headers = read_headers(\"filename.tfs\")",
+      "source": "headers = read_headers(\"filename.tfs\")",
       "names": [],
       "example": {
         "document": "modules/index",
@@ -40,10 +87,10 @@
           "Examples"
         ]
       },
-      "doc_lineno": 12
+      "doc_lineno": 11
     },
     {
-      "source": ">>> headers = read_headers(\"filename.tfs.gz\")",
+      "source": "headers = read_headers(\"filename.tfs.gz\")",
       "names": [],
       "example": {
         "document": "modules/index",
@@ -55,10 +102,10 @@
           "Examples"
         ]
       },
-      "doc_lineno": 21
+      "doc_lineno": 20
     },
     {
-      "source": ">>> tfs.read(\"filename.tfs\")",
+      "source": "tfs.read(\"filename.tfs\")",
       "names": [],
       "example": {
         "document": "modules/index",
@@ -72,10 +119,10 @@
           "Examples"
         ]
       },
-      "doc_lineno": 46
+      "doc_lineno": 48
     },
     {
-      "source": ">>> tfs.read(pathlib.Path(\"filename.tfs\"))",
+      "source": "tfs.read(pathlib.Path(\"filename.tfs\"))",
       "names": [],
       "example": {
         "document": "modules/index",
@@ -89,10 +136,10 @@
           "Examples"
         ]
       },
-      "doc_lineno": 52
+      "doc_lineno": 54
     },
     {
-      "source": ">>> tfs.read(\"filename.tfs\", index=\"COLUMN_NAME\")",
+      "source": "tfs.read(\"filename.tfs.gz\")\ntfs.read(\"filename.tfs.bz2\")\ntfs.read(\"filename.tfs.zip\")",
       "names": [],
       "example": {
         "document": "modules/index",
@@ -106,10 +153,10 @@
           "Examples"
         ]
       },
-      "doc_lineno": 58
+      "doc_lineno": 62
     },
     {
-      "source": ">>> tfs.read(\"filename.tfs\", non_unique_behavior=\"raise\")",
+      "source": "tfs.read(\"filename.tfs\", index=\"COLUMN_NAME\")",
       "names": [],
       "example": {
         "document": "modules/index",
@@ -123,10 +170,10 @@
           "Examples"
         ]
       },
-      "doc_lineno": 65
+      "doc_lineno": 71
     },
     {
-      "source": ">>> tfs.read(\"filename.tfs\", validate=False)",
+      "source": "tfs.read(\"filename.tfs\", validate=\"MAD-NG\")  # or validate=\"MAD-X\"",
       "names": [],
       "example": {
         "document": "modules/index",
@@ -140,10 +187,10 @@
           "Examples"
         ]
       },
-      "doc_lineno": 72
+      "doc_lineno": 78
     },
     {
-      "source": ">>> tfs.read(\"filename.tfs.gz\")\n>>> tfs.read(\"filename.tfs.bz2\")\n>>> tfs.read(\"filename.tfs.zip\")",
+      "source": "tfs.read(\"filename.tfs\", non_unique_behavior=\"raise\")",
       "names": [],
       "example": {
         "document": "modules/index",
@@ -157,7 +204,7 @@
           "Examples"
         ]
       },
-      "doc_lineno": 80
+      "doc_lineno": 85
     },
     {
       "source": "reference_df = tfs.read(\"path/to/file.tfs\")\nnew_df = some_function(*args, **kwargs)\nassert_tfs_frame_equal(reference_df, new_df)",
@@ -178,26 +225,7 @@
       "doc_lineno": 34
     },
     {
-      "source": ">>> tfs.write(\"filename.tfs\", dataframe)",
-      "names": [],
-      "example": {
-        "document": "modules/index",
-        "ref_id": "writer",
-        "headings": [
-          "API Reference",
-          "Example",
-          "Methodology",
-          "Examples",
-          "Methodology",
-          "Examples",
-          "Example",
-          "Examples"
-        ]
-      },
-      "doc_lineno": 46
-    },
-    {
-      "source": ">>> tfs.write(\"filename.tfs\", dataframe, non_unique_behavior=\"raise\")",
+      "source": "tfs.write(\"filename.tfs\", dataframe)",
       "names": [],
       "example": {
         "document": "modules/index",
@@ -216,7 +244,7 @@
       "doc_lineno": 53
     },
     {
-      "source": ">>> tfs.write(\"filename.tfs\", dataframe, validate=False)",
+      "source": "tfs.write(\"filename.tfs\", dataframe, validate=\"madx\")",
       "names": [],
       "example": {
         "document": "modules/index",
@@ -232,10 +260,10 @@
           "Examples"
         ]
       },
-      "doc_lineno": 60
+      "doc_lineno": 61
     },
     {
-      "source": ">>> tfs.write(\"filename.tfs.gz\", dataframe)",
+      "source": "tfs.write(\n    \"filename.tfs\", dataframe, non_unique_behavior=\"raise\", validate=\"madng\"\n)",
       "names": [],
       "example": {
         "document": "modules/index",
@@ -252,6 +280,25 @@
         ]
       },
       "doc_lineno": 68
+    },
+    {
+      "source": "tfs.write(\"filename.tfs.gz\", dataframe)",
+      "names": [],
+      "example": {
+        "document": "modules/index",
+        "ref_id": "writer",
+        "headings": [
+          "API Reference",
+          "Example",
+          "Methodology",
+          "Examples",
+          "Methodology",
+          "Examples",
+          "Example",
+          "Examples"
+        ]
+      },
+      "doc_lineno": 78
     }
   ],
   "quickstart": [
@@ -266,7 +313,7 @@
           "Basic Usage"
         ]
       },
-      "doc_lineno": 16
+      "doc_lineno": 12
     },
     {
       "source": "# Access and modify the headers with the .headers attribute\nuseful_variable = data_frame.headers[\"SOME_KEY\"]\ndata_frame.headers[\"NEW_KEY\"] = some_variable\n\n# Manipulate data as you do with pandas DataFrames\ndata_frame[\"NEWCOL\"] = data_frame.COLUMN_A * data_frame.COLUMN_B\n\n# You can check the TfsDataFrame validity, and choose the behavior in case of errors\ntfs.frame.validate(data_frame, non_unique_behavior=\"raise\")  # or choose \"warn\"",
@@ -279,7 +326,7 @@
           "Basic Usage"
         ]
       },
-      "doc_lineno": 30
+      "doc_lineno": 26
     },
     {
       "source": "# Compression format is inferred from the file extension\ndf = tfs.read(\"filename.tfs.gz\", index=\"index_column\")\n\n# Same thing when writing to disk\ntfs.write(\"path_to_output.tfs.zip\", df)",
@@ -292,10 +339,10 @@
           "Compression"
         ]
       },
-      "doc_lineno": 50
+      "doc_lineno": 46
     },
     {
-      "source": "from tfs.hdf import read_hdf, write_hdf\n\n# Read a TfsDataFrame from an HDF5 file\ndf = tfs.hdf.read(\"path_to_input.hdf5\", key=\"key_in_hdf5_file\")\n\n# Write a TfsDataFrame to an HDF5 file\ntfs.hdf.write(\"path_to_output.hdf5\", df, key=\"key_in_hdf5_file\")",
+      "source": "from tfs.hdf import read_hdf, write_hdf\n\n# Read a TfsDataFrame from an HDF5 file\ndf = tfs.hdf.read_hdf(\"path_to_input.hdf5\", key=\"key_in_hdf5_file\")\n\n# Write a TfsDataFrame to an HDF5 file\ntfs.hdf.write_hdf(\"path_to_output.hdf5\", df, key=\"key_in_hdf5_file\")",
       "names": [],
       "example": {
         "document": "quickstart",
@@ -305,10 +352,10 @@
           "Compression"
         ]
       },
-      "doc_lineno": 68
+      "doc_lineno": 64
     },
     {
-      "source": "df1 = tfs.read(\"file1.tfs\")\ndf2 = tfs.read(\"file2.tfs\")\n\n# This returns a pandas.DataFrame and makes you lose the headers\nresult = pd.concat([df1, df2])\n\n# Instead, use our own\nresult = tfs.frame.concat([df1, df2])  # you can choose how to merge headers too\nassert isinstance(result, tfs.TfsDataFrame)  # that's ok!",
+      "source": "df1 = tfs.read(\"file1.tfs\")\ndf2 = tfs.read(\"file2.tfs\")\n\n# This returns a pandas.DataFrame and makes you lose the headers\nresult = pd.concat([df1, df2])\n\n# Instead, use our own wrapper\nresult = tfs.frame.concat([df1, df2])  # you can choose how to merge headers too\nassert isinstance(result, tfs.TfsDataFrame)  # that's ok!\nassert getattr(result, \"headers\", None) is not None  # headers are not lost",
       "names": [
         {
           "import_components": [
@@ -330,17 +377,28 @@
           "end_lineno": 9,
           "context": "none",
           "resolved_location": "isinstance"
+        },
+        {
+          "import_components": [
+            "getattr"
+          ],
+          "code_str": "getattr",
+          "lineno": 10,
+          "end_lineno": 10,
+          "context": "none",
+          "resolved_location": "getattr"
         }
       ],
       "example": {
         "document": "quickstart",
-        "ref_id": "compatibility",
+        "ref_id": "function-replacements",
         "headings": [
           "2 Minutes to tfs-pandas",
-          "Compatibility"
+          "Function Replacements"
         ]
       },
-      "doc_lineno": 84
+      "doc_lineno": 89
     }
-  ]
+  ],
+  "tfsformat": []
 }

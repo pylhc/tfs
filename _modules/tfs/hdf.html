@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>tfs.hdf &mdash; tfs-pandas 3.9.0 documentation</title>
+  <title>tfs.hdf &mdash; tfs-pandas 4.0.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
@@ -15,7 +15,7 @@
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=e55a5be6"></script>
+      <script src="../../_static/documentation_options.js?v=3304f9e4"></script>
       <script src="../../_static/doctools.js?v=9bcbadda"></script>
       <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -49,7 +49,23 @@
 <li class="toctree-l1"><a class="reference internal" href="../../quickstart.html">2 Minutes to tfs-pandas</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../quickstart.html#basic-usage">Basic Usage</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../quickstart.html#compression">Compression</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../quickstart.html#compatibility">Compatibility</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../quickstart.html#validation">Validation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../quickstart.html#function-replacements">Function Replacements</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../tfsformat.html">The Table File System Format</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../tfsformat.html#headers">Headers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../tfsformat.html#table">Table</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../tfsformat.html#types-and-identifiers">Types and Identifiers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../tfsformat.html#tfs-pandas-caveats">TFS-Pandas Caveats</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../tfsformat.html#tfs-file-example">TFS File Example</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../compatibility.html">MAD-X and MAD-NG Compatibility</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../compatibility.html#tfsdataframe-validation">TfsDataFrame Validation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../compatibility.html#common-validation-rules">Common Validation Rules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../compatibility.html#mad-ng-compatibility">MAD-NG Compatibility</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../compatibility.html#mad-x-compatibility">MAD-X Compatibility</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../modules/index.html">API Reference</a><ul>
@@ -127,21 +143,23 @@
 <div class="viewcode-block" id="write_hdf">
 <a class="viewcode-back" href="../../modules/index.html#tfs.hdf.write_hdf">[docs]</a>
 <span class="k">def</span> <span class="nf">write_hdf</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="n">Path</span> <span class="o">|</span> <span class="nb">str</span><span class="p">,</span> <span class="n">df</span><span class="p">:</span> <span class="n">TfsDataFrame</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Write TfsDataFrame to hdf5 file. The dataframe will be written into</span>
-<span class="sd">    the group ``data``, the headers into the group ``headers``.</span>
-<span class="sd">    Only one dataframe per file is allowed.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Write the `TfsDataFrame` to **HDF** file. The dataframe will be written</span>
+<span class="sd">    into the group ``data``, the headers into the group ``headers``. Only one</span>
+<span class="sd">    dataframe per file is allowed.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        path (Path, str): Path of the output file.</span>
 <span class="sd">        df (TfsDataFrame): TfsDataFrame to write.</span>
-<span class="sd">        kwargs: kwargs to be passed to pandas ``DataFrame.to_hdf()``.</span>
-<span class="sd">                ``key`` is not allowed and ``mode`` needs to be ``w`` if the</span>
-<span class="sd">                output file already exists (``w`` will be used in any case,</span>
-<span class="sd">                even if the file does not exist, but only a warning is logged</span>
-<span class="sd">                in that case).</span>
+<span class="sd">        **kwargs: Any keyword argument is given to `pandas.DataFrame.to_hdf`.</span>
+<span class="sd">            Note that ``key`` is not allowed and ``mode`` *needs* to be ``w``</span>
+<span class="sd">            if the output file already exists (``w`` will be used in any case,</span>
+<span class="sd">            even if the file does not exist, but only a warning is logged in</span>
+<span class="sd">            that case).</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">_check_imports</span><span class="p">()</span>
-    <span class="c1"># Check for `key` kwarg (forbidden) ---</span>
+    <span class="n">_check_imports</span><span class="p">()</span>  <span class="c1"># checks tables and h5py are imported, raises otherwise</span>
+
+    <span class="c1"># Check for `key` kwargs (forbidden) ---</span>
     <span class="k">if</span> <span class="s2">&quot;key&quot;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
         <span class="n">errmsg</span> <span class="o">=</span> <span class="s2">&quot;The argument &#39;key&#39; is not allowed here, as only one TfsDataFrame per file is supported.&quot;</span>
         <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="n">errmsg</span><span class="p">)</span>
@@ -178,7 +196,8 @@
 <span class="sd">    Returns:</span>
 <span class="sd">        A ``TfsDataFrame`` object with the loaded data from the file.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">_check_imports</span><span class="p">()</span>
+    <span class="n">_check_imports</span><span class="p">()</span>  <span class="c1"># checks tables and h5py are imported, raises otherwise</span>
+
     <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_hdf</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="s2">&quot;data&quot;</span><span class="p">)</span>
     <span class="k">with</span> <span class="n">h5py</span><span class="o">.</span><span class="n">File</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">hf</span><span class="p">:</span>
         <span class="n">headers</span> <span class="o">=</span> <span class="n">hf</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;headers&quot;</span><span class="p">)</span>
@@ -193,6 +212,7 @@
 
 <span class="k">def</span> <span class="nf">_check_imports</span><span class="p">():</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Checks if required packages for HDF5 functionality are installed. Raises ImportError if not.&quot;&quot;&quot;</span>
+    <span class="c1"># We try to import tables and h5py at top of file and set them to None if that fails</span>
     <span class="n">not_imported</span> <span class="o">=</span> <span class="p">[</span><span class="n">name</span> <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">package</span> <span class="ow">in</span> <span class="p">((</span><span class="s2">&quot;tables&quot;</span><span class="p">,</span> <span class="n">tables</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;h5py&quot;</span><span class="p">,</span> <span class="n">h5py</span><span class="p">))</span> <span class="k">if</span> <span class="n">package</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">]</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">not_imported</span><span class="p">):</span>
         <span class="n">names</span> <span class="o">=</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;`</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">`&quot;</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">not_imported</span><span class="p">)</span>

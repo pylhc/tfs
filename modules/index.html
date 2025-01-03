@@ -5,7 +5,7 @@
 <head>
 <meta charset="utf-8"/><meta content="width=device-width, initial-scale=1" name="viewport"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>API Reference — tfs-pandas 3.9.0 documentation</title>
+<title>API Reference — tfs-pandas 4.0.0 documentation</title>
 <link href="../_static/pygments.css?v=fa44fd50" rel="stylesheet" type="text/css"/>
 <link href="../_static/css/theme.css?v=e59714d7" rel="stylesheet" type="text/css"/>
 <link href="../_static/copybutton.css?v=76b2166b" rel="stylesheet" type="text/css"/>
@@ -13,7 +13,7 @@
 <link href="../_static/css/custom.css?v=988d0652" rel="stylesheet" type="text/css"/>
 <script src="../_static/jquery.js?v=5d32c60e"></script>
 <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-<script src="../_static/documentation_options.js?v=e55a5be6"></script>
+<script src="../_static/documentation_options.js?v=3304f9e4"></script>
 <script src="../_static/doctools.js?v=9bcbadda"></script>
 <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
 <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -21,7 +21,7 @@
 <script src="../_static/js/theme.js"></script>
 <link href="../genindex.html" rel="index" title="Index"/>
 <link href="../search.html" rel="search" title="Search"/>
-<link href="../quickstart.html" rel="prev" title="2 Minutes to tfs-pandas"/>
+<link href="../compatibility.html" rel="prev" title="MAD-X and MAD-NG Compatibility"/>
 </head>
 <body class="wy-body-for-nav">
 <div class="wy-grid-for-nav">
@@ -43,7 +43,23 @@
 <li class="toctree-l1"><a class="reference internal" href="../quickstart.html">2 Minutes to tfs-pandas</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../quickstart.html#basic-usage">Basic Usage</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../quickstart.html#compression">Compression</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../quickstart.html#compatibility">Compatibility</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../quickstart.html#validation">Validation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../quickstart.html#function-replacements">Function Replacements</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../tfsformat.html">The Table File System Format</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../tfsformat.html#headers">Headers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tfsformat.html#table">Table</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tfsformat.html#types-and-identifiers">Types and Identifiers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tfsformat.html#tfs-pandas-caveats">TFS-Pandas Caveats</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tfsformat.html#tfs-file-example">TFS File Example</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../compatibility.html">MAD-X and MAD-NG Compatibility</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../compatibility.html#tfsdataframe-validation">TfsDataFrame Validation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../compatibility.html#common-validation-rules">Common Validation Rules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../compatibility.html#mad-ng-compatibility">MAD-NG Compatibility</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../compatibility.html#mad-x-compatibility">MAD-X Compatibility</a></li>
 </ul>
 </li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">API Reference</a><ul>
@@ -106,37 +122,37 @@ assignments. All attributes will be read and written as <code class="xref py py-
 <p>If <strong>./example</strong> is a directory that contains two <strong>TFS</strong> files <strong>beta_phase_x.tfs</strong>
 and <strong>beta_phase_y.tfs</strong> with <code class="xref py py-obj docutils literal notranslate"><span class="pre">BETX</span></code> and <code class="xref py py-obj docutils literal notranslate"><span class="pre">BETY</span></code> columns respectively:</p>
 </div>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># All TFS attributes must be marked with the Tfs(...) class,</span>
-<span class="gp">... </span><span class="c1"># and generated attribute names will be appended with _x / _y</span>
-<span class="gp">... </span><span class="c1"># depending on files found in "./example"</span>
-<span class="gp">... </span><span class="k">class</span> <span class="nc">ExampleCollection</span><span class="p">(</span><span class="n">TfsCollection</span><span class="p">):</span>
-<span class="gp">... </span>    <span class="n">beta</span> <span class="o">=</span> <span class="n">Tfs</span><span class="p">(</span><span class="s2">"beta_phase_</span><span class="si">{}</span><span class="s2">.tfs"</span><span class="p">)</span>  <span class="c1"># A TFS attribute</span>
-<span class="gp">... </span>    <span class="n">other_value</span> <span class="o">=</span> <span class="mi">7</span>  <span class="c1"># A traditional attribute.</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># All TFS attributes must be marked with the Tfs(...) class,</span>
+<span class="c1"># and generated attribute names will be appended with _x / _y</span>
+<span class="c1"># depending on files found in "./example"</span>
+<span class="k">class</span> <span class="nc">ExampleCollection</span><span class="p">(</span><span class="n">TfsCollection</span><span class="p">):</span>
+    <span class="n">beta</span> <span class="o">=</span> <span class="n">Tfs</span><span class="p">(</span><span class="s2">"beta_phase_</span><span class="si">{}</span><span class="s2">.tfs"</span><span class="p">)</span>  <span class="c1"># A TFS attribute</span>
+    <span class="n">other_value</span> <span class="o">=</span> <span class="mi">7</span>  <span class="c1"># A traditional attribute.</span>
 
-<span class="go">...     def get_filename(template: str, plane: str) -&gt; str:</span>
-<span class="go">...         return template.format(plane)</span>
+    <span class="k">def</span> <span class="nf">get_filename</span><span class="p">(</span><span class="n">template</span><span class="p">:</span> <a class="sphinx-codeautolink-a" href="https://docs.python.org/3/library/stdtypes.html#str" title="str"><span class="nb">str</span></a><span class="p">,</span> <span class="n">plane</span><span class="p">:</span> <a class="sphinx-codeautolink-a" href="https://docs.python.org/3/library/stdtypes.html#str" title="str"><span class="nb">str</span></a><span class="p">)</span> <span class="o">-&gt;</span> <a class="sphinx-codeautolink-a" href="https://docs.python.org/3/library/stdtypes.html#str" title="str"><span class="nb">str</span></a><span class="p">:</span>
+        <span class="k">return</span> <span class="n">template</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">plane</span><span class="p">)</span>
 
-<span class="gp">&gt;&gt;&gt; </span><span class="n">example</span> <span class="o">=</span> <span class="n">ExampleCollection</span><span class="p">(</span><span class="s2">"./example"</span><span class="p">)</span>
+<span class="n">example</span> <span class="o">=</span> <span class="n">ExampleCollection</span><span class="p">(</span><span class="s2">"./example"</span><span class="p">)</span>
 
-<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Get the BETX / BETY column from "beta_phase_x.tfs":</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">beta_x_column</span> <span class="o">=</span> <span class="n">example</span><span class="o">.</span><span class="n">beta_x</span><span class="o">.</span><span class="n">BETX</span>  <span class="c1"># / example.beta_x.BETY</span>
+<span class="c1"># Get the BETX / BETY column from "beta_phase_x.tfs":</span>
+<span class="n">beta_x_column</span> <span class="o">=</span> <span class="n">example</span><span class="o">.</span><span class="n">beta_x</span><span class="o">.</span><span class="n">BETX</span>  <span class="c1"># / example.beta_x.BETY</span>
 
-<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Get the BETY column from "beta_phase_y.tfs":</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">beta_y_column</span> <span class="o">=</span> <span class="n">example</span><span class="o">.</span><span class="n">beta_y</span><span class="o">.</span><span class="n">BETY</span>
+<span class="c1"># Get the BETY column from "beta_phase_y.tfs":</span>
+<span class="n">beta_y_column</span> <span class="o">=</span> <span class="n">example</span><span class="o">.</span><span class="n">beta_y</span><span class="o">.</span><span class="n">BETY</span>
 
-<span class="gp">&gt;&gt;&gt; </span><span class="c1"># The planes can also be accessed as items (both examples below work):</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">beta_y_column</span> <span class="o">=</span> <span class="n">example</span><span class="o">.</span><span class="n">beta</span><span class="p">[</span><span class="s2">"y"</span><span class="p">]</span><span class="o">.</span><span class="n">BETY</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">beta_y_column</span> <span class="o">=</span> <span class="n">example</span><span class="o">.</span><span class="n">beta</span><span class="p">[</span><span class="s2">"Y"</span><span class="p">]</span><span class="o">.</span><span class="n">BETY</span>
+<span class="c1"># The planes can also be accessed as items (both examples below work):</span>
+<span class="n">beta_y_column</span> <span class="o">=</span> <span class="n">example</span><span class="o">.</span><span class="n">beta</span><span class="p">[</span><span class="s2">"y"</span><span class="p">]</span><span class="o">.</span><span class="n">BETY</span>
+<span class="n">beta_y_column</span> <span class="o">=</span> <span class="n">example</span><span class="o">.</span><span class="n">beta</span><span class="p">[</span><span class="s2">"Y"</span><span class="p">]</span><span class="o">.</span><span class="n">BETY</span>
 
-<span class="gp">&gt;&gt;&gt; </span><span class="c1"># This will write an empty DataFrame to "beta_phase_y.tfs":</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">example</span><span class="o">.</span><span class="n">allow_write</span> <span class="o">=</span> <span class="kc">True</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">example</span><span class="o">.</span><span class="n">beta</span><span class="p">[</span><span class="s2">"y"</span><span class="p">]</span> <span class="o">=</span> <span class="n">DataFrame</span><span class="p">()</span>
+<span class="c1"># This will write an empty DataFrame to "beta_phase_y.tfs":</span>
+<span class="n">example</span><span class="o">.</span><span class="n">allow_write</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="n">example</span><span class="o">.</span><span class="n">beta</span><span class="p">[</span><span class="s2">"y"</span><span class="p">]</span> <span class="o">=</span> <span class="n">DataFrame</span><span class="p">()</span>
 </pre></div>
 </div>
 <p>If the file to be loaded is not defined for two planes then the attribute can be declared
 and accessed as:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">coupling</span> <span class="o">=</span> <span class="n">Tfs</span><span class="p">(</span><span class="s2">"getcouple.tfs"</span><span class="p">,</span> <span class="n">two_planes</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>  <span class="c1"># declaration</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">f1001w_column</span> <span class="o">=</span> <span class="n">example</span><span class="o">.</span><span class="n">coupling</span><span class="o">.</span><span class="n">F1001W</span>  <span class="c1"># access</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">coupling</span> <span class="o">=</span> <span class="n">Tfs</span><span class="p">(</span><span class="s2">"getcouple.tfs"</span><span class="p">,</span> <span class="n">two_planes</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>  <span class="c1"># declaration</span>
+<span class="n">f1001w_column</span> <span class="o">=</span> <span class="n">example</span><span class="o">.</span><span class="n">coupling</span><span class="o">.</span><span class="n">F1001W</span>  <span class="c1"># access</span>
 </pre></div>
 </div>
 <p>No file will be loaded until the corresponding attribute is accessed and the loaded
@@ -228,8 +244,64 @@ does not set the Dataframe into the buffer (that is the job of <code class="xref
 </section>
 <dl class="py exception">
 <dt class="sig sig-object py">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tfs.errors.</span></span><span class="sig-name descname"><span class="pre">AbsentColumnNameError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.13)"><span class="pre">Path</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tfs/errors.html#AbsentColumnNameError"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Raised when a <strong>TFS</strong> file does not provide column names.</p>
+</dd></dl>
+<dl class="py exception">
+<dt class="sig sig-object py">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tfs.errors.</span></span><span class="sig-name descname"><span class="pre">AbsentColumnTypeError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.13)"><span class="pre">Path</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tfs/errors.html#AbsentColumnTypeError"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Raised when a <strong>TFS</strong> file does not provide column type identifiers.</p>
+</dd></dl>
+<dl class="py exception">
+<dt class="sig sig-object py">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tfs.errors.</span></span><span class="sig-name descname"><span class="pre">AbsentTypeIdentifierError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">header_line_elements</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tfs/errors.html#AbsentTypeIdentifierError"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Raised when a <strong>TFS</strong> file’s header line does not provide type identifier.</p>
+</dd></dl>
+<dl class="py exception">
+<dt class="sig sig-object py">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tfs.errors.</span></span><span class="sig-name descname"><span class="pre">DuplicateColumnsError</span></span><a class="reference internal" href="../_modules/tfs/errors.html#DuplicateColumnsError"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Raised when a <strong>TfsDataFrame</strong> has duplicate columns.</p>
+</dd></dl>
+<dl class="py exception">
+<dt class="sig sig-object py">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tfs.errors.</span></span><span class="sig-name descname"><span class="pre">DuplicateIndicesError</span></span><a class="reference internal" href="../_modules/tfs/errors.html#DuplicateIndicesError"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Raised when a <strong>TfsDataFrame</strong> has duplicate indices.</p>
+</dd></dl>
+<dl class="py exception">
+<dt class="sig sig-object py">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tfs.errors.</span></span><span class="sig-name descname"><span class="pre">InvalidBooleanHeaderError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">header_value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tfs/errors.html#InvalidBooleanHeaderError"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Raised when an unaccepted boolean header
+value is read in the <strong>TFS</strong> file.</p>
+</dd></dl>
+<dl class="py exception">
+<dt class="sig sig-object py">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tfs.errors.</span></span><span class="sig-name descname"><span class="pre">IterableInDataFrameError</span></span><a class="reference internal" href="../_modules/tfs/errors.html#IterableInDataFrameError"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Raised when an list / tuple is found in the column of a <strong>TfsDataFrame</strong>.</p>
+</dd></dl>
+<dl class="py exception">
+<dt class="sig sig-object py">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tfs.errors.</span></span><span class="sig-name descname"><span class="pre">MADXCompatibilityError</span></span><a class="reference internal" href="../_modules/tfs/errors.html#MADXCompatibilityError"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Raised when validation for <strong>MADX</strong> compatibility fails.</p>
+</dd></dl>
+<dl class="py exception">
+<dt class="sig sig-object py">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tfs.errors.</span></span><span class="sig-name descname"><span class="pre">NonStringColumnNameError</span></span><a class="reference internal" href="../_modules/tfs/errors.html#NonStringColumnNameError"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Raised when a <strong>TfsDataFrame</strong> has non-string type column names.</p>
+</dd></dl>
+<dl class="py exception">
+<dt class="sig sig-object py">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tfs.errors.</span></span><span class="sig-name descname"><span class="pre">SpaceinColumnNameError</span></span><a class="reference internal" href="../_modules/tfs/errors.html#SpaceinColumnNameError"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Raised when a <strong>TfsDataFrame</strong> has spaces in column names.</p>
+</dd></dl>
+<dl class="py exception">
+<dt class="sig sig-object py">
 <em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tfs.errors.</span></span><span class="sig-name descname"><span class="pre">TfsFormatError</span></span><a class="reference internal" href="../_modules/tfs/errors.html#TfsFormatError"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
-<dd><p>Raised when a wrong format is detected in the <strong>TFS</strong> file.</p>
+<dd><p>Raised when an issue is detected in the <strong>TFS</strong> file or dataframe.</p>
+</dd></dl>
+<dl class="py exception">
+<dt class="sig sig-object py">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tfs.errors.</span></span><span class="sig-name descname"><span class="pre">UnknownTypeIdentifierError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">type_identifier</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tfs/errors.html#UnknownTypeIdentifierError"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Raised when a <strong>TFS</strong> file contains an unknown type identifier.</p>
 </dd></dl>
 <section id="frame">
 <h2>Frame<a class="headerlink" href="#frame" title="Link to this heading"></a></h2>
@@ -239,7 +311,7 @@ as a utility function to validate the correctness of a <code class="docutils lit
 <dl class="py class">
 <dt class="sig sig-object py">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tfs.frame.</span></span><span class="sig-name descname"><span class="pre">TfsDataFrame</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/tfs/frame.html#TfsDataFrame"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
-<dd><p>Class to hold the information of the built an extended <code class="docutils literal notranslate"><span class="pre">pandas</span></code> <code class="docutils literal notranslate"><span class="pre">DataFrame</span></code>, together with a way
+<dd><p>Class to hold the information of the built an extended <a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.3)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code></a>, together with a way
 of getting the headers of the <strong>TFS</strong> file. The file headers are stored in a dictionary upon read.
 To get a header value use <code class="docutils literal notranslate"><span class="pre">data_frame.headers["header_name"]</span></code>, or <code class="docutils literal notranslate"><span class="pre">data_frame["header_name"]</span></code> if
 it does not conflict with a column name in the dataframe.</p>
@@ -254,23 +326,18 @@ provided <strong>how_headers</strong> method or as given via <strong>new_headers
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>right</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">TfsDataFrame</span> <span class="pre">|</span> <span class="pre">pd.DataFrame</span></code>) -- The <code class="docutils literal notranslate"><span class="pre">TfsDataFrame</span></code> to merge with the caller.</p></li>
 <li><p><strong>how_headers</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) -- Type of merge to be performed for the headers. Either <strong>left</strong> or <strong>right</strong>.
-Refer to <code class="xref py py-func docutils literal notranslate"><span class="pre">tfs.frame.merge_headers()</span></code> for behavior. If <code class="docutils literal notranslate"><span class="pre">None</span></code> is provided and
+Refer to <code class="xref py py-obj docutils literal notranslate"><span class="pre">tfs.frame.merge_headers</span></code> for behavior. If <code class="docutils literal notranslate"><span class="pre">None</span></code> is provided and
 <strong>new_headers</strong> is not provided, the final headers will be empty. Case insensitive,
 defaults to <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p></li>
 <li><p><strong>new_headers</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a>) -- If provided, will be used as headers for the merged <code class="docutils literal notranslate"><span class="pre">TfsDataFrame</span></code>.
 Otherwise these are determined by merging the headers from the caller and the other
 <code class="docutils literal notranslate"><span class="pre">TfsDataFrame</span></code> according to the method defined by the <strong>how_headers</strong> argument.</p></li>
+<li><p><strong>**kwargs</strong> -- Arguments for <a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.merge.html#pandas.DataFrame.merge" title="(in pandas v2.2.3)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pandas.DataFrame.merge</span></code></a>, with the same default values as set in</p></li>
+<li><p><strong>codebase.</strong> (<em>the pandas</em>)</p></li>
 </ul>
 </dd>
-<dt class="field-even">Keyword Arguments<span class="colon">:</span></dt>
-<dd class="field-even"><ul class="simple">
-<li><p><strong>these</strong> (<em>Any keyword argument is given to pandas.DataFrame.merge</em><em>(</em><em>)</em><em>. The default values for all</em>)</p></li>
-<li><p><strong>pandas</strong> (<em>parameters are left as set in the pandas codebase. To see these</em><em>, </em><em>refer to the</em>)</p></li>
-<li><p><strong>documentation</strong><strong>]</strong><strong>(</strong><strong>https</strong> (<em>[</em><em>DataFrame.merge</em>) -- //pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.merge.html).</p></li>
-</ul>
-</dd>
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>A new <code class="docutils literal notranslate"><span class="pre">TfsDataFrame</span></code> with the merged data and merged headers.</p>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A new <code class="docutils literal notranslate"><span class="pre">TfsDataFrame</span></code> with the merged data and merged headers.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -279,7 +346,7 @@ Otherwise these are determined by merging the headers from the caller and the ot
 <dt class="sig sig-object py">
 <span class="sig-prename descclassname"><span class="pre">tfs.frame.</span></span><span class="sig-name descname"><span class="pre">concat</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">objs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">TfsDataFrame</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">pd.DataFrame</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">how_headers</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_headers</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><span class="pre">dict</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><span class="pre">TfsDataFrame</span></span></span><a class="reference internal" href="../_modules/tfs/frame.html#concat"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
 <dd><p>Concatenate <code class="docutils literal notranslate"><span class="pre">TfsDataFrame</span></code> objects along a particular axis with optional set logic along the other
-axes. Data manipulation is done by the <code class="docutils literal notranslate"><span class="pre">pandas.concat</span></code> function. Resulting headers are either
+axes. Data manipulation is done by the <a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.concat.html#pandas.concat" title="(in pandas v2.2.3)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pandas.concat</span></code></a> function. Resulting headers are either
 merged according to the provided <strong>how_headers</strong> method or as given via <strong>new_headers</strong>.</p>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
@@ -293,23 +360,16 @@ recommended to provide the <strong>new_headers</strong> argument to ensure the f
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>objs</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Sequence[TfsDataFrame</span> <span class="pre">|</span> <span class="pre">pd.DataFrame]</span></code>) -- the <code class="docutils literal notranslate"><span class="pre">TfsDataFrame</span></code> objects to be concatenated.</p></li>
 <li><p><strong>how_headers</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) -- Type of merge to be performed for the headers. Either <strong>left</strong> or <strong>right</strong>.
-Refer to <code class="xref py py-func docutils literal notranslate"><span class="pre">tfs.frame.merge_headers()</span></code> for behavior. If <code class="docutils literal notranslate"><span class="pre">None</span></code> is provided and
-<strong>new_headers</strong> is not provided, the final headers will be empty. Case insensitive, defaults to
-<code class="docutils literal notranslate"><span class="pre">None</span></code>.</p></li>
+Refer to <code class="xref py py-obj docutils literal notranslate"><span class="pre">tfs.frame.merge_headers</span></code> for behavior. If <code class="docutils literal notranslate"><span class="pre">None</span></code> is provided and <strong>new_headers</strong>
+is not provided, the final headers will be empty. Case insensitive, defaults to <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p></li>
 <li><p><strong>new_headers</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a>) -- If provided, will be used as headers for the merged <code class="docutils literal notranslate"><span class="pre">TfsDataFrame</span></code>.
 Otherwise these are determined by successively merging the headers from all concatenated
 <code class="docutils literal notranslate"><span class="pre">TfsDataFrames</span></code> according to the method defined by the <strong>how_headers</strong> argument.</p></li>
+<li><p><strong>**kwargs</strong> -- Any keyword argument is given to <a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.concat.html#pandas.concat" title="(in pandas v2.2.3)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pandas.concat</span></code></a>.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Keyword Arguments<span class="colon">:</span></dt>
-<dd class="field-even"><ul class="simple">
-<li><p><strong>parameters</strong> (<em>Any keyword argument is given to pandas.concat</em><em>(</em><em>)</em><em>. The default values for all these</em>)</p></li>
-<li><p><strong>[</strong><strong>pandas.concat</strong> (<em>are left as set in the pandas codebase. To see these</em><em>, </em><em>refer to the</em>)</p></li>
-<li><p><strong>documentation</strong><strong>]</strong><strong>(</strong><strong>https</strong> -- //pandas.pydata.org/pandas-docs/stable/reference/api/pandas.concat.html).</p></li>
-</ul>
-</dd>
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>A new <code class="docutils literal notranslate"><span class="pre">TfsDataFrame</span></code> with the merged data and merged headers.</p>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A new <code class="docutils literal notranslate"><span class="pre">TfsDataFrame</span></code> with the merged data and merged headers.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -340,29 +400,43 @@ returned.</p></li>
 </dd></dl>
 <dl class="py function">
 <dt class="sig sig-object py">
-<span class="sig-prename descclassname"><span class="pre">tfs.frame.</span></span><span class="sig-name descname"><span class="pre">validate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_frame</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">TfsDataFrame</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.3)"><span class="pre">DataFrame</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">info_str</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">non_unique_behavior</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'warn'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../_modules/tfs/frame.html#validate"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
-<dd><p>Check if a data frame contains finite values only, strings as column names and no empty headers
-or column names.</p>
+<span class="sig-prename descclassname"><span class="pre">tfs.frame.</span></span><span class="sig-name descname"><span class="pre">validate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_frame</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">TfsDataFrame</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.3)"><span class="pre">DataFrame</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">info_str</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">non_unique_behavior</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'warn'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">compatibility</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'madx'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../_modules/tfs/frame.html#validate"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Enforce validity rules on a <code class="xref py py-obj docutils literal notranslate"><span class="pre">TfsDataFrame</span></code> (see admonition below).
+Additional checks are performed for compatibility with either <code class="docutils literal notranslate"><span class="pre">MAD-X</span></code>
+or <code class="docutils literal notranslate"><span class="pre">MAD-NG</span></code> as provided by the <code class="xref py py-obj docutils literal notranslate"><span class="pre">compatibility</span></code> parameter.</p>
 <div class="admonition-methodology admonition">
-<p class="admonition-title"><strong>Methodology</strong></p>
-<dl class="simple">
-<dt>This function performs several different checks on the provided dataframe:</dt><dd><ol class="arabic simple">
-<li><p>Checking no single element is a <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tuple</span></code></a>, which is done with a
-custom vectorized function applied column-by-column on the dataframe.</p></li>
-<li><p>Checking for non-physical values in the dataframe, which is done by
-applying the <code class="docutils literal notranslate"><span class="pre">isna</span></code> function with the right option context.</p></li>
+<p class="admonition-title">Methodology</p>
+<p>This function performs several different checks on the provided dataframe. The following
+checks are performed for all compatibility modes (<code class="docutils literal notranslate"><span class="pre">MAD-X</span></code> and <code class="docutils literal notranslate"><span class="pre">MAD-NG</span></code>):</p>
+<blockquote>
+<div><ol class="arabic simple">
+<li><p>Checking no single element in the data is a <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tuple</span></code></a>.</p></li>
+<li><p>Checking for non-physical values in the dataframe (uses <code class="xref py py-obj docutils literal notranslate"><span class="pre">isna()</span></code> with the right option context).</p></li>
 <li><p>Checking for duplicates in either indices or columns.</p></li>
 <li><p>Checking for column names that are not strings.</p></li>
 <li><p>Checking for column names including spaces.</p></li>
 </ol>
-</dd>
-</dl>
+</div></blockquote>
+<p>When checking for <code class="docutils literal notranslate"><span class="pre">MAD-X</span></code> compatibility, which is more restrictive than <code class="docutils literal notranslate"><span class="pre">MAD-NG</span></code>,
+the following additional checks are performed:</p>
+<blockquote>
+<div><ol class="arabic simple">
+<li><p>Checking the dataframe has headers.</p></li>
+<li><p>Checking no boolean values are in the dataframe headers.</p></li>
+<li><p>Checking no complex values are in the dataframe headers.</p></li>
+<li><p>Checking for a ‘TYPE’ entry is in the dataframe headers.</p></li>
+<li><p>Checking no boolean-dtype columns are in the dataframe.</p></li>
+<li><p>Checking no complex-dtype columns are in the dataframe.</p></li>
+</ol>
+</div></blockquote>
 </div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>data_frame</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">TfsDataFrame</span> <span class="pre">|</span> <span class="pre">pd.DataFrame</span></code>) -- the dataframe to check on.</p></li>
 <li><p><strong>info_str</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) -- additional information to include in logging statements.</p></li>
+<li><p><strong>compatibility</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) -- Which code to check for compatibility with. Accepted values
+are <code class="xref py py-obj docutils literal notranslate"><span class="pre">madx</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">mad-x</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">madng</span></code> and <code class="xref py py-obj docutils literal notranslate"><span class="pre">mad-ng</span></code>, case-insensitive. Defauts to <code class="xref py py-obj docutils literal notranslate"><span class="pre">madx</span></code>.</p></li>
 <li><p><strong>non_unique_behavior</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) -- behavior to adopt if non-unique indices or columns are found in the
 dataframe. Accepts <code class="xref py py-obj docutils literal notranslate"><span class="pre">warn</span></code> and <code class="xref py py-obj docutils literal notranslate"><span class="pre">raise</span></code> as values, case-insensitively, which dictates
 to respectively issue a warning or raise an error if non-unique elements are found.</p></li>
@@ -391,19 +465,19 @@ in a group named <code class="docutils literal notranslate"><span class="pre">da
 <dl class="py function">
 <dt class="sig sig-object py">
 <span class="sig-prename descclassname"><span class="pre">tfs.hdf.</span></span><span class="sig-name descname"><span class="pre">write_hdf</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">df</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">TfsDataFrame</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../_modules/tfs/hdf.html#write_hdf"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
-<dd><p>Write TfsDataFrame to hdf5 file. The dataframe will be written into
-the group <code class="docutils literal notranslate"><span class="pre">data</span></code>, the headers into the group <code class="docutils literal notranslate"><span class="pre">headers</span></code>.
-Only one dataframe per file is allowed.</p>
+<dd><p>Write the <code class="xref py py-obj docutils literal notranslate"><span class="pre">TfsDataFrame</span></code> to <strong>HDF</strong> file. The dataframe will be written
+into the group <code class="docutils literal notranslate"><span class="pre">data</span></code>, the headers into the group <code class="docutils literal notranslate"><span class="pre">headers</span></code>. Only one
+dataframe per file is allowed.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>path</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Path,</span> <span class="pre">str</span></code>) -- Path of the output file.</p></li>
 <li><p><strong>df</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">TfsDataFrame</span></code>) -- TfsDataFrame to write.</p></li>
-<li><p><strong>kwargs</strong> -- kwargs to be passed to pandas <code class="docutils literal notranslate"><span class="pre">DataFrame.to_hdf()</span></code>.
-<code class="docutils literal notranslate"><span class="pre">key</span></code> is not allowed and <code class="docutils literal notranslate"><span class="pre">mode</span></code> needs to be <code class="docutils literal notranslate"><span class="pre">w</span></code> if the
-output file already exists (<code class="docutils literal notranslate"><span class="pre">w</span></code> will be used in any case,
-even if the file does not exist, but only a warning is logged
-in that case).</p></li>
+<li><p><strong>**kwargs</strong> -- Any keyword argument is given to <a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.to_hdf.html#pandas.DataFrame.to_hdf" title="(in pandas v2.2.3)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pandas.DataFrame.to_hdf</span></code></a>.
+Note that <code class="docutils literal notranslate"><span class="pre">key</span></code> is not allowed and <code class="docutils literal notranslate"><span class="pre">mode</span></code> <em>needs</em> to be <code class="docutils literal notranslate"><span class="pre">w</span></code>
+if the output file already exists (<code class="docutils literal notranslate"><span class="pre">w</span></code> will be used in any case,
+even if the file does not exist, but only a warning is logged in
+that case).</p></li>
 </ul>
 </dd>
 </dl>
@@ -418,9 +492,8 @@ in that case).</p></li>
 <dd><p>Parses the top of the <strong>tfs_file_path</strong> and returns the headers.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>tfs_file_path</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">pathlib.Path</span> <span class="pre">|</span> <span class="pre">str</span></code>) -- Path object to the <strong>TFS</strong>
-file to read. Can be a string, in which case it will be cast to
-a Path object.</p>
+<dd class="field-odd"><p><strong>tfs_file_path</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">pathlib.Path</span> <span class="pre">|</span> <span class="pre">str</span></code>) -- Path to the <strong>TFS</strong> file
+to read.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>An dictionary with the headers read from the file.</p>
@@ -428,22 +501,23 @@ a Path object.</p>
 </dl>
 <div class="admonition-examples admonition">
 <p class="admonition-title">Examples</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">headers</span> <span class="o">=</span> <span class="n">read_headers</span><span class="p">(</span><span class="s2">"filename.tfs"</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">headers</span> <span class="o">=</span> <span class="n">read_headers</span><span class="p">(</span><span class="s2">"filename.tfs"</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>Just as with the <code class="xref py py-obj docutils literal notranslate"><span class="pre">read_tfs</span></code> function, it is possible to load from compressed
 files if the compression format is supported by <a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/index.html#module-pandas" title="(in pandas v2.2.3)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pandas</span></code></a>. The compression
 format detection is handled automatically from the extension of the provided
 <strong>tfs_file_path</strong> suffix. For instance:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">headers</span> <span class="o">=</span> <span class="n">read_headers</span><span class="p">(</span><span class="s2">"filename.tfs.gz"</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">headers</span> <span class="o">=</span> <span class="n">read_headers</span><span class="p">(</span><span class="s2">"filename.tfs.gz"</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 </dd></dl>
 <dl class="py function">
 <dt class="sig sig-object py">
-<span class="sig-prename descclassname"><span class="pre">tfs.reader.</span></span><span class="sig-name descname"><span class="pre">read_tfs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tfs_file_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.13)"><span class="pre">Path</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">non_unique_behavior</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'warn'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">validate</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><span class="pre">TfsDataFrame</span></span></span><a class="reference internal" href="../_modules/tfs/reader.html#read_tfs"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
-<dd><p>Parses the <strong>TFS</strong> table present in <strong>tfs_file_path</strong> and returns a <code class="docutils literal notranslate"><span class="pre">TfsDataFrame</span></code>.</p>
+<span class="sig-prename descclassname"><span class="pre">tfs.reader.</span></span><span class="sig-name descname"><span class="pre">read_tfs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tfs_file_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.13)"><span class="pre">Path</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">non_unique_behavior</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'warn'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">validate</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><span class="pre">TfsDataFrame</span></span></span><a class="reference internal" href="../_modules/tfs/reader.html#read_tfs"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Parses the <strong>TFS</strong> table present in <strong>tfs_file_path</strong> and returns a <code class="docutils literal notranslate"><span class="pre">TfsDataFrame</span></code>.
+Note that this function is also exported at the top-level of the package as <code class="xref py py-obj docutils literal notranslate"><span class="pre">tfs.read</span></code>.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>Loading and reading compressed files is possible. Any compression format supported
@@ -452,12 +526,11 @@ by <code class="docutils literal notranslate"><span class="pre">pandas</span></c
 </div>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
-<p>Through the <em>validate</em> argument, one can skip dataframe validation after
-loading it from a file. While this can speed-up the execution time of this
-function, it is <strong>not recommended</strong> and is not the default behavior of this
-function. The option, however, is left for the user to use at their own risk
-should they wish to avoid lengthy validation of large <code class="xref py py-obj docutils literal notranslate"><span class="pre">TfsDataFrames</span></code> (such
-as for instance a sliced FCC lattice).</p>
+<p>Through the <em>validate</em> argument, one can activate dataframe validation after
+loading it from a file, which can significantly slow the execution of this
+function, e.g. in case of large <code class="xref py py-obj docutils literal notranslate"><span class="pre">TfsDataFrames</span></code> such as a sliced FCC lattice.
+Note that validation can be performed at any time by using the <code class="xref py py-obj docutils literal notranslate"><span class="pre">tfs.frame.validate</span></code>
+function.</p>
 </div>
 <div class="admonition-methodology admonition">
 <p class="admonition-title"><strong>Methodology</strong></p>
@@ -465,21 +538,23 @@ as for instance a sliced FCC lattice).</p>
 from the file (headers content, column names &amp; types, number of lines
 parsed). The rest of the file (dataframe part) is given to parse to
 <code class="docutils literal notranslate"><span class="pre">pandas.read_csv</span></code> with the right options to make use of its C engine’s
-speed. After this, conversion to <code class="docutils literal notranslate"><span class="pre">TfsDataDrame</span></code> is made, proper types
-are applied to columns, the index is set and the frame is eventually
-validated before being returned.</p>
+speed. After this, conversion to <code class="docutils literal notranslate"><span class="pre">TfsDataDrame</span></code> is made and, if requested,
+the index is set and validation performed, before the frame is being returned.</p>
 </div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>tfs_file_path</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">pathlib.Path</span> <span class="pre">|</span> <span class="pre">str</span></code>) -- Path object to the <strong>TFS</strong> file to read. Can be
+<li><p><strong>tfs_file_path</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">pathlib.Path</span> <span class="pre">|</span> <span class="pre">str</span></code>) -- Path to the <strong>TFS</strong> file to read. Can be
 a string, in which case it will be cast to a Path object.</p></li>
 <li><p><strong>index</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) -- Name of the column to set as index. If not given, looks in <strong>tfs_file_path</strong>
 for a column starting with <code class="xref py py-obj docutils literal notranslate"><span class="pre">INDEX&amp;&amp;&amp;</span></code>.</p></li>
-<li><p><strong>non_unique_behavior</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) -- behavior to adopt if non-unique indices or columns are found in the
-dataframe. Accepts <code class="xref py py-obj docutils literal notranslate"><span class="pre">warn</span></code> and <code class="xref py py-obj docutils literal notranslate"><span class="pre">raise</span></code> as values, case-insensitively, which dictates
+<li><p><strong>non_unique_behavior</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) -- behavior to adopt if non-unique indices or columns are found in
+the dataframe. Accepts <code class="xref py py-obj docutils literal notranslate"><span class="pre">warn</span></code> and <code class="xref py py-obj docutils literal notranslate"><span class="pre">raise</span></code> as values, case-insensitively, which dictates
 to respectively issue a warning or raise an error if non-unique elements are found.</p></li>
-<li><p><strong>validate</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) -- Whether to validate the dataframe after reading it. Defaults to <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p></li>
+<li><p><strong>validate</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) -- If an accepted value is given, validation will be performed after loading.
+Defauts to <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>, which skips validation. Accepted validation modes are <code class="xref py py-obj docutils literal notranslate"><span class="pre">madx</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">mad-x</span></code>,
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">madng</span></code> and <code class="xref py py-obj docutils literal notranslate"><span class="pre">mad-ng</span></code>, case-insensitive. See the <code class="xref py py-obj docutils literal notranslate"><span class="pre">tfs.frame.validate</span></code> function for more
+information on validation.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -490,33 +565,34 @@ to respectively issue a warning or raise an error if non-unique elements are fou
 <p class="admonition-title">Examples</p>
 <p>Reading from a file is simple, as most arguments have sane default values.
 The simplest usage goes as follows:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">tfs</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s2">"filename.tfs"</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">tfs</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s2">"filename.tfs"</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>One can also pass a <a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Path</span></code></a> object to the function:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">tfs</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="s2">"filename.tfs"</span><span class="p">))</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">tfs</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="s2">"filename.tfs"</span><span class="p">))</span>
 </pre></div>
 </div>
-<p>If one wants to set a specific column as index, this is done as:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">tfs</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s2">"filename.tfs"</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="s2">"COLUMN_NAME"</span><span class="p">)</span>
-</pre></div>
-</div>
-<p>If one wants to, for instance, raise and error on non-unique indices or columns,
-one can do so as:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">tfs</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s2">"filename.tfs"</span><span class="p">,</span> <span class="n">non_unique_behavior</span><span class="o">=</span><span class="s2">"raise"</span><span class="p">)</span>
-</pre></div>
-</div>
-<p>One can choose to skip dataframe validation <strong>at one’s own risk</strong> after reading
-from file. This is done as:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">tfs</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s2">"filename.tfs"</span><span class="p">,</span> <span class="n">validate</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-</pre></div>
-</div>
-<p>It is possible to load compressed files if the compression format is supported by pandas.
+<p>It is possible to load compressed files if the compression format is supported by <a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/index.html#module-pandas" title="(in pandas v2.2.3)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pandas</span></code></a>.
 (see above). The compression format detection is handled automatically from the extension
 of the provided <strong>tfs_file_path</strong> suffix. For instance:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">tfs</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s2">"filename.tfs.gz"</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">tfs</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s2">"filename.tfs.bz2"</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">tfs</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s2">"filename.tfs.zip"</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">tfs</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s2">"filename.tfs.gz"</span><span class="p">)</span>
+<span class="n">tfs</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s2">"filename.tfs.bz2"</span><span class="p">)</span>
+<span class="n">tfs</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s2">"filename.tfs.zip"</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>If one wants to set a specific column as index (and drop it from the data),
+this is done as:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">tfs</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s2">"filename.tfs"</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="s2">"COLUMN_NAME"</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>One can choose to perform dataframe validation after reading from file, for
+compatibility with a certain code, by providing a valid argument:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">tfs</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s2">"filename.tfs"</span><span class="p">,</span> <span class="n">validate</span><span class="o">=</span><span class="s2">"MAD-NG"</span><span class="p">)</span>  <span class="c1"># or validate="MAD-X"</span>
+</pre></div>
+</div>
+<p>If one wants to raise an error on non-unique indices or columns when
+performing validation, one can do so as:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">tfs</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s2">"filename.tfs"</span><span class="p">,</span> <span class="n">non_unique_behavior</span><span class="o">=</span><span class="s2">"raise"</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -576,8 +652,8 @@ for exact meaning and caveat. Defaults to <a class="reference external" href="ht
 <dl class="py function">
 <dt class="sig sig-object py">
 <span class="sig-prename descclassname"><span class="pre">tfs.tools.</span></span><span class="sig-name descname"><span class="pre">remove_header_comments_from_files</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">list_of_files</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Path</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../_modules/tfs/tools.html#remove_header_comments_from_files"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
-<dd><p>Check the files in the provided list for invalid headers (no type defined) and removes those
-inplace when found.</p>
+<dd><p>Check the files in the provided list for invalid headers (no type defined)
+and removes those inplace when found.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>list_of_files</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">list[str</span> <span class="pre">|</span> <span class="pre">Path]</span></code>) -- list of Paths to <strong>TFS</strong> files meant to be checked.
@@ -592,11 +668,11 @@ The entries of the list can be strings or Path objects.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>list_of_files</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">list[str</span> <span class="pre">|</span> <span class="pre">Path]</span></code>) -- list of Paths to <strong>TFS</strong> files meant to be sanitized.
-The elements of the list can be strings or Path objects.</p></li>
-<li><p><strong>replace</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) -- if <code class="docutils literal notranslate"><span class="pre">True</span></code>, the provided files will be overwritten. Otherwise new files
-with <code class="xref py py-obj docutils literal notranslate"><span class="pre">dropna</span></code> appended to the original filenames will be written to disk. Defaults to
-<code class="docutils literal notranslate"><span class="pre">False</span></code>.</p></li>
+<li><p><strong>list_of_files</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">list[str</span> <span class="pre">|</span> <span class="pre">Path]</span></code>) -- list of Paths to <strong>TFS</strong> files meant to
+be sanitized. The elements of the list can be strings or Path objects.</p></li>
+<li><p><strong>replace</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) -- if <code class="docutils literal notranslate"><span class="pre">True</span></code>, the provided files will be overwritten. Otherwise
+new files with <code class="xref py py-obj docutils literal notranslate"><span class="pre">dropna</span></code> appended to the original filenames will be written
+to disk. Defaults to <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p></li>
 </ul>
 </dd>
 </dl>
@@ -623,11 +699,18 @@ strings. Defaults to <code class="docutils literal notranslate"><span class="pre
 <h2>Writer<a class="headerlink" href="#writer" title="Link to this heading"></a></h2>
 <p>Writing functionalty for <strong>TFS</strong> files.</p>
 </section>
+<dl class="py class">
+<dt class="sig sig-object py">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tfs.writer.</span></span><span class="sig-name descname"><span class="pre">ValueToStringFormatter</span></span><a class="reference internal" href="../_modules/tfs/writer.html#ValueToStringFormatter"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Formatter class to be called for proper formatting of values
+(headers, dataframe data) into strings to write to file.</p>
+</dd></dl>
 <dl class="py function">
 <dt class="sig sig-object py">
-<span class="sig-prename descclassname"><span class="pre">tfs.writer.</span></span><span class="sig-name descname"><span class="pre">write_tfs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tfs_file_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.13)"><span class="pre">Path</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_frame</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">TfsDataFrame</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.3)"><span class="pre">DataFrame</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">headers_dict</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><span class="pre">dict</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">colwidth</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">20</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">headerswidth</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">20</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">non_unique_behavior</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'warn'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">validate</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../_modules/tfs/writer.html#write_tfs"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
-<dd><p>Writes the provided <code class="docutils literal notranslate"><span class="pre">DataFrame</span></code> to disk at <strong>tfs_file_path</strong>, eventually with the <code class="xref py py-obj docutils literal notranslate"><span class="pre">headers_dict</span></code> as
-headers dictionary.</p>
+<span class="sig-prename descclassname"><span class="pre">tfs.writer.</span></span><span class="sig-name descname"><span class="pre">write_tfs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tfs_file_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.13)"><span class="pre">Path</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_frame</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">TfsDataFrame</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.3)"><span class="pre">DataFrame</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Series.html#pandas.Series" title="(in pandas v2.2.3)"><span class="pre">Series</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">headers_dict</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><span class="pre">dict</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">colwidth</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">20</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">headerswidth</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">20</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">non_unique_behavior</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'warn'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">validate</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../_modules/tfs/writer.html#write_tfs"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Writes the provided <code class="xref py py-obj docutils literal notranslate"><span class="pre">DataFrame</span></code> to disk at <strong>tfs_file_path</strong>. If <code class="xref py py-obj docutils literal notranslate"><span class="pre">headers_dict</span></code>
+is provided it is written to dist as the headers. Note that this function is
+exported also at the top-level of the package as <code class="xref py py-obj docutils literal notranslate"><span class="pre">tfs.write</span></code>.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>Compression of the output file is possible, by simply providing a valid compression extension
@@ -637,21 +720,23 @@ which includes: <code class="docutils literal notranslate"><span class="pre">.gz
 </div>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
-<p>Through the <em>validate</em> argument, one can skip dataframe validation before writing it to file.
-While this can speed-up the execution time of this function , it is <strong>not recommended</strong> and
-is not the default behavior of this function. The option, however, is left for the user to
-use at their own risk should they wish to avoid lengthy validation of large <code class="xref py py-obj docutils literal notranslate"><span class="pre">TfsDataFrames</span></code>
-(such as for instance a sliced FCC lattice).</p>
+<p>Through the <em>validate</em> argument, one can skip dataframe validation before writing
+to file which can improve performance. This is <strong>not recommended</strong> if the file needs
+to be read by <code class="docutils literal notranslate"><span class="pre">MAD-X</span></code> or <code class="docutils literal notranslate"><span class="pre">MAD-NG</span></code>. The default behaviour is to check for <code class="docutils literal notranslate"><span class="pre">MAD-X</span></code>
+compatibility. The option to skip validation is left for the user to use (at their own
+risk) should they wish to avoid lengthy validation of large <code class="xref py py-obj docutils literal notranslate"><span class="pre">TfsDataFrames</span></code> (such as
+for instance a sliced FCC lattice).</p>
 </div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>tfs_file_path</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">pathlib.Path</span> <span class="pre">|</span> <span class="pre">str</span></code>) -- Path object to the output <strong>TFS</strong> file. Can be
-a string, in which case it will be cast to a Path object.</p></li>
-<li><p><strong>data_frame</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">TfsDataFrame</span> <span class="pre">|</span> <span class="pre">pd.DataFrame</span></code>) -- <code class="docutils literal notranslate"><span class="pre">TfsDataFrame</span></code> or <code class="docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code> to
-write to file.</p></li>
-<li><p><strong>headers_dict</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a>) -- Headers for the <code class="xref py py-obj docutils literal notranslate"><span class="pre">data_frame</span></code>. If not provided, assumes a <code class="docutils literal notranslate"><span class="pre">TfsDataFrame</span></code>
-was given and tries to use <code class="docutils literal notranslate"><span class="pre">data_frame.headers</span></code>.</p></li>
+<li><p><strong>tfs_file_path</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">pathlib.Path</span> <span class="pre">|</span> <span class="pre">str</span></code>) -- Path to the output <strong>TFS</strong> file.</p></li>
+<li><p><strong>data_frame</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">TfsDataFrame</span> <span class="pre">|</span> <span class="pre">pd.DataFrame</span> <span class="pre">|</span> <span class="pre">pd.Series</span></code>) -- The dataframe to write to file. If
+a Series-like object is given, it will be converted to a <code class="xref py py-obj docutils literal notranslate"><span class="pre">TfsDataFrame</span></code> first and
+written with a single column.</p></li>
+<li><p><strong>headers_dict</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a>) -- Headers for the <code class="xref py py-obj docutils literal notranslate"><span class="pre">data_frame</span></code>. If not provided, assumes a
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">TfsDataFrame</span></code> was given and tries to use <code class="docutils literal notranslate"><span class="pre">data_frame.headers</span></code>. Writes with
+empty headers is those are not found either.</p></li>
 <li><p><strong>save_index</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span> <span class="pre">|</span> <span class="pre">bool</span></code>) -- bool or string. Default to <code class="docutils literal notranslate"><span class="pre">False</span></code>. If <code class="docutils literal notranslate"><span class="pre">True</span></code>, saves
 the index of <code class="xref py py-obj docutils literal notranslate"><span class="pre">data_frame</span></code> to a column identifiable by <code class="xref py py-obj docutils literal notranslate"><span class="pre">INDEX&amp;&amp;&amp;</span></code>. If given as string,
 saves the index of <code class="xref py py-obj docutils literal notranslate"><span class="pre">data_frame</span></code> to a column named by the provided value.</p></li>
@@ -660,7 +745,11 @@ saves the index of <code class="xref py py-obj docutils literal notranslate"><sp
 <li><p><strong>non_unique_behavior</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) -- behavior to adopt if non-unique indices or columns are found in the
 dataframe. Accepts <code class="xref py py-obj docutils literal notranslate"><span class="pre">warn</span></code> and <code class="xref py py-obj docutils literal notranslate"><span class="pre">raise</span></code> as values, case-insensitively, which dictates
 to respectively issue a warning or raise an error if non-unique elements are found.</p></li>
-<li><p><strong>validate</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) -- Whether to validate the dataframe before writing it to file. Defaults to <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p></li>
+<li><p><strong>validate</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) -- Determines if and which validation will be performed before writing. By
+default no validation is performed. Accepted values are <code class="xref py py-obj docutils literal notranslate"><span class="pre">madx</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">mad-x</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">madng</span></code> and
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">mad-ng</span></code> (case-insensitive), for compatibility with <code class="docutils literal notranslate"><span class="pre">MAD-X</span></code> and <code class="docutils literal notranslate"><span class="pre">MAD-NG</span></code> codes,
+respectively. See the <code class="xref py py-obj docutils literal notranslate"><span class="pre">tfs.frame.validate</span></code> function for more information on the
+validation steps.</p></li>
 </ul>
 </dd>
 </dl>
@@ -668,23 +757,26 @@ to respectively issue a warning or raise an error if non-unique elements are fou
 <p class="admonition-title">Examples</p>
 <p>Writing to file is simple, as most arguments have sane default values.
 The simplest usage goes as follows:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">tfs</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">"filename.tfs"</span><span class="p">,</span> <span class="n">dataframe</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">tfs</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">"filename.tfs"</span><span class="p">,</span> <span class="n">dataframe</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>If one wants to, for instance, raise and error on non-unique indices or columns,
-one can do so as:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">tfs</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">"filename.tfs"</span><span class="p">,</span> <span class="n">dataframe</span><span class="p">,</span> <span class="n">non_unique_behavior</span><span class="o">=</span><span class="s2">"raise"</span><span class="p">)</span>
+<p>One can choose to perform dataframe validation before writing
+it to file. This can be done by providing an accepted compatibility
+mode to check for (either <code class="xref py py-obj docutils literal notranslate"><span class="pre">madx</span></code> or <code class="xref py py-obj docutils literal notranslate"><span class="pre">madng</span></code>), as:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">tfs</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">"filename.tfs"</span><span class="p">,</span> <span class="n">dataframe</span><span class="p">,</span> <span class="n">validate</span><span class="o">=</span><span class="s2">"madx"</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>One can choose to skip dataframe validation <strong>at one’s own risk</strong> before writing
-it to file. This is done as:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">tfs</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">"filename.tfs"</span><span class="p">,</span> <span class="n">dataframe</span><span class="p">,</span> <span class="n">validate</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<p>If one wants to, for instance, raise and error on non-unique indices or
+columns when validating the dataframe, one can do so as:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">tfs</span><span class="o">.</span><span class="n">write</span><span class="p">(</span>
+    <span class="s2">"filename.tfs"</span><span class="p">,</span> <span class="n">dataframe</span><span class="p">,</span> <span class="n">non_unique_behavior</span><span class="o">=</span><span class="s2">"raise"</span><span class="p">,</span> <span class="n">validate</span><span class="o">=</span><span class="s2">"madng"</span>
+<span class="p">)</span>
 </pre></div>
 </div>
 <p>It is possible to directly have the output file be compressed, by specifying a
 valid compression extension as the <strong>tfs_file_path</strong> suffix. The detection
 and compression is handled automatically. For instance:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">tfs</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">"filename.tfs.gz"</span><span class="p">,</span> <span class="n">dataframe</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">tfs</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">"filename.tfs.gz"</span><span class="p">,</span> <span class="n">dataframe</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -693,7 +785,7 @@ and compression is handled automatically. For instance:</p>
 </div>
 </div>
 <footer><div aria-label="Footer" class="rst-footer-buttons" role="navigation">
-<a accesskey="p" class="btn btn-neutral float-left" href="../quickstart.html" rel="prev" title="2 Minutes to tfs-pandas"><span aria-hidden="true" class="fa fa-arrow-circle-left"></span> Previous</a>
+<a accesskey="p" class="btn btn-neutral float-left" href="../compatibility.html" rel="prev" title="MAD-X and MAD-NG Compatibility"><span aria-hidden="true" class="fa fa-arrow-circle-left"></span> Previous</a>
 </div>
 <hr/>
 <div role="contentinfo">

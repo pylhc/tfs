@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>tfs.errors &mdash; tfs-pandas 3.9.0 documentation</title>
+  <title>tfs.errors &mdash; tfs-pandas 4.0.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
@@ -15,7 +15,7 @@
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=e55a5be6"></script>
+      <script src="../../_static/documentation_options.js?v=3304f9e4"></script>
       <script src="../../_static/doctools.js?v=9bcbadda"></script>
       <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -49,7 +49,23 @@
 <li class="toctree-l1"><a class="reference internal" href="../../quickstart.html">2 Minutes to tfs-pandas</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../quickstart.html#basic-usage">Basic Usage</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../quickstart.html#compression">Compression</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../quickstart.html#compatibility">Compatibility</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../quickstart.html#validation">Validation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../quickstart.html#function-replacements">Function Replacements</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../tfsformat.html">The Table File System Format</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../tfsformat.html#headers">Headers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../tfsformat.html#table">Table</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../tfsformat.html#types-and-identifiers">Types and Identifiers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../tfsformat.html#tfs-pandas-caveats">TFS-Pandas Caveats</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../tfsformat.html#tfs-file-example">TFS File Example</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../compatibility.html">MAD-X and MAD-NG Compatibility</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../compatibility.html#tfsdataframe-validation">TfsDataFrame Validation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../compatibility.html#common-validation-rules">Common Validation Rules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../compatibility.html#mad-ng-compatibility">MAD-NG Compatibility</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../compatibility.html#mad-x-compatibility">MAD-X Compatibility</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../modules/index.html">API Reference</a><ul>
@@ -98,11 +114,140 @@
 <span class="sd">Errors that can be raised during the handling of **TFS** files.</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+
+<span class="c1"># ----- Main Exception to Inherit From ----- #</span>
+
 
 <div class="viewcode-block" id="TfsFormatError">
 <a class="viewcode-back" href="../../modules/index.html#tfs.errors.TfsFormatError">[docs]</a>
 <span class="k">class</span> <span class="nc">TfsFormatError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Raised when a wrong format is detected in the **TFS** file.&quot;&quot;&quot;</span></div>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Raised when an issue is detected in the **TFS** file or dataframe.</span>
+<span class="sd">    &quot;&quot;&quot;</span></div>
+
+
+
+<span class="c1"># ----- Specific Exceptions ----- #</span>
+
+
+<div class="viewcode-block" id="AbsentColumnNameError">
+<a class="viewcode-back" href="../../modules/index.html#tfs.errors.AbsentColumnNameError">[docs]</a>
+<span class="k">class</span> <span class="nc">AbsentColumnNameError</span><span class="p">(</span><span class="n">TfsFormatError</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Raised when a **TFS** file does not provide column names.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_path</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">errmsg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Missing column name(s) in file </span><span class="si">{</span><span class="n">file_path</span><span class="o">.</span><span class="n">absolute</span><span class="p">()</span><span class="si">}</span><span class="s2">. File not read.&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">errmsg</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="AbsentColumnTypeError">
+<a class="viewcode-back" href="../../modules/index.html#tfs.errors.AbsentColumnTypeError">[docs]</a>
+<span class="k">class</span> <span class="nc">AbsentColumnTypeError</span><span class="p">(</span><span class="n">TfsFormatError</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Raised when a **TFS** file does not provide column type identifiers.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_path</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">errmsg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Missing column type(s) in file </span><span class="si">{</span><span class="n">file_path</span><span class="o">.</span><span class="n">absolute</span><span class="p">()</span><span class="si">}</span><span class="s2">. File not read.&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">errmsg</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="AbsentTypeIdentifierError">
+<a class="viewcode-back" href="../../modules/index.html#tfs.errors.AbsentTypeIdentifierError">[docs]</a>
+<span class="k">class</span> <span class="nc">AbsentTypeIdentifierError</span><span class="p">(</span><span class="n">TfsFormatError</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Raised when a **TFS** file&#39;s header line does not provide type identifier.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">header_line_elements</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">errmsg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;No data type found in header: &#39;</span><span class="si">{</span><span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">header_line_elements</span><span class="p">)</span><span class="si">}</span><span class="s2">&#39;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">errmsg</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="DuplicateColumnsError">
+<a class="viewcode-back" href="../../modules/index.html#tfs.errors.DuplicateColumnsError">[docs]</a>
+<span class="k">class</span> <span class="nc">DuplicateColumnsError</span><span class="p">(</span><span class="n">TfsFormatError</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Raised when a **TfsDataFrame** has duplicate columns.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">errmsg</span> <span class="o">=</span> <span class="s2">&quot;The dataframe contains non-unique columns.&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">errmsg</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="DuplicateIndicesError">
+<a class="viewcode-back" href="../../modules/index.html#tfs.errors.DuplicateIndicesError">[docs]</a>
+<span class="k">class</span> <span class="nc">DuplicateIndicesError</span><span class="p">(</span><span class="n">TfsFormatError</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Raised when a **TfsDataFrame** has duplicate indices.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">errmsg</span> <span class="o">=</span> <span class="s2">&quot;The dataframe contains non-unique indices.&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">errmsg</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="InvalidBooleanHeaderError">
+<a class="viewcode-back" href="../../modules/index.html#tfs.errors.InvalidBooleanHeaderError">[docs]</a>
+<span class="k">class</span> <span class="nc">InvalidBooleanHeaderError</span><span class="p">(</span><span class="n">TfsFormatError</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Raised when an unaccepted boolean header</span>
+<span class="sd">    value is read in the **TFS** file.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">header_value</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">errmsg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Invalid boolean header value parsed: &#39;</span><span class="si">{</span><span class="n">header_value</span><span class="si">}</span><span class="s2">&#39;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">errmsg</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="IterableInDataFrameError">
+<a class="viewcode-back" href="../../modules/index.html#tfs.errors.IterableInDataFrameError">[docs]</a>
+<span class="k">class</span> <span class="nc">IterableInDataFrameError</span><span class="p">(</span><span class="n">TfsFormatError</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Raised when an list / tuple is found in the column of a **TfsDataFrame**.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">errmsg</span> <span class="o">=</span> <span class="s2">&quot;Lists or tuple elements are not accepted in a TfsDataFrame&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">errmsg</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="MADXCompatibilityError">
+<a class="viewcode-back" href="../../modules/index.html#tfs.errors.MADXCompatibilityError">[docs]</a>
+<span class="k">class</span> <span class="nc">MADXCompatibilityError</span><span class="p">(</span><span class="n">TfsFormatError</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Raised when validation for **MADX** compatibility fails.&quot;&quot;&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="NonStringColumnNameError">
+<a class="viewcode-back" href="../../modules/index.html#tfs.errors.NonStringColumnNameError">[docs]</a>
+<span class="k">class</span> <span class="nc">NonStringColumnNameError</span><span class="p">(</span><span class="n">TfsFormatError</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Raised when a **TfsDataFrame** has non-string type column names.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">errmsg</span> <span class="o">=</span> <span class="s2">&quot;TFS-Columns need to be strings.&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">errmsg</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="SpaceinColumnNameError">
+<a class="viewcode-back" href="../../modules/index.html#tfs.errors.SpaceinColumnNameError">[docs]</a>
+<span class="k">class</span> <span class="nc">SpaceinColumnNameError</span><span class="p">(</span><span class="n">TfsFormatError</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Raised when a **TfsDataFrame** has spaces in column names.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">errmsg</span> <span class="o">=</span> <span class="s2">&quot;TFS-Columns can not contain spaces.&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">errmsg</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="UnknownTypeIdentifierError">
+<a class="viewcode-back" href="../../modules/index.html#tfs.errors.UnknownTypeIdentifierError">[docs]</a>
+<span class="k">class</span> <span class="nc">UnknownTypeIdentifierError</span><span class="p">(</span><span class="n">TfsFormatError</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Raised when a **TFS** file contains an unknown type identifier.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">type_identifier</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">errmsg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Unknown data type: </span><span class="si">{</span><span class="n">type_identifier</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">errmsg</span><span class="p">)</span></div>
 
 </pre></div>
 

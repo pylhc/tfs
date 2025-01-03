@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>tfs.frame &mdash; tfs-pandas 3.9.0 documentation</title>
+  <title>tfs.frame &mdash; tfs-pandas 4.0.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
@@ -15,7 +15,7 @@
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=e55a5be6"></script>
+      <script src="../../_static/documentation_options.js?v=3304f9e4"></script>
       <script src="../../_static/doctools.js?v=9bcbadda"></script>
       <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -49,7 +49,23 @@
 <li class="toctree-l1"><a class="reference internal" href="../../quickstart.html">2 Minutes to tfs-pandas</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../quickstart.html#basic-usage">Basic Usage</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../quickstart.html#compression">Compression</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../quickstart.html#compatibility">Compatibility</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../quickstart.html#validation">Validation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../quickstart.html#function-replacements">Function Replacements</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../tfsformat.html">The Table File System Format</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../tfsformat.html#headers">Headers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../tfsformat.html#table">Table</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../tfsformat.html#types-and-identifiers">Types and Identifiers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../tfsformat.html#tfs-pandas-caveats">TFS-Pandas Caveats</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../tfsformat.html#tfs-file-example">TFS File Example</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../compatibility.html">MAD-X and MAD-NG Compatibility</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../compatibility.html#tfsdataframe-validation">TfsDataFrame Validation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../compatibility.html#common-validation-rules">Common Validation Rules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../compatibility.html#mad-ng-compatibility">MAD-NG Compatibility</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../compatibility.html#mad-x-compatibility">MAD-X Compatibility</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../modules/index.html">API Reference</a><ul>
@@ -108,8 +124,17 @@
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">pandas.api</span> <span class="kn">import</span> <span class="n">types</span> <span class="k">as</span> <span class="n">pdtypes</span>
 
-<span class="kn">from</span> <span class="nn">tfs.errors</span> <span class="kn">import</span> <span class="n">TfsFormatError</span>
+<span class="kn">from</span> <span class="nn">tfs.constants</span> <span class="kn">import</span> <span class="n">VALIDATION_MODES</span>
+<span class="kn">from</span> <span class="nn">tfs.errors</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">DuplicateColumnsError</span><span class="p">,</span>
+    <span class="n">DuplicateIndicesError</span><span class="p">,</span>
+    <span class="n">IterableInDataFrameError</span><span class="p">,</span>
+    <span class="n">MADXCompatibilityError</span><span class="p">,</span>
+    <span class="n">NonStringColumnNameError</span><span class="p">,</span>
+    <span class="n">SpaceinColumnNameError</span><span class="p">,</span>
+<span class="p">)</span>
 
 <span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
     <span class="kn">from</span> <span class="nn">collections.abc</span> <span class="kn">import</span> <span class="n">Sequence</span>
@@ -122,7 +147,7 @@
 <a class="viewcode-back" href="../../modules/index.html#tfs.frame.TfsDataFrame">[docs]</a>
 <span class="k">class</span> <span class="nc">TfsDataFrame</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Class to hold the information of the built an extended ``pandas`` ``DataFrame``, together with a way</span>
+<span class="sd">    Class to hold the information of the built an extended `pandas.DataFrame`, together with a way</span>
 <span class="sd">    of getting the headers of the **TFS** file. The file headers are stored in a dictionary upon read.</span>
 <span class="sd">    To get a header value use ``data_frame.headers[&quot;header_name&quot;]``, or ``data_frame[&quot;header_name&quot;]`` if</span>
 <span class="sd">    it does not conflict with a column name in the dataframe.</span>
@@ -213,17 +238,14 @@
 <span class="sd">        Args:</span>
 <span class="sd">            right (TfsDataFrame | pd.DataFrame): The ``TfsDataFrame`` to merge with the caller.</span>
 <span class="sd">            how_headers (str): Type of merge to be performed for the headers. Either **left** or **right**.</span>
-<span class="sd">                Refer to :func:`tfs.frame.merge_headers` for behavior. If ``None`` is provided and</span>
+<span class="sd">                Refer to `tfs.frame.merge_headers` for behavior. If ``None`` is provided and</span>
 <span class="sd">                **new_headers** is not provided, the final headers will be empty. Case insensitive,</span>
 <span class="sd">                defaults to ``None``.</span>
 <span class="sd">            new_headers (dict): If provided, will be used as headers for the merged ``TfsDataFrame``.</span>
 <span class="sd">                Otherwise these are determined by merging the headers from the caller and the other</span>
 <span class="sd">                ``TfsDataFrame`` according to the method defined by the **how_headers** argument.</span>
-
-<span class="sd">        Keyword Args:</span>
-<span class="sd">            Any keyword argument is given to ``pandas.DataFrame.merge()``. The default values for all these</span>
-<span class="sd">            parameters are left as set in the ``pandas`` codebase. To see these, refer to the pandas</span>
-<span class="sd">            [DataFrame.merge documentation](https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.merge.html).</span>
+<span class="sd">            **kwargs: Arguments for `pandas.DataFrame.merge`, with the same default values as set in</span>
+<span class="sd">            the ``pandas`` codebase.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            A new ``TfsDataFrame`` with the merged data and merged headers.</span>
@@ -235,6 +257,7 @@
         <span class="n">dframe</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">right</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
         <span class="n">LOGGER</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Determining headers&quot;</span><span class="p">)</span>
+        <span class="c1"># fmt: off</span>
         <span class="n">new_headers</span> <span class="o">=</span> <span class="p">(</span>
             <span class="n">new_headers</span>
             <span class="k">if</span> <span class="n">new_headers</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
@@ -243,6 +266,7 @@
         <span class="k">return</span> <span class="n">TfsDataFrame</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">dframe</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">new_headers</span><span class="p">)</span></div>
 </div>
 
+        <span class="c1"># fmt: on</span>
 
 
 <div class="viewcode-block" id="merge_headers">
@@ -295,7 +319,7 @@
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TfsDataFrame</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Concatenate ``TfsDataFrame`` objects along a particular axis with optional set logic along the other</span>
-<span class="sd">    axes. Data manipulation is done by the ``pandas.concat`` function. Resulting headers are either</span>
+<span class="sd">    axes. Data manipulation is done by the `pandas.concat` function. Resulting headers are either</span>
 <span class="sd">    merged according to the provided **how_headers** method or as given via **new_headers**.</span>
 
 <span class="sd">    .. warning::</span>
@@ -307,17 +331,12 @@
 <span class="sd">    Args:</span>
 <span class="sd">        objs (Sequence[TfsDataFrame | pd.DataFrame]): the ``TfsDataFrame`` objects to be concatenated.</span>
 <span class="sd">        how_headers (str): Type of merge to be performed for the headers. Either **left** or **right**.</span>
-<span class="sd">            Refer to :func:`tfs.frame.merge_headers` for behavior. If ``None`` is provided and</span>
-<span class="sd">            **new_headers** is not provided, the final headers will be empty. Case insensitive, defaults to</span>
-<span class="sd">            ``None``.</span>
+<span class="sd">            Refer to `tfs.frame.merge_headers` for behavior. If ``None`` is provided and **new_headers**</span>
+<span class="sd">            is not provided, the final headers will be empty. Case insensitive, defaults to ``None``.</span>
 <span class="sd">        new_headers (dict): If provided, will be used as headers for the merged ``TfsDataFrame``.</span>
 <span class="sd">            Otherwise these are determined by successively merging the headers from all concatenated</span>
 <span class="sd">            ``TfsDataFrames`` according to the method defined by the **how_headers** argument.</span>
-
-<span class="sd">    Keyword Args:</span>
-<span class="sd">        Any keyword argument is given to ``pandas.concat()``. The default values for all these parameters</span>
-<span class="sd">        are left as set in the ``pandas`` codebase. To see these, refer to the [pandas.concat</span>
-<span class="sd">        documentation](https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.concat.html).</span>
+<span class="sd">        **kwargs: Any keyword argument is given to `pandas.concat`.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        A new ``TfsDataFrame`` with the merged data and merged headers.</span>
@@ -340,37 +359,54 @@
     <span class="n">data_frame</span><span class="p">:</span> <span class="n">TfsDataFrame</span> <span class="o">|</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
     <span class="n">info_str</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
     <span class="n">non_unique_behavior</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;warn&quot;</span><span class="p">,</span>
+    <span class="n">compatibility</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;madx&quot;</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Check if a data frame contains finite values only, strings as column names and no empty headers</span>
-<span class="sd">    or column names.</span>
+<span class="sd">    Enforce validity rules on a `TfsDataFrame` (see admonition below).</span>
+<span class="sd">    Additional checks are performed for compatibility with either ``MAD-X``</span>
+<span class="sd">    or ``MAD-NG`` as provided by the `compatibility` parameter.</span>
 
-<span class="sd">    .. admonition:: **Methodology**</span>
+<span class="sd">    .. admonition:: Methodology</span>
 
-<span class="sd">        This function performs several different checks on the provided dataframe:</span>
-<span class="sd">         1. Checking no single element is a `list` or `tuple`, which is done with a</span>
-<span class="sd">            custom vectorized function applied column-by-column on the dataframe.</span>
-<span class="sd">         2. Checking for non-physical values in the dataframe, which is done by</span>
-<span class="sd">            applying the ``isna`` function with the right option context.</span>
-<span class="sd">         3. Checking for duplicates in either indices or columns.</span>
-<span class="sd">         4. Checking for column names that are not strings.</span>
-<span class="sd">         5. Checking for column names including spaces.</span>
+<span class="sd">        This function performs several different checks on the provided dataframe. The following</span>
+<span class="sd">        checks are performed for all compatibility modes (``MAD-X`` and ``MAD-NG``):</span>
 
+<span class="sd">          1. Checking no single element in the data is a `list` or `tuple`.</span>
+<span class="sd">          2. Checking for non-physical values in the dataframe (uses `.isna()` with the right option context).</span>
+<span class="sd">          3. Checking for duplicates in either indices or columns.</span>
+<span class="sd">          4. Checking for column names that are not strings.</span>
+<span class="sd">          5. Checking for column names including spaces.</span>
+
+<span class="sd">        When checking for ``MAD-X`` compatibility, which is more restrictive than ``MAD-NG``,</span>
+<span class="sd">        the following additional checks are performed:</span>
+
+<span class="sd">          1. Checking the dataframe has headers.</span>
+<span class="sd">          2. Checking no boolean values are in the dataframe headers.</span>
+<span class="sd">          3. Checking no complex values are in the dataframe headers.</span>
+<span class="sd">          4. Checking for a &#39;TYPE&#39; entry is in the dataframe headers.</span>
+<span class="sd">          5. Checking no boolean-dtype columns are in the dataframe.</span>
+<span class="sd">          6. Checking no complex-dtype columns are in the dataframe.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        data_frame (TfsDataFrame | pd.DataFrame): the dataframe to check on.</span>
 <span class="sd">        info_str (str): additional information to include in logging statements.</span>
+<span class="sd">        compatibility (str): Which code to check for compatibility with. Accepted values</span>
+<span class="sd">            are `madx`, `mad-x`, `madng` and `mad-ng`, case-insensitive. Defauts to `madx`.</span>
 <span class="sd">        non_unique_behavior (str): behavior to adopt if non-unique indices or columns are found in the</span>
 <span class="sd">            dataframe. Accepts `warn` and `raise` as values, case-insensitively, which dictates</span>
 <span class="sd">            to respectively issue a warning or raise an error if non-unique elements are found.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">compatibility</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">or</span> <span class="n">compatibility</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">VALIDATION_MODES</span><span class="p">:</span>
+        <span class="n">errmsg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Invalid compatibility mode provided: &#39;</span><span class="si">{</span><span class="n">compatibility</span><span class="si">}</span><span class="s2">&#39;.&quot;</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">errmsg</span><span class="p">)</span>
+
     <span class="k">if</span> <span class="n">non_unique_behavior</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;warn&quot;</span><span class="p">,</span> <span class="s2">&quot;raise&quot;</span><span class="p">):</span>
         <span class="n">errmsg</span> <span class="o">=</span> <span class="s2">&quot;Invalid value for parameter &#39;non_unique_behavior&#39;.&quot;</span>
-        <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="n">errmsg</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">errmsg</span><span class="p">)</span>
 
     <span class="c1"># ----- Check that no element is a list / tuple in the dataframe ----- #</span>
     <span class="k">def</span> <span class="nf">_element_is_list</span><span class="p">(</span><span class="n">element</span><span class="p">):</span>
-        <span class="k">return</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">element</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">))</span>
+        <span class="k">return</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">element</span><span class="p">,</span> <span class="nb">list</span> <span class="o">|</span> <span class="nb">tuple</span><span class="p">)</span>
 
     <span class="n">_element_is_list</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vectorize</span><span class="p">(</span><span class="n">_element_is_list</span><span class="p">)</span>
 
@@ -380,10 +416,9 @@
             <span class="sa">f</span><span class="s2">&quot;DataFrame </span><span class="si">{</span><span class="n">info_str</span><span class="si">}</span><span class="s2"> contains list/tuple values at Index: &quot;</span>
             <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">list_or_tuple_bool_df</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="n">list_or_tuple_bool_df</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s1">&#39;columns&#39;</span><span class="p">)]</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span>
         <span class="p">)</span>
-        <span class="n">errmsg</span> <span class="o">=</span> <span class="s2">&quot;Lists or tuple elements are not accepted in a TfsDataFrame&quot;</span>
-        <span class="k">raise</span> <span class="n">TfsFormatError</span><span class="p">(</span><span class="n">errmsg</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="n">IterableInDataFrameError</span>
 
-    <span class="c1"># -----  Check that no element is non-physical value in the dataframe ----- #</span>
+    <span class="c1"># -----  Check that no element is non-physical value in the data and headers ----- #</span>
     <span class="c1"># The pd.option_context(&#39;mode.use_inf_as_na&#39;, True) context manager raises FutureWarning</span>
     <span class="c1"># and will likely disappear in pandas 3.0 so we replace &#39;inf&#39; values by NaNs before calling</span>
     <span class="c1"># .isna(). Additionally, the downcasting behaviour of .replace() is deprecated and raises a</span>
@@ -391,36 +426,99 @@
     <span class="c1"># for object-dtype columns (which strings can be). Since .infer_objects() and .replace() return</span>
     <span class="c1"># (lazy for the former) copies we&#39;re not modifying the original dataframe during validation :)</span>
     <span class="n">inf_or_nan_bool_df</span> <span class="o">=</span> <span class="n">data_frame</span><span class="o">.</span><span class="n">infer_objects</span><span class="p">()</span><span class="o">.</span><span class="n">replace</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span><span class="o">.</span><span class="n">isna</span><span class="p">()</span>
-
     <span class="k">if</span> <span class="n">inf_or_nan_bool_df</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
         <span class="n">LOGGER</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
             <span class="sa">f</span><span class="s2">&quot;DataFrame </span><span class="si">{</span><span class="n">info_str</span><span class="si">}</span><span class="s2"> contains non-physical values at Index: &quot;</span>
             <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">inf_or_nan_bool_df</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="n">inf_or_nan_bool_df</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s1">&#39;columns&#39;</span><span class="p">)]</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span>
         <span class="p">)</span>
 
-    <span class="c1"># Other sanity checks</span>
+    <span class="k">if</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">data_frame</span><span class="p">,</span> <span class="s2">&quot;headers&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">data_frame</span><span class="o">.</span><span class="n">headers</span><span class="o">.</span><span class="n">values</span><span class="p">())</span><span class="o">.</span><span class="n">isna</span><span class="p">()</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
+        <span class="n">LOGGER</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;DataFrame </span><span class="si">{</span><span class="n">info_str</span><span class="si">}</span><span class="s2"> contains non-physical values in headers.&quot;</span><span class="p">)</span>
+
+    <span class="c1"># ----- Other sanity checks ----- #</span>
+    <span class="c1"># These are not deal-breakers but might raise</span>
+    <span class="c1"># issues being read back by some other codes</span>
     <span class="k">if</span> <span class="n">data_frame</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">has_duplicates</span><span class="p">:</span>
         <span class="n">LOGGER</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Non-unique indices found.&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">non_unique_behavior</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;raise&quot;</span><span class="p">:</span>
-            <span class="n">errmsg</span> <span class="o">=</span> <span class="s2">&quot;The dataframe contains non-unique indices.&quot;</span>
-            <span class="k">raise</span> <span class="n">TfsFormatError</span><span class="p">(</span><span class="n">errmsg</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">DuplicateIndicesError</span>
 
     <span class="k">if</span> <span class="n">data_frame</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">has_duplicates</span><span class="p">:</span>
         <span class="n">LOGGER</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Non-unique column names found.&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">non_unique_behavior</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;raise&quot;</span><span class="p">:</span>
-            <span class="n">errmsg</span> <span class="o">=</span> <span class="s2">&quot;The dataframe contains non-unique columns.&quot;</span>
-            <span class="k">raise</span> <span class="n">TfsFormatError</span><span class="p">(</span><span class="n">errmsg</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">DuplicateColumnsError</span>
 
-    <span class="c1"># The following are deal-breakers for the TFS format and would not, for instance, be accepted by MAD-X</span>
+    <span class="c1"># The following are deal-breakers for the TFS format,</span>
+    <span class="c1"># but might be accepted by MAD-X or MAD-NG</span>
     <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">data_frame</span><span class="o">.</span><span class="n">columns</span><span class="p">):</span>
         <span class="n">LOGGER</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Some column-names are not of string-type, dataframe </span><span class="si">{</span><span class="n">info_str</span><span class="si">}</span><span class="s2"> is invalid.&quot;</span><span class="p">)</span>
-        <span class="n">errmsg</span> <span class="o">=</span> <span class="s2">&quot;TFS-Columns need to be strings.&quot;</span>
-        <span class="k">raise</span> <span class="n">TfsFormatError</span><span class="p">(</span><span class="n">errmsg</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="n">NonStringColumnNameError</span>
 
     <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="s2">&quot; &quot;</span> <span class="ow">in</span> <span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">data_frame</span><span class="o">.</span><span class="n">columns</span><span class="p">):</span>
         <span class="n">LOGGER</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Space(s) found in TFS columns, dataframe </span><span class="si">{</span><span class="n">info_str</span><span class="si">}</span><span class="s2"> is invalid&quot;</span><span class="p">)</span>
-        <span class="n">errmsg</span> <span class="o">=</span> <span class="s2">&quot;TFS-Columns can not contain spaces.&quot;</span>
-        <span class="k">raise</span> <span class="n">TfsFormatError</span><span class="p">(</span><span class="n">errmsg</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="n">SpaceinColumnNameError</span>
+
+    <span class="c1"># ----- Additional checks for MAD-X compatibility mode ----- #</span>
+    <span class="k">if</span> <span class="n">compatibility</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;madx&quot;</span><span class="p">,</span> <span class="s2">&quot;mad-x&quot;</span><span class="p">):</span>
+        <span class="c1"># MAD-X really wants a &#39;TYPE&#39; header in the file, which is not possible to</span>
+        <span class="c1"># enforce if there are no headers in the df (we can&#39;t add, we don&#39;t modify</span>
+        <span class="c1"># and return the df in this function). In this case we error.</span>
+        <span class="k">if</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">data_frame</span><span class="p">,</span> <span class="s2">&quot;headers&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">errmsg</span> <span class="o">=</span> <span class="s2">&quot;Headers should be present in MAD-X compatibility mode.&quot;</span>
+            <span class="k">raise</span> <span class="n">MADXCompatibilityError</span><span class="p">(</span><span class="n">errmsg</span><span class="p">)</span>
+
+        <span class="c1"># ----- Otherwise we can check the existing headers</span>
+        <span class="c1"># Check that no boolean values are in the headers - MAD-X does not accept them</span>
+        <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">header</span><span class="p">,</span> <span class="nb">bool</span><span class="p">)</span> <span class="k">for</span> <span class="n">header</span> <span class="ow">in</span> <span class="n">data_frame</span><span class="o">.</span><span class="n">headers</span><span class="o">.</span><span class="n">values</span><span class="p">()):</span>
+            <span class="n">LOGGER</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Boolean values found in headers of dataframe </span><span class="si">{</span><span class="n">info_str</span><span class="si">}</span><span class="s2">, which is incompatible with MAD-X. &quot;</span>
+                <span class="s2">&quot;Change their types in order to keep compatibility with MAD-X.&quot;</span>
+            <span class="p">)</span>
+            <span class="n">errmsg</span> <span class="o">=</span> <span class="s2">&quot;TFS-Headers can not contain boolean values in MAD-X compatibility mode.&quot;</span>
+            <span class="k">raise</span> <span class="n">MADXCompatibilityError</span><span class="p">(</span><span class="n">errmsg</span><span class="p">)</span>
+
+        <span class="c1"># Check that no complex values are in the headers - MAD-X does not accept them</span>
+        <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">header</span><span class="p">,</span> <span class="nb">complex</span><span class="p">)</span> <span class="k">for</span> <span class="n">header</span> <span class="ow">in</span> <span class="n">data_frame</span><span class="o">.</span><span class="n">headers</span><span class="o">.</span><span class="n">values</span><span class="p">()):</span>
+            <span class="n">LOGGER</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Complex values found in headers of dataframe </span><span class="si">{</span><span class="n">info_str</span><span class="si">}</span><span class="s2">, which is incompatible with MAD-X. &quot;</span>
+                <span class="s2">&quot;Change their types in order to keep compatibility with MAD-X.&quot;</span>
+            <span class="p">)</span>
+            <span class="n">errmsg</span> <span class="o">=</span> <span class="s2">&quot;TFS-Headers can not contain complex values in MAD-X compatibility mode.&quot;</span>
+            <span class="k">raise</span> <span class="n">MADXCompatibilityError</span><span class="p">(</span><span class="n">errmsg</span><span class="p">)</span>
+
+        <span class="c1"># Check that no &#39;None&#39; values are in the headers - it would</span>
+        <span class="c1"># write as &#39;nil&#39; which MAD-X does not accept</span>
+        <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">header</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">for</span> <span class="n">header</span> <span class="ow">in</span> <span class="n">data_frame</span><span class="o">.</span><span class="n">headers</span><span class="o">.</span><span class="n">values</span><span class="p">()):</span>
+            <span class="n">LOGGER</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;&#39;None&#39; values found in headers of dataframe </span><span class="si">{</span><span class="n">info_str</span><span class="si">}</span><span class="s2">, which is incompatible with MAD-X. &quot;</span>
+                <span class="s2">&quot;Remove them or assign a value in order to keep compatibility with MAD-X.&quot;</span>
+            <span class="p">)</span>
+            <span class="n">errmsg</span> <span class="o">=</span> <span class="s2">&quot;TFS-Headers can not contain &#39;None&#39; values in MAD-X compatibility mode.&quot;</span>
+            <span class="k">raise</span> <span class="n">MADXCompatibilityError</span><span class="p">(</span><span class="n">errmsg</span><span class="p">)</span>
+
+        <span class="c1"># MAD-X will not accept back in a TFS file with no &#39;TYPE&#39; entry in the headers (as string)</span>
+        <span class="k">if</span> <span class="s2">&quot;TYPE&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">data_frame</span><span class="o">.</span><span class="n">headers</span><span class="p">:</span>
+            <span class="n">LOGGER</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;MAD-X expects a &#39;TYPE&#39; header in the TFS file, which is missing. Adding it.&quot;</span><span class="p">)</span>
+            <span class="n">data_frame</span><span class="o">.</span><span class="n">headers</span><span class="p">[</span><span class="s2">&quot;TYPE&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;Added by tfs-pandas for MAD-X compatibility&quot;</span>
+
+        <span class="c1"># ----- The following checks are regarding the data itself ----- #</span>
+        <span class="c1"># Check that the dataframe contains no boolean dtype columns</span>
+        <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">pdtypes</span><span class="o">.</span><span class="n">is_bool_dtype</span><span class="p">(</span><span class="n">type_</span><span class="p">)</span> <span class="k">for</span> <span class="n">type_</span> <span class="ow">in</span> <span class="n">data_frame</span><span class="o">.</span><span class="n">dtypes</span><span class="p">):</span>
+            <span class="n">LOGGER</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Boolean dtype column found in dataframe </span><span class="si">{</span><span class="n">info_str</span><span class="si">}</span><span class="s2">, which is incompatible with MAD-X. &quot;</span>
+                <span class="s2">&quot;Change the column dtypes to keep compatibility with MAD-X.&quot;</span>
+            <span class="p">)</span>
+            <span class="n">errmsg</span> <span class="o">=</span> <span class="s2">&quot;TFS-Dataframe can not contain boolean dtype columns in MAD-X compatibility mode.&quot;</span>
+            <span class="k">raise</span> <span class="n">MADXCompatibilityError</span><span class="p">(</span><span class="n">errmsg</span><span class="p">)</span>
+
+        <span class="c1"># Check that the dataframe contains no complex dtype columns</span>
+        <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">pdtypes</span><span class="o">.</span><span class="n">is_complex_dtype</span><span class="p">(</span><span class="n">type_</span><span class="p">)</span> <span class="k">for</span> <span class="n">type_</span> <span class="ow">in</span> <span class="n">data_frame</span><span class="o">.</span><span class="n">dtypes</span><span class="p">):</span>
+            <span class="n">LOGGER</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Complex dtype column found in dataframe </span><span class="si">{</span><span class="n">info_str</span><span class="si">}</span><span class="s2">, which is incompatible with MAD-X. &quot;</span>
+                <span class="s2">&quot;Change the column dtypes or split it into real and imaginary values to keep compatibility with MAD-X.&quot;</span>
+            <span class="p">)</span>
+            <span class="n">errmsg</span> <span class="o">=</span> <span class="s2">&quot;TFS-Dataframe can not contain complex dtype columns in MAD-X compatibility mode.&quot;</span>
+            <span class="k">raise</span> <span class="n">MADXCompatibilityError</span><span class="p">(</span><span class="n">errmsg</span><span class="p">)</span>
 
     <span class="n">LOGGER</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;DataFrame </span><span class="si">{</span><span class="n">info_str</span><span class="si">}</span><span class="s2"> validated&quot;</span><span class="p">)</span></div>
 

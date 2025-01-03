@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Welcome to tfs-pandas’ documentation! &mdash; tfs-pandas 3.9.0 documentation</title>
+  <title>Welcome to tfs-pandas’ documentation! &mdash; tfs-pandas 4.0.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
@@ -16,7 +16,7 @@
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=e55a5be6"></script>
+      <script src="_static/documentation_options.js?v=3304f9e4"></script>
       <script src="_static/doctools.js?v=9bcbadda"></script>
       <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
       <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -51,7 +51,23 @@
 <li class="toctree-l1"><a class="reference internal" href="quickstart.html">2 Minutes to tfs-pandas</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="quickstart.html#basic-usage">Basic Usage</a></li>
 <li class="toctree-l2"><a class="reference internal" href="quickstart.html#compression">Compression</a></li>
-<li class="toctree-l2"><a class="reference internal" href="quickstart.html#compatibility">Compatibility</a></li>
+<li class="toctree-l2"><a class="reference internal" href="quickstart.html#validation">Validation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="quickstart.html#function-replacements">Function Replacements</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="tfsformat.html">The Table File System Format</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="tfsformat.html#headers">Headers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tfsformat.html#table">Table</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tfsformat.html#types-and-identifiers">Types and Identifiers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tfsformat.html#tfs-pandas-caveats">TFS-Pandas Caveats</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tfsformat.html#tfs-file-example">TFS File Example</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="compatibility.html">MAD-X and MAD-NG Compatibility</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="compatibility.html#tfsdataframe-validation">TfsDataFrame Validation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="compatibility.html#common-validation-rules">Common Validation Rules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="compatibility.html#mad-ng-compatibility">MAD-NG Compatibility</a></li>
+<li class="toctree-l2"><a class="reference internal" href="compatibility.html#mad-x-compatibility">MAD-X Compatibility</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="modules/index.html">API Reference</a><ul>
@@ -95,23 +111,24 @@
              
   <section id="welcome-to-tfs-pandas-documentation">
 <h1>Welcome to tfs-pandas’ documentation!<a class="headerlink" href="#welcome-to-tfs-pandas-documentation" title="Link to this heading"></a></h1>
-<p><code class="docutils literal notranslate"><span class="pre">tfs-pandas</span></code> is a library for reading and writing capabilities for <a class="reference external" href="http://mad.web.cern.ch/mad/madx.old/Introduction/tfs.html">TFS files</a> used at <a class="reference external" href="https://home.cern/">CERN</a>.</p>
-<p>It provides functionality through a <code class="docutils literal notranslate"><span class="pre">TfsDataFrame</span></code> object, an extension of the popular <strong>pandas</strong> <code class="docutils literal notranslate"><span class="pre">DataFrame</span></code>, which in addition to the normal behaviour attaches a dictionary of headers to the <code class="docutils literal notranslate"><span class="pre">DataFrame</span></code>.
+<p><code class="docutils literal notranslate"><span class="pre">tfs-pandas</span></code> is a library for reading and writing capabilities for <strong>TFS</strong> files used at <a class="reference external" href="https://home.cern/">CERN</a>, namely by codes such as <a class="reference external" href="https://madx.web.cern.ch/">MAD-X</a> and <a class="reference external" href="https://madx.web.cern.ch/releases/madng/html/">MAD-NG</a>.</p>
+<p>It provides functionality through a <code class="docutils literal notranslate"><span class="pre">TfsDataFrame</span></code> object, an extension of the popular <strong>pandas</strong> <code class="docutils literal notranslate"><span class="pre">DataFrame</span></code>, which in addition to the normal behaviour attaches a dictionary of headers to the dataframe.
 Functions are also exported that handle reading and writing of <strong>TFS</strong> files to and from <code class="docutils literal notranslate"><span class="pre">TfsDataFrames</span></code> as well as merging and validating for <code class="docutils literal notranslate"><span class="pre">TfsDataFrames</span></code>.</p>
 <div class="admonition-package-scope admonition">
 <p class="admonition-title"><strong>Package Scope</strong></p>
 <p>The package only has as a goal to provide a simple and easy to use interface from <strong>TFS</strong> files to a familiar object build upon the <a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.3)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code></a>.
 It is not meant to implement various calculations on <code class="xref py py-obj docutils literal notranslate"><span class="pre">TfsDataFrames</span></code>.</p>
-<p>Tools relative to the <strong>TFS</strong> format are provided, such as validating a <code class="xref py py-obj docutils literal notranslate"><span class="pre">TfsDataFrame</span></code> and its headers; or lazily manage a collection of <strong>TFS</strong> files.</p>
+<p>Tools relative to the <strong>TFS</strong> format are provided, such as validating a <code class="xref py py-obj docutils literal notranslate"><span class="pre">TfsDataFrame</span></code> and its headers; or lazily managing a collection of <strong>TFS</strong> files.</p>
 </div>
 </section>
 <section id="installation">
 <h1>Installation<a class="headerlink" href="#installation" title="Link to this heading"></a></h1>
-<p>Installation is easily done via <code class="xref py py-obj docutils literal notranslate"><span class="pre">pip</span></code>:</p>
+<p>The package is published on <code class="xref py py-obj docutils literal notranslate"><span class="pre">PyPI</span></code> and installation is easily done via <code class="xref py py-obj docutils literal notranslate"><span class="pre">pip</span></code>:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>tfs-pandas
 </pre></div>
 </div>
-<p>One can also install in a <code class="xref py py-obj docutils literal notranslate"><span class="pre">conda</span></code>/<code class="xref py py-obj docutils literal notranslate"><span class="pre">mamba</span></code> environment via the <code class="xref py py-obj docutils literal notranslate"><span class="pre">conda-forge</span></code> channel with:</p>
+<p>There is also a maintained version of the package on <code class="xref py py-obj docutils literal notranslate"><span class="pre">conda-forge</span></code>.
+One can install in a <code class="xref py py-obj docutils literal notranslate"><span class="pre">conda</span></code>/<code class="xref py py-obj docutils literal notranslate"><span class="pre">mamba</span></code> environment via the <code class="xref py py-obj docutils literal notranslate"><span class="pre">conda-forge</span></code> channel with:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>conda<span class="w"> </span>install<span class="w"> </span>-c<span class="w"> </span>conda-forge<span class="w"> </span>tfs-pandas
 </pre></div>
 </div>
@@ -125,7 +142,23 @@ You can find here a <a class="reference internal" href="quickstart.html"><span c
 <li class="toctree-l1"><a class="reference internal" href="quickstart.html">2 Minutes to tfs-pandas</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="quickstart.html#basic-usage">Basic Usage</a></li>
 <li class="toctree-l2"><a class="reference internal" href="quickstart.html#compression">Compression</a></li>
-<li class="toctree-l2"><a class="reference internal" href="quickstart.html#compatibility">Compatibility</a></li>
+<li class="toctree-l2"><a class="reference internal" href="quickstart.html#validation">Validation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="quickstart.html#function-replacements">Function Replacements</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="tfsformat.html">The Table File System Format</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="tfsformat.html#headers">Headers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tfsformat.html#table">Table</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tfsformat.html#types-and-identifiers">Types and Identifiers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tfsformat.html#tfs-pandas-caveats">TFS-Pandas Caveats</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tfsformat.html#tfs-file-example">TFS File Example</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="compatibility.html">MAD-X and MAD-NG Compatibility</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="compatibility.html#tfsdataframe-validation">TfsDataFrame Validation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="compatibility.html#common-validation-rules">Common Validation Rules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="compatibility.html#mad-ng-compatibility">MAD-NG Compatibility</a></li>
+<li class="toctree-l2"><a class="reference internal" href="compatibility.html#mad-x-compatibility">MAD-X Compatibility</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="modules/index.html">API Reference</a><ul>

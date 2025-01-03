@@ -1,0 +1,220 @@
+
+<!DOCTYPE html>
+
+<html class="writer-html5" data-content_root="./" lang="en">
+<head>
+<meta charset="utf-8"/><meta content="width=device-width, initial-scale=1" name="viewport"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>MAD-X and MAD-NG Compatibility — tfs-pandas 4.0.0 documentation</title>
+<link href="_static/pygments.css?v=fa44fd50" rel="stylesheet" type="text/css"/>
+<link href="_static/css/theme.css?v=e59714d7" rel="stylesheet" type="text/css"/>
+<link href="_static/copybutton.css?v=76b2166b" rel="stylesheet" type="text/css"/>
+<link href="_static/sphinx-codeautolink.css?v=125d5c1c" rel="stylesheet" type="text/css"/>
+<link href="_static/css/custom.css?v=988d0652" rel="stylesheet" type="text/css"/>
+<script src="_static/jquery.js?v=5d32c60e"></script>
+<script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+<script src="_static/documentation_options.js?v=3304f9e4"></script>
+<script src="_static/doctools.js?v=9bcbadda"></script>
+<script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+<script src="_static/clipboard.min.js?v=a7894cd8"></script>
+<script src="_static/copybutton.js?v=f281be69"></script>
+<script src="_static/js/theme.js"></script>
+<link href="genindex.html" rel="index" title="Index"/>
+<link href="search.html" rel="search" title="Search"/>
+<link href="modules/index.html" rel="next" title="API Reference"/>
+<link href="tfsformat.html" rel="prev" title="The Table File System Format"/>
+</head>
+<body class="wy-body-for-nav">
+<div class="wy-grid-for-nav">
+<nav class="wy-nav-side" data-toggle="wy-nav-shift">
+<div class="wy-side-scroll">
+<div class="wy-side-nav-search">
+<a href="index.html">
+<img alt="Logo" class="logo" src="_static/omc_logo.svg"/>
+</a>
+<div role="search">
+<form action="search.html" class="wy-form" id="rtd-search-form" method="get">
+<input aria-label="Search docs" name="q" placeholder="Search docs" type="text"/>
+<input name="check_keywords" type="hidden" value="yes"/>
+<input name="area" type="hidden" value="default"/>
+</form>
+</div>
+</div><div aria-label="Navigation menu" class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation">
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="quickstart.html">2 Minutes to tfs-pandas</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="quickstart.html#basic-usage">Basic Usage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="quickstart.html#compression">Compression</a></li>
+<li class="toctree-l2"><a class="reference internal" href="quickstart.html#validation">Validation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="quickstart.html#function-replacements">Function Replacements</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="tfsformat.html">The Table File System Format</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="tfsformat.html#headers">Headers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tfsformat.html#table">Table</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tfsformat.html#types-and-identifiers">Types and Identifiers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tfsformat.html#tfs-pandas-caveats">TFS-Pandas Caveats</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tfsformat.html#tfs-file-example">TFS File Example</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">MAD-X and MAD-NG Compatibility</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#tfsdataframe-validation">TfsDataFrame Validation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#common-validation-rules">Common Validation Rules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#mad-ng-compatibility">MAD-NG Compatibility</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#mad-x-compatibility">MAD-X Compatibility</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="modules/index.html">API Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="modules/index.html#collection">Collection</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/index.html#constants">Constants</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/index.html#errors">Errors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/index.html#frame">Frame</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/index.html#hdf5-i-o">HDF5 I/O</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/index.html#reader">Reader</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/index.html#testing">Testing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/index.html#tools">Tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/index.html#writer">Writer</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+</nav>
+<section class="wy-nav-content-wrap" data-toggle="wy-nav-shift"><nav aria-label="Mobile navigation menu" class="wy-nav-top">
+<i class="fa fa-bars" data-toggle="wy-nav-top"></i>
+<a href="index.html">tfs-pandas</a>
+</nav>
+<div class="wy-nav-content">
+<div class="rst-content">
+<div aria-label="Page navigation" role="navigation">
+<ul class="wy-breadcrumbs">
+<li><a aria-label="Home" class="icon icon-home" href="index.html"></a></li>
+<li class="breadcrumb-item active">MAD-X and MAD-NG Compatibility</li>
+<li class="wy-breadcrumbs-aside">
+<!-- User defined GitHub URL -->
+<a class="fa fa-github" href="https://github.com/pylhc/tfs"> Edit on GitHub</a>
+</li>
+</ul>
+<hr/>
+</div>
+<div class="document" itemscope="itemscope" itemtype="http://schema.org/Article" role="main">
+<div itemprop="articleBody">
+<section id="mad-x-and-mad-ng-compatibility">
+<h1>MAD-X and MAD-NG Compatibility<a class="headerlink" href="#mad-x-and-mad-ng-compatibility" title="Link to this heading"></a></h1>
+<p>As <code class="xref py py-obj docutils literal notranslate"><span class="pre">tfs-pandas</span></code> allows one to write <code class="xref py py-obj docutils literal notranslate"><span class="pre">TfsDataFrames</span></code> as files in the <strong>TFS</strong> format, which are typically output by simulations codes, compatibility of these files with said codes is crucial.
+Specifically, <code class="xref py py-obj docutils literal notranslate"><span class="pre">tfs-pandas</span></code> aims to ensure the files it writes to disk are accepted as input for <a class="reference external" href="https://madx.web.cern.ch/">MAD-X</a> and <a class="reference external" href="https://madx.web.cern.ch/releases/madng/html/">MAD-NG</a>.</p>
+<p>However, as <code class="docutils literal notranslate"><span class="pre">MAD-NG</span></code> is the successor to <code class="docutils literal notranslate"><span class="pre">MAD-X</span></code>, it includes new features regarding the <strong>TFS</strong> format, and files including these features will not be accepted by <code class="docutils literal notranslate"><span class="pre">MAD-X</span></code>.
+To circumvent this issue, <code class="xref py py-obj docutils literal notranslate"><span class="pre">tfs-pandas</span></code> offers functionality - named validation - to ensure compatibility with either code.</p>
+<section id="tfsdataframe-validation">
+<h2>TfsDataFrame Validation<a class="headerlink" href="#tfsdataframe-validation" title="Link to this heading"></a></h2>
+<p>It is possible to perform automatic validation of a <code class="xref py py-obj docutils literal notranslate"><span class="pre">TfsDataFrame</span></code> both when reading and writing, or to validate them at any time using the <code class="xref py py-obj docutils literal notranslate"><span class="pre">tfs.frame.validate</span></code> function.
+Validation enforces the rules described in the <a class="reference internal" href="tfsformat.html#tfs-pandas-caveats"><span class="std std-ref">caveats section</span></a>, both to guarantee the integrity of the dataframe and compatibility of written files with simulation codes.</p>
+<div class="admonition-when-does-validation-happen admonition">
+<p class="admonition-title">When Does Validation Happen?</p>
+<p>Validation is <strong>optional</strong>, and is by default turned off at both read-time and write-time.</p>
+</div>
+<p>Validation is done by providing a <code class="xref py py-obj docutils literal notranslate"><span class="pre">TfsDataFrame</span></code> and a compatibility mode to <code class="xref py py-obj docutils literal notranslate"><span class="pre">tfs.frame.validate</span></code> (see the <a class="reference internal" href="modules/index.html#frame"><span class="std std-ref">API reference</span></a>).
+It goes as:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">tfs</span>
+<span class="kn">from</span> <span class="nn">tfs.frame</span> <span class="kn">import</span> <span class="n">validate</span>
+
+<span class="n">df</span> <span class="o">=</span> <span class="n">tfs</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s2">"path/to/file.tfs"</span><span class="p">)</span>
+
+<span class="c1"># To validate with MAD-X compatibility</span>
+<span class="n">validate</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">compatibility</span><span class="o">=</span><span class="s2">"mad-x"</span><span class="p">)</span>  <span class="c1"># or use "madx"</span>
+
+<span class="c1"># To validate with MAD-NG compatibility</span>
+<span class="n">validate</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">compatibility</span><span class="o">=</span><span class="s2">"mad-ng"</span><span class="p">)</span>  <span class="c1"># or use "madng"</span>
+</pre></div>
+</div>
+<p>In case of compatibility issue, an exception is raised which will point to the specific incompatible element.
+All exceptions inherit from the <code class="xref py py-obj docutils literal notranslate"><span class="pre">TfsFormatError</span></code>, which one can <code class="xref py py-obj docutils literal notranslate"><span class="pre">except</span></code> as a catch-all for this package.</p>
+</section>
+<section id="common-validation-rules">
+<span id="common-rules"></span><h2>Common Validation Rules<a class="headerlink" href="#common-validation-rules" title="Link to this heading"></a></h2>
+<p>In either compatibility mode, some common rules are enforced.
+These rules are listed and described in the <a class="reference internal" href="modules/index.html#frame"><span class="std std-ref">API reference</span></a> for the <code class="xref py py-obj docutils literal notranslate"><span class="pre">tfs.frame.validate</span></code> function.</p>
+<p>When validating a <code class="xref py py-obj docutils literal notranslate"><span class="pre">TfsDataFrame</span></code>, the behavior in case one of these rules is violated depends on the value of the <code class="xref py py-obj docutils literal notranslate"><span class="pre">non_unique_behavior</span></code> parameter.
+These rules are <em>always</em> checked against when validating a <code class="xref py py-obj docutils literal notranslate"><span class="pre">TfsDataFrame</span></code>.
+Additional checks can be performed by setting the <code class="xref py py-obj docutils literal notranslate"><span class="pre">compatibility</span></code> parameter, as described in the <a class="reference internal" href="#madng-mode"><span class="std std-ref">MAD-NG</span></a> and <a class="reference internal" href="#madx-mode"><span class="std std-ref">MAD-X</span></a> below.</p>
+</section>
+<section id="mad-ng-compatibility">
+<span id="madng-mode"></span><h2>MAD-NG Compatibility<a class="headerlink" href="#mad-ng-compatibility" title="Link to this heading"></a></h2>
+<div class="admonition-supported-versions admonition">
+<p class="admonition-title">Supported Versions</p>
+<p>The compatibility with <code class="docutils literal notranslate"><span class="pre">MAD-NG</span></code> is guaranteed starting with version <code class="xref py py-obj docutils literal notranslate"><span class="pre">1.0.0</span></code>.
+See below for details and caveats.</p>
+</div>
+<p>Since <code class="docutils literal notranslate"><span class="pre">MAD-NG</span></code> implements and accepts more features into its <strong>TFS</strong> files, its compatibility mode is naturally less restrictive.
+Namely, the following are accepted by <code class="docutils literal notranslate"><span class="pre">MAD-NG</span></code> and <code class="docutils literal notranslate"><span class="pre">MAD-NG</span></code> only:</p>
+<ul class="simple">
+<li><p>Boolean dtype for header parameters and table columns.</p></li>
+<li><p>Complex dtype for header parameters and table columns.</p></li>
+<li><p>Nullable dtype for header parameters and table columns (value <code class="xref py py-obj docutils literal notranslate"><span class="pre">nil</span></code>).</p></li>
+</ul>
+<div class="admonition-complex-number-representation admonition">
+<p class="admonition-title">Complex Number Representation</p>
+<p>In Python, the imaginary part of a complex number is represented by the letter <code class="docutils literal notranslate"><span class="pre">j</span></code>, as in <code class="xref py py-obj docutils literal notranslate"><span class="pre">1.4</span> <span class="pre">+</span> <span class="pre">2.6j</span></code>.
+When writing complex values to file, <code class="xref py py-obj docutils literal notranslate"><span class="pre">tfs-pandas</span></code> will instead use the <code class="docutils literal notranslate"><span class="pre">MAD-NG</span></code> (read <code class="xref py py-obj docutils literal notranslate"><span class="pre">Lua</span></code>) representation, and uses the letter <code class="docutils literal notranslate"><span class="pre">i</span></code>, as in <code class="xref py py-obj docutils literal notranslate"><span class="pre">1.4</span> <span class="pre">+</span> <span class="pre">2.6i</span></code>, so that <code class="docutils literal notranslate"><span class="pre">MAD-NG</span></code> can properly read such a file.
+Both of these representations will be correctly read by <code class="xref py py-obj docutils literal notranslate"><span class="pre">tfs-pandas</span></code> (including when <code class="docutils literal notranslate"><span class="pre">MAD-NG</span></code> uses <code class="docutils literal notranslate"><span class="pre">I</span></code> for special complex numbers).</p>
+</div>
+<div class="admonition-handling-of-nullable-types admonition">
+<p class="admonition-title">Handling of Nullable Types</p>
+<p><code class="docutils literal notranslate"><span class="pre">MAD-NG</span></code> uses the nullable <code class="xref py py-obj docutils literal notranslate"><span class="pre">nil</span></code>, which is accepted by <code class="xref py py-obj docutils literal notranslate"><span class="pre">tfs-pandas</span></code> with the following caveats:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>When reading from file, <code class="xref py py-obj docutils literal notranslate"><span class="pre">nil</span></code> values in the headers are converted to <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> while those in the dataframe are cast to <code class="xref py py-obj docutils literal notranslate"><span class="pre">NaN</span></code>, except in string-dtyped columns where they are converted to <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>.</p></li>
+<li><p>When writing to file, <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> values anywhere are written as <code class="xref py py-obj docutils literal notranslate"><span class="pre">nil</span></code>, and <code class="xref py py-obj docutils literal notranslate"><span class="pre">NaN</span></code> values in the dataframe are written as <code class="xref py py-obj docutils literal notranslate"><span class="pre">NaN</span></code> (remember that setting a <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> in a numeric <a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.3)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code></a> column automatically casts it as <code class="xref py py-obj docutils literal notranslate"><span class="pre">NaN</span></code>).</p></li>
+</ul>
+</div></blockquote>
+</div>
+<div class="admonition attention">
+<p class="admonition-title">Attention</p>
+<p>The exotic “features” of <code class="docutils literal notranslate"><span class="pre">MAD-NG</span></code> such as the <code class="docutils literal notranslate"><span class="pre">Lua</span></code> operator overloading for ranges and tables, and their inclusion in <strong>TFS</strong> files are not supported by <code class="xref py py-obj docutils literal notranslate"><span class="pre">tfs-pandas</span></code>.
+Should one need to use these features, it is recommended to go through the <a class="reference external" href="https://pymadng.readthedocs.io/en/latest/">pymadng</a> package to handle them in-memory.</p>
+</div>
+</section>
+<section id="mad-x-compatibility">
+<span id="madx-mode"></span><h2>MAD-X Compatibility<a class="headerlink" href="#mad-x-compatibility" title="Link to this heading"></a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">MAD-X</span></code> compatibility mode is more restrictive, and enforces that none of the features listed in the <a class="reference internal" href="#madng-mode"><span class="std std-ref">MAD-NG section</span></a> appear in the <code class="xref py py-obj docutils literal notranslate"><span class="pre">TfsDataFrame</span></code>.</p>
+<p>Additionally, <code class="docutils literal notranslate"><span class="pre">MAD-X</span></code> will refuse to read into a table any <strong>TFS</strong> file that does not include a <code class="xref py py-obj docutils literal notranslate"><span class="pre">TYPE</span></code> entry in the headers (which should be a string).
+As such, when checking for compatibility with <code class="docutils literal notranslate"><span class="pre">MAD-X</span></code>:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>If the dataframe has no headers, an error will be raised indicating the dataframe should have headers.</p></li>
+<li><p>If the dataframe has headers but no <code class="xref py py-obj docutils literal notranslate"><span class="pre">TYPE</span></code> entry is not found, <code class="xref py py-obj docutils literal notranslate"><span class="pre">tfs-pandas</span></code> will log a warning and add one with the value <code class="xref py py-obj docutils literal notranslate"><span class="pre">"Added</span> <span class="pre">by</span> <span class="pre">tfs-pandas</span> <span class="pre">for</span> <span class="pre">MAD-X</span> <span class="pre">compatibility"</span></code></p></li>
+</ul>
+</div></blockquote>
+<div class="admonition-default-mode admonition">
+<p class="admonition-title">Default mode</p>
+<p>The default compatibility mode enforced by the <code class="xref py py-obj docutils literal notranslate"><span class="pre">tfs.frame.validate</span></code> function is <code class="docutils literal notranslate"><span class="pre">MAD-X</span></code>.</p>
+</div>
+</section>
+</section>
+</div>
+</div>
+<footer><div aria-label="Footer" class="rst-footer-buttons" role="navigation">
+<a accesskey="p" class="btn btn-neutral float-left" href="tfsformat.html" rel="prev" title="The Table File System Format"><span aria-hidden="true" class="fa fa-arrow-circle-left"></span> Previous</a>
+<a accesskey="n" class="btn btn-neutral float-right" href="modules/index.html" rel="next" title="API Reference">Next <span aria-hidden="true" class="fa fa-arrow-circle-right"></span></a>
+</div>
+<hr/>
+<div role="contentinfo">
+<p>© Copyright .</p>
+</div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+</div>
+</div>
+</section>
+</div>
+<script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+</body>
+</html>

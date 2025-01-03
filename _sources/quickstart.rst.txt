@@ -4,10 +4,6 @@
 Yes, 2 minutes.
 That's how little it takes!
 
-.. hint::
-
-   You can click the function names in the code examples below to go directly to their documentation.
-
 Basic Usage
 -----------
 
@@ -44,7 +40,7 @@ Compression
 
 A **TFS** file being text-based, it benefits heavily from compression.
 Thankfully, `tfs-pandas` supports automatic reading and writing of various compression formats.
-Just use the API as you would normally, and the compression will be handled automatically:
+Just use the API as you would normally, and the compression will be handled automatically based on the extension:
 
 .. autolink-preface:: import tfs
 .. code-block:: python
@@ -60,7 +56,7 @@ First though, one needs to install the package with the `hdf5` extra requirement
 
 .. code-block:: bash
 
-   python -m pip install --upgrade tfs-pandas[hdf5]
+   python -m pip install --upgrade "tfs-pandas[hdf5]"
 
 Then, access the functionality from `tfs.hdf`.
 
@@ -70,13 +66,22 @@ Then, access the functionality from `tfs.hdf`.
    from tfs.hdf import read_hdf, write_hdf
    
    # Read a TfsDataFrame from an HDF5 file
-   df = tfs.hdf.read("path_to_input.hdf5", key="key_in_hdf5_file")
+   df = tfs.hdf.read_hdf("path_to_input.hdf5", key="key_in_hdf5_file")
 
    # Write a TfsDataFrame to an HDF5 file
-   tfs.hdf.write("path_to_output.hdf5", df, key="key_in_hdf5_file")
+   tfs.hdf.write_hdf("path_to_output.hdf5", df, key="key_in_hdf5_file")
 
-Compatibility
--------------
+Validation
+----------
+
+As **TFS** files typically come from the output of simulations codes, validation modes are available to ensure compatibility with said codes.
+This is done through the `tfs.frame.validate` function, or relevant arguments in both the reader and writer functions.
+
+As validation modes and compatibility details are complex, validation warrants its own documentation page.
+Please refer to the :doc:`compatibility and validation guide <compatibility>` for more information.
+
+Function Replacements
+---------------------
 
 Finally, some replacement functions are provided for some `pandas` operations which, if used, would return a `pandas.DataFrame` instead of a `~.TfsDataFrame`.
 
@@ -89,9 +94,9 @@ Finally, some replacement functions are provided for some `pandas` operations wh
    # This returns a pandas.DataFrame and makes you lose the headers
    result = pd.concat([df1, df2])
 
-   # Instead, use our own
+   # Instead, use our own wrapper
    result = tfs.frame.concat([df1, df2])  # you can choose how to merge headers too
    assert isinstance(result, tfs.TfsDataFrame)  # that's ok!
+   assert getattr(result, "headers", None) is not None  # headers are not lost
 
 That's it!
-Happy using :)

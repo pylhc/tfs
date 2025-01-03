@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>tfs.writer &mdash; tfs-pandas 3.9.0 documentation</title>
+  <title>tfs.writer &mdash; tfs-pandas 4.0.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
@@ -15,7 +15,7 @@
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=e55a5be6"></script>
+      <script src="../../_static/documentation_options.js?v=3304f9e4"></script>
       <script src="../../_static/doctools.js?v=9bcbadda"></script>
       <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -49,7 +49,23 @@
 <li class="toctree-l1"><a class="reference internal" href="../../quickstart.html">2 Minutes to tfs-pandas</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../quickstart.html#basic-usage">Basic Usage</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../quickstart.html#compression">Compression</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../quickstart.html#compatibility">Compatibility</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../quickstart.html#validation">Validation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../quickstart.html#function-replacements">Function Replacements</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../tfsformat.html">The Table File System Format</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../tfsformat.html#headers">Headers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../tfsformat.html#table">Table</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../tfsformat.html#types-and-identifiers">Types and Identifiers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../tfsformat.html#tfs-pandas-caveats">TFS-Pandas Caveats</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../tfsformat.html#tfs-file-example">TFS File Example</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../compatibility.html">MAD-X and MAD-NG Compatibility</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../compatibility.html#tfsdataframe-validation">TfsDataFrame Validation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../compatibility.html#common-validation-rules">Common Validation Rules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../compatibility.html#mad-ng-compatibility">MAD-NG Compatibility</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../compatibility.html#mad-x-compatibility">MAD-X Compatibility</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../modules/index.html">API Reference</a><ul>
@@ -102,6 +118,8 @@
 
 <span class="kn">import</span> <span class="nn">logging</span>
 <span class="kn">import</span> <span class="nn">pathlib</span>
+<span class="kn">import</span> <span class="nn">string</span>
+<span class="kn">from</span> <span class="nn">types</span> <span class="kn">import</span> <span class="n">NoneType</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
@@ -119,17 +137,18 @@
 <a class="viewcode-back" href="../../modules/index.html#tfs.writer.write_tfs">[docs]</a>
 <span class="k">def</span> <span class="nf">write_tfs</span><span class="p">(</span>
     <span class="n">tfs_file_path</span><span class="p">:</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span> <span class="o">|</span> <span class="nb">str</span><span class="p">,</span>
-    <span class="n">data_frame</span><span class="p">:</span> <span class="n">TfsDataFrame</span> <span class="o">|</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
+    <span class="n">data_frame</span><span class="p">:</span> <span class="n">TfsDataFrame</span> <span class="o">|</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span> <span class="o">|</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">,</span>
     <span class="n">headers_dict</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">save_index</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>  <span class="c1"># noqa: FBT002</span>
     <span class="n">colwidth</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">DEFAULT_COLUMN_WIDTH</span><span class="p">,</span>
     <span class="n">headerswidth</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">DEFAULT_COLUMN_WIDTH</span><span class="p">,</span>
     <span class="n">non_unique_behavior</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;warn&quot;</span><span class="p">,</span>
-    <span class="n">validate</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>  <span class="c1"># noqa: FBT001, FBT002</span>
+    <span class="n">validate</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Writes the provided ``DataFrame`` to disk at **tfs_file_path**, eventually with the `headers_dict` as</span>
-<span class="sd">    headers dictionary.</span>
+<span class="sd">    Writes the provided `DataFrame` to disk at **tfs_file_path**. If `headers_dict`</span>
+<span class="sd">    is provided it is written to dist as the headers. Note that this function is</span>
+<span class="sd">    exported also at the top-level of the package as `tfs.write`.</span>
 
 <span class="sd">    .. note::</span>
 <span class="sd">        Compression of the output file is possible, by simply providing a valid compression extension</span>
@@ -138,19 +157,21 @@
 <span class="sd">        ``.tar.xz`` or ``.tar.bz2``. See below for examples.</span>
 
 <span class="sd">    .. warning::</span>
-<span class="sd">        Through the *validate* argument, one can skip dataframe validation before writing it to file.</span>
-<span class="sd">        While this can speed-up the execution time of this function , it is **not recommended** and</span>
-<span class="sd">        is not the default behavior of this function. The option, however, is left for the user to</span>
-<span class="sd">        use at their own risk should they wish to avoid lengthy validation of large `TfsDataFrames`</span>
-<span class="sd">        (such as for instance a sliced FCC lattice).</span>
+<span class="sd">        Through the *validate* argument, one can skip dataframe validation before writing</span>
+<span class="sd">        to file which can improve performance. This is **not recommended** if the file needs</span>
+<span class="sd">        to be read by ``MAD-X`` or ``MAD-NG``. The default behaviour is to check for ``MAD-X``</span>
+<span class="sd">        compatibility. The option to skip validation is left for the user to use (at their own</span>
+<span class="sd">        risk) should they wish to avoid lengthy validation of large `TfsDataFrames` (such as</span>
+<span class="sd">        for instance a sliced FCC lattice).</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        tfs_file_path (pathlib.Path | str): Path object to the output **TFS** file. Can be</span>
-<span class="sd">            a string, in which case it will be cast to a Path object.</span>
-<span class="sd">        data_frame (TfsDataFrame | pd.DataFrame): ``TfsDataFrame`` or ``pandas.DataFrame`` to</span>
-<span class="sd">            write to file.</span>
-<span class="sd">        headers_dict (dict): Headers for the `data_frame`. If not provided, assumes a ``TfsDataFrame``</span>
-<span class="sd">            was given and tries to use ``data_frame.headers``.</span>
+<span class="sd">        tfs_file_path (pathlib.Path | str): Path to the output **TFS** file.</span>
+<span class="sd">        data_frame (TfsDataFrame | pd.DataFrame | pd.Series): The dataframe to write to file. If</span>
+<span class="sd">            a Series-like object is given, it will be converted to a `TfsDataFrame` first and</span>
+<span class="sd">            written with a single column.</span>
+<span class="sd">        headers_dict (dict): Headers for the `data_frame`. If not provided, assumes a</span>
+<span class="sd">            `TfsDataFrame` was given and tries to use ``data_frame.headers``. Writes with</span>
+<span class="sd">            empty headers is those are not found either.</span>
 <span class="sd">        save_index (str | bool): bool or string. Default to ``False``. If ``True``, saves</span>
 <span class="sd">            the index of `data_frame` to a column identifiable by `INDEX&amp;&amp;&amp;`. If given as string,</span>
 <span class="sd">            saves the index of `data_frame` to a column named by the provided value.</span>
@@ -159,7 +180,11 @@
 <span class="sd">        non_unique_behavior (str): behavior to adopt if non-unique indices or columns are found in the</span>
 <span class="sd">            dataframe. Accepts `warn` and `raise` as values, case-insensitively, which dictates</span>
 <span class="sd">            to respectively issue a warning or raise an error if non-unique elements are found.</span>
-<span class="sd">        validate (bool): Whether to validate the dataframe before writing it to file. Defaults to ``True``.</span>
+<span class="sd">        validate (str): Determines if and which validation will be performed before writing. By</span>
+<span class="sd">            default no validation is performed. Accepted values are `madx`, `mad-x`, `madng` and</span>
+<span class="sd">            `mad-ng` (case-insensitive), for compatibility with ``MAD-X`` and ``MAD-NG`` codes,</span>
+<span class="sd">            respectively. See the `tfs.frame.validate` function for more information on the</span>
+<span class="sd">            validation steps.</span>
 
 <span class="sd">    Examples:</span>
 <span class="sd">        Writing to file is simple, as most arguments have sane default values.</span>
@@ -167,21 +192,24 @@
 
 <span class="sd">        .. code-block:: python</span>
 
-<span class="sd">            &gt;&gt;&gt; tfs.write(&quot;filename.tfs&quot;, dataframe)</span>
+<span class="sd">            tfs.write(&quot;filename.tfs&quot;, dataframe)</span>
 
-<span class="sd">        If one wants to, for instance, raise and error on non-unique indices or columns,</span>
-<span class="sd">        one can do so as:</span>
-
-<span class="sd">        .. code-block:: python</span>
-
-<span class="sd">            &gt;&gt;&gt; tfs.write(&quot;filename.tfs&quot;, dataframe, non_unique_behavior=&quot;raise&quot;)</span>
-
-<span class="sd">        One can choose to skip dataframe validation **at one&#39;s own risk** before writing</span>
-<span class="sd">        it to file. This is done as:</span>
+<span class="sd">        One can choose to perform dataframe validation before writing</span>
+<span class="sd">        it to file. This can be done by providing an accepted compatibility</span>
+<span class="sd">        mode to check for (either `madx` or `madng`), as:</span>
 
 <span class="sd">        .. code-block:: python</span>
 
-<span class="sd">            &gt;&gt;&gt; tfs.write(&quot;filename.tfs&quot;, dataframe, validate=False)</span>
+<span class="sd">            tfs.write(&quot;filename.tfs&quot;, dataframe, validate=&quot;madx&quot;)</span>
+
+<span class="sd">        If one wants to, for instance, raise and error on non-unique indices or</span>
+<span class="sd">        columns when validating the dataframe, one can do so as:</span>
+
+<span class="sd">        .. code-block:: python</span>
+
+<span class="sd">            tfs.write(</span>
+<span class="sd">                &quot;filename.tfs&quot;, dataframe, non_unique_behavior=&quot;raise&quot;, validate=&quot;madng&quot;</span>
+<span class="sd">            )</span>
 
 <span class="sd">        It is possible to directly have the output file be compressed, by specifying a</span>
 <span class="sd">        valid compression extension as the **tfs_file_path** suffix. The detection</span>
@@ -189,26 +217,39 @@
 
 <span class="sd">        .. code-block:: python</span>
 
-<span class="sd">            &gt;&gt;&gt; tfs.write(&quot;filename.tfs.gz&quot;, dataframe)</span>
+<span class="sd">            tfs.write(&quot;filename.tfs.gz&quot;, dataframe)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">left_align_first_column</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="n">tfs_file_path</span> <span class="o">=</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="n">tfs_file_path</span><span class="p">)</span>
 
-    <span class="c1"># Force a conversion from pd.Series-like to TfsDataFrame to avoid empty columns issues</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data_frame</span><span class="p">,</span> <span class="p">(</span><span class="n">TfsDataFrame</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)):</span>
-        <span class="n">data_frame</span> <span class="o">=</span> <span class="n">TfsDataFrame</span><span class="p">(</span><span class="n">data_frame</span><span class="p">)</span>
-        <span class="n">data_frame</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="n">data_frame</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>  <span class="c1"># need column names to be strings</span>
+    <span class="c1"># Check for provided headers. If None, try to get them from the df</span>
+    <span class="c1"># and default to empty dict (will not write any lines to file)</span>
+    <span class="k">if</span> <span class="n">headers_dict</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">headers_dict</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">data_frame</span><span class="p">,</span> <span class="s2">&quot;headers&quot;</span><span class="p">,</span> <span class="p">{})</span>
 
-    <span class="k">if</span> <span class="n">validate</span><span class="p">:</span>
-        <span class="n">validate_frame</span><span class="p">(</span><span class="n">data_frame</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;to be written in </span><span class="si">{</span><span class="n">tfs_file_path</span><span class="o">.</span><span class="n">absolute</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">non_unique_behavior</span><span class="p">)</span>
+    <span class="c1"># We case to a TfsDataFrame anyway for validation and writing</span>
+    <span class="c1"># We ensure column names as strings in case it was a pd.Series-like (and colname is 0)</span>
+    <span class="n">data_frame</span> <span class="o">=</span> <span class="n">TfsDataFrame</span><span class="p">(</span><span class="n">data_frame</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers_dict</span><span class="p">)</span>
+    <span class="n">data_frame</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="n">data_frame</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>  
 
-    <span class="k">if</span> <span class="n">headers_dict</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># tries to get headers from TfsDataFrame</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="n">headers_dict</span> <span class="o">=</span> <span class="n">data_frame</span><span class="o">.</span><span class="n">headers</span>
-        <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
-            <span class="n">headers_dict</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="c1"># Only perform validation if asked (validation is OFF by default)</span>
+    <span class="c1"># We also check for False as it was the way to skip it in tfs-pandas 3.x</span>
+    <span class="k">if</span> <span class="n">validate</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">validate</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">False</span><span class="p">:</span>  <span class="c1"># validation function will check for valid values</span>
+        <span class="n">validate_frame</span><span class="p">(</span>
+            <span class="n">data_frame</span><span class="p">,</span>
+            <span class="n">info_str</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;to be written in </span><span class="si">{</span><span class="n">tfs_file_path</span><span class="o">.</span><span class="n">absolute</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="n">non_unique_behavior</span><span class="o">=</span><span class="n">non_unique_behavior</span><span class="p">,</span>
+            <span class="n">compatibility</span><span class="o">=</span><span class="n">validate</span><span class="p">,</span>
+        <span class="p">)</span>
 
-    <span class="n">data_frame</span> <span class="o">=</span> <span class="n">data_frame</span><span class="o">.</span><span class="n">convert_dtypes</span><span class="p">(</span><span class="n">convert_integer</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="c1"># Let pandas try to infer the best dtypes for the data to write (only to write, the</span>
+    <span class="c1"># actual dataframe provided by the user is not changed so this operation is fine).</span>
+    <span class="c1"># Passed options: don&#39;t convert float to ints, don&#39;t try (and fail) to convert complex</span>
+    <span class="c1"># to floats, and don&#39;t try to convert strings to its special StringDtype (as then &#39;None&#39;</span>
+    <span class="c1"># would be transformed into &lt;pd.NA&gt; and if we write this to file we are very much cooked.)</span>
+    <span class="c1"># Overall we do not care to infer specialized dtypes, just that it makes the best inference</span>
+    <span class="c1"># to valid dtypes (i.e. an object column should be inferred as strings if that makes sense).</span>
+    <span class="n">data_frame</span> <span class="o">=</span> <span class="n">data_frame</span><span class="o">.</span><span class="n">convert_dtypes</span><span class="p">(</span><span class="n">convert_integer</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">convert_floating</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">convert_string</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">save_index</span><span class="p">:</span>
         <span class="n">left_align_first_column</span> <span class="o">=</span> <span class="kc">True</span>
@@ -229,7 +270,15 @@
 
 
 
-<span class="k">def</span> <span class="nf">_insert_index_column</span><span class="p">(</span><span class="n">data_frame</span><span class="p">:</span> <span class="n">TfsDataFrame</span> <span class="o">|</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">save_index</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="c1"># ----- Helpers ----- #</span>
+
+
+<span class="k">def</span> <span class="nf">_insert_index_column</span><span class="p">(</span><span class="n">data_frame</span><span class="p">:</span> <span class="n">TfsDataFrame</span> <span class="o">|</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">save_index</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Inserts the index of the dataframe into it as a column, naming it according to</span>
+<span class="sd">    &#39;save_index&#39; if it was provided. Otherwise it tries to use the existing index&#39;s</span>
+<span class="sd">    name (if present) and falls back to a default.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">save_index</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>  <span class="c1"># save index into column by name given</span>
         <span class="n">idx_name</span> <span class="o">=</span> <span class="n">save_index</span>
     <span class="k">else</span><span class="p">:</span>  <span class="c1"># save index into column, which can be found by INDEX_ID</span>
@@ -243,42 +292,60 @@
 <span class="k">def</span> <span class="nf">_get_headers_string</span><span class="p">(</span><span class="n">headers_dict</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">width</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Returns the string to write a ``TfsDataFrame`` headers to file. Will return an empty string if</span>
-<span class="sd">    called for an empty headers dictionary, in order not write an line to file.</span>
+<span class="sd">    called for an empty headers dictionary, in order not write a line to file.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        headers_dict (dict): the ``TfsDataFrame`` headers.</span>
 <span class="sd">        width (int): column width to use when formatting keys and values from the headers dict.</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        A full string representation for the headers dictionary.</span>
+<span class="sd">        A full string representation for the headers dictionary, TFS compliant.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">headers_dict</span><span class="p">:</span>
-        <span class="k">return</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">_get_header_line</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">headers_dict</span><span class="p">[</span><span class="n">name</span><span class="p">],</span> <span class="n">width</span><span class="p">)</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">headers_dict</span><span class="p">)</span>
+        <span class="k">return</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">_get_header_line</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">width</span><span class="p">)</span> <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">headers_dict</span><span class="o">.</span><span class="n">items</span><span class="p">())</span>
     <span class="k">return</span> <span class="s2">&quot;&quot;</span>
 
 
 <span class="k">def</span> <span class="nf">_get_header_line</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">width</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Creates and returns the string value for a single header line, based</span>
+<span class="sd">    on the name of the header parameter and its value.</span>
+
+<span class="sd">    For instance, calling this for &#39;param&#39; header which is a float equal to</span>
+<span class="sd">    1.792 and using the DEFAULT_COLUMN_WIDTH of the package would yield:</span>
+<span class="sd">    &quot;@ param                %le                1.792&quot;</span>
+
+
+<span class="sd">    Args:</span>
+<span class="sd">        name (str): name of the header parameter.</span>
+<span class="sd">        value: value of the header parameter. Any valid type is accepted here</span>
+<span class="sd">            (int, float, str, potentially bool, complex etc.) and the type</span>
+<span class="sd">            of this value is used to infer the formatting.</span>
+<span class="sd">        width (int): column width to use when formatting the header line.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        The full, formatted header line string.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
         <span class="n">errmsg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> is not a string&quot;</span>
         <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="n">errmsg</span><span class="p">)</span>
-    <span class="n">type_str</span> <span class="o">=</span> <span class="n">_value_to_type_string</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">type_str</span> <span class="o">==</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">:</span>
-        <span class="n">value</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;&quot;</span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s1">&quot;&#39;</span>
-    <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;@ </span><span class="si">{</span><span class="n">name</span><span class="si">:</span><span class="s2">&lt;</span><span class="si">{</span><span class="n">width</span><span class="si">}}</span><span class="s2"> </span><span class="si">{</span><span class="n">type_str</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">value</span><span class="si">:</span><span class="s2">&gt;</span><span class="si">{</span><span class="n">width</span><span class="si">}}</span><span class="s2">&quot;</span>
+    <span class="n">type_identifier</span> <span class="o">=</span> <span class="n">_value_to_tfs_type_identifier</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+    <span class="n">dtype_</span> <span class="o">=</span> <span class="n">NoneType</span> <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="o">.</span><span class="n">dtype</span>  <span class="c1"># otherwise numpy gives &#39;Object&#39; for &#39;None&#39;s</span>
+    <span class="c1"># Strip the following as it might have trailing spaces and we leave that to the alignment formatting below</span>
+    <span class="n">value_str</span> <span class="o">=</span> <span class="n">ValueToStringFormatter</span><span class="p">()</span><span class="o">.</span><span class="n">format_field</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">_dtype_to_formatter_string</span><span class="p">(</span><span class="n">dtype_</span><span class="p">,</span> <span class="n">width</span><span class="p">))</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+    <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;@ </span><span class="si">{</span><span class="n">name</span><span class="si">:</span><span class="s2">&lt;</span><span class="si">{</span><span class="n">width</span><span class="si">}}</span><span class="s2"> </span><span class="si">{</span><span class="n">type_identifier</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">value_str</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="si">:</span><span class="s2">&gt;</span><span class="si">{</span><span class="n">width</span><span class="si">}}</span><span class="s2">&quot;</span>
 
 
-<span class="k">def</span> <span class="nf">_get_colnames_string</span><span class="p">(</span>
-    <span class="n">colnames</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">colwidth</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">left_align_first_column</span><span class="p">:</span> <span class="nb">bool</span>  <span class="c1"># noqa: FBT001, FBT002</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="k">def</span> <span class="nf">_get_colnames_string</span><span class="p">(</span><span class="n">colnames</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">colwidth</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">left_align_first_column</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>  <span class="c1"># noqa: FBT001</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns the string for the line with the column names.&quot;&quot;&quot;</span>
     <span class="n">format_string</span> <span class="o">=</span> <span class="n">_get_row_format_string</span><span class="p">([</span><span class="kc">None</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">colnames</span><span class="p">),</span> <span class="n">colwidth</span><span class="p">,</span> <span class="n">left_align_first_column</span><span class="p">)</span>
     <span class="k">return</span> <span class="s2">&quot;* &quot;</span> <span class="o">+</span> <span class="n">format_string</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">*</span><span class="n">colnames</span><span class="p">)</span>
 
 
-<span class="k">def</span> <span class="nf">_get_coltypes_string</span><span class="p">(</span>
-    <span class="n">types</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">,</span> <span class="n">colwidth</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">left_align_first_column</span><span class="p">:</span> <span class="nb">bool</span>  <span class="c1"># noqa: FBT001, FBT002</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="k">def</span> <span class="nf">_get_coltypes_string</span><span class="p">(</span><span class="n">types</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">,</span> <span class="n">colwidth</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">left_align_first_column</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>  <span class="c1"># noqa: FBT001</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns the string for the line with the column type specifiers.&quot;&quot;&quot;</span>
     <span class="n">fmt</span> <span class="o">=</span> <span class="n">_get_row_format_string</span><span class="p">([</span><span class="nb">str</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">types</span><span class="p">),</span> <span class="n">colwidth</span><span class="p">,</span> <span class="n">left_align_first_column</span><span class="p">)</span>
-    <span class="k">return</span> <span class="s2">&quot;$ &quot;</span> <span class="o">+</span> <span class="n">fmt</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">*</span><span class="p">[</span><span class="n">_dtype_to_id_string</span><span class="p">(</span><span class="n">type_</span><span class="p">)</span> <span class="k">for</span> <span class="n">type_</span> <span class="ow">in</span> <span class="n">types</span><span class="p">])</span>
+    <span class="k">return</span> <span class="s2">&quot;$ &quot;</span> <span class="o">+</span> <span class="n">fmt</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">*</span><span class="p">[</span><span class="n">_dtype_to_tfs_format_identifier</span><span class="p">(</span><span class="n">type_</span><span class="p">)</span> <span class="k">for</span> <span class="n">type_</span> <span class="ow">in</span> <span class="n">types</span><span class="p">])</span>
 
 
 <span class="k">def</span> <span class="nf">_get_data_string</span><span class="p">(</span>
@@ -286,42 +353,78 @@
     <span class="n">colwidth</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
     <span class="n">left_align_first_column</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>  <span class="c1"># noqa: FBT001</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Returns the complete string to be written for the data part of the dataframe.</span>
+<span class="sd">    This corresponds to all the data rows, after the column names and the column</span>
+<span class="sd">    type specifiers.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        data_frame (TfsDataFrame | pd.DataFrame): the dataframe to write.</span>
+<span class="sd">        colwidth (int): column width to use when formatting the data.</span>
+<span class="sd">        left_align_first_column (bool): whether to left-align the first column or not.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        The full string representation of the data part of the dataframe.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">data_frame</span><span class="o">.</span><span class="n">index</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">data_frame</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
         <span class="k">return</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+
     <span class="n">format_strings</span> <span class="o">=</span> <span class="s2">&quot;  &quot;</span> <span class="o">+</span> <span class="n">_get_row_format_string</span><span class="p">(</span><span class="n">data_frame</span><span class="o">.</span><span class="n">dtypes</span><span class="p">,</span> <span class="n">colwidth</span><span class="p">,</span> <span class="n">left_align_first_column</span><span class="p">)</span>
-    <span class="n">data_frame</span> <span class="o">=</span> <span class="n">_quote_string_columns</span><span class="p">(</span><span class="n">data_frame</span><span class="p">)</span>
     <span class="n">data_frame</span> <span class="o">=</span> <span class="n">data_frame</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">object</span><span class="p">)</span>  <span class="c1"># overrides pandas auto-conversion (lead to format bug)</span>
-    <span class="k">return</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">data_frame</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">series</span><span class="p">:</span> <span class="n">format_strings</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">*</span><span class="n">series</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>
+    <span class="n">string_formatter</span> <span class="o">=</span> <span class="n">ValueToStringFormatter</span><span class="p">()</span>
+
+    <span class="c1"># A bit ugly but we go line per line and determine the string on the fly</span>
+    <span class="k">return</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+        <span class="n">data_frame</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">series</span><span class="p">:</span> <span class="n">string_formatter</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">format_strings</span><span class="p">,</span> <span class="o">*</span><span class="n">series</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="p">)</span>
 
 
 <span class="k">def</span> <span class="nf">_get_row_format_string</span><span class="p">(</span>
-    <span class="n">dtypes</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">type</span><span class="p">],</span> <span class="n">colwidth</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">left_align_first_column</span><span class="p">:</span> <span class="nb">bool</span>  <span class="c1"># noqa: FBT001, FBT002</span>
+    <span class="n">dtypes</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">type</span><span class="p">],</span> <span class="n">colwidth</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">left_align_first_column</span><span class="p">:</span> <span class="nb">bool</span>  <span class="c1"># noqa: FBT001</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Returns the formatter string for a given row of the data part of the dataframe,</span>
+<span class="sd">    based on the dtypes of the columns and the column width to use for writing. It is</span>
+<span class="sd">    a string with the formatting speficiers (for fstrings), one slot per column. For</span>
+<span class="sd">    instance: {0:&gt;20s} {1:&gt;20.12g} {2:&gt;20d} {3:&gt;20.12g}&quot;.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        dtypes (list): list of the dtypes of the columns.</span>
+<span class="sd">        colwidth (int): column width to use when formatting the row.</span>
+<span class="sd">        left_align_first_column (bool): whether to left-align the first column or not.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        The full formatter string for any data row.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
         <span class="sa">f</span><span class="s2">&quot;</span><span class="se">{{</span><span class="si">{</span><span class="n">indx</span><span class="si">:</span><span class="s2">d</span><span class="si">}</span><span class="s2">:&quot;</span>
         <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="s1">&#39;&lt;&#39;</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="ow">not</span><span class="w"> </span><span class="n">indx</span><span class="p">)</span><span class="w"> </span><span class="ow">and</span><span class="w"> </span><span class="n">left_align_first_column</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="s1">&#39;&gt;&#39;</span><span class="si">}</span><span class="s2">&quot;</span>
-        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">_dtype_to_formatter</span><span class="p">(</span><span class="n">type_</span><span class="p">,</span><span class="w"> </span><span class="n">colwidth</span><span class="p">)</span><span class="si">}</span><span class="se">}}</span><span class="s2">&quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">_dtype_to_formatter_string</span><span class="p">(</span><span class="n">type_</span><span class="p">,</span><span class="w"> </span><span class="n">colwidth</span><span class="p">)</span><span class="si">}</span><span class="se">}}</span><span class="s2">&quot;</span>
         <span class="k">for</span> <span class="n">indx</span><span class="p">,</span> <span class="n">type_</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">dtypes</span><span class="p">)</span>
     <span class="p">)</span>
 
 
-<span class="k">def</span> <span class="nf">_quote_string_columns</span><span class="p">(</span><span class="n">data_frame</span><span class="p">:</span> <span class="n">TfsDataFrame</span> <span class="o">|</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TfsDataFrame</span> <span class="o">|</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
-    <span class="k">def</span> <span class="nf">quote_strings</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">s</span><span class="o">.</span><span class="n">startswith</span><span class="p">((</span><span class="s1">&#39;&quot;&#39;</span><span class="p">,</span> <span class="s2">&quot;&#39;&quot;</span><span class="p">)):</span>
-            <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;&quot;</span><span class="si">{</span><span class="n">s</span><span class="si">}</span><span class="s1">&quot;&#39;</span>
-        <span class="k">return</span> <span class="n">s</span>
-
-    <span class="k">return</span> <span class="n">data_frame</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">quote_strings</span><span class="p">)</span>  <span class="c1"># makes a copy, we don&#39;t modify the original</span>
-
-
-<span class="k">def</span> <span class="nf">_value_to_type_string</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-    <span class="n">dtype_</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="o">.</span><span class="n">dtype</span>  <span class="c1"># let numpy handle conversion to it dtypes</span>
-    <span class="k">return</span> <span class="n">_dtype_to_id_string</span><span class="p">(</span><span class="n">dtype_</span><span class="p">)</span>
-
-
-<span class="k">def</span> <span class="nf">_dtype_to_id_string</span><span class="p">(</span><span class="n">type_</span><span class="p">:</span> <span class="nb">type</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="k">def</span> <span class="nf">_value_to_tfs_type_identifier</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Return the proper **TFS** identifier for the provided dtype.</span>
+<span class="sd">    Returns the **TFS** dtype identifier for the provided value,</span>
+<span class="sd">    as a string. For instance for a float, it would return &quot;%le&quot;.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># First intercept for None values (MAD-NG writes nil) to return %n</span>
+    <span class="c1"># (as the inferred dtype is object and that would be a mess later)</span>
+    <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;%n&quot;</span>
+
+    <span class="c1"># Otherwise we infer the dtype and return the corresponding identifier</span>
+    <span class="n">dtype_</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="o">.</span><span class="n">dtype</span>  <span class="c1"># let numpy handle conversion to it dtypes</span>
+    <span class="k">return</span> <span class="n">_dtype_to_tfs_format_identifier</span><span class="p">(</span><span class="n">dtype_</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_dtype_to_tfs_format_identifier</span><span class="p">(</span><span class="n">type_</span><span class="p">:</span> <span class="nb">type</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Return the proper **TFS** identifier for the provided dtype. This is</span>
+<span class="sd">    the function called behind the scenes by `_value_to_type_identifier`,</span>
+<span class="sd">    but it takes the inferred dtype as argument. For a float dtype it</span>
+<span class="sd">    would return &#39;%le&#39;, for a string &#39;%s&#39; etc.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        type_ (type): an instance of the built-in type (in this package, one of ``numpy`` or ``pandas``</span>
@@ -329,20 +432,31 @@
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The ID string.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        TypeError: if the provided type could not be identified as a valid dtype.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="n">pdtypes</span><span class="o">.</span><span class="n">is_integer_dtype</span><span class="p">(</span><span class="n">type_</span><span class="p">)</span> <span class="ow">or</span> <span class="n">pdtypes</span><span class="o">.</span><span class="n">is_bool_dtype</span><span class="p">(</span><span class="n">type_</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">pdtypes</span><span class="o">.</span><span class="n">is_integer_dtype</span><span class="p">(</span><span class="n">type_</span><span class="p">):</span>
         <span class="k">return</span> <span class="s2">&quot;</span><span class="si">%d</span><span class="s2">&quot;</span>
     <span class="k">if</span> <span class="n">pdtypes</span><span class="o">.</span><span class="n">is_float_dtype</span><span class="p">(</span><span class="n">type_</span><span class="p">):</span>
         <span class="k">return</span> <span class="s2">&quot;</span><span class="si">%le</span><span class="s2">&quot;</span>
     <span class="k">if</span> <span class="n">pdtypes</span><span class="o">.</span><span class="n">is_string_dtype</span><span class="p">(</span><span class="n">type_</span><span class="p">):</span>
         <span class="k">return</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">&quot;</span>
-    <span class="n">errmsg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Provided type &#39;</span><span class="si">{</span><span class="n">type_</span><span class="si">}</span><span class="s2">&#39; could not be identified as either a bool, int, float or string dtype&quot;</span>
+    <span class="k">if</span> <span class="n">pdtypes</span><span class="o">.</span><span class="n">is_bool_dtype</span><span class="p">(</span><span class="n">type_</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">&quot;%b&quot;</span>
+    <span class="k">if</span> <span class="n">pdtypes</span><span class="o">.</span><span class="n">is_complex_dtype</span><span class="p">(</span><span class="n">type_</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">&quot;%lz&quot;</span>
+    <span class="n">errmsg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Provided type &#39;</span><span class="si">{</span><span class="n">type_</span><span class="si">}</span><span class="s2">&#39; could not be identified as either a bool, int, float complex or string dtype&quot;</span>
     <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="n">errmsg</span><span class="p">)</span>
 
 
-<span class="k">def</span> <span class="nf">_dtype_to_formatter</span><span class="p">(</span><span class="n">type_</span><span class="p">:</span> <span class="nb">type</span><span class="p">,</span> <span class="n">colsize</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="k">def</span> <span class="nf">_dtype_to_formatter_string</span><span class="p">(</span><span class="n">type_</span><span class="p">:</span> <span class="nb">type</span><span class="p">,</span> <span class="n">colsize</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Return the proper string formatter for the provided dtype.</span>
+<span class="sd">    Return the proper formatter string for the provided dtype. This is</span>
+<span class="sd">    the function called behind the scenes by `_value_to_string_format_id`,</span>
+<span class="sd">    but it takes the inferred dtype as argument. For a float dtype it</span>
+<span class="sd">    would return &#39;g&#39;, for a complex &#39;c&#39; etc. It is used later for string</span>
+<span class="sd">    formatting (you know, when you do f&#39;{variable:.2f}&#39; etc).</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        type_ (type): an instance of the built-in type (in this package, one of</span>
@@ -350,18 +464,118 @@
 <span class="sd">        colsize (int): size of the written column to use for the formatter.</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        The formatter.</span>
+<span class="sd">        The formatter string for the provided dtype.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="n">type_</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">colsize</span><span class="si">}</span><span class="s2">&quot;</span>
-    <span class="k">if</span> <span class="n">pdtypes</span><span class="o">.</span><span class="n">is_integer_dtype</span><span class="p">(</span><span class="n">type_</span><span class="p">)</span> <span class="ow">or</span> <span class="n">pdtypes</span><span class="o">.</span><span class="n">is_bool_dtype</span><span class="p">(</span><span class="n">type_</span><span class="p">):</span>
-        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">colsize</span><span class="si">}</span><span class="s2">d&quot;</span>
+    <span class="n">type_id</span> <span class="o">=</span> <span class="n">_dtype_to_python_string_formatter</span><span class="p">(</span><span class="n">type_</span><span class="p">)</span>  <span class="c1"># for Python: &#39;d&#39; or &#39;g&#39; or &#39;s&#39; etc</span>
+    <span class="k">if</span> <span class="n">pdtypes</span><span class="o">.</span><span class="n">is_float_dtype</span><span class="p">(</span><span class="n">type_</span><span class="p">)</span> <span class="ow">or</span> <span class="n">pdtypes</span><span class="o">.</span><span class="n">is_complex_dtype</span><span class="p">(</span><span class="n">type_</span><span class="p">):</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">colsize</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">colsize</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="nb">len</span><span class="p">(</span><span class="s1">&#39;-0.e-000&#39;</span><span class="p">)</span><span class="si">}{</span><span class="n">type_id</span><span class="si">}</span><span class="s2">&quot;</span>  <span class="c1"># make sure we don&#39;t round and lose info</span>
+    <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">colsize</span><span class="si">}{</span><span class="n">type_id</span><span class="si">}</span><span class="s2">&quot;</span>
+
+
+<span class="k">def</span> <span class="nf">_dtype_to_python_string_formatter</span><span class="p">(</span><span class="n">type_</span><span class="p">:</span> <span class="nb">type</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Return the (Python) string-formatter for the provided dtype,</span>
+<span class="sd">    a.k.a the formatter passed to f-strings (&#39;d&#39; for integers for</span>
+<span class="sd">    instance).</span>
+
+<span class="sd">    Of special note are here &quot;b&quot; for boolean and &quot;c&quot; for complex</span>
+<span class="sd">    numbers, but those are only for our own internal formatter.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        type_ (type): an instance of the built-in type (in this package, one of</span>
+<span class="sd">            ``numpy`` or ``pandas`` types) to get the formatter for.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        str: the formatter type-identifier.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        TypeError: if the provided type could not be identified as a valid dtype.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">type_</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># don&#39;t know when that triggers</span>
+        <span class="k">return</span> <span class="s2">&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">type_</span> <span class="ow">is</span> <span class="n">NoneType</span><span class="p">:</span>  <span class="c1"># this means the value was None</span>
+        <span class="k">return</span> <span class="s2">&quot;s&quot;</span>  <span class="c1"># formatted as string since we will write &#39;nil&#39;</span>
+    <span class="k">if</span> <span class="n">pdtypes</span><span class="o">.</span><span class="n">is_integer_dtype</span><span class="p">(</span><span class="n">type_</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">&quot;d&quot;</span>
+    <span class="k">if</span> <span class="n">pdtypes</span><span class="o">.</span><span class="n">is_bool_dtype</span><span class="p">(</span><span class="n">type_</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">&quot;b&quot;</span>  <span class="c1"># can only be used with TfsStringFormatter</span>
     <span class="k">if</span> <span class="n">pdtypes</span><span class="o">.</span><span class="n">is_float_dtype</span><span class="p">(</span><span class="n">type_</span><span class="p">):</span>
-        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">colsize</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">colsize</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="nb">len</span><span class="p">(</span><span class="s1">&#39;-0.e-000&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">g&quot;</span>
+        <span class="k">return</span> <span class="s2">&quot;g&quot;</span>
     <span class="k">if</span> <span class="n">pdtypes</span><span class="o">.</span><span class="n">is_string_dtype</span><span class="p">(</span><span class="n">type_</span><span class="p">):</span>
-        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">colsize</span><span class="si">}</span><span class="s2">s&quot;</span>
-    <span class="n">errmsg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Provided type &#39;</span><span class="si">{</span><span class="n">type_</span><span class="si">}</span><span class="s2">&#39; could not be identified as either a bool, int, float or string dtype&quot;</span>
+        <span class="k">return</span> <span class="s2">&quot;s&quot;</span>
+    <span class="k">if</span> <span class="n">pdtypes</span><span class="o">.</span><span class="n">is_complex_dtype</span><span class="p">(</span><span class="n">type_</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">&quot;c&quot;</span>  <span class="c1"># can only be used with TfsStringFormatter</span>
+
+    <span class="n">errmsg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Provided type &#39;</span><span class="si">{</span><span class="n">type_</span><span class="si">}</span><span class="s2">&#39; could not be identified as either a bool, int, float, complex or string dtype&quot;</span>
     <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="n">errmsg</span><span class="p">)</span>
+
+
+<span class="c1"># ----- Formatter Class ----- #</span>
+
+
+<div class="viewcode-block" id="ValueToStringFormatter">
+<a class="viewcode-back" href="../../modules/index.html#tfs.writer.ValueToStringFormatter">[docs]</a>
+<span class="k">class</span> <span class="nc">ValueToStringFormatter</span><span class="p">(</span><span class="n">string</span><span class="o">.</span><span class="n">Formatter</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Formatter class to be called for proper formatting of values</span>
+<span class="sd">    (headers, dataframe data) into strings to write to file.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">format_field</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">format_spec</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">format_spec</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;b&quot;</span><span class="p">):</span>  <span class="c1"># value is a boolean</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_format_boolean</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">format_spec</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">format_spec</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;c&quot;</span><span class="p">):</span>  <span class="c1"># value is a complex number</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_format_complex</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">format_spec</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">format_spec</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;s&quot;</span><span class="p">):</span>  <span class="c1"># value is a string or None</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_format_string</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">format_spec</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">format_field</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">format_spec</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_format_boolean</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">format_spec</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Special case for booleans, as from their written version</span>
+<span class="sd">        will always be either &#39;true&#39; or &#39;false&#39; (lowercase) as</span>
+<span class="sd">        done by MAD-NG.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">bool_str</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="nb">bool</span><span class="p">(</span><span class="n">value</span><span class="p">))</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">format_field</span><span class="p">(</span><span class="n">bool_str</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">format_spec</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2">s&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_format_complex</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">format_spec</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Special case for complex numbers, MAD-X and MAD-NG use &#39;i&#39; for</span>
+<span class="sd">        the imaginary part and not &#39;j&#39;, so we have to replace that in.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">format_field</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">format_spec</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2">g&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;j&quot;</span><span class="p">,</span> <span class="s2">&quot;i&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_format_string</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">,</span> <span class="n">format_spec</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Special case as we need to ensure that strings are enclosed</span>
+<span class="sd">        in either &quot; or &#39; quotes. This also handles `pathlib.Path`</span>
+<span class="sd">        objects and makes sure they are converted to strings first.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># First a check so that passing a Path works (i.e. if we</span>
+        <span class="c1"># have a Path in the headers it will be written as a string)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">):</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>  <span class="c1"># convert its current form (can be relative)</span>
+
+        <span class="c1"># Now we go on with the formatting</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">value</span><span class="o">.</span><span class="n">startswith</span><span class="p">((</span><span class="s1">&#39;&quot;&#39;</span><span class="p">,</span> <span class="s2">&quot;&#39;&quot;</span><span class="p">)):</span>
+                <span class="n">value</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;&quot;</span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s1">&quot;&#39;</span>
+        <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+            <span class="k">pass</span>
+
+        <span class="c1"># Special case for None values which we always write as &#39;nil&#39;. In case</span>
+        <span class="c1"># value is None we end up here as we want &#39;nil&#39; and format it as string</span>
+        <span class="c1"># We do this here as we want to write nil and not &quot;nil&quot;</span>
+        <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="s2">&quot;nil&quot;</span>
+
+        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">format_field</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">format_spec</span><span class="p">)</span></div>
+
 </pre></div>
 
            </div>
