@@ -32,21 +32,23 @@ LOGGER = logging.getLogger(__name__)
 
 
 def write_hdf(path: Path | str, df: TfsDataFrame, **kwargs) -> None:
-    """Write TfsDataFrame to hdf5 file. The dataframe will be written into
-    the group ``data``, the headers into the group ``headers``.
-    Only one dataframe per file is allowed.
+    """
+    Write the `TfsDataFrame` to **HDF** file. The dataframe will be written
+    into the group ``data``, the headers into the group ``headers``. Only one
+    dataframe per file is allowed.
 
     Args:
         path (Path, str): Path of the output file.
         df (TfsDataFrame): TfsDataFrame to write.
-        kwargs: kwargs to be passed to pandas ``DataFrame.to_hdf()``.
-                ``key`` is not allowed and ``mode`` needs to be ``w`` if the
-                output file already exists (``w`` will be used in any case,
-                even if the file does not exist, but only a warning is logged
-                in that case).
+        **kwargs: Any keyword argument is given to `pandas.DataFrame.to_hdf`.
+            Note that ``key`` is not allowed and ``mode`` *needs* to be ``w``
+            if the output file already exists (``w`` will be used in any case,
+            even if the file does not exist, but only a warning is logged in
+            that case).
     """
-    _check_imports()
-    # Check for `key` kwarg (forbidden) ---
+    _check_imports()  # checks tables and h5py are imported, raises otherwise
+
+    # Check for `key` kwargs (forbidden) ---
     if "key" in kwargs:
         errmsg = "The argument 'key' is not allowed here, as only one TfsDataFrame per file is supported."
         raise AttributeError(errmsg)
@@ -80,7 +82,8 @@ def read_hdf(path: Path | str) -> TfsDataFrame:
     Returns:
         A ``TfsDataFrame`` object with the loaded data from the file.
     """
-    _check_imports()
+    _check_imports()  # checks tables and h5py are imported, raises otherwise
+
     df = pd.read_hdf(path, key="data")
     with h5py.File(path, mode="r") as hf:
         headers = hf.get("headers")
@@ -94,6 +97,7 @@ def read_hdf(path: Path | str) -> TfsDataFrame:
 
 def _check_imports():
     """Checks if required packages for HDF5 functionality are installed. Raises ImportError if not."""
+    # We try to import tables and h5py at top of file and set them to None if that fails
     not_imported = [name for name, package in (("tables", tables), ("h5py", h5py)) if package is None]
     if len(not_imported):
         names = ", ".join(f"`{name}`" for name in not_imported)

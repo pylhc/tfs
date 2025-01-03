@@ -15,8 +15,17 @@ from typing import TYPE_CHECKING, ClassVar
 
 import numpy as np
 import pandas as pd
+from pandas.api import types as pdtypes
 
-from tfs.errors import TfsFormatError
+from tfs.constants import VALIDATION_MODES
+from tfs.errors import (
+    DuplicateColumnsError,
+    DuplicateIndicesError,
+    IterableInDataFrameError,
+    MADXCompatibilityError,
+    NonStringColumnNameError,
+    SpaceinColumnNameError,
+)
 
 if TYPE_CHECKING:
     from collections.abc import Sequence
@@ -27,7 +36,7 @@ LOGGER = logging.getLogger(__name__)
 
 class TfsDataFrame(pd.DataFrame):
     """
-    Class to hold the information of the built an extended ``pandas`` ``DataFrame``, together with a way
+    Class to hold the information of the built an extended `pandas.DataFrame`, together with a way
     of getting the headers of the **TFS** file. The file headers are stored in a dictionary upon read.
     To get a header value use ``data_frame.headers["header_name"]``, or ``data_frame["header_name"]`` if
     it does not conflict with a column name in the dataframe.
@@ -116,17 +125,14 @@ class TfsDataFrame(pd.DataFrame):
         Args:
             right (TfsDataFrame | pd.DataFrame): The ``TfsDataFrame`` to merge with the caller.
             how_headers (str): Type of merge to be performed for the headers. Either **left** or **right**.
-                Refer to :func:`tfs.frame.merge_headers` for behavior. If ``None`` is provided and
+                Refer to `tfs.frame.merge_headers` for behavior. If ``None`` is provided and
                 **new_headers** is not provided, the final headers will be empty. Case insensitive,
                 defaults to ``None``.
             new_headers (dict): If provided, will be used as headers for the merged ``TfsDataFrame``.
                 Otherwise these are determined by merging the headers from the caller and the other
                 ``TfsDataFrame`` according to the method defined by the **how_headers** argument.
-
-        Keyword Args:
-            Any keyword argument is given to ``pandas.DataFrame.merge()``. The default values for all these
-            parameters are left as set in the ``pandas`` codebase. To see these, refer to the pandas
-            [DataFrame.merge documentation](https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.merge.html).
+            **kwargs: Arguments for `pandas.DataFrame.merge`, with the same default values as set in
+            the ``pandas`` codebase.
 
         Returns:
             A new ``TfsDataFrame`` with the merged data and merged headers.
@@ -138,12 +144,14 @@ class TfsDataFrame(pd.DataFrame):
         dframe = super().merge(right, **kwargs)
 
         LOGGER.debug("Determining headers")
+        # fmt: off
         new_headers = (
             new_headers
             if new_headers is not None
             else merge_headers(self.headers, right.headers, how=how_headers)
         )
         return TfsDataFrame(data=dframe, headers=new_headers)
+        # fmt: on
 
 
 def merge_headers(headers_left: dict, headers_right: dict, how: str) -> dict:
@@ -191,7 +199,7 @@ def concat(
 ) -> TfsDataFrame:
     """
     Concatenate ``TfsDataFrame`` objects along a particular axis with optional set logic along the other
-    axes. Data manipulation is done by the ``pandas.concat`` function. Resulting headers are either
+    axes. Data manipulation is done by the `pandas.concat` function. Resulting headers are either
     merged according to the provided **how_headers** method or as given via **new_headers**.
 
     .. warning::
@@ -203,17 +211,12 @@ def concat(
     Args:
         objs (Sequence[TfsDataFrame | pd.DataFrame]): the ``TfsDataFrame`` objects to be concatenated.
         how_headers (str): Type of merge to be performed for the headers. Either **left** or **right**.
-            Refer to :func:`tfs.frame.merge_headers` for behavior. If ``None`` is provided and
-            **new_headers** is not provided, the final headers will be empty. Case insensitive, defaults to
-            ``None``.
+            Refer to `tfs.frame.merge_headers` for behavior. If ``None`` is provided and **new_headers**
+            is not provided, the final headers will be empty. Case insensitive, defaults to ``None``.
         new_headers (dict): If provided, will be used as headers for the merged ``TfsDataFrame``.
             Otherwise these are determined by successively merging the headers from all concatenated
             ``TfsDataFrames`` according to the method defined by the **how_headers** argument.
-
-    Keyword Args:
-        Any keyword argument is given to ``pandas.concat()``. The default values for all these parameters
-        are left as set in the ``pandas`` codebase. To see these, refer to the [pandas.concat
-        documentation](https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.concat.html).
+        **kwargs: Any keyword argument is given to `pandas.concat`.
 
     Returns:
         A new ``TfsDataFrame`` with the merged data and merged headers.
@@ -233,37 +236,54 @@ def validate(
     data_frame: TfsDataFrame | pd.DataFrame,
     info_str: str = "",
     non_unique_behavior: str = "warn",
+    compatibility: str = "madx",
 ) -> None:
     """
-    Check if a data frame contains finite values only, strings as column names and no empty headers
-    or column names.
+    Enforce validity rules on a `TfsDataFrame` (see admonition below).
+    Additional checks are performed for compatibility with either ``MAD-X``
+    or ``MAD-NG`` as provided by the `compatibility` parameter.
 
-    .. admonition:: **Methodology**
+    .. admonition:: Methodology
 
-        This function performs several different checks on the provided dataframe:
-         1. Checking no single element is a `list` or `tuple`, which is done with a
-            custom vectorized function applied column-by-column on the dataframe.
-         2. Checking for non-physical values in the dataframe, which is done by
-            applying the ``isna`` function with the right option context.
-         3. Checking for duplicates in either indices or columns.
-         4. Checking for column names that are not strings.
-         5. Checking for column names including spaces.
+        This function performs several different checks on the provided dataframe. The following
+        checks are performed for all compatibility modes (``MAD-X`` and ``MAD-NG``):
 
+          1. Checking no single element in the data is a `list` or `tuple`.
+          2. Checking for non-physical values in the dataframe (uses `.isna()` with the right option context).
+          3. Checking for duplicates in either indices or columns.
+          4. Checking for column names that are not strings.
+          5. Checking for column names including spaces.
+
+        When checking for ``MAD-X`` compatibility, which is more restrictive than ``MAD-NG``,
+        the following additional checks are performed:
+
+          1. Checking the dataframe has headers.
+          2. Checking no boolean values are in the dataframe headers.
+          3. Checking no complex values are in the dataframe headers.
+          4. Checking for a 'TYPE' entry is in the dataframe headers.
+          5. Checking no boolean-dtype columns are in the dataframe.
+          6. Checking no complex-dtype columns are in the dataframe.
 
     Args:
         data_frame (TfsDataFrame | pd.DataFrame): the dataframe to check on.
         info_str (str): additional information to include in logging statements.
+        compatibility (str): Which code to check for compatibility with. Accepted values
+            are `madx`, `mad-x`, `madng` and `mad-ng`, case-insensitive. Defauts to `madx`.
         non_unique_behavior (str): behavior to adopt if non-unique indices or columns are found in the
             dataframe. Accepts `warn` and `raise` as values, case-insensitively, which dictates
             to respectively issue a warning or raise an error if non-unique elements are found.
     """
+    if not isinstance(compatibility, str) or compatibility.lower() not in VALIDATION_MODES:
+        errmsg = f"Invalid compatibility mode provided: '{compatibility}'."
+        raise ValueError(errmsg)
+
     if non_unique_behavior.lower() not in ("warn", "raise"):
         errmsg = "Invalid value for parameter 'non_unique_behavior'."
-        raise KeyError(errmsg)
+        raise ValueError(errmsg)
 
     # ----- Check that no element is a list / tuple in the dataframe ----- #
     def _element_is_list(element):
-        return isinstance(element, (list, tuple))
+        return isinstance(element, list | tuple)
 
     _element_is_list = np.vectorize(_element_is_list)
 
@@ -273,10 +293,9 @@ def validate(
             f"DataFrame {info_str} contains list/tuple values at Index: "
             f"{list_or_tuple_bool_df.index[list_or_tuple_bool_df.any(axis='columns')].tolist()}"
         )
-        errmsg = "Lists or tuple elements are not accepted in a TfsDataFrame"
-        raise TfsFormatError(errmsg)
+        raise IterableInDataFrameError
 
-    # -----  Check that no element is non-physical value in the dataframe ----- #
+    # -----  Check that no element is non-physical value in the data and headers ----- #
     # The pd.option_context('mode.use_inf_as_na', True) context manager raises FutureWarning
     # and will likely disappear in pandas 3.0 so we replace 'inf' values by NaNs before calling
     # .isna(). Additionally, the downcasting behaviour of .replace() is deprecated and raises a
@@ -284,35 +303,98 @@ def validate(
     # for object-dtype columns (which strings can be). Since .infer_objects() and .replace() return
     # (lazy for the former) copies we're not modifying the original dataframe during validation :)
     inf_or_nan_bool_df = data_frame.infer_objects().replace([np.inf, -np.inf], np.nan).isna()
-
     if inf_or_nan_bool_df.to_numpy().any():
         LOGGER.warning(
             f"DataFrame {info_str} contains non-physical values at Index: "
             f"{inf_or_nan_bool_df.index[inf_or_nan_bool_df.any(axis='columns')].tolist()}"
         )
 
-    # Other sanity checks
+    if getattr(data_frame, "headers", None) is not None and pd.Series(data_frame.headers.values()).isna().any():
+        LOGGER.warning(f"DataFrame {info_str} contains non-physical values in headers.")
+
+    # ----- Other sanity checks ----- #
+    # These are not deal-breakers but might raise
+    # issues being read back by some other codes
     if data_frame.index.has_duplicates:
         LOGGER.warning("Non-unique indices found.")
         if non_unique_behavior.lower() == "raise":
-            errmsg = "The dataframe contains non-unique indices."
-            raise TfsFormatError(errmsg)
+            raise DuplicateIndicesError
 
     if data_frame.columns.has_duplicates:
         LOGGER.warning("Non-unique column names found.")
         if non_unique_behavior.lower() == "raise":
-            errmsg = "The dataframe contains non-unique columns."
-            raise TfsFormatError(errmsg)
+            raise DuplicateColumnsError
 
-    # The following are deal-breakers for the TFS format and would not, for instance, be accepted by MAD-X
+    # The following are deal-breakers for the TFS format,
+    # but might be accepted by MAD-X or MAD-NG
     if any(not isinstance(c, str) for c in data_frame.columns):
         LOGGER.debug(f"Some column-names are not of string-type, dataframe {info_str} is invalid.")
-        errmsg = "TFS-Columns need to be strings."
-        raise TfsFormatError(errmsg)
+        raise NonStringColumnNameError
 
     if any(" " in c for c in data_frame.columns):
         LOGGER.debug(f"Space(s) found in TFS columns, dataframe {info_str} is invalid")
-        errmsg = "TFS-Columns can not contain spaces."
-        raise TfsFormatError(errmsg)
+        raise SpaceinColumnNameError
+
+    # ----- Additional checks for MAD-X compatibility mode ----- #
+    if compatibility.lower() in ("madx", "mad-x"):
+        # MAD-X really wants a 'TYPE' header in the file, which is not possible to
+        # enforce if there are no headers in the df (we can't add, we don't modify
+        # and return the df in this function). In this case we error.
+        if getattr(data_frame, "headers", None) is None:
+            errmsg = "Headers should be present in MAD-X compatibility mode."
+            raise MADXCompatibilityError(errmsg)
+
+        # ----- Otherwise we can check the existing headers
+        # Check that no boolean values are in the headers - MAD-X does not accept them
+        if any(isinstance(header, bool) for header in data_frame.headers.values()):
+            LOGGER.debug(
+                f"Boolean values found in headers of dataframe {info_str}, which is incompatible with MAD-X. "
+                "Change their types in order to keep compatibility with MAD-X."
+            )
+            errmsg = "TFS-Headers can not contain boolean values in MAD-X compatibility mode."
+            raise MADXCompatibilityError(errmsg)
+
+        # Check that no complex values are in the headers - MAD-X does not accept them
+        if any(isinstance(header, complex) for header in data_frame.headers.values()):
+            LOGGER.debug(
+                f"Complex values found in headers of dataframe {info_str}, which is incompatible with MAD-X. "
+                "Change their types in order to keep compatibility with MAD-X."
+            )
+            errmsg = "TFS-Headers can not contain complex values in MAD-X compatibility mode."
+            raise MADXCompatibilityError(errmsg)
+
+        # Check that no 'None' values are in the headers - it would
+        # write as 'nil' which MAD-X does not accept
+        if any(header is None for header in data_frame.headers.values()):
+            LOGGER.debug(
+                f"'None' values found in headers of dataframe {info_str}, which is incompatible with MAD-X. "
+                "Remove them or assign a value in order to keep compatibility with MAD-X."
+            )
+            errmsg = "TFS-Headers can not contain 'None' values in MAD-X compatibility mode."
+            raise MADXCompatibilityError(errmsg)
+
+        # MAD-X will not accept back in a TFS file with no 'TYPE' entry in the headers (as string)
+        if "TYPE" not in data_frame.headers:
+            LOGGER.warning("MAD-X expects a 'TYPE' header in the TFS file, which is missing. Adding it.")
+            data_frame.headers["TYPE"] = "Added by tfs-pandas for MAD-X compatibility"
+
+        # ----- The following checks are regarding the data itself ----- #
+        # Check that the dataframe contains no boolean dtype columns
+        if any(pdtypes.is_bool_dtype(type_) for type_ in data_frame.dtypes):
+            LOGGER.debug(
+                f"Boolean dtype column found in dataframe {info_str}, which is incompatible with MAD-X. "
+                "Change the column dtypes to keep compatibility with MAD-X."
+            )
+            errmsg = "TFS-Dataframe can not contain boolean dtype columns in MAD-X compatibility mode."
+            raise MADXCompatibilityError(errmsg)
+
+        # Check that the dataframe contains no complex dtype columns
+        if any(pdtypes.is_complex_dtype(type_) for type_ in data_frame.dtypes):
+            LOGGER.debug(
+                f"Complex dtype column found in dataframe {info_str}, which is incompatible with MAD-X. "
+                "Change the column dtypes or split it into real and imaginary values to keep compatibility with MAD-X."
+            )
+            errmsg = "TFS-Dataframe can not contain complex dtype columns in MAD-X compatibility mode."
+            raise MADXCompatibilityError(errmsg)
 
     LOGGER.debug(f"DataFrame {info_str} validated")

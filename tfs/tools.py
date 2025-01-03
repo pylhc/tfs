@@ -52,18 +52,16 @@ def significant_digits(
     return res
 
 
-def remove_nan_from_files(
-    list_of_files: list[str | Path], replace: bool = False  # noqa: FBT001, FBT002
-) -> None:
+def remove_nan_from_files(list_of_files: list[str | Path], replace: bool = False) -> None:  # noqa: FBT001, FBT002
     """
     Remove ``NaN`` entries from files in `list_of_files`.
 
     Args:
-        list_of_files (list[str | Path]): list of Paths to **TFS** files meant to be sanitized.
-            The elements of the list can be strings or Path objects.
-        replace (bool): if ``True``, the provided files will be overwritten. Otherwise new files
-            with `.dropna` appended to the original filenames will be written to disk. Defaults to
-            ``False``.
+        list_of_files (list[str | Path]): list of Paths to **TFS** files meant to
+            be sanitized. The elements of the list can be strings or Path objects.
+        replace (bool): if ``True``, the provided files will be overwritten. Otherwise
+            new files with `.dropna` appended to the original filenames will be written
+            to disk. Defaults to ``False``.
     """
     for filepath in list_of_files:
         try:
@@ -79,8 +77,8 @@ def remove_nan_from_files(
 
 def remove_header_comments_from_files(list_of_files: list[str | Path]) -> None:
     """
-    Check the files in the provided list for invalid headers (no type defined) and removes those
-    inplace when found.
+    Check the files in the provided list for invalid headers (no type defined)
+    and removes those inplace when found.
 
     Args:
         list_of_files (list[str | Path]): list of Paths to **TFS** files meant to be checked.

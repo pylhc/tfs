@@ -9,8 +9,8 @@
 [![Conda-forge Version](https://img.shields.io/conda/vn/conda-forge/tfs-pandas?color=orange&logo=anaconda)](https://anaconda.org/conda-forge/tfs-pandas)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.5070986.svg)](https://doi.org/10.5281/zenodo.5070986)
 
-This package provides reading and writing functionality for [**Table Format System (TFS)** files](http://mad.web.cern.ch/mad/madx.old/Introduction/tfs.html).
-Files are read into a `TfsDataFrame`, a class built on top of the famous `pandas.DataFrame`, which in addition to the normal behavior attaches a dictionary of headers to the `DataFrame`.
+This package provides reading and writing functionality for [**Table Format System (TFS)**](https://pylhc.github.io/tfs/tfsformat.html) files.
+Files are read into a `TfsDataFrame`, a class built on top of the `pandas.DataFrame`, which in addition to the normal behavior attaches a dictionary of headers to the `DataFrame`.
 
 See the [API documentation](https://pylhc.github.io/tfs/) for details.
 
@@ -45,14 +45,19 @@ data_frame.headers["NEW_KEY"] = some_variable
 # Manipulate data as you do with pandas DataFrames
 data_frame["NEWCOL"] = data_frame.COL_A * data_frame.COL_B
 
-# You can check the validity of a TfsDataFrame, and choose the behavior in case of errors
-tfs.frame.validate(data_frame, non_unique_behavior="raise")  # or choose "warn"
+# You can check the validity of a TfsDataFrame, speficying the
+# compatibility mode as well as the behavior in case of errors
+tfs.frame.validate(
+    data_frame,
+    non_unique_behavior="raise",  # or choose "warn"
+    compatibility="mad-x",  # or choose "mad-ng"
+)
 
 # Writing out to disk is simple too
 tfs.write("path_to_output.tfs", data_frame, save_index="index_column")
 ```
 
-Reading and writing compressed files is also supported, and done automatically based on the provided file extension:
+Compression is automatically supported, based on the provided file extension (for supported formats):
 
 ```python
 import tfs
