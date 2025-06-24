@@ -9,7 +9,7 @@ on:  # Runs on all push events to master branch and any push related to a pull r
 
 jobs:
   coverage:
-      uses: pylhc/.github/.github/workflows/coverage.yml@master
+      uses: pylhc/.github/.github/workflows/coverage.yml@venv
       with:
         src-dir: tfs
         pytest-options: --cov-report term-missing
