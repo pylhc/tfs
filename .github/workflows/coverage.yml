@@ -7,6 +7,7 @@ on:  # Runs on all push events to master branch and any push related to a pull r
       - master
   pull_request:  # so that codeclimate gets coverage and reports on the diff
 
+
 jobs:
   coverage:
       uses: pylhc/.github/.github/workflows/coverage.yml@venv
