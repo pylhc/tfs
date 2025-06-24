@@ -6,10 +6,10 @@
 <meta charset="utf-8"/><meta content="width=device-width, initial-scale=1" name="viewport"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>MAD-X and MAD-NG Compatibility — tfs-pandas 4.0.0 documentation</title>
-<link href="_static/pygments.css?v=fa44fd50" rel="stylesheet" type="text/css"/>
+<link href="_static/pygments.css?v=03e43079" rel="stylesheet" type="text/css"/>
 <link href="_static/css/theme.css?v=e59714d7" rel="stylesheet" type="text/css"/>
 <link href="_static/copybutton.css?v=76b2166b" rel="stylesheet" type="text/css"/>
-<link href="_static/sphinx-codeautolink.css?v=125d5c1c" rel="stylesheet" type="text/css"/>
+<link href="_static/sphinx-codeautolink.css?v=b2176991" rel="stylesheet" type="text/css"/>
 <link href="_static/css/custom.css?v=988d0652" rel="stylesheet" type="text/css"/>
 <script src="_static/jquery.js?v=5d32c60e"></script>
 <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
@@ -114,8 +114,8 @@ Validation enforces the rules described in the <a class="reference internal" hre
 </div>
 <p>Validation is done by providing a <code class="xref py py-obj docutils literal notranslate"><span class="pre">TfsDataFrame</span></code> and a compatibility mode to <code class="xref py py-obj docutils literal notranslate"><span class="pre">tfs.frame.validate</span></code> (see the <a class="reference internal" href="modules/index.html#frame"><span class="std std-ref">API reference</span></a>).
 It goes as:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">tfs</span>
-<span class="kn">from</span> <span class="nn">tfs.frame</span> <span class="kn">import</span> <span class="n">validate</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">tfs</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">tfs.frame</span><span class="w"> </span><span class="kn">import</span> <span class="n">validate</span>
 
 <span class="n">df</span> <span class="o">=</span> <span class="n">tfs</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s2">"path/to/file.tfs"</span><span class="p">)</span>
 
@@ -163,7 +163,7 @@ Both of these representations will be correctly read by <code class="xref py py-
 <blockquote>
 <div><ul class="simple">
 <li><p>When reading from file, <code class="xref py py-obj docutils literal notranslate"><span class="pre">nil</span></code> values in the headers are converted to <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> while those in the dataframe are cast to <code class="xref py py-obj docutils literal notranslate"><span class="pre">NaN</span></code>, except in string-dtyped columns where they are converted to <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>.</p></li>
-<li><p>When writing to file, <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> values anywhere are written as <code class="xref py py-obj docutils literal notranslate"><span class="pre">nil</span></code>, and <code class="xref py py-obj docutils literal notranslate"><span class="pre">NaN</span></code> values in the dataframe are written as <code class="xref py py-obj docutils literal notranslate"><span class="pre">NaN</span></code> (remember that setting a <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> in a numeric <a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.2.3)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code></a> column automatically casts it as <code class="xref py py-obj docutils literal notranslate"><span class="pre">NaN</span></code>).</p></li>
+<li><p>When writing to file, <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> values anywhere are written as <code class="xref py py-obj docutils literal notranslate"><span class="pre">nil</span></code>, and <code class="xref py py-obj docutils literal notranslate"><span class="pre">NaN</span></code> values in the dataframe are written as <code class="xref py py-obj docutils literal notranslate"><span class="pre">NaN</span></code> (remember that setting a <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a> in a numeric <a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.3.0)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code></a> column automatically casts it as <code class="xref py py-obj docutils literal notranslate"><span class="pre">NaN</span></code>).</p></li>
 </ul>
 </div></blockquote>
 </div>

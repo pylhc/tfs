@@ -6,10 +6,10 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>tfs.tools &mdash; tfs-pandas 4.0.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
-      <link rel="stylesheet" type="text/css" href="../../_static/sphinx-codeautolink.css?v=125d5c1c" />
+      <link rel="stylesheet" type="text/css" href="../../_static/sphinx-codeautolink.css?v=b2176991" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/custom.css?v=988d0652" />
 
   
@@ -114,26 +114,26 @@
 <span class="sd">Additional functions to modify **TFS** files.</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
-<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
-<span class="kn">import</span> <span class="nn">logging</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">TYPE_CHECKING</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TYPE_CHECKING</span>
 
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
-<span class="kn">from</span> <span class="nn">tfs.errors</span> <span class="kn">import</span> <span class="n">TfsFormatError</span>
-<span class="kn">from</span> <span class="nn">tfs.reader</span> <span class="kn">import</span> <span class="n">read_tfs</span>
-<span class="kn">from</span> <span class="nn">tfs.writer</span> <span class="kn">import</span> <span class="n">write_tfs</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">tfs.errors</span><span class="w"> </span><span class="kn">import</span> <span class="n">TfsFormatError</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">tfs.reader</span><span class="w"> </span><span class="kn">import</span> <span class="n">read_tfs</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">tfs.writer</span><span class="w"> </span><span class="kn">import</span> <span class="n">write_tfs</span>
 
 <span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
 
 <span class="n">LOGGER</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="significant_digits">
 <a class="viewcode-back" href="../../modules/index.html#tfs.tools.significant_digits">[docs]</a>
-<span class="k">def</span> <span class="nf">significant_digits</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">significant_digits</span><span class="p">(</span>
     <span class="n">value</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">error</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">return_floats</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>  <span class="c1"># noqa: FBT001, FBT002</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
@@ -166,7 +166,7 @@
 
 <div class="viewcode-block" id="remove_nan_from_files">
 <a class="viewcode-back" href="../../modules/index.html#tfs.tools.remove_nan_from_files">[docs]</a>
-<span class="k">def</span> <span class="nf">remove_nan_from_files</span><span class="p">(</span><span class="n">list_of_files</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="n">Path</span><span class="p">],</span> <span class="n">replace</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># noqa: FBT001, FBT002</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">remove_nan_from_files</span><span class="p">(</span><span class="n">list_of_files</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="n">Path</span><span class="p">],</span> <span class="n">replace</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># noqa: FBT001, FBT002</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Remove ``NaN`` entries from files in `list_of_files`.</span>
 
@@ -192,7 +192,7 @@
 
 <div class="viewcode-block" id="remove_header_comments_from_files">
 <a class="viewcode-back" href="../../modules/index.html#tfs.tools.remove_header_comments_from_files">[docs]</a>
-<span class="k">def</span> <span class="nf">remove_header_comments_from_files</span><span class="p">(</span><span class="n">list_of_files</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="n">Path</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">remove_header_comments_from_files</span><span class="p">(</span><span class="n">list_of_files</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="n">Path</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Check the files in the provided list for invalid headers (no type defined)</span>
 <span class="sd">    and removes those inplace when found.</span>

@@ -1,54 +1,46 @@
 
-
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" data-content_root="./">
+
+<html class="writer-html5" data-content_root="./" lang="en">
 <head>
-  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
-
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>The Table File System Format &mdash; tfs-pandas 4.0.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
-      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
-      <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
-      <link rel="stylesheet" type="text/css" href="_static/sphinx-codeautolink.css?v=125d5c1c" />
-      <link rel="stylesheet" type="text/css" href="_static/css/custom.css?v=988d0652" />
-
-  
-      <script src="_static/jquery.js?v=5d32c60e"></script>
-      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=3304f9e4"></script>
-      <script src="_static/doctools.js?v=9bcbadda"></script>
-      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
-      <script src="_static/clipboard.min.js?v=a7894cd8"></script>
-      <script src="_static/copybutton.js?v=f281be69"></script>
-    <script src="_static/js/theme.js"></script>
-    <link rel="index" title="Index" href="genindex.html" />
-    <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="MAD-X and MAD-NG Compatibility" href="compatibility.html" />
-    <link rel="prev" title="2 Minutes to tfs-pandas" href="quickstart.html" /> 
+<meta charset="utf-8"/><meta content="width=device-width, initial-scale=1" name="viewport"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>The Table File System Format — tfs-pandas 4.0.0 documentation</title>
+<link href="_static/pygments.css?v=03e43079" rel="stylesheet" type="text/css"/>
+<link href="_static/css/theme.css?v=e59714d7" rel="stylesheet" type="text/css"/>
+<link href="_static/copybutton.css?v=76b2166b" rel="stylesheet" type="text/css"/>
+<link href="_static/sphinx-codeautolink.css?v=b2176991" rel="stylesheet" type="text/css"/>
+<link href="_static/css/custom.css?v=988d0652" rel="stylesheet" type="text/css"/>
+<script src="_static/jquery.js?v=5d32c60e"></script>
+<script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+<script src="_static/documentation_options.js?v=3304f9e4"></script>
+<script src="_static/doctools.js?v=9bcbadda"></script>
+<script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+<script src="_static/clipboard.min.js?v=a7894cd8"></script>
+<script src="_static/copybutton.js?v=f281be69"></script>
+<script src="_static/js/theme.js"></script>
+<link href="genindex.html" rel="index" title="Index"/>
+<link href="search.html" rel="search" title="Search"/>
+<link href="compatibility.html" rel="next" title="MAD-X and MAD-NG Compatibility"/>
+<link href="quickstart.html" rel="prev" title="2 Minutes to tfs-pandas"/>
 </head>
-
-<body class="wy-body-for-nav"> 
-  <div class="wy-grid-for-nav">
-    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
-      <div class="wy-side-scroll">
-        <div class="wy-side-nav-search" >
-
-          
-          
-          <a href="index.html">
-            
-              <img src="_static/omc_logo.svg" class="logo" alt="Logo"/>
-          </a>
+<body class="wy-body-for-nav">
+<div class="wy-grid-for-nav">
+<nav class="wy-nav-side" data-toggle="wy-nav-shift">
+<div class="wy-side-scroll">
+<div class="wy-side-nav-search">
+<a href="index.html">
+<img alt="Logo" class="logo" src="_static/omc_logo.svg"/>
+</a>
 <div role="search">
-  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
-    <input type="hidden" name="check_keywords" value="yes" />
-    <input type="hidden" name="area" value="default" />
-  </form>
+<form action="search.html" class="wy-form" id="rtd-search-form" method="get">
+<input aria-label="Search docs" name="q" placeholder="Search docs" type="text"/>
+<input name="check_keywords" type="hidden" value="yes"/>
+<input name="area" type="hidden" value="default"/>
+</form>
 </div>
-        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <ul class="current">
+</div><div aria-label="Navigation menu" class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation">
+<ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="quickstart.html">2 Minutes to tfs-pandas</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="quickstart.html#basic-usage">Basic Usage</a></li>
 <li class="toctree-l2"><a class="reference internal" href="quickstart.html#compression">Compression</a></li>
@@ -84,33 +76,29 @@
 </ul>
 </li>
 </ul>
-
-        </div>
-      </div>
-    </nav>
-
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
-          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="index.html">tfs-pandas</a>
-      </nav>
-
-      <div class="wy-nav-content">
-        <div class="rst-content">
-          <div role="navigation" aria-label="Page navigation">
-  <ul class="wy-breadcrumbs">
-      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
-      <li class="breadcrumb-item active">The Table File System Format</li>
-      <li class="wy-breadcrumbs-aside">
-              <!-- User defined GitHub URL -->
-              <a href="https://github.com/pylhc/tfs" class="fa fa-github"> Edit on GitHub</a>
-      </li>
-  </ul>
-  <hr/>
 </div>
-          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
-           <div itemprop="articleBody">
-             
-  <section id="the-table-file-system-format">
+</div>
+</nav>
+<section class="wy-nav-content-wrap" data-toggle="wy-nav-shift"><nav aria-label="Mobile navigation menu" class="wy-nav-top">
+<i class="fa fa-bars" data-toggle="wy-nav-top"></i>
+<a href="index.html">tfs-pandas</a>
+</nav>
+<div class="wy-nav-content">
+<div class="rst-content">
+<div aria-label="Page navigation" role="navigation">
+<ul class="wy-breadcrumbs">
+<li><a aria-label="Home" class="icon icon-home" href="index.html"></a></li>
+<li class="breadcrumb-item active">The Table File System Format</li>
+<li class="wy-breadcrumbs-aside">
+<!-- User defined GitHub URL -->
+<a class="fa fa-github" href="https://github.com/pylhc/tfs"> Edit on GitHub</a>
+</li>
+</ul>
+<hr/>
+</div>
+<div class="document" itemscope="itemscope" itemtype="http://schema.org/Article" role="main">
+<div itemprop="articleBody">
+<section id="the-table-file-system-format">
 <h1>The Table File System Format<a class="headerlink" href="#the-table-file-system-format" title="Link to this heading"></a></h1>
 <p><strong>TFS</strong> is an acronym for “Table File System”, and the TFS format has been used at <a class="reference external" href="https://home.cern/">CERN</a> since the LEP control system.
 The accelerator physics codes <a class="reference external" href="https://madx.web.cern.ch/">MAD-X</a> and <a class="reference external" href="https://madx.web.cern.ch/releases/madng/html/">MAD-NG</a> output tables in the TFS format, and accept TFS files as input for tables.</p>
@@ -121,15 +109,15 @@ They are described below, including their specifics.</p>
 <section id="headers">
 <h2>Headers<a class="headerlink" href="#headers" title="Link to this heading"></a></h2>
 <p>The first section of the TFS file contains <code class="xref py py-obj docutils literal notranslate"><span class="pre">headers</span></code>, lines each containing a parameter, its type and its value.
-All headers lines start with the <code class="xref py py-obj docutils literal notranslate"><span class="pre">&#64;</span></code> character, and have the following structure:</p>
+All headers lines start with the <code class="xref py py-obj docutils literal notranslate"><span class="pre">@</span></code> character, and have the following structure:</p>
 <ul class="simple">
-<li><p>The <code class="xref py py-obj docutils literal notranslate"><span class="pre">&#64;</span></code> character, to identify the line as a header.</p></li>
+<li><p>The <code class="xref py py-obj docutils literal notranslate"><span class="pre">@</span></code> character, to identify the line as a header.</p></li>
 <li><p>The name of the parameter.</p></li>
 <li><p>The type identifier of the parameter (see <a class="reference internal" href="#types-and-identifiers">Types and Identifiers</a> below).</p></li>
 <li><p>The value of the parameter.</p></li>
 </ul>
 <p>An example header line is:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">@</span> <span class="n">NAME</span>                   <span class="o">%</span><span class="n">s</span>             <span class="s2">&quot;EFIELD&quot;</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">@</span> <span class="n">NAME</span>                   <span class="o">%</span><span class="n">s</span>             <span class="s2">"EFIELD"</span>
 </pre></div>
 </div>
 <p>Additionally, any headers line starting with the <code class="xref py py-obj docutils literal notranslate"><span class="pre">#</span></code> character is considered a comment and is ignored by the parser.
@@ -152,7 +140,7 @@ Following the example above, a few table lines would look like:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>*             INTEGERS              STRINGS               FLOATS
 $                   %d                   %s                  %le
                      1            SOMETHING              4.51395
-                 21345         &quot;WITH SPACE&quot;             123.4825
+                 21345         "WITH SPACE"             123.4825
 </pre></div>
 </div>
 </section>
@@ -247,7 +235,7 @@ See the <a class="reference internal" href="modules/index.html#frame"><span clas
 <section id="tfs-file-example">
 <h2>TFS File Example<a class="headerlink" href="#tfs-file-example" title="Link to this heading"></a></h2>
 <p>Many examples of TFS files can be found in the repository’s tests files, and a simple one is included below:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>@ TITLE                %11s         &quot;Table title&quot;
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>@ TITLE                %11s         "Table title"
 @ DPP                  %le                      1
 @ Q1                   %le               0.269975
 @ Q1RMS                %le            1.75643e-07
@@ -257,25 +245,25 @@ See the <a class="reference internal" href="modules/index.html#frame"><span clas
 # This is a comment line and will be ignored
 *                 NAME                    S                   CO                CORMS              BPM_RES
 $                   %s                  %le                  %le                  %le                  %le
-        &quot;BPMYB.5L2.B1&quot;               28.288      -0.280727353099     0.00404721900879       0.121264541395
-        &quot;BPMYB.4L2.B1&quot;               48.858       0.601472827003     0.00301396244054       0.129738519811
-        &quot;BPMWI.4L2.B1&quot;              73.3255      -0.610294990396      0.0039123010318      0.0952864848273
-        &quot;BPMSX.4L2.B1&quot;             123.4825       0.778206651453     0.00542543379504      0.0578581425476
-         &quot;BPMS.2L2.B1&quot;              161.394       0.585105573645     0.00291016910226         0.1223625619
-        &quot;BPMSW.1L2.B1&quot;              171.328        2.50235465023     0.00275350035218       0.148603785488
-        &quot;BPMSW.1R2.B1&quot;              214.518        1.81036167087     0.00282138482457       0.164954082556
-         &quot;BPMS.2R2.B1&quot;              224.452      0.0791371365672     0.00474290041487       0.122265653712
-        &quot;BPMSX.4R2.B1&quot;             262.3635    -0.00665768479832     0.00350302654669       0.187320306406
+        "BPMYB.5L2.B1"               28.288      -0.280727353099     0.00404721900879       0.121264541395
+        "BPMYB.4L2.B1"               48.858       0.601472827003     0.00301396244054       0.129738519811
+        "BPMWI.4L2.B1"              73.3255      -0.610294990396      0.0039123010318      0.0952864848273
+        "BPMSX.4L2.B1"             123.4825       0.778206651453     0.00542543379504      0.0578581425476
+         "BPMS.2L2.B1"              161.394       0.585105573645     0.00291016910226         0.1223625619
+        "BPMSW.1L2.B1"              171.328        2.50235465023     0.00275350035218       0.148603785488
+        "BPMSW.1R2.B1"              214.518        1.81036167087     0.00282138482457       0.164954082556
+         "BPMS.2R2.B1"              224.452      0.0791371365672     0.00474290041487       0.122265653712
+        "BPMSX.4R2.B1"             262.3635    -0.00665768479832     0.00350302654669       0.187320306406
 </pre></div>
 </div>
 <p class="rubric">Footnotes</p>
 <aside class="footnote-list brackets">
 <aside class="footnote brackets" id="f1" role="doc-footnote">
-<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id1">1</a><span class="fn-bracket">]</span></span>
+<span class="label"><span class="fn-bracket">[</span><a href="#id1" role="doc-backlink">1</a><span class="fn-bracket">]</span></span>
 <p>Ph. Defert, Ph. Hofmann, and R. Keyser. <em>The Table File System, the C Interfaces</em>. LAW Note 9, CERN, 1989.</p>
 </aside>
 <aside class="footnote brackets" id="f2" role="doc-footnote">
-<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id2">2</a><span class="fn-bracket">]</span></span>
+<span class="label"><span class="fn-bracket">[</span><a href="#id2" role="doc-backlink">2</a><span class="fn-bracket">]</span></span>
 <ol class="upperalpha simple">
 <li><p>Belk, P. Defert, P. Hofmann, and P. Keyser. <em>Table File System Reference Guide</em>. SL/CO Note 91-32, CERN 1991, <a class="reference external" href="https://cds.cern.ch/record/703204/">https://cds.cern.ch/record/703204/</a>.</p></li>
 </ol>
@@ -283,20 +271,16 @@ $                   %s                  %le                  %le                
 </aside>
 </section>
 </section>
-
-
-           </div>
-          </div>
-          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="quickstart.html" class="btn btn-neutral float-left" title="2 Minutes to tfs-pandas" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="compatibility.html" class="btn btn-neutral float-right" title="MAD-X and MAD-NG Compatibility" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
-    </div>
-
-  <hr/>
-
-  <div role="contentinfo">
-    <p>&#169; Copyright .</p>
-  </div>
+</div>
+</div>
+<footer><div aria-label="Footer" class="rst-footer-buttons" role="navigation">
+<a accesskey="p" class="btn btn-neutral float-left" href="quickstart.html" rel="prev" title="2 Minutes to tfs-pandas"><span aria-hidden="true" class="fa fa-arrow-circle-left"></span> Previous</a>
+<a accesskey="n" class="btn btn-neutral float-right" href="compatibility.html" rel="next" title="MAD-X and MAD-NG Compatibility">Next <span aria-hidden="true" class="fa fa-arrow-circle-right"></span></a>
+</div>
+<hr/>
+<div role="contentinfo">
+<p>© Copyright .</p>
+</div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
     <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
@@ -304,15 +288,14 @@ $                   %s                  %le                  %le                
    
 
 </footer>
-        </div>
-      </div>
-    </section>
-  </div>
-  <script>
+</div>
+</div>
+</section>
+</div>
+<script>
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script> 
-
+  </script>
 </body>
 </html>

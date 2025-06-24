@@ -6,10 +6,10 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>tfs.frame &mdash; tfs-pandas 4.0.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
-      <link rel="stylesheet" type="text/css" href="../../_static/sphinx-codeautolink.css?v=125d5c1c" />
+      <link rel="stylesheet" type="text/css" href="../../_static/sphinx-codeautolink.css?v=b2176991" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/custom.css?v=988d0652" />
 
   
@@ -115,19 +115,19 @@
 <span class="sd">as a utility function to validate the correctness of a ``TfsDataFrame``.</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
-<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
-<span class="kn">import</span> <span class="nn">logging</span>
-<span class="kn">from</span> <span class="nn">contextlib</span> <span class="kn">import</span> <span class="n">suppress</span>
-<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">partial</span><span class="p">,</span> <span class="n">reduce</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">ClassVar</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">contextlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">suppress</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">functools</span><span class="w"> </span><span class="kn">import</span> <span class="n">partial</span><span class="p">,</span> <span class="n">reduce</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">ClassVar</span>
 
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="kn">from</span> <span class="nn">pandas.api</span> <span class="kn">import</span> <span class="n">types</span> <span class="k">as</span> <span class="n">pdtypes</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pandas.api</span><span class="w"> </span><span class="kn">import</span> <span class="n">types</span> <span class="k">as</span> <span class="n">pdtypes</span>
 
-<span class="kn">from</span> <span class="nn">tfs.constants</span> <span class="kn">import</span> <span class="n">VALIDATION_MODES</span>
-<span class="kn">from</span> <span class="nn">tfs.errors</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">tfs.constants</span><span class="w"> </span><span class="kn">import</span> <span class="n">VALIDATION_MODES</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">tfs.errors</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">DuplicateColumnsError</span><span class="p">,</span>
     <span class="n">DuplicateIndicesError</span><span class="p">,</span>
     <span class="n">IterableInDataFrameError</span><span class="p">,</span>
@@ -137,7 +137,7 @@
 <span class="p">)</span>
 
 <span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">collections.abc</span> <span class="kn">import</span> <span class="n">Sequence</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Sequence</span>
 
 
 <span class="n">LOGGER</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
@@ -145,7 +145,7 @@
 
 <div class="viewcode-block" id="TfsDataFrame">
 <a class="viewcode-back" href="../../modules/index.html#tfs.frame.TfsDataFrame">[docs]</a>
-<span class="k">class</span> <span class="nc">TfsDataFrame</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">TfsDataFrame</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Class to hold the information of the built an extended `pandas.DataFrame`, together with a way</span>
 <span class="sd">    of getting the headers of the **TFS** file. The file headers are stored in a dictionary upon read.</span>
@@ -155,14 +155,14 @@
 
     <span class="n">_metadata</span><span class="p">:</span> <span class="n">ClassVar</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;headers&quot;</span><span class="p">]</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">headers</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">with</span> <span class="n">suppress</span><span class="p">(</span><span class="ne">IndexError</span><span class="p">,</span> <span class="ne">AttributeError</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">headers</span> <span class="o">=</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">headers</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">headers</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;headers&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">headers</span><span class="p">)</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">object</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">object</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">object</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">object</span><span class="p">:</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__getitem__</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
         <span class="k">except</span> <span class="ne">KeyError</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
@@ -170,11 +170,11 @@
                 <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">headers</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
             <span class="k">except</span> <span class="ne">KeyError</span> <span class="k">as</span> <span class="n">kerror</span><span class="p">:</span>
                 <span class="n">errmsg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2"> is neither in the DataFrame nor in headers.&quot;</span>
-                <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="n">errmsg</span><span class="p">)</span> <span class="kn">from</span> <span class="nn">kerror</span>
+                <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="n">errmsg</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">kerror</span>
             <span class="k">except</span> <span class="ne">TypeError</span> <span class="k">as</span> <span class="n">terror</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="n">error</span> <span class="kn">from</span> <span class="nn">terror</span>
+                <span class="k">raise</span> <span class="n">error</span> <span class="kn">from</span><span class="w"> </span><span class="nn">terror</span>
 
-    <span class="k">def</span> <span class="fm">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">object</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">object</span><span class="p">:</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__getattr__</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
         <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
@@ -182,16 +182,16 @@
                 <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">headers</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
             <span class="k">except</span> <span class="ne">KeyError</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
                 <span class="n">errmsg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> is neither in the DataFrame nor in headers.&quot;</span>
-                <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="n">errmsg</span><span class="p">)</span> <span class="kn">from</span> <span class="nn">error</span>
+                <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="n">errmsg</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">error</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">_constructor</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_constructor</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Function called, whenever a new ``TfsDataFrame`` is created</span>
 <span class="sd">        by pandas functionality, to ensure the new object is also a ``TfsDataFrame``.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">TfsDataFrame</span>
 
-    <span class="k">def</span> <span class="nf">_constructor_from_mgr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mgr</span><span class="p">,</span> <span class="n">axes</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_constructor_from_mgr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mgr</span><span class="p">,</span> <span class="n">axes</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize new ``TfsDataFrame`` from a dataframe manager.</span>
 <span class="sd">        This function is needed since pandas v2.1.0 to ensure the new object</span>
 <span class="sd">        given to __init__() already contains the headers.</span>
@@ -200,10 +200,10 @@
         <span class="n">obj</span><span class="o">.</span><span class="n">headers</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">return</span> <span class="n">obj</span>
 
-    <span class="k">def</span> <span class="nf">_headers_repr</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_headers_repr</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="n">space</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot; &quot;</span> <span class="o">*</span> <span class="mi">4</span>
 
-        <span class="k">def</span> <span class="nf">_str_items</span><span class="p">(</span><span class="n">items_list</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">_str_items</span><span class="p">(</span><span class="n">items_list</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
             <span class="k">return</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">space</span><span class="si">}{</span><span class="n">k</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">v</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">items_list</span><span class="p">)</span>
 
         <span class="n">s</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
@@ -217,13 +217,13 @@
             <span class="n">s</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
         <span class="k">return</span> <span class="n">s</span>
 
-    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="n">headers_string</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_headers_repr</span><span class="p">()</span>
         <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">headers_string</span><span class="si">}{</span><span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span>
 
 <div class="viewcode-block" id="TfsDataFrame.merge">
 <a class="viewcode-back" href="../../modules/index.html#tfs.frame.TfsDataFrame.merge">[docs]</a>
-    <span class="k">def</span> <span class="nf">merge</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">merge</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">right</span><span class="p">:</span> <span class="n">TfsDataFrame</span> <span class="o">|</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
         <span class="n">how_headers</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -271,7 +271,7 @@
 
 <div class="viewcode-block" id="merge_headers">
 <a class="viewcode-back" href="../../modules/index.html#tfs.frame.merge_headers">[docs]</a>
-<span class="k">def</span> <span class="nf">merge_headers</span><span class="p">(</span><span class="n">headers_left</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">headers_right</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">how</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">merge_headers</span><span class="p">(</span><span class="n">headers_left</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">headers_right</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">how</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Merge headers of two ``TfsDataFrames`` together.</span>
 
@@ -311,7 +311,7 @@
 
 <div class="viewcode-block" id="concat">
 <a class="viewcode-back" href="../../modules/index.html#tfs.frame.concat">[docs]</a>
-<span class="k">def</span> <span class="nf">concat</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">concat</span><span class="p">(</span>
     <span class="n">objs</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">TfsDataFrame</span> <span class="o">|</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">],</span>
     <span class="n">how_headers</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">new_headers</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -355,7 +355,7 @@
 
 <div class="viewcode-block" id="validate">
 <a class="viewcode-back" href="../../modules/index.html#tfs.frame.validate">[docs]</a>
-<span class="k">def</span> <span class="nf">validate</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">validate</span><span class="p">(</span>
     <span class="n">data_frame</span><span class="p">:</span> <span class="n">TfsDataFrame</span> <span class="o">|</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
     <span class="n">info_str</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
     <span class="n">non_unique_behavior</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;warn&quot;</span><span class="p">,</span>
@@ -405,7 +405,7 @@
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">errmsg</span><span class="p">)</span>
 
     <span class="c1"># ----- Check that no element is a list / tuple in the dataframe ----- #</span>
-    <span class="k">def</span> <span class="nf">_element_is_list</span><span class="p">(</span><span class="n">element</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_element_is_list</span><span class="p">(</span><span class="n">element</span><span class="p">):</span>
         <span class="k">return</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">element</span><span class="p">,</span> <span class="nb">list</span> <span class="o">|</span> <span class="nb">tuple</span><span class="p">)</span>
 
     <span class="n">_element_is_list</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vectorize</span><span class="p">(</span><span class="n">_element_is_list</span><span class="p">)</span>

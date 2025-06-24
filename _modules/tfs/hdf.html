@@ -6,10 +6,10 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>tfs.hdf &mdash; tfs-pandas 4.0.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
-      <link rel="stylesheet" type="text/css" href="../../_static/sphinx-codeautolink.css?v=125d5c1c" />
+      <link rel="stylesheet" type="text/css" href="../../_static/sphinx-codeautolink.css?v=b2176991" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/custom.css?v=988d0652" />
 
   
@@ -114,26 +114,26 @@
 <span class="sd">Additional tools for reading and writing ``TfsDataFrames`` into ``hdf5`` files.</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
-<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
-<span class="kn">import</span> <span class="nn">contextlib</span>
-<span class="kn">import</span> <span class="nn">logging</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">TYPE_CHECKING</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">contextlib</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TYPE_CHECKING</span>
 
-<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
 
-<span class="kn">from</span> <span class="nn">tfs</span> <span class="kn">import</span> <span class="n">TfsDataFrame</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">tfs</span><span class="w"> </span><span class="kn">import</span> <span class="n">TfsDataFrame</span>
 
 <span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
 
 <span class="k">try</span><span class="p">:</span>
-    <span class="kn">import</span> <span class="nn">h5py</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">h5py</span>
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
     <span class="n">h5py</span> <span class="o">=</span> <span class="kc">None</span>
 
 <span class="k">try</span><span class="p">:</span>
-    <span class="kn">import</span> <span class="nn">tables</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">tables</span>
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
     <span class="n">tables</span> <span class="o">=</span> <span class="kc">None</span>
 
@@ -142,7 +142,7 @@
 
 <div class="viewcode-block" id="write_hdf">
 <a class="viewcode-back" href="../../modules/index.html#tfs.hdf.write_hdf">[docs]</a>
-<span class="k">def</span> <span class="nf">write_hdf</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="n">Path</span> <span class="o">|</span> <span class="nb">str</span><span class="p">,</span> <span class="n">df</span><span class="p">:</span> <span class="n">TfsDataFrame</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">write_hdf</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="n">Path</span> <span class="o">|</span> <span class="nb">str</span><span class="p">,</span> <span class="n">df</span><span class="p">:</span> <span class="n">TfsDataFrame</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Write the `TfsDataFrame` to **HDF** file. The dataframe will be written</span>
 <span class="sd">    into the group ``data``, the headers into the group ``headers``. Only one</span>
@@ -186,7 +186,7 @@
 
 <div class="viewcode-block" id="read_hdf">
 <a class="viewcode-back" href="../../modules/index.html#tfs.hdf.read_hdf">[docs]</a>
-<span class="k">def</span> <span class="nf">read_hdf</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="n">Path</span> <span class="o">|</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TfsDataFrame</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">read_hdf</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="n">Path</span> <span class="o">|</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TfsDataFrame</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Read TfsDataFrame from hdf5 file. The DataFrame needs to be stored</span>
 <span class="sd">    in a group named ``data``, while the headers are stored in ``headers``.</span>
 
@@ -210,7 +210,7 @@
 
 
 
-<span class="k">def</span> <span class="nf">_check_imports</span><span class="p">():</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_check_imports</span><span class="p">():</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Checks if required packages for HDF5 functionality are installed. Raises ImportError if not.&quot;&quot;&quot;</span>
     <span class="c1"># We try to import tables and h5py at top of file and set them to None if that fails</span>
     <span class="n">not_imported</span> <span class="o">=</span> <span class="p">[</span><span class="n">name</span> <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">package</span> <span class="ow">in</span> <span class="p">((</span><span class="s2">&quot;tables&quot;</span><span class="p">,</span> <span class="n">tables</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;h5py&quot;</span><span class="p">,</span> <span class="n">h5py</span><span class="p">))</span> <span class="k">if</span> <span class="n">package</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">]</span>
