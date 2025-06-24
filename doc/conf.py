@@ -60,7 +60,7 @@ extensions = [
     "sphinx.ext.todo",  # Support for todo items
     "sphinx.ext.viewcode",  # Add links to highlighted source code
     "sphinx_copybutton",  # Add a "copy" button to code blocks
-    "sphinx-prompt",  # prompt symbols will not be copy-pastable
+    "sphinx_prompt",  # prompt symbols will not be copy-pastable
     "sphinx_codeautolink",  # Automatically link example code to documentation source
 ]
 
