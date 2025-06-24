@@ -1,4 +1,4 @@
-# Runs all tests 
+# Runs all tests
 name: All Tests
 
 defaults:
@@ -12,6 +12,6 @@ on:  # Runs on any push event to any branch except master (the coverage workflow
 
 jobs:
   tests:
-    uses: pylhc/.github/.github/workflows/tests.yml@master
+    uses: pylhc/.github/.github/workflows/tests.yml@venv
     with:
       extra-dependencies: test  # test includes hdf5 dependency specifier
