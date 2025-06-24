@@ -11,4 +11,4 @@ on:  # Runs on any push event in a PR or any push event to master
 
 jobs:
   documentation:
-        uses: pylhc/.github/.github/workflows/documentation.yml@venv
+        uses: pylhc/.github/.github/workflows/documentation.yml@master
