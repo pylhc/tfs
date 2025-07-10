@@ -8,16 +8,13 @@ Additional functions to modify **TFS** files.
 from __future__ import annotations
 
 import logging
-from typing import TYPE_CHECKING
+from pathlib import Path
 
 import numpy as np
 
 from tfs.errors import TfsFormatError
 from tfs.reader import read_tfs
 from tfs.writer import write_tfs
-
-if TYPE_CHECKING:
-    from pathlib import Path
 
 LOGGER = logging.getLogger(__name__)
 
@@ -88,8 +85,7 @@ def remove_header_comments_from_files(list_of_files: list[str | Path]) -> None:
     """
     for filepath in list_of_files:
         LOGGER.info(f"Checking file: {filepath}")
-        with open(filepath) as f:
-            f_lines = f.readlines()
+        f_lines = Path(filepath).read_text().splitlines(keepends=True)
 
         delete_indicies = []
         for index, line in enumerate(f_lines):
@@ -104,5 +100,4 @@ def remove_header_comments_from_files(list_of_files: list[str | Path]) -> None:
                 deleted_line = f_lines.pop(index)
                 LOGGER.info(f"    Deleted line: {deleted_line.strip():s}")
 
-            with open(filepath, "w") as f:
-                f.writelines(f_lines)
+            Path(filepath).write_text("".join(f_lines))

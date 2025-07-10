@@ -12,6 +12,7 @@ import pathlib
 import string
 from types import NoneType
 from typing import TYPE_CHECKING
+
 import numpy as np
 from pandas.api import types as pdtypes
 from pandas.io.common import get_handle
