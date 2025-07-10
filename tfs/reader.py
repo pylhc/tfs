@@ -419,9 +419,7 @@ def _string_to_bool(val_str: str) -> bool:
     if val_str.lower().capitalize() not in VALID_BOOLEANS_HEADERS:
         raise InvalidBooleanHeaderError(val_str)
 
-    if val_str.lower().capitalize() in VALID_TRUE_BOOLEANS:
-        return True
-    return False
+    return val_str.lower().capitalize() in VALID_TRUE_BOOLEANS
 
 
 def _id_to_type(type_identifier: str) -> type:
