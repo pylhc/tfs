@@ -16,7 +16,6 @@ from tfs.errors import (
     DuplicateColumnsError,
     DuplicateIndicesError,
     IterableInDataFrameError,
-    NonStringColumnNameError,
     SpaceinColumnNameError,
 )
 from tfs.testing import assert_tfs_frame_equal
@@ -414,7 +413,7 @@ def _bigger_tfs_dataframe() -> TfsDataFrame:
 def _dataframe_empty_headers() -> TfsDataFrame:
     return TfsDataFrame(
         index=range(3),
-        columns="a b c d e".split(),
+        columns=["a", "b", "c", "d", "e"],
         data=np.random.rand(3, 5),
         headers={},
     )
@@ -429,7 +428,7 @@ def _messed_up_dataframe() -> TfsDataFrame:
     list_floats_row = [[1.0, 14.777], [2.0, 1243.9], [3.0], [123414.0, 9909.12795]]
     return TfsDataFrame(
         index=range(4),
-        columns="a b c d".split(),
+        columns=["a", "b", "c", "d"],
         data=[int_row, float_row, string_row, list_floats_row],
         headers={"Title": "Tfs Title", "Value": 3.3663},
     )
@@ -445,7 +444,7 @@ def _dict_column_in_dataframe() -> TfsDataFrame:
     data = [[e[i] for e in (int_elements, float_elements, string_elements, dict_elements)] for i in range(4)]
     return TfsDataFrame(
         index=range(4),
-        columns="a b c d".split(),
+        columns=["a", "b", "c", "d"],
         data=data,
         headers={"Title": "Tfs Title", "Value": 3.3663},
     )
@@ -461,7 +460,7 @@ def _list_column_in_dataframe() -> TfsDataFrame:
     data = [[e[i] for e in (int_elements, float_elements, string_elements, list_elements)] for i in range(4)]
     return TfsDataFrame(
         index=range(4),
-        columns="a b c d".split(),
+        columns=["a", "b", "c", "d"],
         data=data,
         headers={"Title": "Tfs Title", "Value": 3.3663},
     )

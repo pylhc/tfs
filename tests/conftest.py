@@ -49,7 +49,7 @@ def _tfs_madng_file() -> pathlib.Path:
 def _pd_dataframe() -> pd.DataFrame:
     return pd.DataFrame(
         index=range(3),
-        columns="a b c d e".split(),
+        columns=["a", "b", "c", "d", "e"],
         data=np.random.rand(3, 5),
     )
 
@@ -58,7 +58,7 @@ def _pd_dataframe() -> pd.DataFrame:
 def _tfs_dataframe() -> TfsDataFrame:
     return TfsDataFrame(
         index=range(15),
-        columns="a b c d e".split(),
+        columns=["a", "b", "c", "d", "e"],
         data=np.random.rand(15, 5),
         headers={"Title": "Tfs Title", "Value": 3.3663},
     )
@@ -69,7 +69,7 @@ def _tfs_dataframe_booleans() -> TfsDataFrame:
     """TfsDataFrame with boolean values in the headers and data (1 column)."""
     df = TfsDataFrame(
         index=range(15),
-        columns="a b c d e".split(),
+        columns=["a", "b", "c", "d", "e"],
         data=np.random.rand(15, 5),
         headers={"Title": "Bool Test", "Bool1": True, "Bool2": False, "Bool3": 1},
     )
@@ -82,7 +82,7 @@ def _tfs_dataframe_complex() -> TfsDataFrame:
     """TfsDataFrame with complex values in the headers and data (1 column)."""
     df = TfsDataFrame(
         index=range(15),
-        columns="a b c d e".split(),
+        columns=["a", "b", "c", "d", "e"],
         data=np.random.rand(15, 5),
         headers={"Title": "Complex Test", "Complex1": 1 + 2j, "Complex2": -4 - 17.9j},
     )
@@ -98,7 +98,7 @@ def _tfs_dataframe_madng() -> TfsDataFrame:
     """
     df = TfsDataFrame(
         index=range(15),
-        columns="a b c d e".split(),
+        columns=["a", "b", "c", "d", "e"],
         data=np.random.rand(15, 5),
         headers={
             "Title": "MADNG Test",
