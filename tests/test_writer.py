@@ -23,10 +23,11 @@ from tfs.testing import assert_tfs_frame_equal
 
 class TestWrites:
     def test_tfs_write_empty_columns_dataframe(self, tmp_path):
+        rng = np.random.default_rng()
         df = TfsDataFrame(
             index=range(3),
             columns=[],
-            data=np.random.rand(3, 0),
+            data=rng.random(size=(3, 0)),
             headers={"Title": "Tfs Title", "Value": 3.3663},
         )
 
@@ -72,10 +73,11 @@ class TestWrites:
                 )
 
     def test_tfs_write_empty_index_dataframe(self, tmp_path):
+        rng = np.random.default_rng()
         df = TfsDataFrame(
             index=[],
             columns=["a", "b", "c"],
-            data=np.random.rand(0, 3),
+            data=rng.random(size=(0, 3)),
             headers={"Title": "Tfs Title", "Value": 3.3663},
         )
 
@@ -401,20 +403,22 @@ class TestFailures:
 
 @pytest.fixture
 def _bigger_tfs_dataframe() -> TfsDataFrame:
+    rng = np.random.default_rng()
     return TfsDataFrame(
         index=range(50),
         columns=list(string.ascii_lowercase),
-        data=np.random.rand(50, len(list(string.ascii_lowercase))),
+        data=rng.random(size=(50, len(list(string.ascii_lowercase)))),
         headers={"Title": "Tfs Title", "Value": 3.3663},
     )
 
 
 @pytest.fixture
 def _dataframe_empty_headers() -> TfsDataFrame:
+    rng = np.random.default_rng()
     return TfsDataFrame(
         index=range(3),
         columns=["a", "b", "c", "d", "e"],
-        data=np.random.rand(3, 5),
+        data=rng.random(size=(3, 5)),
         headers={},
     )
 
