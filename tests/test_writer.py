@@ -131,7 +131,9 @@ class TestWrites:
         assert write_location.is_file()
 
         new = read_tfs(write_location)
-        assert_tfs_frame_equal(_dataframe_empty_headers, new, check_exact=False)  # float precision can be an issue
+        assert_tfs_frame_equal(
+            _dataframe_empty_headers, new, check_exact=False
+        )  # float precision can be an issue
 
     @pytest.mark.parametrize("validation_mode", [None, "madng"])
     def test_tfs_write_read_no_headers_compatible_modes(self, _pd_dataframe, validation_mode, tmp_path):
@@ -187,7 +189,9 @@ class TestWrites:
         assert_frame_equal(df, new, check_frame_type=False)
 
     @pytest.mark.parametrize("validation_mode", ["madx", "madng"])
-    def test_tfs_write_read_validate_with_pandas_and_headers_dict(self, tmp_path, _pd_dataframe, validation_mode):
+    def test_tfs_write_read_validate_with_pandas_and_headers_dict(
+        self, tmp_path, _pd_dataframe, validation_mode
+    ):
         # We make sure that if provided with a pandas.DataFrame and a headers_dict
         # the validation and writing go as expected.
         df = _pd_dataframe
@@ -200,7 +204,9 @@ class TestWrites:
         assert_dict_equal(headers, new.headers, compare_keys=True)
 
     @pytest.mark.parametrize("validation_mode", ["madx", "madng"])
-    def test_tfs_write_read_dataframe_empty_headers_provided_headers(self, tmp_path, _tfs_dataframe, validation_mode):
+    def test_tfs_write_read_dataframe_empty_headers_provided_headers(
+        self, tmp_path, _tfs_dataframe, validation_mode
+    ):
         # We make sure that providing a TfsDataFrame with empty headers, but providing
         # actual headers to write_tfs actually validates and writes with the provided headers
         df = _tfs_dataframe
@@ -235,7 +241,9 @@ class TestWrites:
         assert write_location.is_file()
 
         new = read_tfs(write_location)
-        assert_tfs_frame_equal(_tfs_dataframe_booleans, new, check_exact=False)  # float precision can be an issue
+        assert_tfs_frame_equal(
+            _tfs_dataframe_booleans, new, check_exact=False
+        )  # float precision can be an issue
 
     def test_tfs_write_read_with_complex(self, _tfs_dataframe_complex, tmp_path):
         write_location = tmp_path / "test.tfs"
@@ -243,7 +251,9 @@ class TestWrites:
         assert write_location.is_file()
 
         new = read_tfs(write_location)
-        assert_tfs_frame_equal(_tfs_dataframe_complex, new, check_exact=False)  # float precision can be an issue
+        assert_tfs_frame_equal(
+            _tfs_dataframe_complex, new, check_exact=False
+        )  # float precision can be an issue
 
     def test_tfs_write_with_nil_in_headers(self, _tfs_dataframe, tmp_path):
         df = _tfs_dataframe
@@ -263,7 +273,9 @@ class TestWrites:
         assert write_location.is_file()
 
         new = read_tfs(write_location)
-        assert_tfs_frame_equal(_tfs_dataframe_madng, new, check_exact=False)  # float precision can be an issue
+        assert_tfs_frame_equal(
+            _tfs_dataframe_madng, new, check_exact=False
+        )  # float precision can be an issue
 
     @pytest.mark.skipif(sys.platform == "win32", reason="MAD-NG not available on Windows")
     def test_tfs_write_madng_compatible_is_read_by_madng(self, _tfs_dataframe_madng, tmp_path):
@@ -328,10 +340,15 @@ class TestFailures:
     def test_messed_up_dataframe_fails_writes_when_validating(self, _messed_up_dataframe: TfsDataFrame):
         messed_tfs = _messed_up_dataframe
         # This df raises in validate because of list elements
-        with pytest.raises(IterableInDataFrameError, match="Lists or tuple elements are not accepted in a TfsDataFrame"):
+        with pytest.raises(
+            IterableInDataFrameError,
+            match="Lists or tuple elements are not accepted in a TfsDataFrame",
+        ):
             write_tfs("", messed_tfs, validate="madx")  # strictest
 
-    def test_dict_column_dataframe_fails_writes_when_validating(self, _dict_column_in_dataframe: TfsDataFrame, tmp_path):
+    def test_dict_column_dataframe_fails_writes_when_validating(
+        self, _dict_column_in_dataframe: TfsDataFrame, tmp_path
+    ):
         dict_col_tfs = _dict_column_in_dataframe
         with pytest.raises(TypeError):  # tries to format dict.__dict__, can't get a % formatter
             write_tfs("", dict_col_tfs, validate="madx")  # strictest
@@ -341,7 +358,9 @@ class TestFailures:
         write_tfs(write_location, dict_col_tfs)
         assert write_location.is_file()
 
-    def test_list_column_dataframe_fails_writes_when_validating(self, _list_column_in_dataframe: TfsDataFrame, tmp_path, caplog):
+    def test_list_column_dataframe_fails_writes_when_validating(
+        self, _list_column_in_dataframe: TfsDataFrame, tmp_path, caplog
+    ):
         list_col_tfs = _list_column_in_dataframe
         write_location = tmp_path / "test.tfs"
         # This df raises in validate because of list colnames

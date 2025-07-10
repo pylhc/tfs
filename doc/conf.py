@@ -99,7 +99,7 @@ author = ABOUT_TFS["__author__"]
 
 # Override link in 'Edit on Github'
 rst_prolog = f"""
-:github_url: {ABOUT_TFS['__url__']}
+:github_url: {ABOUT_TFS["__url__"]}
 """
 
 # The version info for the project you're documenting, acts as replacement for

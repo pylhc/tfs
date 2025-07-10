@@ -54,6 +54,7 @@ _NA_VALUES.remove("")
 
 # ----- Main Functionality ----- #
 
+
 def read_tfs(
     tfs_file_path: pathlib.Path | str,
     index: str | None = None,
@@ -342,7 +343,6 @@ def _read_metadata(tfs_file_path: pathlib.Path | str) -> _TfsMetaData:
         column_names=column_names,
         column_types=column_types,
     )
-
 
 
 def _parse_header_line(str_list: list[str]) -> tuple[str, bool | str | int | float, np.complex128]:

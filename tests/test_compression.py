@@ -12,7 +12,8 @@ from tfs.writer import write_tfs
 
 from .conftest import INPUTS_DIR
 
-SUPPORTED_EXTENSIONS: tuple[str] = ["gz", "bz2", "zip", "xz", "zst", "tar", "tar.gz"]  # through pandas
+# Compression extensions supported through pandas
+SUPPORTED_EXTENSIONS: tuple[str] = ("gz", "bz2", "zip", "xz", "zst", "tar", "tar.gz")
 
 # ----- Compression tests with 'classic' TFS files (no MAD-NG features) ----- #
 

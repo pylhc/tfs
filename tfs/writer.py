@@ -119,7 +119,7 @@ def write_tfs(
     # We case to a TfsDataFrame anyway for validation and writing
     # We ensure column names as strings in case it was a pd.Series-like (and colname is 0)
     data_frame = TfsDataFrame(data_frame, headers=headers_dict)
-    data_frame.columns = data_frame.columns.astype(str)  
+    data_frame.columns = data_frame.columns.astype(str)
 
     # Only perform validation if asked (validation is OFF by default)
     # We also check for False as it was the way to skip it in tfs-pandas 3.x
@@ -161,7 +161,9 @@ def write_tfs(
 # ----- Helpers ----- #
 
 
-def _insert_index_column(data_frame: TfsDataFrame | pd.DataFrame, save_index: str | bool | None = None) -> None:
+def _insert_index_column(
+    data_frame: TfsDataFrame | pd.DataFrame, save_index: str | bool | None = None
+) -> None:
     """
     Inserts the index of the dataframe into it as a column, naming it according to
     'save_index' if it was provided. Otherwise it tries to use the existing index's
@@ -218,9 +220,13 @@ def _get_header_line(name: str, value, width: int) -> str:
         errmsg = f"{name} is not a string"
         raise TypeError(errmsg)
     type_identifier = _value_to_tfs_type_identifier(value)
-    dtype_ = NoneType if value is None else np.array(value).dtype  # otherwise numpy gives 'Object' for 'None's
+    dtype_ = (
+        NoneType if value is None else np.array(value).dtype
+    )  # otherwise numpy gives 'Object' for 'None's
     # Strip the following as it might have trailing spaces and we leave that to the alignment formatting below
-    value_str = ValueToStringFormatter().format_field(value, _dtype_to_formatter_string(dtype_, width)).strip()
+    value_str = (
+        ValueToStringFormatter().format_field(value, _dtype_to_formatter_string(dtype_, width)).strip()
+    )
     return f"@ {name:<{width}} {type_identifier} {value_str.strip():>{width}}"
 
 
@@ -268,7 +274,9 @@ def _get_data_string(
 
 
 def _get_row_format_string(
-    dtypes: list[type], colwidth: int, left_align_first_column: bool  # noqa: FBT001
+    dtypes: list[type],
+    colwidth: int,
+    left_align_first_column: bool,  # noqa: FBT001
 ) -> str:
     """
     Returns the formatter string for a given row of the data part of the dataframe,

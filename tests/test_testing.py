@@ -5,7 +5,6 @@ from tfs.testing import assert_tfs_frame_equal
 
 
 class TestAssertTfsDataFrameEqual:
-
     def test_no_headers_equal(self):
         df1 = TfsDataFrame({"a": [1, 2, 3], "b": [4, 5, 6]})
         assert_tfs_frame_equal(df1, df1)  # we expect True
