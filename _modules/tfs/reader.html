@@ -163,6 +163,7 @@
 
 <span class="c1"># ----- Main Functionality ----- #</span>
 
+
 <div class="viewcode-block" id="read_tfs">
 <a class="viewcode-back" href="../../modules/index.html#tfs.reader.read_tfs">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">read_tfs</span><span class="p">(</span>
@@ -459,7 +460,6 @@
     <span class="p">)</span>
 
 
-
 <span class="k">def</span><span class="w"> </span><span class="nf">_parse_header_line</span><span class="p">(</span><span class="n">str_list</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bool</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">complex128</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Parses the data in the provided header line. Expects a valid header</span>
@@ -534,9 +534,7 @@
     <span class="k">if</span> <span class="n">val_str</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">capitalize</span><span class="p">()</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">VALID_BOOLEANS_HEADERS</span><span class="p">:</span>
         <span class="k">raise</span> <span class="n">InvalidBooleanHeaderError</span><span class="p">(</span><span class="n">val_str</span><span class="p">)</span>
 
-    <span class="k">if</span> <span class="n">val_str</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">capitalize</span><span class="p">()</span> <span class="ow">in</span> <span class="n">VALID_TRUE_BOOLEANS</span><span class="p">:</span>
-        <span class="k">return</span> <span class="kc">True</span>
-    <span class="k">return</span> <span class="kc">False</span>
+    <span class="k">return</span> <span class="n">val_str</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">capitalize</span><span class="p">()</span> <span class="ow">in</span> <span class="n">VALID_TRUE_BOOLEANS</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_id_to_type</span><span class="p">(</span><span class="n">type_identifier</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">type</span><span class="p">:</span>
