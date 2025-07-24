@@ -74,7 +74,9 @@ class TestCommonFailures:
             validate(df, "", non_unique_behavior="invalid", compatibility=validation_mode)
 
     @pytest.mark.parametrize("validation_mode", ["madx", "mad-x", "madng", "MAD-NG"])
-    def test_validation_raises_space_in_colname(self, _space_in_colnames_tfs_path: pathlib.Path, validation_mode):
+    def test_validation_raises_space_in_colname(
+        self, _space_in_colnames_tfs_path: pathlib.Path, validation_mode
+    ):
         # Read file has a space in a column name which should raise
         with pytest.raises(SpaceinColumnNameError, match="TFS-Columns can not contain spaces."):
             _ = read_tfs(_space_in_colnames_tfs_path, index="NAME", validate=validation_mode)
@@ -124,14 +126,17 @@ class TestMADXFailures:
     def test_madx_validation_raises_if_no_headers(self, _pd_dataframe, validation_mode):
         """MAD-X expects at least a 'TYPE' header. If there are no headers, we raise."""
         df = _pd_dataframe
-        with pytest.raises(MADXCompatibilityError, match="Headers should be present in MAD-X compatibility mode"):
+        with pytest.raises(
+            MADXCompatibilityError, match="Headers should be present in MAD-X compatibility mode"
+        ):
             validate(df, compatibility=validation_mode)
 
     @pytest.mark.parametrize("validation_mode", ["madx", "mad-x", "mAd-X"])
     def test_madx_validation_raises_on_boolean_headers(self, _tfs_booleans_file, validation_mode):
         df = read_tfs(_tfs_booleans_file)
         with pytest.raises(
-            MADXCompatibilityError, match="TFS-Headers can not contain boolean values in MAD-X compatibility mode"
+            MADXCompatibilityError,
+            match="TFS-Headers can not contain boolean values in MAD-X compatibility mode",
         ):
             validate(df, compatibility=validation_mode)
 
@@ -139,7 +144,8 @@ class TestMADXFailures:
     def test_madx_validation_raises_on_complex_headers(self, _tfs_complex_file, validation_mode):
         df = read_tfs(_tfs_complex_file)
         with pytest.raises(
-            MADXCompatibilityError, match="TFS-Headers can not contain complex values in MAD-X compatibility mode"
+            MADXCompatibilityError,
+            match="TFS-Headers can not contain complex values in MAD-X compatibility mode",
         ):
             validate(df, compatibility=validation_mode)
 
@@ -148,7 +154,8 @@ class TestMADXFailures:
         df = _tfs_dataframe
         df.headers["NONEVALUE"] = None
         with pytest.raises(
-            MADXCompatibilityError, match="TFS-Headers can not contain 'None' values in MAD-X compatibility mode"
+            MADXCompatibilityError,
+            match="TFS-Headers can not contain 'None' values in MAD-X compatibility mode",
         ):
             validate(df, compatibility=validation_mode)
 

@@ -309,7 +309,10 @@ def validate(
             f"{inf_or_nan_bool_df.index[inf_or_nan_bool_df.any(axis='columns')].tolist()}"
         )
 
-    if getattr(data_frame, "headers", None) is not None and pd.Series(data_frame.headers.values()).isna().any():
+    if (
+        getattr(data_frame, "headers", None) is not None
+        and pd.Series(data_frame.headers.values()).isna().any()
+    ):
         LOGGER.warning(f"DataFrame {info_str} contains non-physical values in headers.")
 
     # ----- Other sanity checks ----- #

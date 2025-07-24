@@ -47,19 +47,21 @@ def _tfs_madng_file() -> pathlib.Path:
 
 @pytest.fixture
 def _pd_dataframe() -> pd.DataFrame:
+    rng = np.random.default_rng()
     return pd.DataFrame(
         index=range(3),
-        columns="a b c d e".split(),
-        data=np.random.rand(3, 5),
+        columns=["a", "b", "c", "d", "e"],
+        data=rng.random(size=(3, 5)),
     )
 
 
 @pytest.fixture
 def _tfs_dataframe() -> TfsDataFrame:
+    rng = np.random.default_rng()
     return TfsDataFrame(
         index=range(15),
-        columns="a b c d e".split(),
-        data=np.random.rand(15, 5),
+        columns=["a", "b", "c", "d", "e"],
+        data=rng.random(size=(15, 5)),
         headers={"Title": "Tfs Title", "Value": 3.3663},
     )
 
@@ -67,26 +69,28 @@ def _tfs_dataframe() -> TfsDataFrame:
 @pytest.fixture
 def _tfs_dataframe_booleans() -> TfsDataFrame:
     """TfsDataFrame with boolean values in the headers and data (1 column)."""
+    rng = np.random.default_rng()
     df = TfsDataFrame(
         index=range(15),
-        columns="a b c d e".split(),
-        data=np.random.rand(15, 5),
+        columns=["a", "b", "c", "d", "e"],
+        data=rng.random(size=(15, 5)),
         headers={"Title": "Bool Test", "Bool1": True, "Bool2": False, "Bool3": 1},
     )
-    df["bools"] = np.random.rand(15) > 0.5  # random from 0 to 1 and then boolean check
+    df["bools"] = rng.random(15) > 0.5  # random from 0 to 1 and then boolean check
     return df
 
 
 @pytest.fixture
 def _tfs_dataframe_complex() -> TfsDataFrame:
     """TfsDataFrame with complex values in the headers and data (1 column)."""
+    rng = np.random.default_rng()
     df = TfsDataFrame(
         index=range(15),
-        columns="a b c d e".split(),
-        data=np.random.rand(15, 5),
+        columns=["a", "b", "c", "d", "e"],
+        data=rng.random(size=(15, 5)),
         headers={"Title": "Complex Test", "Complex1": 1 + 2j, "Complex2": -4 - 17.9j},
     )
-    df["complex"] = np.random.rand(15) + np.random.rand(15) * 1j
+    df["complex"] = rng.random(15) + rng.random(15) * 1j
     return df
 
 
@@ -96,10 +100,11 @@ def _tfs_dataframe_madng() -> TfsDataFrame:
     TfsDataFrame with both booleans and complex
     values in the headers and data (1 column each).
     """
+    rng = np.random.default_rng()
     df = TfsDataFrame(
         index=range(15),
-        columns="a b c d e".split(),
-        data=np.random.rand(15, 5),
+        columns=["a", "b", "c", "d", "e"],
+        data=rng.random(size=(15, 5)),
         headers={
             "Title": "MADNG Test",
             "Bool1": True,
@@ -109,6 +114,6 @@ def _tfs_dataframe_madng() -> TfsDataFrame:
             "Complex2": -94.6 - 67.9j,
         },
     )
-    df["bools"] = np.random.rand(15) > 0.5  # random from 0 to 1 and then boolean check
-    df["complex"] = np.random.rand(15) + np.random.rand(15) * 1j
+    df["bools"] = rng.random(15) > 0.5  # random from 0 to 1 and then boolean check
+    df["complex"] = rng.random(15) + rng.random(15) * 1j
     return df

@@ -19,9 +19,7 @@ if TYPE_CHECKING:
 # ----- Helpers ----- #
 
 
-def assert_tfs_frame_equal(
-    df1: TfsDataFrame, df2: TfsDataFrame, compare_keys: bool = True, **kwargs
-):
+def assert_tfs_frame_equal(df1: TfsDataFrame, df2: TfsDataFrame, compare_keys: bool = True, **kwargs):
     """
     Compare two `TfsDataFrame` objects, with `df1` being the reference
     that `df2` is compared to. This is mostly intended for unit tests.

@@ -54,6 +54,7 @@ _NA_VALUES.remove("")
 
 # ----- Main Functionality ----- #
 
+
 def read_tfs(
     tfs_file_path: pathlib.Path | str,
     index: str | None = None,
@@ -344,7 +345,6 @@ def _read_metadata(tfs_file_path: pathlib.Path | str) -> _TfsMetaData:
     )
 
 
-
 def _parse_header_line(str_list: list[str]) -> tuple[str, bool | str | int | float, np.complex128]:
     """
     Parses the data in the provided header line. Expects a valid header
@@ -419,9 +419,7 @@ def _string_to_bool(val_str: str) -> bool:
     if val_str.lower().capitalize() not in VALID_BOOLEANS_HEADERS:
         raise InvalidBooleanHeaderError(val_str)
 
-    if val_str.lower().capitalize() in VALID_TRUE_BOOLEANS:
-        return True
-    return False
+    return val_str.lower().capitalize() in VALID_TRUE_BOOLEANS
 
 
 def _id_to_type(type_identifier: str) -> type:

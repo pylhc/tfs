@@ -16,7 +16,6 @@ from tfs.errors import (
     DuplicateColumnsError,
     DuplicateIndicesError,
     IterableInDataFrameError,
-    NonStringColumnNameError,
     SpaceinColumnNameError,
 )
 from tfs.testing import assert_tfs_frame_equal
@@ -24,10 +23,11 @@ from tfs.testing import assert_tfs_frame_equal
 
 class TestWrites:
     def test_tfs_write_empty_columns_dataframe(self, tmp_path):
+        rng = np.random.default_rng()
         df = TfsDataFrame(
             index=range(3),
             columns=[],
-            data=np.random.rand(3, 0),
+            data=rng.random(size=(3, 0)),
             headers={"Title": "Tfs Title", "Value": 3.3663},
         )
 
@@ -73,10 +73,11 @@ class TestWrites:
                 )
 
     def test_tfs_write_empty_index_dataframe(self, tmp_path):
+        rng = np.random.default_rng()
         df = TfsDataFrame(
             index=[],
             columns=["a", "b", "c"],
-            data=np.random.rand(0, 3),
+            data=rng.random(size=(0, 3)),
             headers={"Title": "Tfs Title", "Value": 3.3663},
         )
 
@@ -131,7 +132,9 @@ class TestWrites:
         assert write_location.is_file()
 
         new = read_tfs(write_location)
-        assert_tfs_frame_equal(_dataframe_empty_headers, new, check_exact=False)  # float precision can be an issue
+        assert_tfs_frame_equal(
+            _dataframe_empty_headers, new, check_exact=False
+        )  # float precision can be an issue
 
     @pytest.mark.parametrize("validation_mode", [None, "madng"])
     def test_tfs_write_read_no_headers_compatible_modes(self, _pd_dataframe, validation_mode, tmp_path):
@@ -187,7 +190,9 @@ class TestWrites:
         assert_frame_equal(df, new, check_frame_type=False)
 
     @pytest.mark.parametrize("validation_mode", ["madx", "madng"])
-    def test_tfs_write_read_validate_with_pandas_and_headers_dict(self, tmp_path, _pd_dataframe, validation_mode):
+    def test_tfs_write_read_validate_with_pandas_and_headers_dict(
+        self, tmp_path, _pd_dataframe, validation_mode
+    ):
         # We make sure that if provided with a pandas.DataFrame and a headers_dict
         # the validation and writing go as expected.
         df = _pd_dataframe
@@ -200,7 +205,9 @@ class TestWrites:
         assert_dict_equal(headers, new.headers, compare_keys=True)
 
     @pytest.mark.parametrize("validation_mode", ["madx", "madng"])
-    def test_tfs_write_read_dataframe_empty_headers_provided_headers(self, tmp_path, _tfs_dataframe, validation_mode):
+    def test_tfs_write_read_dataframe_empty_headers_provided_headers(
+        self, tmp_path, _tfs_dataframe, validation_mode
+    ):
         # We make sure that providing a TfsDataFrame with empty headers, but providing
         # actual headers to write_tfs actually validates and writes with the provided headers
         df = _tfs_dataframe
@@ -235,7 +242,9 @@ class TestWrites:
         assert write_location.is_file()
 
         new = read_tfs(write_location)
-        assert_tfs_frame_equal(_tfs_dataframe_booleans, new, check_exact=False)  # float precision can be an issue
+        assert_tfs_frame_equal(
+            _tfs_dataframe_booleans, new, check_exact=False
+        )  # float precision can be an issue
 
     def test_tfs_write_read_with_complex(self, _tfs_dataframe_complex, tmp_path):
         write_location = tmp_path / "test.tfs"
@@ -243,7 +252,9 @@ class TestWrites:
         assert write_location.is_file()
 
         new = read_tfs(write_location)
-        assert_tfs_frame_equal(_tfs_dataframe_complex, new, check_exact=False)  # float precision can be an issue
+        assert_tfs_frame_equal(
+            _tfs_dataframe_complex, new, check_exact=False
+        )  # float precision can be an issue
 
     def test_tfs_write_with_nil_in_headers(self, _tfs_dataframe, tmp_path):
         df = _tfs_dataframe
@@ -263,7 +274,9 @@ class TestWrites:
         assert write_location.is_file()
 
         new = read_tfs(write_location)
-        assert_tfs_frame_equal(_tfs_dataframe_madng, new, check_exact=False)  # float precision can be an issue
+        assert_tfs_frame_equal(
+            _tfs_dataframe_madng, new, check_exact=False
+        )  # float precision can be an issue
 
     @pytest.mark.skipif(sys.platform == "win32", reason="MAD-NG not available on Windows")
     def test_tfs_write_madng_compatible_is_read_by_madng(self, _tfs_dataframe_madng, tmp_path):
@@ -328,10 +341,15 @@ class TestFailures:
     def test_messed_up_dataframe_fails_writes_when_validating(self, _messed_up_dataframe: TfsDataFrame):
         messed_tfs = _messed_up_dataframe
         # This df raises in validate because of list elements
-        with pytest.raises(IterableInDataFrameError, match="Lists or tuple elements are not accepted in a TfsDataFrame"):
+        with pytest.raises(
+            IterableInDataFrameError,
+            match="Lists or tuple elements are not accepted in a TfsDataFrame",
+        ):
             write_tfs("", messed_tfs, validate="madx")  # strictest
 
-    def test_dict_column_dataframe_fails_writes_when_validating(self, _dict_column_in_dataframe: TfsDataFrame, tmp_path):
+    def test_dict_column_dataframe_fails_writes_when_validating(
+        self, _dict_column_in_dataframe: TfsDataFrame, tmp_path
+    ):
         dict_col_tfs = _dict_column_in_dataframe
         with pytest.raises(TypeError):  # tries to format dict.__dict__, can't get a % formatter
             write_tfs("", dict_col_tfs, validate="madx")  # strictest
@@ -341,7 +359,9 @@ class TestFailures:
         write_tfs(write_location, dict_col_tfs)
         assert write_location.is_file()
 
-    def test_list_column_dataframe_fails_writes_when_validating(self, _list_column_in_dataframe: TfsDataFrame, tmp_path, caplog):
+    def test_list_column_dataframe_fails_writes_when_validating(
+        self, _list_column_in_dataframe: TfsDataFrame, tmp_path, caplog
+    ):
         list_col_tfs = _list_column_in_dataframe
         write_location = tmp_path / "test.tfs"
         # This df raises in validate because of list colnames
@@ -383,20 +403,22 @@ class TestFailures:
 
 @pytest.fixture
 def _bigger_tfs_dataframe() -> TfsDataFrame:
+    rng = np.random.default_rng()
     return TfsDataFrame(
         index=range(50),
         columns=list(string.ascii_lowercase),
-        data=np.random.rand(50, len(list(string.ascii_lowercase))),
+        data=rng.random(size=(50, len(list(string.ascii_lowercase)))),
         headers={"Title": "Tfs Title", "Value": 3.3663},
     )
 
 
 @pytest.fixture
 def _dataframe_empty_headers() -> TfsDataFrame:
+    rng = np.random.default_rng()
     return TfsDataFrame(
         index=range(3),
-        columns="a b c d e".split(),
-        data=np.random.rand(3, 5),
+        columns=["a", "b", "c", "d", "e"],
+        data=rng.random(size=(3, 5)),
         headers={},
     )
 
@@ -410,7 +432,7 @@ def _messed_up_dataframe() -> TfsDataFrame:
     list_floats_row = [[1.0, 14.777], [2.0, 1243.9], [3.0], [123414.0, 9909.12795]]
     return TfsDataFrame(
         index=range(4),
-        columns="a b c d".split(),
+        columns=["a", "b", "c", "d"],
         data=[int_row, float_row, string_row, list_floats_row],
         headers={"Title": "Tfs Title", "Value": 3.3663},
     )
@@ -426,7 +448,7 @@ def _dict_column_in_dataframe() -> TfsDataFrame:
     data = [[e[i] for e in (int_elements, float_elements, string_elements, dict_elements)] for i in range(4)]
     return TfsDataFrame(
         index=range(4),
-        columns="a b c d".split(),
+        columns=["a", "b", "c", "d"],
         data=data,
         headers={"Title": "Tfs Title", "Value": 3.3663},
     )
@@ -442,7 +464,7 @@ def _list_column_in_dataframe() -> TfsDataFrame:
     data = [[e[i] for e in (int_elements, float_elements, string_elements, list_elements)] for i in range(4)]
     return TfsDataFrame(
         index=range(4),
-        columns="a b c d".split(),
+        columns=["a", "b", "c", "d"],
         data=data,
         headers={"Title": "Tfs Title", "Value": 3.3663},
     )

@@ -117,7 +117,16 @@ class TestHeadersPrinting:
             assert str(val) in print_out
 
     def test_long_headers_print(self):
-        headers = {"p1": 1, "p2": "hello", "p3": 3, "p4": 4, "p5": 5, "p6": 6, "p7": "string", "p8": "long"}
+        headers = {
+            "p1": 1,
+            "p2": "hello",
+            "p3": 3,
+            "p4": 4,
+            "p5": 5,
+            "p6": 6,
+            "p7": "string",
+            "p8": "long",
+        }
         df = TfsDataFrame(headers=headers)
         print_out = str(df)
         assert "Headers" in print_out

@@ -21,7 +21,6 @@ class CollectionTest(TfsCollection):
 
 
 class TestRead:
-
     def test_read_pathlib_input(
         self, _input_dir_pathlib: pathlib.Path, _tfs_x: TfsDataFrame, _tfs_y: TfsDataFrame
     ):
@@ -48,13 +47,13 @@ class TestRead:
 
 
 class TestWrite:
-
     def test_write(self, _tfs_x: TfsDataFrame, _tfs_y: TfsDataFrame, tmp_path):
         c = CollectionTest(tmp_path)
         file_x_path = tmp_path / "nofile_x.tfs"
         assert not file_x_path.is_file()
 
-        c.nofile_x = _tfs_y  # only assigns dataframe without writing (use _tfs_y so that we can set _tfs_x below)
+        # only assigns dataframe without writing (use _tfs_y so that we can set _tfs_x below)
+        c.nofile_x = _tfs_y
         assert not file_x_path.is_file()
         assert_tfs_frame_equal(_tfs_y, c.nofile_x)
 
@@ -130,7 +129,9 @@ class TestWrite:
         assert tfs_x_after_flush.loc["BPMSX.4L2.B1", "NUMBER"] == -199
         assert tfs_y_after_flush.loc["BPMSX.4L2.B1", "NUMBER"] == -19
 
-    def test_buffer_flush_nowrite(self, _input_dir_str: str, _tfs_x: TfsDataFrame, _tfs_y: TfsDataFrame, tmp_path):
+    def test_buffer_flush_nowrite(
+        self, _input_dir_str: str, _tfs_x: TfsDataFrame, _tfs_y: TfsDataFrame, tmp_path
+    ):
         c = CollectionTest(tmp_path, allow_write=True)
 
         c.file_x = _tfs_x.copy()
@@ -155,7 +156,6 @@ class TestWrite:
 
 
 class TestFilenames:
-
     def test_tfscollection_getfilename_not_implemented(self):
         with pytest.raises(NotImplementedError):
             TfsCollection._get_filename("doesnt matter")  # noqa: SLF001
@@ -206,7 +206,6 @@ class TestFilenames:
 
 
 class TestOther:
-
     def test_access_methods(self, _input_dir_pathlib: pathlib.Path):
         c = CollectionTest(_input_dir_pathlib, allow_write=False)
 

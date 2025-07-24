@@ -71,7 +71,9 @@ class TestRead:
 
     def test_read_write_wise_header(self, _tfs_file_wise, tmp_path):
         original_text = _tfs_file_wise.read_text()
-        original_header_lines = [line for line in original_text.splitlines() if line.strip().startswith(HEADER)]
+        original_header_lines = [
+            line for line in original_text.splitlines() if line.strip().startswith(HEADER)
+        ]
         df = read_tfs(_tfs_file_wise)
 
         assert len(df.headers) == len(original_header_lines)
@@ -111,7 +113,9 @@ class TestRead:
         df_for_compare = read_tfs(_tfs_filex)
         assert_tfs_frame_equal(df, df_for_compare)
 
-    def test_read_file_single_header_empty_line_in_header(self, _tfs_file_single_header_empty_line, _tfs_filex):
+    def test_read_file_single_header_empty_line_in_header(
+        self, _tfs_file_single_header_empty_line, _tfs_filex
+    ):
         """Very special, but this was a case that failed in the past."""
         df = read_tfs(_tfs_file_single_header_empty_line)
         assert len(df.headers) == 1
