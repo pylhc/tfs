@@ -1,9 +1,7 @@
 # TFS-Pandas
 
-[![Cron Testing](https://github.com/pylhc/tfs/workflows/Cron%20Testing/badge.svg)](https://github.com/pylhc/tfs/actions?query=workflow%3A%22Cron+Testing%22)
-[![Code Climate coverage](https://img.shields.io/codeclimate/coverage/pylhc/tfs.svg?style=popout)](https://codeclimate.com/github/pylhc/tfs)
-[![Code Climate maintainability (percentage)](https://img.shields.io/codeclimate/maintainability-percentage/pylhc/tfs.svg?style=popout)](https://codeclimate.com/github/pylhc/tfs)
-<!-- [![GitHub last commit](https://img.shields.io/github/last-commit/pylhc/tfs.svg?style=popout)](https://github.com/pylhc/tfs/) -->
+[![Tests](https://github.com/pylhc/tfs/actions/workflows/coverage.yml/badge.svg?branch=master)](https://github.com/pylhc/tfs/actions/workflows/coverage.yml)
+[![GitHub last commit](https://img.shields.io/github/last-commit/pylhc/tfs.svg?style=popout)](https://github.com/pylhc/tfs/)
 [![GitHub release](https://img.shields.io/github/v/release/pylhc/tfs?logo=github)](https://github.com/pylhc/tfs/)
 [![PyPI Version](https://img.shields.io/pypi/v/tfs-pandas?label=PyPI&logo=pypi)](https://pypi.org/project/tfs-pandas/)
 [![Conda-forge Version](https://img.shields.io/conda/vn/conda-forge/tfs-pandas?color=orange&logo=anaconda)](https://anaconda.org/conda-forge/tfs-pandas)
