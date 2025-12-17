@@ -3,44 +3,44 @@ API Reference
 
 .. automodule:: tfs.collection
     :members:
-    :no-index-entry:
+    :noindex:
 
 
 .. automodule:: tfs.constants
     :members:
-    :no-index-entry:
+    :noindex:
 
 
 .. automodule:: tfs.errors
     :members:
-    :no-index-entry:
+    :noindex:
 
 
 .. automodule:: tfs.frame
     :members:
-    :no-index-entry:
+    :noindex:
 
 
 .. automodule:: tfs.hdf
     :members:
-    :no-index-entry:
+    :noindex:
 
 
 .. automodule:: tfs.reader
     :members:
-    :no-index-entry:
+    :noindex:
 
 
 .. automodule:: tfs.testing
     :members:
-    :no-index-entry:
+    :noindex:
 
 
 .. automodule:: tfs.tools
     :members:
-    :no-index-entry:
+    :noindex:
 
 
 .. automodule:: tfs.writer
     :members:
-    :no-index-entry:
+    :noindex:
