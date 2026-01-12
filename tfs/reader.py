@@ -207,10 +207,10 @@ def read_tfs(
 
     if index:
         LOGGER.debug(f"Setting '{index}' column as index")
-        tfs_data_frame = tfs_data_frame.set_index(index)
+        tfs_data_frame: TfsDataFrame = tfs_data_frame.set_index(index)  # ty:ignore[invalid-assignment]
     else:
         LOGGER.debug("Attempting to find index identifier in columns")
-        tfs_data_frame = _find_and_set_index(tfs_data_frame)
+        tfs_data_frame: TfsDataFrame = _find_and_set_index(tfs_data_frame)
 
     # Only perform validation if asked ('validate' defaults to None which skips this step)
     if validate is not None:  # validation function checks for valid values
