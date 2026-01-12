@@ -185,15 +185,15 @@ def read_tfs(
     # string header or some value in the dataframe) then the entire parsing will crash
     data_frame = pd.read_csv(
         tfs_file_path,
-        engine="c",  # faster, and we do not need the features of the python engine
-        skiprows=metadata.non_data_lines,  # no need to read these lines again
         sep=r"\s+",  # understands ' ' as delimiter | replaced deprecated 'delim_whitespace' in tfs-pandas 3.8.0
-        quotechar='"',  # elements surrounded by " are one entry -> correct parsing of strings with spaces
         names=metadata.column_names,  # column names we have determined, avoids using first read row for columns
         dtype=dtypes_dict,  # assign types at read-time to avoid conversions later
+        engine="c",  # faster, and we do not need the features of the python engine
         converters=converters,  # more involved dtype conversion, e.g. for complex columns
+        skiprows=metadata.non_data_lines,  # no need to read these lines again
         na_values=_NA_VALUES,  # includes MAD-NG's 'nil' which we cast to NaN in the data
         keep_default_na=False,  # we provided the list ourselves so it does not include ""
+        quotechar='"',  # elements surrounded by " are one entry -> correct parsing of strings with spaces
     )
 
     LOGGER.debug("Converting to TfsDataFrame")
