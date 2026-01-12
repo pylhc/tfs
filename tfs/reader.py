@@ -319,8 +319,7 @@ def _read_metadata(tfs_file_path: pathlib.Path | str) -> _TfsMetaData:
     # and provides and handle to iterate through, line by line
     with _metadata_handle(tfs_file_path) as file_reader:
         for line_number, line in enumerate(file_reader):
-            stripped_line = line.strip()
-            if not stripped_line:
+            if not (stripped_line := line.strip()):
                 continue  # empty line
             line_components = shlex.split(stripped_line)
             if line_components[0] == HEADER:
