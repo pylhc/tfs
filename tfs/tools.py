@@ -47,7 +47,7 @@ def significant_digits(
         f"{round(error, digits):.{max(digits, 0)}f}",
     )
     if return_floats:
-        return tuple([float(val) for val in res])
+        return float(res[0]), float(res[1])
     return res
 
 
