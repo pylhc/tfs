@@ -344,7 +344,7 @@ def _read_metadata(tfs_file_path: pathlib.Path | str) -> _TfsMetaData:
     )
 
 
-def _parse_header_line(str_list: list[str]) -> tuple[str, bool | str | int | float, np.complex128]:
+def _parse_header_line(str_list: list[str]) -> tuple[str, bool | str | int | float | np.complex128]:
     """
     Parses the data in the provided header line. Expects a valid header
     line starting with the '@' identifier, and parses the content that
