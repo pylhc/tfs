@@ -402,7 +402,7 @@ def _find_and_set_index(data_frame: TfsDataFrame) -> TfsDataFrame:
     """
     index_column = [colname for colname in data_frame.columns if colname.startswith(INDEX_ID)]
     if index_column:
-        data_frame = data_frame.set_index(index_column)
+        data_frame: TfsDataFrame = data_frame.set_index(index_column)  # ty:ignore[invalid-assignment]
         index_name = index_column[0].replace(INDEX_ID, "")
         if index_name == "":
             index_name = None  # to remove it completely (Pandas makes a difference)
