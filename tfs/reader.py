@@ -410,12 +410,14 @@ def _find_and_set_index(data_frame: TfsDataFrame) -> TfsDataFrame:
     return data_frame
 
 
-def _compute_column_types(str_list: list[str]) -> list[type]:
+def _compute_column_types(identifiers: list[str]) -> list[type]:
     """
     Returns the data type for each column based on the
-    corresponding provided type identifier strings.
+    corresponding provided type identifier strings. The
+    type identifier strings are written on the line just
+    below the column names (the %le, %d, %s, etc.).
     """
-    return [_id_to_type(string) for string in str_list]
+    return [_id_to_type(type_id) for type_id in identifiers]
 
 
 def _string_to_bool(val_str: str) -> bool:
