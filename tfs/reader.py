@@ -318,7 +318,7 @@ def _read_metadata(tfs_file_path: pathlib.Path | str) -> _TfsMetaData:
     # Note: the helper contextmanager handles compression for us
     # and provides and handle to iterate through, line by line
     with _metadata_handle(tfs_file_path) as file_reader:
-        for line_number, line in enumerate(file_reader.readlines()):
+        for line_number, line in enumerate(file_reader):
             stripped_line = line.strip()
             if not stripped_line:
                 continue  # empty line
