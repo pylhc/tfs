@@ -330,7 +330,7 @@ def _read_metadata(tfs_file_path: pathlib.Path | str) -> _TfsMetaData:
                 column_names = np.array(line_components[1:])
             elif line_components[0] == TYPES:
                 LOGGER.debug("Parsing column types.")
-                column_types = _compute_types(line_components[1:])
+                column_types = _compute_column_types(line_components[1:])
             elif line_components[0] == COMMENTS:
                 continue
             else:  # After all previous cases should only be data lines. If not, file is fucked.
@@ -406,7 +406,11 @@ def _find_and_set_index(data_frame: TfsDataFrame) -> TfsDataFrame:
     return data_frame
 
 
-def _compute_types(str_list: list[str]) -> list[type]:
+def _compute_column_types(str_list: list[str]) -> list[type]:
+    """
+    Returns the data type for each column based on the
+    corresponding provided type identifier strings.
+    """
     return [_id_to_type(string) for string in str_list]
 
 
