@@ -5,7 +5,7 @@ Tools
 Additional functions to modify **TFS** files.
 """
 
-from __future__ import annotations
+from __future__ import annotations  # for delayed type annotations
 
 import logging
 from pathlib import Path

@@ -5,7 +5,7 @@ Reader
 Reading functionalty for **TFS** files.
 """
 
-from __future__ import annotations
+from __future__ import annotations  # for delayed type annotations
 
 import logging
 import pathlib

@@ -5,7 +5,7 @@ HDF5 I/O
 Additional tools for reading and writing ``TfsDataFrames`` into ``hdf5`` files.
 """
 
-from __future__ import annotations
+from __future__ import annotations  # for delayed type annotations
 
 import contextlib
 import logging

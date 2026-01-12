@@ -6,7 +6,7 @@ Contains the class definition of a ``TfsDataFrame``, inherited from the ``pandas
 as a utility function to validate the correctness of a ``TfsDataFrame``.
 """
 
-from __future__ import annotations
+from __future__ import annotations  # for delayed type annotations
 
 import logging
 from contextlib import suppress

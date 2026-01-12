@@ -5,7 +5,7 @@ Constants
 General constants used throughout ``tfs-pandas``, relating to the standard of **TFS** files.
 """
 
-from __future__ import annotations
+from __future__ import annotations  # for delayed type annotations
 
 from types import NoneType
 
