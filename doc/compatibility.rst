@@ -81,6 +81,9 @@ Namely, the following are accepted by ``MAD-NG`` and ``MAD-NG`` only:
 .. attention::
 
     The exotic "features" of ``MAD-NG`` such as the ``Lua`` operator overloading for ranges and tables, and their inclusion in **TFS** files are not supported by `tfs-pandas`.
+    We firstly recommend users only include these if truly needed, and avoid writing them out otherwise.
+    One can find information on table writing for ``MAD-NG`` in `their documentation pages <https://madx.web.cern.ch/releases/madng/html/mad_gen_mtable.html>`_.
+
     Should one need to use these features, it is recommended to go through the `pymadng <https://pymadng.readthedocs.io/en/latest/>`_ package to handle them in-memory.
 
 .. _madx mode:
