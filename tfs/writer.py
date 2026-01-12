@@ -142,7 +142,7 @@ def write_tfs(
     # would be transformed into <pd.NA> and if we write this to file we are very much cooked.)
     # Overall we do not care to infer specialized dtypes, just that it makes the best inference
     # to valid dtypes (i.e. an object column should be inferred as strings if that makes sense).
-    data_frame = data_frame.convert_dtypes(convert_integer=False, convert_floating=False, convert_string=None)
+    data_frame = data_frame.convert_dtypes(convert_integer=False, convert_floating=False, convert_string=False)
 
     if save_index:
         left_align_first_column = True
