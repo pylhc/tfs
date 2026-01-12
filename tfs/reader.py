@@ -364,7 +364,11 @@ def _parse_header_line(str_list: list[str]) -> tuple[str, bool | str | int | flo
         InvalidBooleanHeaderError: if the identifier type indicates a boolean
             but the corresponding value is not an accepted boolean.
     """
-    type_index = next((index for index, part in enumerate(str_list) if part.startswith("%")), None)
+    # Find the index of elements at which the type identifier is located
+    # For instance for ['q2', '%le', '60.31999175'] this would be 1
+    type_index: int | None = next(
+        (index for index, part in enumerate(str_list) if part.startswith("%")), None
+    )
     if type_index is None:
         raise AbsentTypeIdentifierError(str_list)
 
