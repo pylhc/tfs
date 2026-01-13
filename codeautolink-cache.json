@@ -2,7 +2,102 @@
   "compatibility": [
     {
       "source": "import tfs\nfrom tfs.frame import validate\n\ndf = tfs.read(\"path/to/file.tfs\")\n\n# To validate with MAD-X compatibility\nvalidate(df, compatibility=\"mad-x\")  # or use \"madx\"\n\n# To validate with MAD-NG compatibility\nvalidate(df, compatibility=\"mad-ng\")  # or use \"madng\"",
-      "names": [],
+      "names": [
+        {
+          "import_components": [
+            "tfs",
+            "frame"
+          ],
+          "code_str": "tfs.frame",
+          "lineno": 2,
+          "end_lineno": 2,
+          "context": "import_from",
+          "resolved_location": "tfs.frame"
+        },
+        {
+          "import_components": [
+            "tfs",
+            "frame",
+            "validate"
+          ],
+          "code_str": "validate",
+          "lineno": 2,
+          "end_lineno": 2,
+          "context": "import_target",
+          "resolved_location": "tfs.frame.validate"
+        },
+        {
+          "import_components": [
+            "tfs",
+            "read"
+          ],
+          "code_str": "tfs.read",
+          "lineno": 4,
+          "end_lineno": 4,
+          "context": "none",
+          "resolved_location": "tfs.reader.read_tfs"
+        },
+        {
+          "import_components": [
+            "tfs",
+            "read",
+            "()"
+          ],
+          "code_str": "df",
+          "lineno": 4,
+          "end_lineno": 4,
+          "context": "none",
+          "resolved_location": "tfs.frame.TfsDataFrame"
+        },
+        {
+          "import_components": [
+            "tfs",
+            "frame",
+            "validate"
+          ],
+          "code_str": "validate",
+          "lineno": 7,
+          "end_lineno": 7,
+          "context": "none",
+          "resolved_location": "tfs.frame.validate"
+        },
+        {
+          "import_components": [
+            "tfs",
+            "read",
+            "()"
+          ],
+          "code_str": "df",
+          "lineno": 7,
+          "end_lineno": 7,
+          "context": "none",
+          "resolved_location": "tfs.frame.TfsDataFrame"
+        },
+        {
+          "import_components": [
+            "tfs",
+            "frame",
+            "validate"
+          ],
+          "code_str": "validate",
+          "lineno": 10,
+          "end_lineno": 10,
+          "context": "none",
+          "resolved_location": "tfs.frame.validate"
+        },
+        {
+          "import_components": [
+            "tfs",
+            "read",
+            "()"
+          ],
+          "code_str": "df",
+          "lineno": 10,
+          "end_lineno": 10,
+          "context": "none",
+          "resolved_location": "tfs.frame.TfsDataFrame"
+        }
+      ],
       "example": {
         "document": "compatibility",
         "ref_id": "tfsdataframe-validation",
@@ -13,6 +108,71 @@
         ]
       },
       "doc_lineno": 23
+    },
+    {
+      "source": "@ trkrdt             %03t     {\"f4000\", \"f2020\", \"f3100\"}",
+      "names": [],
+      "example": {
+        "document": "compatibility",
+        "ref_id": "mad-ng-compatibility",
+        "headings": [
+          "MAD-X and MAD-NG Compatibility",
+          "TfsDataFrame Validation",
+          "MAD-NG Compatibility",
+          "Supported Versions",
+          "Complex Number Representation",
+          "Handling of Nullable Types"
+        ]
+      },
+      "doc_lineno": 91
+    },
+    {
+      "source": "from pymadng import MAD\n\nmad = MAD()\ndf = mad.mtable.read(\"'madng_tfs_file.tfs'\").eval().to_df()\n\nprint(type(df))  # prints: <class 'tfs.frame.TfsDataFrame'>\nprint(df.headers[\"trkrdt\"])  # prints: ['f4000', 'f2020', 'f3100']",
+      "names": [
+        {
+          "import_components": [
+            "print"
+          ],
+          "code_str": "print",
+          "lineno": 6,
+          "end_lineno": 6,
+          "context": "none",
+          "resolved_location": "print"
+        },
+        {
+          "import_components": [
+            "type"
+          ],
+          "code_str": "type",
+          "lineno": 6,
+          "end_lineno": 6,
+          "context": "none",
+          "resolved_location": "type"
+        },
+        {
+          "import_components": [
+            "print"
+          ],
+          "code_str": "print",
+          "lineno": 7,
+          "end_lineno": 7,
+          "context": "none",
+          "resolved_location": "print"
+        }
+      ],
+      "example": {
+        "document": "compatibility",
+        "ref_id": "mad-ng-compatibility",
+        "headings": [
+          "MAD-X and MAD-NG Compatibility",
+          "TfsDataFrame Validation",
+          "MAD-NG Compatibility",
+          "Supported Versions",
+          "Complex Number Representation",
+          "Handling of Nullable Types"
+        ]
+      },
+      "doc_lineno": 97
     }
   ],
   "index": [],
@@ -304,7 +464,54 @@
   "quickstart": [
     {
       "source": "import tfs\n\n# Loading a TFS file is simple\ndf = tfs.read(\"path_to_input.tfs\", index=\"index_column\")\n\n# Writing out to disk is simple too\ntfs.write(\"path_to_output.tfs\", df, save_index=\"index_column\")",
-      "names": [],
+      "names": [
+        {
+          "import_components": [
+            "tfs",
+            "read"
+          ],
+          "code_str": "tfs.read",
+          "lineno": 4,
+          "end_lineno": 4,
+          "context": "none",
+          "resolved_location": "tfs.reader.read_tfs"
+        },
+        {
+          "import_components": [
+            "tfs",
+            "read",
+            "()"
+          ],
+          "code_str": "df",
+          "lineno": 4,
+          "end_lineno": 4,
+          "context": "none",
+          "resolved_location": "tfs.frame.TfsDataFrame"
+        },
+        {
+          "import_components": [
+            "tfs",
+            "write"
+          ],
+          "code_str": "tfs.write",
+          "lineno": 7,
+          "end_lineno": 7,
+          "context": "none",
+          "resolved_location": "tfs.writer.write_tfs"
+        },
+        {
+          "import_components": [
+            "tfs",
+            "read",
+            "()"
+          ],
+          "code_str": "df",
+          "lineno": 7,
+          "end_lineno": 7,
+          "context": "none",
+          "resolved_location": "tfs.frame.TfsDataFrame"
+        }
+      ],
       "example": {
         "document": "quickstart",
         "ref_id": "basic-usage",
@@ -317,7 +524,20 @@
     },
     {
       "source": "# Access and modify the headers with the .headers attribute\nuseful_variable = data_frame.headers[\"SOME_KEY\"]\ndata_frame.headers[\"NEW_KEY\"] = some_variable\n\n# Manipulate data as you do with pandas DataFrames\ndata_frame[\"NEWCOL\"] = data_frame.COLUMN_A * data_frame.COLUMN_B\n\n# You can check the TfsDataFrame validity, and choose the behavior in case of errors\ntfs.frame.validate(data_frame, non_unique_behavior=\"raise\")  # or choose \"warn\"",
-      "names": [],
+      "names": [
+        {
+          "import_components": [
+            "tfs",
+            "frame",
+            "validate"
+          ],
+          "code_str": "tfs.frame.validate",
+          "lineno": 9,
+          "end_lineno": 9,
+          "context": "none",
+          "resolved_location": "tfs.frame.validate"
+        }
+      ],
       "example": {
         "document": "quickstart",
         "ref_id": "basic-usage",
@@ -330,7 +550,54 @@
     },
     {
       "source": "# Compression format is inferred from the file extension\ndf = tfs.read(\"filename.tfs.gz\", index=\"index_column\")\n\n# Same thing when writing to disk\ntfs.write(\"path_to_output.tfs.zip\", df)",
-      "names": [],
+      "names": [
+        {
+          "import_components": [
+            "tfs",
+            "read"
+          ],
+          "code_str": "tfs.read",
+          "lineno": 2,
+          "end_lineno": 2,
+          "context": "none",
+          "resolved_location": "tfs.reader.read_tfs"
+        },
+        {
+          "import_components": [
+            "tfs",
+            "read",
+            "()"
+          ],
+          "code_str": "df",
+          "lineno": 2,
+          "end_lineno": 2,
+          "context": "none",
+          "resolved_location": "tfs.frame.TfsDataFrame"
+        },
+        {
+          "import_components": [
+            "tfs",
+            "write"
+          ],
+          "code_str": "tfs.write",
+          "lineno": 5,
+          "end_lineno": 5,
+          "context": "none",
+          "resolved_location": "tfs.writer.write_tfs"
+        },
+        {
+          "import_components": [
+            "tfs",
+            "read",
+            "()"
+          ],
+          "code_str": "df",
+          "lineno": 5,
+          "end_lineno": 5,
+          "context": "none",
+          "resolved_location": "tfs.frame.TfsDataFrame"
+        }
+      ],
       "example": {
         "document": "quickstart",
         "ref_id": "compression",
@@ -343,7 +610,93 @@
     },
     {
       "source": "from tfs.hdf import read_hdf, write_hdf\n\n# Read a TfsDataFrame from an HDF5 file\ndf = tfs.hdf.read_hdf(\"path_to_input.hdf5\", key=\"key_in_hdf5_file\")\n\n# Write a TfsDataFrame to an HDF5 file\ntfs.hdf.write_hdf(\"path_to_output.hdf5\", df, key=\"key_in_hdf5_file\")",
-      "names": [],
+      "names": [
+        {
+          "import_components": [
+            "tfs",
+            "hdf"
+          ],
+          "code_str": "tfs.hdf",
+          "lineno": 1,
+          "end_lineno": 1,
+          "context": "import_from",
+          "resolved_location": "tfs.hdf"
+        },
+        {
+          "import_components": [
+            "tfs",
+            "hdf",
+            "read_hdf"
+          ],
+          "code_str": "read_hdf",
+          "lineno": 1,
+          "end_lineno": 1,
+          "context": "import_target",
+          "resolved_location": "tfs.hdf.read_hdf"
+        },
+        {
+          "import_components": [
+            "tfs",
+            "hdf",
+            "write_hdf"
+          ],
+          "code_str": "write_hdf",
+          "lineno": 1,
+          "end_lineno": 1,
+          "context": "import_target",
+          "resolved_location": "tfs.hdf.write_hdf"
+        },
+        {
+          "import_components": [
+            "tfs",
+            "hdf",
+            "read_hdf"
+          ],
+          "code_str": "tfs.hdf.read_hdf",
+          "lineno": 4,
+          "end_lineno": 4,
+          "context": "none",
+          "resolved_location": "tfs.hdf.read_hdf"
+        },
+        {
+          "import_components": [
+            "tfs",
+            "hdf",
+            "read_hdf",
+            "()"
+          ],
+          "code_str": "df",
+          "lineno": 4,
+          "end_lineno": 4,
+          "context": "none",
+          "resolved_location": "tfs.frame.TfsDataFrame"
+        },
+        {
+          "import_components": [
+            "tfs",
+            "hdf",
+            "write_hdf"
+          ],
+          "code_str": "tfs.hdf.write_hdf",
+          "lineno": 7,
+          "end_lineno": 7,
+          "context": "none",
+          "resolved_location": "tfs.hdf.write_hdf"
+        },
+        {
+          "import_components": [
+            "tfs",
+            "hdf",
+            "read_hdf",
+            "()"
+          ],
+          "code_str": "df",
+          "lineno": 7,
+          "end_lineno": 7,
+          "context": "none",
+          "resolved_location": "tfs.frame.TfsDataFrame"
+        }
+      ],
       "example": {
         "document": "quickstart",
         "ref_id": "compression",
@@ -359,6 +712,52 @@
       "names": [
         {
           "import_components": [
+            "tfs",
+            "read"
+          ],
+          "code_str": "tfs.read",
+          "lineno": 1,
+          "end_lineno": 1,
+          "context": "none",
+          "resolved_location": "tfs.reader.read_tfs"
+        },
+        {
+          "import_components": [
+            "tfs",
+            "read",
+            "()"
+          ],
+          "code_str": "df1",
+          "lineno": 1,
+          "end_lineno": 1,
+          "context": "none",
+          "resolved_location": "tfs.frame.TfsDataFrame"
+        },
+        {
+          "import_components": [
+            "tfs",
+            "read"
+          ],
+          "code_str": "tfs.read",
+          "lineno": 2,
+          "end_lineno": 2,
+          "context": "none",
+          "resolved_location": "tfs.reader.read_tfs"
+        },
+        {
+          "import_components": [
+            "tfs",
+            "read",
+            "()"
+          ],
+          "code_str": "df2",
+          "lineno": 2,
+          "end_lineno": 2,
+          "context": "none",
+          "resolved_location": "tfs.frame.TfsDataFrame"
+        },
+        {
+          "import_components": [
             "pandas",
             "concat"
           ],
@@ -370,6 +769,66 @@
         },
         {
           "import_components": [
+            "tfs",
+            "read",
+            "()"
+          ],
+          "code_str": "df1",
+          "lineno": 5,
+          "end_lineno": 5,
+          "context": "none",
+          "resolved_location": "tfs.frame.TfsDataFrame"
+        },
+        {
+          "import_components": [
+            "tfs",
+            "read",
+            "()"
+          ],
+          "code_str": "df2",
+          "lineno": 5,
+          "end_lineno": 5,
+          "context": "none",
+          "resolved_location": "tfs.frame.TfsDataFrame"
+        },
+        {
+          "import_components": [
+            "tfs",
+            "frame",
+            "concat"
+          ],
+          "code_str": "tfs.frame.concat",
+          "lineno": 8,
+          "end_lineno": 8,
+          "context": "none",
+          "resolved_location": "tfs.frame.concat"
+        },
+        {
+          "import_components": [
+            "tfs",
+            "read",
+            "()"
+          ],
+          "code_str": "df1",
+          "lineno": 8,
+          "end_lineno": 8,
+          "context": "none",
+          "resolved_location": "tfs.frame.TfsDataFrame"
+        },
+        {
+          "import_components": [
+            "tfs",
+            "read",
+            "()"
+          ],
+          "code_str": "df2",
+          "lineno": 8,
+          "end_lineno": 8,
+          "context": "none",
+          "resolved_location": "tfs.frame.TfsDataFrame"
+        },
+        {
+          "import_components": [
             "isinstance"
           ],
           "code_str": "isinstance",
@@ -377,6 +836,17 @@
           "end_lineno": 9,
           "context": "none",
           "resolved_location": "isinstance"
+        },
+        {
+          "import_components": [
+            "tfs",
+            "TfsDataFrame"
+          ],
+          "code_str": "tfs.TfsDataFrame",
+          "lineno": 9,
+          "end_lineno": 9,
+          "context": "none",
+          "resolved_location": "tfs.frame.TfsDataFrame"
         },
         {
           "import_components": [

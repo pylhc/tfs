@@ -5,17 +5,17 @@
 <head>
 <meta charset="utf-8"/><meta content="width=device-width, initial-scale=1" name="viewport"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>MAD-X and MAD-NG Compatibility — tfs-pandas 4.0.0 documentation</title>
+<title>MAD-X and MAD-NG Compatibility — tfs-pandas 4.0.1 documentation</title>
 <link href="_static/pygments.css?v=03e43079" rel="stylesheet" type="text/css"/>
-<link href="_static/css/theme.css?v=e59714d7" rel="stylesheet" type="text/css"/>
+<link href="_static/css/theme.css?v=9edc463e" rel="stylesheet" type="text/css"/>
 <link href="_static/copybutton.css?v=76b2166b" rel="stylesheet" type="text/css"/>
 <link href="_static/sphinx-codeautolink.css?v=b2176991" rel="stylesheet" type="text/css"/>
 <link href="_static/css/custom.css?v=988d0652" rel="stylesheet" type="text/css"/>
 <script src="_static/jquery.js?v=5d32c60e"></script>
 <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-<script src="_static/documentation_options.js?v=3304f9e4"></script>
-<script src="_static/doctools.js?v=9bcbadda"></script>
-<script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+<script src="_static/documentation_options.js?v=977c7dfd"></script>
+<script src="_static/doctools.js?v=fd6eb6e6"></script>
+<script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
 <script src="_static/clipboard.min.js?v=a7894cd8"></script>
 <script src="_static/copybutton.js?v=f281be69"></script>
 <script src="_static/js/theme.js"></script>
@@ -106,24 +106,24 @@ Specifically, <code class="xref py py-obj docutils literal notranslate"><span cl
 To circumvent this issue, <code class="xref py py-obj docutils literal notranslate"><span class="pre">tfs-pandas</span></code> offers functionality - named validation - to ensure compatibility with either code.</p>
 <section id="tfsdataframe-validation">
 <h2>TfsDataFrame Validation<a class="headerlink" href="#tfsdataframe-validation" title="Link to this heading"></a></h2>
-<p>It is possible to perform automatic validation of a <code class="xref py py-obj docutils literal notranslate"><span class="pre">TfsDataFrame</span></code> both when reading and writing, or to validate them at any time using the <code class="xref py py-obj docutils literal notranslate"><span class="pre">tfs.frame.validate</span></code> function.
+<p>It is possible to perform automatic validation of a <code class="xref py py-obj docutils literal notranslate"><span class="pre">TfsDataFrame</span></code> both when reading and writing, or to validate them at any time using the <a class="reference internal" href="modules/index.html#tfs.frame.validate" title="tfs.frame.validate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tfs.frame.validate</span></code></a> function.
 Validation enforces the rules described in the <a class="reference internal" href="tfsformat.html#tfs-pandas-caveats"><span class="std std-ref">caveats section</span></a>, both to guarantee the integrity of the dataframe and compatibility of written files with simulation codes.</p>
 <div class="admonition-when-does-validation-happen admonition">
 <p class="admonition-title">When Does Validation Happen?</p>
 <p>Validation is <strong>optional</strong>, and is by default turned off at both read-time and write-time.</p>
 </div>
-<p>Validation is done by providing a <code class="xref py py-obj docutils literal notranslate"><span class="pre">TfsDataFrame</span></code> and a compatibility mode to <code class="xref py py-obj docutils literal notranslate"><span class="pre">tfs.frame.validate</span></code> (see the <a class="reference internal" href="modules/index.html#frame"><span class="std std-ref">API reference</span></a>).
+<p>Validation is done by providing a <code class="xref py py-obj docutils literal notranslate"><span class="pre">TfsDataFrame</span></code> and a compatibility mode to <a class="reference internal" href="modules/index.html#tfs.frame.validate" title="tfs.frame.validate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tfs.frame.validate</span></code></a> (see the <a class="reference internal" href="modules/index.html#frame"><span class="std std-ref">API reference</span></a>).
 It goes as:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">tfs</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">tfs.frame</span><span class="w"> </span><span class="kn">import</span> <span class="n">validate</span>
+<span class="kn">from</span><span class="w"> </span><a class="sphinx-codeautolink-a" href="modules/index.html#module-tfs.frame" title="tfs.frame"><span class="nn">tfs.frame</span></a><span class="w"> </span><span class="kn">import</span> <a class="sphinx-codeautolink-a" href="modules/index.html#tfs.frame.validate" title="tfs.frame.validate"><span class="n">validate</span></a>
 
-<span class="n">df</span> <span class="o">=</span> <span class="n">tfs</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s2">"path/to/file.tfs"</span><span class="p">)</span>
+<a class="sphinx-codeautolink-a" href="modules/index.html#tfs.frame.TfsDataFrame" title="tfs.frame.TfsDataFrame"><span class="n">df</span></a> <span class="o">=</span> <a class="sphinx-codeautolink-a" href="modules/index.html#tfs.reader.read_tfs" title="tfs.reader.read_tfs"><span class="n">tfs</span><span class="o">.</span><span class="n">read</span></a><span class="p">(</span><span class="s2">"path/to/file.tfs"</span><span class="p">)</span>
 
 <span class="c1"># To validate with MAD-X compatibility</span>
-<span class="n">validate</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">compatibility</span><span class="o">=</span><span class="s2">"mad-x"</span><span class="p">)</span>  <span class="c1"># or use "madx"</span>
+<a class="sphinx-codeautolink-a" href="modules/index.html#tfs.frame.validate" title="tfs.frame.validate"><span class="n">validate</span></a><span class="p">(</span><a class="sphinx-codeautolink-a" href="modules/index.html#tfs.frame.TfsDataFrame" title="tfs.frame.TfsDataFrame"><span class="n">df</span></a><span class="p">,</span> <span class="n">compatibility</span><span class="o">=</span><span class="s2">"mad-x"</span><span class="p">)</span>  <span class="c1"># or use "madx"</span>
 
 <span class="c1"># To validate with MAD-NG compatibility</span>
-<span class="n">validate</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">compatibility</span><span class="o">=</span><span class="s2">"mad-ng"</span><span class="p">)</span>  <span class="c1"># or use "madng"</span>
+<a class="sphinx-codeautolink-a" href="modules/index.html#tfs.frame.validate" title="tfs.frame.validate"><span class="n">validate</span></a><span class="p">(</span><a class="sphinx-codeautolink-a" href="modules/index.html#tfs.frame.TfsDataFrame" title="tfs.frame.TfsDataFrame"><span class="n">df</span></a><span class="p">,</span> <span class="n">compatibility</span><span class="o">=</span><span class="s2">"mad-ng"</span><span class="p">)</span>  <span class="c1"># or use "madng"</span>
 </pre></div>
 </div>
 <p>In case of compatibility issue, an exception is raised which will point to the specific incompatible element.
@@ -132,7 +132,7 @@ All exceptions inherit from the <code class="xref py py-obj docutils literal not
 <section id="common-validation-rules">
 <span id="common-rules"></span><h2>Common Validation Rules<a class="headerlink" href="#common-validation-rules" title="Link to this heading"></a></h2>
 <p>In either compatibility mode, some common rules are enforced.
-These rules are listed and described in the <a class="reference internal" href="modules/index.html#frame"><span class="std std-ref">API reference</span></a> for the <code class="xref py py-obj docutils literal notranslate"><span class="pre">tfs.frame.validate</span></code> function.</p>
+These rules are listed and described in the <a class="reference internal" href="modules/index.html#frame"><span class="std std-ref">API reference</span></a> for the <a class="reference internal" href="modules/index.html#tfs.frame.validate" title="tfs.frame.validate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tfs.frame.validate</span></code></a> function.</p>
 <p>When validating a <code class="xref py py-obj docutils literal notranslate"><span class="pre">TfsDataFrame</span></code>, the behavior in case one of these rules is violated depends on the value of the <code class="xref py py-obj docutils literal notranslate"><span class="pre">non_unique_behavior</span></code> parameter.
 These rules are <em>always</em> checked against when validating a <code class="xref py py-obj docutils literal notranslate"><span class="pre">TfsDataFrame</span></code>.
 Additional checks can be performed by setting the <code class="xref py py-obj docutils literal notranslate"><span class="pre">compatibility</span></code> parameter, as described in the <a class="reference internal" href="#madng-mode"><span class="std std-ref">MAD-NG</span></a> and <a class="reference internal" href="#madx-mode"><span class="std std-ref">MAD-X</span></a> below.</p>
@@ -170,7 +170,24 @@ Both of these representations will be correctly read by <code class="xref py py-
 <div class="admonition attention">
 <p class="admonition-title">Attention</p>
 <p>The exotic “features” of <code class="docutils literal notranslate"><span class="pre">MAD-NG</span></code> such as the <code class="docutils literal notranslate"><span class="pre">Lua</span></code> operator overloading for ranges and tables, and their inclusion in <strong>TFS</strong> files are not supported by <code class="xref py py-obj docutils literal notranslate"><span class="pre">tfs-pandas</span></code>.
-Should one need to use these features, it is recommended to go through the <a class="reference external" href="https://pymadng.readthedocs.io/en/latest/">pymadng</a> package to handle them in-memory.</p>
+We firstly recommend users only include these if truly needed, and avoid writing them out otherwise.
+One can find information on table writing for <code class="docutils literal notranslate"><span class="pre">MAD-NG</span></code> in <a class="reference external" href="https://madx.web.cern.ch/releases/madng/html/mad_gen_mtable.html">their documentation pages</a>.</p>
+<p>Should one need to use these features, it is recommended to go through the <a class="reference external" href="https://pymadng.readthedocs.io/en/latest/">pymadng</a> package to handle them in-memory.
+Below is an example of how to read a <strong>TFS</strong> file including a <code class="docutils literal notranslate"><span class="pre">Lua</span></code> table in its headers with <code class="docutils literal notranslate"><span class="pre">pymadng</span></code> and extract the <code class="xref py py-obj docutils literal notranslate"><span class="pre">TfsDataFrame</span></code>.
+The header line would look like:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">@</span> <span class="n">trkrdt</span>             <span class="o">%</span><span class="mi">03</span><span class="n">t</span>     <span class="p">{</span><span class="s2">"f4000"</span><span class="p">,</span> <span class="s2">"f2020"</span><span class="p">,</span> <span class="s2">"f3100"</span><span class="p">}</span>
+</pre></div>
+</div>
+<p>The file can be read via <code class="docutils literal notranslate"><span class="pre">pymadng</span></code> and converted as follows (please note the need to double quote the file name):</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pymadng</span><span class="w"> </span><span class="kn">import</span> <span class="n">MAD</span>
+
+<span class="n">mad</span> <span class="o">=</span> <span class="n">MAD</span><span class="p">()</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">mad</span><span class="o">.</span><span class="n">mtable</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s2">"'madng_tfs_file.tfs'"</span><span class="p">)</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span><span class="o">.</span><span class="n">to_df</span><span class="p">()</span>
+
+<a class="sphinx-codeautolink-a" href="https://docs.python.org/3/library/functions.html#print" title="print"><span class="nb">print</span></a><span class="p">(</span><a class="sphinx-codeautolink-a" href="https://docs.python.org/3/library/functions.html#type" title="type"><span class="nb">type</span></a><span class="p">(</span><span class="n">df</span><span class="p">))</span>  <span class="c1"># prints: &lt;class 'tfs.frame.TfsDataFrame'&gt;</span>
+<a class="sphinx-codeautolink-a" href="https://docs.python.org/3/library/functions.html#print" title="print"><span class="nb">print</span></a><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">headers</span><span class="p">[</span><span class="s2">"trkrdt"</span><span class="p">])</span>  <span class="c1"># prints: ['f4000', 'f2020', 'f3100']</span>
+</pre></div>
+</div>
 </div>
 </section>
 <section id="mad-x-compatibility">
@@ -186,7 +203,7 @@ As such, when checking for compatibility with <code class="docutils literal notr
 </div></blockquote>
 <div class="admonition-default-mode admonition">
 <p class="admonition-title">Default mode</p>
-<p>The default compatibility mode enforced by the <code class="xref py py-obj docutils literal notranslate"><span class="pre">tfs.frame.validate</span></code> function is <code class="docutils literal notranslate"><span class="pre">MAD-X</span></code>.</p>
+<p>The default compatibility mode enforced by the <a class="reference internal" href="modules/index.html#tfs.frame.validate" title="tfs.frame.validate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tfs.frame.validate</span></code></a> function is <code class="docutils literal notranslate"><span class="pre">MAD-X</span></code>.</p>
 </div>
 </section>
 </section>

@@ -5,17 +5,17 @@
 <head>
 <meta charset="utf-8"/><meta content="width=device-width, initial-scale=1" name="viewport"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>The Table File System Format — tfs-pandas 4.0.0 documentation</title>
+<title>The Table File System Format — tfs-pandas 4.0.1 documentation</title>
 <link href="_static/pygments.css?v=03e43079" rel="stylesheet" type="text/css"/>
-<link href="_static/css/theme.css?v=e59714d7" rel="stylesheet" type="text/css"/>
+<link href="_static/css/theme.css?v=9edc463e" rel="stylesheet" type="text/css"/>
 <link href="_static/copybutton.css?v=76b2166b" rel="stylesheet" type="text/css"/>
 <link href="_static/sphinx-codeautolink.css?v=b2176991" rel="stylesheet" type="text/css"/>
 <link href="_static/css/custom.css?v=988d0652" rel="stylesheet" type="text/css"/>
 <script src="_static/jquery.js?v=5d32c60e"></script>
 <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-<script src="_static/documentation_options.js?v=3304f9e4"></script>
-<script src="_static/doctools.js?v=9bcbadda"></script>
-<script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+<script src="_static/documentation_options.js?v=977c7dfd"></script>
+<script src="_static/doctools.js?v=fd6eb6e6"></script>
+<script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
 <script src="_static/clipboard.min.js?v=a7894cd8"></script>
 <script src="_static/copybutton.js?v=f281be69"></script>
 <script src="_static/js/theme.js"></script>
@@ -227,7 +227,7 @@ Please see the <a class="reference internal" href="compatibility.html"><span cla
 </ul>
 <div class="admonition-dataframe-validation admonition">
 <p class="admonition-title">DataFrame Validation</p>
-<p>It is possible to perform automatic validation of the <code class="xref py py-obj docutils literal notranslate"><span class="pre">TfsDataFrame</span></code> both when reading and writing, or to validate them at any time using the <code class="xref py py-obj docutils literal notranslate"><span class="pre">tfs.frame.validate</span></code> function.
+<p>It is possible to perform automatic validation of the <code class="xref py py-obj docutils literal notranslate"><span class="pre">TfsDataFrame</span></code> both when reading and writing, or to validate them at any time using the <a class="reference internal" href="modules/index.html#tfs.frame.validate" title="tfs.frame.validate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tfs.frame.validate</span></code></a> function.
 See the <a class="reference internal" href="modules/index.html#frame"><span class="std std-ref">API reference</span></a> for more information.</p>
 </div>
 <p>Not respecting the above does not necessarily lead to an issue when reading or writing a TFS file (without validation), but it might be an issue trying to get such a file accepted by <code class="docutils literal notranslate"><span class="pre">MAD-X</span></code> or <code class="docutils literal notranslate"><span class="pre">MAD-NG</span></code>.</p>

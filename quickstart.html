@@ -5,17 +5,17 @@
 <head>
 <meta charset="utf-8"/><meta content="width=device-width, initial-scale=1" name="viewport"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>2 Minutes to tfs-pandas — tfs-pandas 4.0.0 documentation</title>
+<title>2 Minutes to tfs-pandas — tfs-pandas 4.0.1 documentation</title>
 <link href="_static/pygments.css?v=03e43079" rel="stylesheet" type="text/css"/>
-<link href="_static/css/theme.css?v=e59714d7" rel="stylesheet" type="text/css"/>
+<link href="_static/css/theme.css?v=9edc463e" rel="stylesheet" type="text/css"/>
 <link href="_static/copybutton.css?v=76b2166b" rel="stylesheet" type="text/css"/>
 <link href="_static/sphinx-codeautolink.css?v=b2176991" rel="stylesheet" type="text/css"/>
 <link href="_static/css/custom.css?v=988d0652" rel="stylesheet" type="text/css"/>
 <script src="_static/jquery.js?v=5d32c60e"></script>
 <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-<script src="_static/documentation_options.js?v=3304f9e4"></script>
-<script src="_static/doctools.js?v=9bcbadda"></script>
-<script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+<script src="_static/documentation_options.js?v=977c7dfd"></script>
+<script src="_static/doctools.js?v=fd6eb6e6"></script>
+<script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
 <script src="_static/clipboard.min.js?v=a7894cd8"></script>
 <script src="_static/copybutton.js?v=f281be69"></script>
 <script src="_static/js/theme.js"></script>
@@ -108,13 +108,13 @@ That’s how little it takes!</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">tfs</span>
 
 <span class="c1"># Loading a TFS file is simple</span>
-<span class="n">df</span> <span class="o">=</span> <span class="n">tfs</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s2">"path_to_input.tfs"</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="s2">"index_column"</span><span class="p">)</span>
+<a class="sphinx-codeautolink-a" href="modules/index.html#tfs.frame.TfsDataFrame" title="tfs.frame.TfsDataFrame"><span class="n">df</span></a> <span class="o">=</span> <a class="sphinx-codeautolink-a" href="modules/index.html#tfs.reader.read_tfs" title="tfs.reader.read_tfs"><span class="n">tfs</span><span class="o">.</span><span class="n">read</span></a><span class="p">(</span><span class="s2">"path_to_input.tfs"</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="s2">"index_column"</span><span class="p">)</span>
 
 <span class="c1"># Writing out to disk is simple too</span>
-<span class="n">tfs</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">"path_to_output.tfs"</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="n">save_index</span><span class="o">=</span><span class="s2">"index_column"</span><span class="p">)</span>
+<a class="sphinx-codeautolink-a" href="modules/index.html#tfs.writer.write_tfs" title="tfs.writer.write_tfs"><span class="n">tfs</span><span class="o">.</span><span class="n">write</span></a><span class="p">(</span><span class="s2">"path_to_output.tfs"</span><span class="p">,</span> <a class="sphinx-codeautolink-a" href="modules/index.html#tfs.frame.TfsDataFrame" title="tfs.frame.TfsDataFrame"><span class="n">df</span></a><span class="p">,</span> <span class="n">save_index</span><span class="o">=</span><span class="s2">"index_column"</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Once loaded, you get your data in a <code class="xref py py-obj docutils literal notranslate"><span class="pre">TfsDataFrame</span></code>, which is a <a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.3.3)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code></a> with a <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a> of headers attached to it.
+<p>Once loaded, you get your data in a <a class="reference internal" href="modules/index.html#tfs.frame.TfsDataFrame" title="tfs.frame.TfsDataFrame"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TfsDataFrame</span></code></a>, which is a <a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.3.3)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code></a> with a <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></a> of headers attached to it.
 You can access and manipulate all data as you would with a <code class="xref py py-obj docutils literal notranslate"><span class="pre">DataFrame</span></code>:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Access and modify the headers with the .headers attribute</span>
 <span class="n">useful_variable</span> <span class="o">=</span> <span class="n">data_frame</span><span class="o">.</span><span class="n">headers</span><span class="p">[</span><span class="s2">"SOME_KEY"</span><span class="p">]</span>
@@ -124,7 +124,7 @@ You can access and manipulate all data as you would with a <code class="xref py 
 <span class="n">data_frame</span><span class="p">[</span><span class="s2">"NEWCOL"</span><span class="p">]</span> <span class="o">=</span> <span class="n">data_frame</span><span class="o">.</span><span class="n">COLUMN_A</span> <span class="o">*</span> <span class="n">data_frame</span><span class="o">.</span><span class="n">COLUMN_B</span>
 
 <span class="c1"># You can check the TfsDataFrame validity, and choose the behavior in case of errors</span>
-<span class="n">tfs</span><span class="o">.</span><span class="n">frame</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="n">data_frame</span><span class="p">,</span> <span class="n">non_unique_behavior</span><span class="o">=</span><span class="s2">"raise"</span><span class="p">)</span>  <span class="c1"># or choose "warn"</span>
+<a class="sphinx-codeautolink-a" href="modules/index.html#tfs.frame.validate" title="tfs.frame.validate"><span class="n">tfs</span><span class="o">.</span><span class="n">frame</span><span class="o">.</span><span class="n">validate</span></a><span class="p">(</span><span class="n">data_frame</span><span class="p">,</span> <span class="n">non_unique_behavior</span><span class="o">=</span><span class="s2">"raise"</span><span class="p">)</span>  <span class="c1"># or choose "warn"</span>
 </pre></div>
 </div>
 </section>
@@ -134,10 +134,10 @@ You can access and manipulate all data as you would with a <code class="xref py 
 Thankfully, <code class="xref py py-obj docutils literal notranslate"><span class="pre">tfs-pandas</span></code> supports automatic reading and writing of various compression formats.
 Just use the API as you would normally, and the compression will be handled automatically based on the extension:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Compression format is inferred from the file extension</span>
-<span class="n">df</span> <span class="o">=</span> <span class="n">tfs</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s2">"filename.tfs.gz"</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="s2">"index_column"</span><span class="p">)</span>
+<a class="sphinx-codeautolink-a" href="modules/index.html#tfs.frame.TfsDataFrame" title="tfs.frame.TfsDataFrame"><span class="n">df</span></a> <span class="o">=</span> <a class="sphinx-codeautolink-a" href="modules/index.html#tfs.reader.read_tfs" title="tfs.reader.read_tfs"><span class="n">tfs</span><span class="o">.</span><span class="n">read</span></a><span class="p">(</span><span class="s2">"filename.tfs.gz"</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="s2">"index_column"</span><span class="p">)</span>
 
 <span class="c1"># Same thing when writing to disk</span>
-<span class="n">tfs</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">"path_to_output.tfs.zip"</span><span class="p">,</span> <span class="n">df</span><span class="p">)</span>
+<a class="sphinx-codeautolink-a" href="modules/index.html#tfs.writer.write_tfs" title="tfs.writer.write_tfs"><span class="n">tfs</span><span class="o">.</span><span class="n">write</span></a><span class="p">(</span><span class="s2">"path_to_output.tfs.zip"</span><span class="p">,</span> <a class="sphinx-codeautolink-a" href="modules/index.html#tfs.frame.TfsDataFrame" title="tfs.frame.TfsDataFrame"><span class="n">df</span></a><span class="p">)</span>
 </pre></div>
 </div>
 <p>A special module is provided to interface to the <code class="docutils literal notranslate"><span class="pre">HDF5</span></code> format.
@@ -145,36 +145,36 @@ First though, one needs to install the package with the <code class="xref py py-
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>--upgrade<span class="w"> </span><span class="s2">"tfs-pandas[hdf5]"</span>
 </pre></div>
 </div>
-<p>Then, access the functionality from <code class="xref py py-obj docutils literal notranslate"><span class="pre">tfs.hdf</span></code>.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">tfs.hdf</span><span class="w"> </span><span class="kn">import</span> <span class="n">read_hdf</span><span class="p">,</span> <span class="n">write_hdf</span>
+<p>Then, access the functionality from <a class="reference internal" href="modules/index.html#module-tfs.hdf" title="tfs.hdf"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tfs.hdf</span></code></a>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><a class="sphinx-codeautolink-a" href="modules/index.html#module-tfs.hdf" title="tfs.hdf"><span class="nn">tfs.hdf</span></a><span class="w"> </span><span class="kn">import</span> <a class="sphinx-codeautolink-a" href="modules/index.html#tfs.hdf.read_hdf" title="tfs.hdf.read_hdf"><span class="n">read_hdf</span></a><span class="p">,</span> <a class="sphinx-codeautolink-a" href="modules/index.html#tfs.hdf.write_hdf" title="tfs.hdf.write_hdf"><span class="n">write_hdf</span></a>
 
 <span class="c1"># Read a TfsDataFrame from an HDF5 file</span>
-<span class="n">df</span> <span class="o">=</span> <span class="n">tfs</span><span class="o">.</span><span class="n">hdf</span><span class="o">.</span><span class="n">read_hdf</span><span class="p">(</span><span class="s2">"path_to_input.hdf5"</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="s2">"key_in_hdf5_file"</span><span class="p">)</span>
+<a class="sphinx-codeautolink-a" href="modules/index.html#tfs.frame.TfsDataFrame" title="tfs.frame.TfsDataFrame"><span class="n">df</span></a> <span class="o">=</span> <a class="sphinx-codeautolink-a" href="modules/index.html#tfs.hdf.read_hdf" title="tfs.hdf.read_hdf"><span class="n">tfs</span><span class="o">.</span><span class="n">hdf</span><span class="o">.</span><span class="n">read_hdf</span></a><span class="p">(</span><span class="s2">"path_to_input.hdf5"</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="s2">"key_in_hdf5_file"</span><span class="p">)</span>
 
 <span class="c1"># Write a TfsDataFrame to an HDF5 file</span>
-<span class="n">tfs</span><span class="o">.</span><span class="n">hdf</span><span class="o">.</span><span class="n">write_hdf</span><span class="p">(</span><span class="s2">"path_to_output.hdf5"</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="s2">"key_in_hdf5_file"</span><span class="p">)</span>
+<a class="sphinx-codeautolink-a" href="modules/index.html#tfs.hdf.write_hdf" title="tfs.hdf.write_hdf"><span class="n">tfs</span><span class="o">.</span><span class="n">hdf</span><span class="o">.</span><span class="n">write_hdf</span></a><span class="p">(</span><span class="s2">"path_to_output.hdf5"</span><span class="p">,</span> <a class="sphinx-codeautolink-a" href="modules/index.html#tfs.frame.TfsDataFrame" title="tfs.frame.TfsDataFrame"><span class="n">df</span></a><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="s2">"key_in_hdf5_file"</span><span class="p">)</span>
 </pre></div>
 </div>
 </section>
 <section id="validation">
 <h2>Validation<a class="headerlink" href="#validation" title="Link to this heading"></a></h2>
 <p>As <strong>TFS</strong> files typically come from the output of simulations codes, validation modes are available to ensure compatibility with said codes.
-This is done through the <code class="xref py py-obj docutils literal notranslate"><span class="pre">tfs.frame.validate</span></code> function, or relevant arguments in both the reader and writer functions.</p>
+This is done through the <a class="reference internal" href="modules/index.html#tfs.frame.validate" title="tfs.frame.validate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tfs.frame.validate</span></code></a> function, or relevant arguments in both the reader and writer functions.</p>
 <p>As validation modes and compatibility details are complex, validation warrants its own documentation page.
 Please refer to the <a class="reference internal" href="compatibility.html"><span class="doc">compatibility and validation guide</span></a> for more information.</p>
 </section>
 <section id="function-replacements">
 <h2>Function Replacements<a class="headerlink" href="#function-replacements" title="Link to this heading"></a></h2>
-<p>Finally, some replacement functions are provided for some <a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/index.html#module-pandas" title="(in pandas v2.3.3)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pandas</span></code></a> operations which, if used, would return a <a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.3.3)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code></a> instead of a <code class="xref py py-obj docutils literal notranslate"><span class="pre">TfsDataFrame</span></code>.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">df1</span> <span class="o">=</span> <span class="n">tfs</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s2">"file1.tfs"</span><span class="p">)</span>
-<span class="n">df2</span> <span class="o">=</span> <span class="n">tfs</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s2">"file2.tfs"</span><span class="p">)</span>
+<p>Finally, some replacement functions are provided for some <a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/index.html#module-pandas" title="(in pandas v2.3.3)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pandas</span></code></a> operations which, if used, would return a <a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v2.3.3)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code></a> instead of a <a class="reference internal" href="modules/index.html#tfs.frame.TfsDataFrame" title="tfs.frame.TfsDataFrame"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TfsDataFrame</span></code></a>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><a class="sphinx-codeautolink-a" href="modules/index.html#tfs.frame.TfsDataFrame" title="tfs.frame.TfsDataFrame"><span class="n">df1</span></a> <span class="o">=</span> <a class="sphinx-codeautolink-a" href="modules/index.html#tfs.reader.read_tfs" title="tfs.reader.read_tfs"><span class="n">tfs</span><span class="o">.</span><span class="n">read</span></a><span class="p">(</span><span class="s2">"file1.tfs"</span><span class="p">)</span>
+<a class="sphinx-codeautolink-a" href="modules/index.html#tfs.frame.TfsDataFrame" title="tfs.frame.TfsDataFrame"><span class="n">df2</span></a> <span class="o">=</span> <a class="sphinx-codeautolink-a" href="modules/index.html#tfs.reader.read_tfs" title="tfs.reader.read_tfs"><span class="n">tfs</span><span class="o">.</span><span class="n">read</span></a><span class="p">(</span><span class="s2">"file2.tfs"</span><span class="p">)</span>
 
 <span class="c1"># This returns a pandas.DataFrame and makes you lose the headers</span>
-<span class="n">result</span> <span class="o">=</span> <a class="sphinx-codeautolink-a" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.concat.html#pandas.concat" title="pandas.concat"><span class="n">pd</span><span class="o">.</span><span class="n">concat</span></a><span class="p">([</span><span class="n">df1</span><span class="p">,</span> <span class="n">df2</span><span class="p">])</span>
+<span class="n">result</span> <span class="o">=</span> <a class="sphinx-codeautolink-a" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.concat.html#pandas.concat" title="pandas.concat"><span class="n">pd</span><span class="o">.</span><span class="n">concat</span></a><span class="p">([</span><a class="sphinx-codeautolink-a" href="modules/index.html#tfs.frame.TfsDataFrame" title="tfs.frame.TfsDataFrame"><span class="n">df1</span></a><span class="p">,</span> <a class="sphinx-codeautolink-a" href="modules/index.html#tfs.frame.TfsDataFrame" title="tfs.frame.TfsDataFrame"><span class="n">df2</span></a><span class="p">])</span>
 
 <span class="c1"># Instead, use our own wrapper</span>
-<span class="n">result</span> <span class="o">=</span> <span class="n">tfs</span><span class="o">.</span><span class="n">frame</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">df1</span><span class="p">,</span> <span class="n">df2</span><span class="p">])</span>  <span class="c1"># you can choose how to merge headers too</span>
-<span class="k">assert</span> <a class="sphinx-codeautolink-a" href="https://docs.python.org/3/library/functions.html#isinstance" title="isinstance"><span class="nb">isinstance</span></a><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">tfs</span><span class="o">.</span><span class="n">TfsDataFrame</span><span class="p">)</span>  <span class="c1"># that's ok!</span>
+<span class="n">result</span> <span class="o">=</span> <a class="sphinx-codeautolink-a" href="modules/index.html#tfs.frame.concat" title="tfs.frame.concat"><span class="n">tfs</span><span class="o">.</span><span class="n">frame</span><span class="o">.</span><span class="n">concat</span></a><span class="p">([</span><a class="sphinx-codeautolink-a" href="modules/index.html#tfs.frame.TfsDataFrame" title="tfs.frame.TfsDataFrame"><span class="n">df1</span></a><span class="p">,</span> <a class="sphinx-codeautolink-a" href="modules/index.html#tfs.frame.TfsDataFrame" title="tfs.frame.TfsDataFrame"><span class="n">df2</span></a><span class="p">])</span>  <span class="c1"># you can choose how to merge headers too</span>
+<span class="k">assert</span> <a class="sphinx-codeautolink-a" href="https://docs.python.org/3/library/functions.html#isinstance" title="isinstance"><span class="nb">isinstance</span></a><span class="p">(</span><span class="n">result</span><span class="p">,</span> <a class="sphinx-codeautolink-a" href="modules/index.html#tfs.frame.TfsDataFrame" title="tfs.frame.TfsDataFrame"><span class="n">tfs</span><span class="o">.</span><span class="n">TfsDataFrame</span></a><span class="p">)</span>  <span class="c1"># that's ok!</span>
 <span class="k">assert</span> <a class="sphinx-codeautolink-a" href="https://docs.python.org/3/library/functions.html#getattr" title="getattr"><span class="nb">getattr</span></a><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="s2">"headers"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>  <span class="c1"># headers are not lost</span>
 </pre></div>
 </div>

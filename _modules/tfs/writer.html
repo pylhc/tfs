@@ -5,9 +5,9 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>tfs.writer &mdash; tfs-pandas 4.0.0 documentation</title>
+  <title>tfs.writer &mdash; tfs-pandas 4.0.1 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
-      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
       <link rel="stylesheet" type="text/css" href="../../_static/sphinx-codeautolink.css?v=b2176991" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/custom.css?v=988d0652" />
@@ -15,9 +15,9 @@
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=3304f9e4"></script>
-      <script src="../../_static/doctools.js?v=9bcbadda"></script>
-      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../_static/documentation_options.js?v=977c7dfd"></script>
+      <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
       <script src="../../_static/copybutton.js?v=f281be69"></script>
     <script src="../../_static/js/theme.js"></script>
@@ -114,7 +114,7 @@
 <span class="sd">Writing functionalty for **TFS** files.</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>  <span class="c1"># for delayed type annotations</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">pathlib</span>
@@ -253,7 +253,7 @@
     <span class="c1"># would be transformed into &lt;pd.NA&gt; and if we write this to file we are very much cooked.)</span>
     <span class="c1"># Overall we do not care to infer specialized dtypes, just that it makes the best inference</span>
     <span class="c1"># to valid dtypes (i.e. an object column should be inferred as strings if that makes sense).</span>
-    <span class="n">data_frame</span> <span class="o">=</span> <span class="n">data_frame</span><span class="o">.</span><span class="n">convert_dtypes</span><span class="p">(</span><span class="n">convert_integer</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">convert_floating</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">convert_string</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+    <span class="n">data_frame</span> <span class="o">=</span> <span class="n">data_frame</span><span class="o">.</span><span class="n">convert_dtypes</span><span class="p">(</span><span class="n">convert_integer</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">convert_floating</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">convert_string</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">save_index</span><span class="p">:</span>
         <span class="n">left_align_first_column</span> <span class="o">=</span> <span class="kc">True</span>
@@ -534,6 +534,8 @@
 <span class="sd">    (headers, dataframe data) into strings to write to file.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
+<div class="viewcode-block" id="ValueToStringFormatter.format_field">
+<a class="viewcode-back" href="../../modules/index.html#tfs.writer.ValueToStringFormatter.format_field">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">format_field</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">format_spec</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">format_spec</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;b&quot;</span><span class="p">):</span>  <span class="c1"># value is a boolean</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_format_boolean</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">format_spec</span><span class="p">)</span>
@@ -544,7 +546,8 @@
         <span class="k">if</span> <span class="n">format_spec</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;s&quot;</span><span class="p">):</span>  <span class="c1"># value is a string or None</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_format_string</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">format_spec</span><span class="p">)</span>
 
-        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">format_field</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">format_spec</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">format_field</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">format_spec</span><span class="p">)</span></div>
+
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_format_boolean</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">format_spec</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>

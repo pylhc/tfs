@@ -81,7 +81,29 @@ Namely, the following are accepted by ``MAD-NG`` and ``MAD-NG`` only:
 .. attention::
 
     The exotic "features" of ``MAD-NG`` such as the ``Lua`` operator overloading for ranges and tables, and their inclusion in **TFS** files are not supported by `tfs-pandas`.
+    We firstly recommend users only include these if truly needed, and avoid writing them out otherwise.
+    One can find information on table writing for ``MAD-NG`` in `their documentation pages <https://madx.web.cern.ch/releases/madng/html/mad_gen_mtable.html>`_.
+
     Should one need to use these features, it is recommended to go through the `pymadng <https://pymadng.readthedocs.io/en/latest/>`_ package to handle them in-memory.
+    Below is an example of how to read a **TFS** file including a ``Lua`` table in its headers with ``pymadng`` and extract the `TfsDataFrame`.
+    The header line would look like:
+
+    .. code-block::
+
+        @ trkrdt             %03t     {"f4000", "f2020", "f3100"}
+
+    The file can be read via ``pymadng`` and converted as follows (please note the need to double quote the file name):
+
+    .. code-block:: python
+
+        from pymadng import MAD
+
+        mad = MAD()
+        df = mad.mtable.read("'madng_tfs_file.tfs'").eval().to_df()
+
+        print(type(df))  # prints: <class 'tfs.frame.TfsDataFrame'>
+        print(df.headers["trkrdt"])  # prints: ['f4000', 'f2020', 'f3100']
+
 
 .. _madx mode:
 
