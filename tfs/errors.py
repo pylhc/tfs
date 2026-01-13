@@ -5,7 +5,12 @@ Errors
 Errors that can be raised during the handling of **TFS** files.
 """
 
-from pathlib import Path
+from __future__ import annotations  # for delayed type annotations
+
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from pathlib import Path
 
 # ----- Main Exception to Inherit From ----- #
 

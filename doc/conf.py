@@ -87,7 +87,7 @@ todo_include_todos = True
 # You can specify multiple suffix as a list of string:
 #
 # source_suffix = ['.rst', '.md']
-source_suffix = ".rst"
+source_suffix = {".rst": "restructuredtext"}
 
 # The master toctree document.
 master_doc = "index"
@@ -139,8 +139,9 @@ html_theme = "sphinx_rtd_theme"
 
 html_theme_options = {
     "collapse_navigation": False,
-    "version_selector": True,  # replaces 'display_version' since sphinx-rtd-theme 3.0 but only works on ReadTheDocs
-    "logo_only": True,
+    #'display_version': True,  # show version in the sidebar (currently not working: https://github.com/readthedocs/sphinx_rtd_theme/issues/1624)
+    # "version_selector": True,  # replaces 'display_version' since sphinx-rtd-theme 3.0 but only works on ReadTheDocs
+    "logo_only": True,  # if True, display only logo image, no project name
     "navigation_depth": 3,
 }
 
@@ -156,12 +157,6 @@ html_context = {
 html_css_files = ["css/custom.css"]
 
 smartquotes_action = "qe"  # renders only quotes and ellipses (...) but not dashes (option: D)
-
-# Theme options are theme-specific and customize the look and feel of a theme
-# further.  For a list of options available for each theme, see the
-# documentation.
-#
-# html_theme_options = {}
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
@@ -184,6 +179,24 @@ html_sidebars = {
 
 # Output file base name for HTML help builder.
 htmlhelp_basename = "tfspandasdoc"
+
+# -- Autodoc options ------------------------------------------------------
+
+# This is to tell Sphinx how to print some specific type annotations
+# See: https://stackoverflow.com/a/67483317
+# See: https://www.sphinx-doc.org/en/master/usage/extensions/autodoc.html#confval-autodoc_type_aliases
+autodoc_type_aliases = {"ArrayLike": "ArrayLike"}
+
+autodoc_default_options = {
+    "members": True,  # include members
+    "undoc-members": True,  # add all members, even if they have no docstring
+    "show-inheritance": True,  # e.g. ``class LHC(Accelerator)`` shows ``BaseClass: Accelerator``
+    # "no-index-entry": True,  # don't add an index entry (toc_object_entries below works better for our use case)
+}
+
+toc_object_entries = (
+    False  # do not create entries for domain objects (e.g. functions, classes, attributes, etc.).
+)
 
 # -- Options for LaTeX output ---------------------------------------------
 

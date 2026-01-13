@@ -5,7 +5,7 @@ Reader
 Reading functionalty for **TFS** files.
 """
 
-from __future__ import annotations
+from __future__ import annotations  # for delayed type annotations
 
 import logging
 import pathlib
@@ -43,6 +43,8 @@ from tfs.frame import validate as validate_frame
 if TYPE_CHECKING:
     from collections.abc import Callable
     from io import TextIOWrapper
+
+    from pandas import DataFrame
 
 
 LOGGER = logging.getLogger(__name__)
@@ -183,17 +185,17 @@ def read_tfs(
 
     # DO NOT use `comment=COMMENTS` in this call: if the '#' symbol is in an element (a
     # string header or some value in the dataframe) then the entire parsing will crash
-    data_frame = pd.read_csv(
+    data_frame: DataFrame = pd.read_csv(  # ty:ignore[no-matching-overload]
         tfs_file_path,
-        engine="c",  # faster, and we do not need the features of the python engine
-        skiprows=metadata.non_data_lines,  # no need to read these lines again
         sep=r"\s+",  # understands ' ' as delimiter | replaced deprecated 'delim_whitespace' in tfs-pandas 3.8.0
-        quotechar='"',  # elements surrounded by " are one entry -> correct parsing of strings with spaces
         names=metadata.column_names,  # column names we have determined, avoids using first read row for columns
         dtype=dtypes_dict,  # assign types at read-time to avoid conversions later
+        engine="c",  # faster, and we do not need the features of the python engine
         converters=converters,  # more involved dtype conversion, e.g. for complex columns
+        skiprows=metadata.non_data_lines,  # no need to read these lines again
         na_values=_NA_VALUES,  # includes MAD-NG's 'nil' which we cast to NaN in the data
         keep_default_na=False,  # we provided the list ourselves so it does not include ""
+        quotechar='"',  # elements surrounded by " are one entry -> correct parsing of strings with spaces
     )
 
     LOGGER.debug("Converting to TfsDataFrame")
@@ -207,10 +209,10 @@ def read_tfs(
 
     if index:
         LOGGER.debug(f"Setting '{index}' column as index")
-        tfs_data_frame = tfs_data_frame.set_index(index)
+        tfs_data_frame: TfsDataFrame = tfs_data_frame.set_index(index)  # ty:ignore[invalid-assignment]
     else:
         LOGGER.debug("Attempting to find index identifier in columns")
-        tfs_data_frame = _find_and_set_index(tfs_data_frame)
+        tfs_data_frame: TfsDataFrame = _find_and_set_index(tfs_data_frame)
 
     # Only perform validation if asked ('validate' defaults to None which skips this step)
     if validate is not None:  # validation function checks for valid values
@@ -318,9 +320,8 @@ def _read_metadata(tfs_file_path: pathlib.Path | str) -> _TfsMetaData:
     # Note: the helper contextmanager handles compression for us
     # and provides and handle to iterate through, line by line
     with _metadata_handle(tfs_file_path) as file_reader:
-        for line_number, line in enumerate(file_reader.readlines()):
-            stripped_line = line.strip()
-            if not stripped_line:
+        for line_number, line in enumerate(file_reader):
+            if not (stripped_line := line.strip()):
                 continue  # empty line
             line_components = shlex.split(stripped_line)
             if line_components[0] == HEADER:
@@ -331,7 +332,7 @@ def _read_metadata(tfs_file_path: pathlib.Path | str) -> _TfsMetaData:
                 column_names = np.array(line_components[1:])
             elif line_components[0] == TYPES:
                 LOGGER.debug("Parsing column types.")
-                column_types = _compute_types(line_components[1:])
+                column_types = _compute_column_types(line_components[1:])
             elif line_components[0] == COMMENTS:
                 continue
             else:  # After all previous cases should only be data lines. If not, file is fucked.
@@ -345,7 +346,7 @@ def _read_metadata(tfs_file_path: pathlib.Path | str) -> _TfsMetaData:
     )
 
 
-def _parse_header_line(str_list: list[str]) -> tuple[str, bool | str | int | float, np.complex128]:
+def _parse_header_line(str_list: list[str]) -> tuple[str, bool | str | int | float | np.complex128 | None]:
     """
     Parses the data in the provided header line. Expects a valid header
     line starting with the '@' identifier, and parses the content that
@@ -365,7 +366,11 @@ def _parse_header_line(str_list: list[str]) -> tuple[str, bool | str | int | flo
         InvalidBooleanHeaderError: if the identifier type indicates a boolean
             but the corresponding value is not an accepted boolean.
     """
-    type_index = next((index for index, part in enumerate(str_list) if part.startswith("%")), None)
+    # Find the index of elements at which the type identifier is located
+    # For instance for ['q2', '%le', '60.31999175'] this would be 1
+    type_index: int | None = next(
+        (index for index, part in enumerate(str_list) if part.startswith("%")), None
+    )
     if type_index is None:
         raise AbsentTypeIdentifierError(str_list)
 
@@ -399,7 +404,7 @@ def _find_and_set_index(data_frame: TfsDataFrame) -> TfsDataFrame:
     """
     index_column = [colname for colname in data_frame.columns if colname.startswith(INDEX_ID)]
     if index_column:
-        data_frame = data_frame.set_index(index_column)
+        data_frame: TfsDataFrame = data_frame.set_index(index_column)  # ty:ignore[invalid-assignment]
         index_name = index_column[0].replace(INDEX_ID, "")
         if index_name == "":
             index_name = None  # to remove it completely (Pandas makes a difference)
@@ -407,8 +412,14 @@ def _find_and_set_index(data_frame: TfsDataFrame) -> TfsDataFrame:
     return data_frame
 
 
-def _compute_types(str_list: list[str]) -> list[type]:
-    return [_id_to_type(string) for string in str_list]
+def _compute_column_types(identifiers: list[str]) -> list[type]:
+    """
+    Returns the data type for each column based on the
+    corresponding provided type identifier strings. The
+    type identifier strings are written on the line just
+    below the column names (the %le, %d, %s, etc.).
+    """
+    return [_id_to_type(type_id) for type_id in identifiers]
 
 
 def _string_to_bool(val_str: str) -> bool:

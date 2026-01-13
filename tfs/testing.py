@@ -5,7 +5,7 @@ Testing
 Testing functionalty for TfsDataFrames.
 """
 
-from __future__ import annotations
+from __future__ import annotations  # for delayed type annotations
 
 from typing import TYPE_CHECKING
 

@@ -18,6 +18,20 @@ class TestHDF:
         df_read = read_hdf(out_file)
         assert_tfs_frame_equal(_tfs_dataframe, df_read)
 
+    def test_read_write_string_path(self, tmp_path: Path, _tfs_dataframe: TfsDataFrame):
+        """
+        Basic read-write loop test for TfsDataFrames to hdf5 format.
+        This time the provided file path is a string.
+        """
+        out_file = str(tmp_path / "data_frame.h5")# use string path instead of Path object
+        write_hdf(out_file, _tfs_dataframe)
+
+        assert Path(out_file).is_file()
+
+        df_read = read_hdf(out_file)
+        assert_tfs_frame_equal(_tfs_dataframe, df_read)
+
+
     def test_read_write_madng_features(self, _tfs_madng_file, tmp_path):
         """Same as the above for a dataframe which includes MAD-NG features."""
         original = read_tfs(_tfs_madng_file)

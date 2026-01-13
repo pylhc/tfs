@@ -5,28 +5,25 @@ HDF5 I/O
 Additional tools for reading and writing ``TfsDataFrames`` into ``hdf5`` files.
 """
 
-from __future__ import annotations
+from __future__ import annotations  # for delayed type annotations
 
 import contextlib
 import logging
-from typing import TYPE_CHECKING
+from pathlib import Path
 
 import pandas as pd
 
 from tfs import TfsDataFrame
 
-if TYPE_CHECKING:
-    from pathlib import Path
-
 try:
     import h5py
 except ImportError:
-    h5py = None
+    h5py = None  # ty:ignore[invalid-assignment]
 
 try:
     import tables
 except ImportError:
-    tables = None
+    tables = None  # ty:ignore[invalid-assignment]
 
 LOGGER = logging.getLogger(__name__)
 
@@ -56,6 +53,7 @@ def write_hdf(path: Path | str, df: TfsDataFrame, **kwargs) -> None:
     # Check for `mode` kwarg (allowed under circumstances but generally ignored) ---
     user_mode = kwargs.pop("mode", None)
     if user_mode is not None and user_mode != "w":
+        path = Path(path)
         if path.exists():
             errmsg = (
                 f"'mode=\"{user_mode}\"' is not allowed here."

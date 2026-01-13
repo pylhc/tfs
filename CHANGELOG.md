@@ -1,5 +1,16 @@
 # TFS-Pandas Changelog
 
+## Version 4.0.1
+
+- Fixed:
+  - Fixed an issue where writing a `TfsDataFrame` to disk in the `HDF5` format would crash if the provided file path was a string.
+
+- Changed:
+  - Some type hints have been fixed or improved in parts of the codebase.
+
+- Documentation:
+  - Added information on how to handle `MAD-NG`'s specific features via `pymadng` when reading and writing `TFS` files in the documentation.
+
 ## Version 4.0.0
 
 Version `4.0` is a major release bringing compatibility with `MAD-NG` features in **TFS** files and tables, apart from the more exotic ones.
@@ -71,12 +82,12 @@ Please have a look at the documentation should you intent to use `tfs-pandas` 4.
 ## Version 3.7.3
 
 - Fixed:
-  - Fixed a regression where the writing of a `pd.Series`-like object to disk was raising an error. It is now possible again.  
+  - Fixed a regression where the writing of a `pd.Series`-like object to disk was raising an error. It is now possible again.
 
 ## Version 3.7.2
 
 - Fixed:
-  - fixing the issues with `pandas` >= `v2.1.0` (see `tfs-pandas` `v3.7.1`) by overwriting the `_constructor_from_mgr` function.  
+  - fixing the issues with `pandas` >= `v2.1.0` (see `tfs-pandas` `v3.7.1`) by overwriting the `_constructor_from_mgr` function.
 
 ## Version 3.7.1
 
@@ -168,7 +179,7 @@ Minor API changes to the `TFSCollections`:
 
 - Added:
   - HDF5 read/write.
-  
+
 - Changed:
   - The minimum required Python version is now `3.7`.
 
