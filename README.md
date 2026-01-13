@@ -7,14 +7,14 @@
 | tfs/\_\_init\_\_.py |       15 |        0 |     100% |           |
 | tfs/collection.py   |      154 |        0 |     100% |           |
 | tfs/constants.py    |       15 |        0 |     100% |           |
-| tfs/errors.py       |       43 |        0 |     100% |           |
+| tfs/errors.py       |       44 |        0 |     100% |           |
 | tfs/frame.py        |      155 |        0 |     100% |           |
-| tfs/hdf.py          |       43 |        0 |     100% |           |
-| tfs/reader.py       |      136 |        0 |     100% |           |
+| tfs/hdf.py          |       44 |        0 |     100% |           |
+| tfs/reader.py       |      135 |        0 |     100% |           |
 | tfs/testing.py      |        7 |        0 |     100% |           |
 | tfs/tools.py        |       45 |        0 |     100% |           |
 | tfs/writer.py       |      135 |        0 |     100% |           |
-|           **TOTAL** |  **748** |    **0** | **100%** |           |
+| **TOTAL**           |  **749** |    **0** | **100%** |           |
 
 
 ## Setup coverage badge
