@@ -34,11 +34,12 @@ def assert_tfs_frame_equal(df1: TfsDataFrame, df2: TfsDataFrame, compare_keys: b
         set of keys*.
 
         Whether this is given as `True` or `False`, the values are
-        compared anyway for all keys in the first (reference) dict.
+        compared **anyway** for all keys in the first (reference) dict.
         In the case of this helper function, all keys present in
         `df1`'s headers will be checked for in `df2`'s headers and
         their corresponding values compared. If given as `True`,
-        then both headers should be the exact same dictionary.
+        then both headers should be the exact same dictionary, including
+        the same keys order.
 
     Args:
         df1 (TfsDataFrame): The first `TfsDataFrame` to compare.
