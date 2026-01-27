@@ -42,7 +42,13 @@ class TestTfsDataFrameMerging:
         assert isinstance(result, TfsDataFrame)
         assert isinstance(result.headers, dict)
         assert_dict_equal(result.headers, merge_headers(dframe_x.headers, dframe_y.headers, how=how_headers))
-        assert_frame_equal(result, pd.DataFrame(dframe_x).merge(pd.DataFrame(dframe_y), how=how, on=on))
+
+        pdmerge = pd.DataFrame(dframe_x).merge(pd.DataFrame(dframe_y), how=how, on=on)
+        # force string dtype on pandas result as we enforce in TfsDataFrame as results are equal but
+        # semantics are not necessarily otherwise (we get <StringDtype(storage='python', na_value=<NA>)>
+        # versus <StringDtype(storage='python', na_value=nan)> in comparison)
+        pdmerge.columns = pdmerge.columns.astype("string")
+        assert_frame_equal(result, pdmerge)
 
     @pytest.mark.parametrize("how_headers", [None, "left", "right"])
     @pytest.mark.parametrize("how", ["left", "right", "outer", "inner"])
@@ -57,7 +63,12 @@ class TestTfsDataFrameMerging:
 
         # using empty dict here as it's what dframe_y is getting when converted in the call
         assert_dict_equal(result.headers, merge_headers(dframe_x.headers, headers_right={}, how=how_headers))
-        assert_frame_equal(result, pd.DataFrame(dframe_x).merge(pd.DataFrame(dframe_y), how=how, on=on))
+        pdmerge = pd.DataFrame(dframe_x).merge(pd.DataFrame(dframe_y), how=how, on=on)
+        # force string dtype on pandas result as we enforce in TfsDataFrame as results are equal but
+        # semantics are not necessarily otherwise (we get <StringDtype(storage='python', na_value=<NA>)>
+        # versus <StringDtype(storage='python', na_value=nan)> in comparison)
+        pdmerge.columns = pdmerge.columns.astype("string")
+        assert_frame_equal(result, pdmerge)
 
 
 class TestHeadersMerging:
