@@ -204,7 +204,7 @@ def read_tfs(
     # In pandas.read_csv we read a 'nil' as NaN in columns, so we have to convert it back
     # to 'None' in the string-dtyped columns. For numeric columns we keep NaN
     LOGGER.debug("Ensuring preservation of None values in string columns")
-    for column in tfs_data_frame.select_dtypes(include=["string", "object"]):
+    for column in tfs_data_frame.select_dtypes(include=["string", "object"]):  # works in pandas 2.x and 3.x
         tfs_data_frame[column] = tfs_data_frame[column].replace([np.nan], [None])
 
     if index:
