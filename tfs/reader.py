@@ -185,7 +185,7 @@ def read_tfs(
 
     # DO NOT use `comment=COMMENTS` in this call: if the '#' symbol is in an element (a
     # string header or some value in the dataframe) then the entire parsing will crash
-    data_frame: DataFrame = pd.read_csv(  # ty:ignore[no-matching-overload]
+    data_frame: DataFrame = pd.read_csv(
         tfs_file_path,
         sep=r"\s+",  # understands ' ' as delimiter | replaced deprecated 'delim_whitespace' in tfs-pandas 3.8.0
         names=metadata.column_names,  # column names we have determined, avoids using first read row for columns
