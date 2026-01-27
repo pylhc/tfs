@@ -3,7 +3,9 @@
 ## Version 4.0.2
 
 This version is a patch release bringing compatibility with the recently released `pandas 3.0`.
-Specifically, since starting with version `3.0` `pandas` defaults strings to the specific "string" dtype and column names in `TfsDataFrames` have to be strings, we have modified the dataframe constructor to enforce inferrence of column names to this new type, for consistency with behavior when reading from a file, in which the `pandas` reader would do this conversion automatically.
+
+Specifically, an issue arose due `pandas` defaulting strings to its specific "string" dtype starting with version `3.0`.
+Since column names in `TfsDataFrames` have to be strings, we have modified the dataframe constructor to enforce coercion of column names to this new dtype, for consistency with behavior when reading from a file, in which the `pandas` reader would do this conversion automatically.
 
 ## Version 4.0.1
 
