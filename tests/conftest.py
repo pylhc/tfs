@@ -47,12 +47,21 @@ def _tfs_madng_file() -> pathlib.Path:
 
 @pytest.fixture
 def _pd_dataframe() -> pd.DataFrame:
+    """
+    We enforce coercion of strings (for columns index) to the new pandas
+    string dtype it uses in 3.0 onwards. This is because we also enforce
+    it in the TfsDataFrame and we have semantic errors when comparing equal
+    columns otherwise.
+    """
     rng = np.random.default_rng()
-    return pd.DataFrame(
+    df = pd.DataFrame(
         index=range(3),
         columns=["a", "b", "c", "d", "e"],
         data=rng.random(size=(3, 5)),
     )
+    # We enforce the "string" dtype on columns as pandas does since 3.0
+    df.columns = df.columns.astype("string")
+    return df
 
 
 @pytest.fixture
