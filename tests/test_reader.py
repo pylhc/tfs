@@ -2,7 +2,6 @@ import pathlib
 
 import pytest
 from pandas.api import types as pdtypes
-from pandas.core.arrays.string_ import StringDtype
 from pandas.testing import assert_frame_equal
 
 import tfs
@@ -101,7 +100,7 @@ class TestRead:
         df = read_tfs(_empty_strings_tfs_path)
 
         # Make sure the NAME column is properly inferred to string dtype
-        assert isinstance(df.convert_dtypes().NAME.dtype, StringDtype)
+        assert pdtypes.is_string_dtype(df.convert_dtypes().NAME)
         # Make sure there are no nans in the NAME column
         assert not any(df.NAME.isna())
         # Make sure we have exactly 5 empty strings in the NAME column
