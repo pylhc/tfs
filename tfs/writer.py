@@ -126,7 +126,7 @@ def write_tfs(
     data_frame.columns = data_frame.columns.astype(str)
 
     # Only perform validation if asked (validation is OFF by default)
-    # We also check for False as it was the way to skip it in tfs-pandas 3.x
+    # We also check for False as it was the way to skip it in tfs-pandas 3.x and above
     if validate is not None and validate is not False:  # validation function will check for valid values
         validate_frame(
             data_frame,

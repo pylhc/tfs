@@ -45,11 +45,24 @@ class TfsDataFrame(pd.DataFrame):
     _metadata: ClassVar = ["headers"]
 
     def __init__(self, *args, **kwargs):
+        # We start by handling the file headers
         self.headers = {}
         with suppress(IndexError, AttributeError):
             self.headers = args[0].headers
         self.headers = kwargs.pop("headers", self.headers)
+
+        # Then we let pandas build the DataFrame itself
         super().__init__(*args, **kwargs)
+
+        # Compatibility for building methods due to pandas 3.x behavior.
+        # By now DataFrame has column names (even if empty) stored as the
+        # self.columns attribute. We ensure to default them to the "string"
+        # dtype for consistency with our reading from file: in pandas 3.x
+        # their parser (which we use) will agressively coerce column names
+        # to the "string" dtype. We want this way to build a TfsDataFrame to
+        # do the same for consistency. This restriction is fine with us since
+        # in tfs-pandas column names are ALWAYS strings - see doc pages).
+        self.columns = pd.Index(self.columns, dtype="string")
 
     def __getitem__(self, key: object) -> object:
         try:
@@ -296,12 +309,12 @@ def validate(
         raise IterableInDataFrameError
 
     # -----  Check that no element is non-physical value in the data and headers ----- #
-    # The pd.option_context('mode.use_inf_as_na', True) context manager raises FutureWarning
-    # and will likely disappear in pandas 3.0 so we replace 'inf' values by NaNs before calling
-    # .isna(). Additionally, the downcasting behaviour of .replace() is deprecated and raises a
-    # FutureWarning, so we use .infer_objects() first to attemps soft conversion to a better dtype
-    # for object-dtype columns (which strings can be). Since .infer_objects() and .replace() return
-    # (lazy for the former) copies we're not modifying the original dataframe during validation :)
+    # The pd.option_context('mode.use_inf_as_na', True) context manager raises FutureWarning and
+    # will likely disappear in pandas 3.0 so we replace 'inf' values by NaNs before calling .isna().
+    # Additionally, the downcasting behaviour of .replace() is deprecated and raises a FutureWarning,
+    # so we use .infer_objects() first to attempt soft conversion to a better dtype for object-dtype
+    # columns (which strings can be before pandas 3.x). Since .infer_objects() and .replace() return
+    # (lazily for the former) copies we're not modifying the original dataframe during validation :)
     inf_or_nan_bool_df = data_frame.infer_objects().replace([np.inf, -np.inf], np.nan).isna()
     if inf_or_nan_bool_df.to_numpy().any():
         LOGGER.warning(
