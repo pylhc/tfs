@@ -57,8 +57,11 @@ class TfsDataFrame(pd.DataFrame):
         # Below is compatibility for pandas 2.x and 3.x versions. By now
         # DataFrame has column names (even if empty) as the self.columns
         # attribute. We ensure to default the column names with "string"
-        # dtype which is enforced in pandas 3.0 (ok since in tfs-pandas
-        # column names are ALWAYS strings - see our documentation pages).
+        # dtype for consistency with the reading from file: in pandas 3.0
+        # their parser will agressively coerce column names to the "string"
+        # dtype. We want this way to build a TfsDataFrame to do the same.
+        # This restriction is ok since in tfs-pandas column names are ALWAYS
+        # strings - see our documentation pages).
         self.columns = pd.Index(self.columns, dtype="string")
 
     def __getitem__(self, key: object) -> object:
