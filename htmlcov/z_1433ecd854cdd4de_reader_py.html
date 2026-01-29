@@ -65,7 +65,7 @@
             <a id="nextFileLink" class="nav" href="z_1433ecd854cdd4de_testing_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.13.1">coverage.py v7.13.1</a>,
-            created at 2026-01-13 10:24 +0000
+            created at 2026-01-29 10:14 +0000
         </p>
         <aside class="hidden">
             <button type="button" class="button_next_chunk" data-shortcut="j"></button>
@@ -267,7 +267,7 @@
     <p class="pln"><span class="n"><a id="t185" href="#t185">185</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t186" href="#t186">186</a></span><span class="t">    <span class="com"># DO NOT use `comment=COMMENTS` in this call: if the '#' symbol is in an element (a</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t187" href="#t187">187</a></span><span class="t">    <span class="com"># string header or some value in the dataframe) then the entire parsing will crash</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t188" href="#t188">188</a></span><span class="t">    <span class="nam">data_frame</span><span class="op">:</span> <span class="nam">DataFrame</span> <span class="op">=</span> <span class="nam">pd</span><span class="op">.</span><span class="nam">read_csv</span><span class="op">(</span>  <span class="com"># ty:ignore[no-matching-overload]</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t188" href="#t188">188</a></span><span class="t">    <span class="nam">data_frame</span><span class="op">:</span> <span class="nam">DataFrame</span> <span class="op">=</span> <span class="nam">pd</span><span class="op">.</span><span class="nam">read_csv</span><span class="op">(</span>&nbsp;</span><span class="r"></span></p>
     <p class="run run2"><span class="n"><a id="t189" href="#t189">189</a></span><span class="t">        <span class="nam">tfs_file_path</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
     <p class="run run2"><span class="n"><a id="t190" href="#t190">190</a></span><span class="t">        <span class="nam">sep</span><span class="op">=</span><span class="str">r"\s+"</span><span class="op">,</span>  <span class="com"># understands ' ' as delimiter | replaced deprecated 'delim_whitespace' in tfs-pandas 3.8.0</span>&nbsp;</span><span class="r"></span></p>
     <p class="run run2"><span class="n"><a id="t191" href="#t191">191</a></span><span class="t">        <span class="nam">names</span><span class="op">=</span><span class="nam">metadata</span><span class="op">.</span><span class="nam">column_names</span><span class="op">,</span>  <span class="com"># column names we have determined, avoids using first read row for columns</span>&nbsp;</span><span class="r"></span></p>
@@ -286,7 +286,7 @@
     <p class="pln"><span class="n"><a id="t204" href="#t204">204</a></span><span class="t">    <span class="com"># In pandas.read_csv we read a 'nil' as NaN in columns, so we have to convert it back</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t205" href="#t205">205</a></span><span class="t">    <span class="com"># to 'None' in the string-dtyped columns. For numeric columns we keep NaN</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t206" href="#t206">206</a></span><span class="t">    <span class="nam">LOGGER</span><span class="op">.</span><span class="nam">debug</span><span class="op">(</span><span class="str">"Ensuring preservation of None values in string columns"</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t207" href="#t207">207</a></span><span class="t">    <span class="key">for</span> <span class="nam">column</span> <span class="key">in</span> <span class="nam">tfs_data_frame</span><span class="op">.</span><span class="nam">select_dtypes</span><span class="op">(</span><span class="nam">include</span><span class="op">=</span><span class="op">[</span><span class="str">"string"</span><span class="op">,</span> <span class="str">"object"</span><span class="op">]</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t207" href="#t207">207</a></span><span class="t">    <span class="key">for</span> <span class="nam">column</span> <span class="key">in</span> <span class="nam">tfs_data_frame</span><span class="op">.</span><span class="nam">select_dtypes</span><span class="op">(</span><span class="nam">include</span><span class="op">=</span><span class="op">[</span><span class="str">"string"</span><span class="op">,</span> <span class="str">"object"</span><span class="op">]</span><span class="op">)</span><span class="op">:</span>  <span class="com"># works in pandas 2.x and 3.x</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t208" href="#t208">208</a></span><span class="t">        <span class="nam">tfs_data_frame</span><span class="op">[</span><span class="nam">column</span><span class="op">]</span> <span class="op">=</span> <span class="nam">tfs_data_frame</span><span class="op">[</span><span class="nam">column</span><span class="op">]</span><span class="op">.</span><span class="nam">replace</span><span class="op">(</span><span class="op">[</span><span class="nam">np</span><span class="op">.</span><span class="nam">nan</span><span class="op">]</span><span class="op">,</span> <span class="op">[</span><span class="key">None</span><span class="op">]</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t209" href="#t209">209</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t210" href="#t210">210</a></span><span class="t">    <span class="key">if</span> <span class="nam">index</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
@@ -571,7 +571,7 @@
             <a class="nav" href="z_1433ecd854cdd4de_testing_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.13.1">coverage.py v7.13.1</a>,
-            created at 2026-01-13 10:24 +0000
+            created at 2026-01-29 10:14 +0000
         </p>
     </div>
 </footer>

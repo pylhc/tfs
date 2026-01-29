@@ -2,19 +2,19 @@
 
 [Full report](https://htmlpreview.github.io/?https://github.com/pylhc/tfs/blob/python-coverage-comment-action-data/htmlcov/index.html)
 
-| Name                |    Stmts |     Miss |    Cover |   Missing |
-|-------------------- | -------: | -------: | -------: | --------: |
-| tfs/\_\_init\_\_.py |       15 |        0 |     100% |           |
-| tfs/collection.py   |      154 |        0 |     100% |           |
-| tfs/constants.py    |       15 |        0 |     100% |           |
-| tfs/errors.py       |       44 |        0 |     100% |           |
-| tfs/frame.py        |      155 |        0 |     100% |           |
-| tfs/hdf.py          |       44 |        0 |     100% |           |
-| tfs/reader.py       |      135 |        0 |     100% |           |
-| tfs/testing.py      |        7 |        0 |     100% |           |
-| tfs/tools.py        |       45 |        0 |     100% |           |
-| tfs/writer.py       |      135 |        0 |     100% |           |
-| **TOTAL**           |  **749** |    **0** | **100%** |           |
+| Name                |    Stmts |     Miss |   Cover |   Missing |
+|-------------------- | -------: | -------: | ------: | --------: |
+| tfs/\_\_init\_\_.py |       15 |        0 |    100% |           |
+| tfs/collection.py   |      154 |        0 |    100% |           |
+| tfs/constants.py    |       15 |        0 |    100% |           |
+| tfs/errors.py       |       44 |        2 |     95% |     94-95 |
+| tfs/frame.py        |      156 |        2 |     99% |   347-348 |
+| tfs/hdf.py          |       44 |        0 |    100% |           |
+| tfs/reader.py       |      135 |        0 |    100% |           |
+| tfs/testing.py      |        7 |        0 |    100% |           |
+| tfs/tools.py        |       45 |        0 |    100% |           |
+| tfs/writer.py       |      135 |        0 |    100% |           |
+| **TOTAL**           |  **750** |    **4** | **99%** |           |
 
 
 ## Setup coverage badge
