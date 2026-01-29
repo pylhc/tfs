@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>tfs.reader &mdash; tfs-pandas 4.0.1 documentation</title>
+  <title>tfs.reader &mdash; tfs-pandas 4.0.2 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
@@ -15,7 +15,7 @@
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=977c7dfd"></script>
+      <script src="../../_static/documentation_options.js?v=a084f797"></script>
       <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -296,7 +296,7 @@
 
     <span class="c1"># DO NOT use `comment=COMMENTS` in this call: if the &#39;#&#39; symbol is in an element (a</span>
     <span class="c1"># string header or some value in the dataframe) then the entire parsing will crash</span>
-    <span class="n">data_frame</span><span class="p">:</span> <span class="n">DataFrame</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span>  <span class="c1"># ty:ignore[no-matching-overload]</span>
+    <span class="n">data_frame</span><span class="p">:</span> <span class="n">DataFrame</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span>
         <span class="n">tfs_file_path</span><span class="p">,</span>
         <span class="n">sep</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;\s+&quot;</span><span class="p">,</span>  <span class="c1"># understands &#39; &#39; as delimiter | replaced deprecated &#39;delim_whitespace&#39; in tfs-pandas 3.8.0</span>
         <span class="n">names</span><span class="o">=</span><span class="n">metadata</span><span class="o">.</span><span class="n">column_names</span><span class="p">,</span>  <span class="c1"># column names we have determined, avoids using first read row for columns</span>
@@ -315,7 +315,7 @@
     <span class="c1"># In pandas.read_csv we read a &#39;nil&#39; as NaN in columns, so we have to convert it back</span>
     <span class="c1"># to &#39;None&#39; in the string-dtyped columns. For numeric columns we keep NaN</span>
     <span class="n">LOGGER</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Ensuring preservation of None values in string columns&quot;</span><span class="p">)</span>
-    <span class="k">for</span> <span class="n">column</span> <span class="ow">in</span> <span class="n">tfs_data_frame</span><span class="o">.</span><span class="n">select_dtypes</span><span class="p">(</span><span class="n">include</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;string&quot;</span><span class="p">,</span> <span class="s2">&quot;object&quot;</span><span class="p">]):</span>
+    <span class="k">for</span> <span class="n">column</span> <span class="ow">in</span> <span class="n">tfs_data_frame</span><span class="o">.</span><span class="n">select_dtypes</span><span class="p">(</span><span class="n">include</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;string&quot;</span><span class="p">,</span> <span class="s2">&quot;object&quot;</span><span class="p">]):</span>  <span class="c1"># works in pandas 2.x and 3.x</span>
         <span class="n">tfs_data_frame</span><span class="p">[</span><span class="n">column</span><span class="p">]</span> <span class="o">=</span> <span class="n">tfs_data_frame</span><span class="p">[</span><span class="n">column</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">],</span> <span class="p">[</span><span class="kc">None</span><span class="p">])</span>
 
     <span class="k">if</span> <span class="n">index</span><span class="p">:</span>

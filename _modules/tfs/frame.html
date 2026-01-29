@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>tfs.frame &mdash; tfs-pandas 4.0.1 documentation</title>
+  <title>tfs.frame &mdash; tfs-pandas 4.0.2 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
@@ -15,7 +15,7 @@
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=977c7dfd"></script>
+      <script src="../../_static/documentation_options.js?v=a084f797"></script>
       <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -156,11 +156,24 @@
     <span class="n">_metadata</span><span class="p">:</span> <span class="n">ClassVar</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;headers&quot;</span><span class="p">]</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="c1"># We start by handling the file headers</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">headers</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">with</span> <span class="n">suppress</span><span class="p">(</span><span class="ne">IndexError</span><span class="p">,</span> <span class="ne">AttributeError</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">headers</span> <span class="o">=</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">headers</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">headers</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;headers&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">headers</span><span class="p">)</span>
+
+        <span class="c1"># Then we let pandas build the DataFrame itself</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="c1"># Compatibility for building methods due to pandas 3.x behavior.</span>
+        <span class="c1"># By now DataFrame has column names (even if empty) stored as the</span>
+        <span class="c1"># self.columns attribute. We ensure to default them to the &quot;string&quot;</span>
+        <span class="c1"># dtype for consistency with our reading from file: in pandas 3.x</span>
+        <span class="c1"># their parser (which we use) will agressively coerce column names</span>
+        <span class="c1"># to the &quot;string&quot; dtype. We want this way to build a TfsDataFrame to</span>
+        <span class="c1"># do the same for consistency. This restriction is fine with us since</span>
+        <span class="c1"># in tfs-pandas column names are ALWAYS strings - see doc pages).</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Index</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">columns</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;string&quot;</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">object</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">object</span><span class="p">:</span>
         <span class="k">try</span><span class="p">:</span>
@@ -419,12 +432,12 @@
         <span class="k">raise</span> <span class="n">IterableInDataFrameError</span>
 
     <span class="c1"># -----  Check that no element is non-physical value in the data and headers ----- #</span>
-    <span class="c1"># The pd.option_context(&#39;mode.use_inf_as_na&#39;, True) context manager raises FutureWarning</span>
-    <span class="c1"># and will likely disappear in pandas 3.0 so we replace &#39;inf&#39; values by NaNs before calling</span>
-    <span class="c1"># .isna(). Additionally, the downcasting behaviour of .replace() is deprecated and raises a</span>
-    <span class="c1"># FutureWarning, so we use .infer_objects() first to attemps soft conversion to a better dtype</span>
-    <span class="c1"># for object-dtype columns (which strings can be). Since .infer_objects() and .replace() return</span>
-    <span class="c1"># (lazy for the former) copies we&#39;re not modifying the original dataframe during validation :)</span>
+    <span class="c1"># The pd.option_context(&#39;mode.use_inf_as_na&#39;, True) context manager raises FutureWarning and</span>
+    <span class="c1"># will likely disappear in pandas 3.0 so we replace &#39;inf&#39; values by NaNs before calling .isna().</span>
+    <span class="c1"># Additionally, the downcasting behaviour of .replace() is deprecated and raises a FutureWarning,</span>
+    <span class="c1"># so we use .infer_objects() first to attempt soft conversion to a better dtype for object-dtype</span>
+    <span class="c1"># columns (which strings can be before pandas 3.x). Since .infer_objects() and .replace() return</span>
+    <span class="c1"># (lazily for the former) copies we&#39;re not modifying the original dataframe during validation :)</span>
     <span class="n">inf_or_nan_bool_df</span> <span class="o">=</span> <span class="n">data_frame</span><span class="o">.</span><span class="n">infer_objects</span><span class="p">()</span><span class="o">.</span><span class="n">replace</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span><span class="o">.</span><span class="n">isna</span><span class="p">()</span>
     <span class="k">if</span> <span class="n">inf_or_nan_bool_df</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
         <span class="n">LOGGER</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>

@@ -382,7 +382,7 @@
           "Example"
         ]
       },
-      "doc_lineno": 34
+      "doc_lineno": 35
     },
     {
       "source": "tfs.write(\"filename.tfs\", dataframe)",
